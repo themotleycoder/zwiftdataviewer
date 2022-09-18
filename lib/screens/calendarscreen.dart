@@ -7,7 +7,7 @@ import 'package:zwiftdataviewer/screens/worlddetailscreen.dart';
 import 'package:zwiftdataviewer/utils/repository/filerepository.dart';
 import 'package:zwiftdataviewer/utils/worlddata.dart';
 import 'package:table_calendar/table_calendar.dart';
-import 'package:zwiftdataviewer/utils/constants.dart' as Constants;
+import 'package:zwiftdataviewer/utils/constants.dart' as constants;
 import 'package:zwiftdataviewer/utils/theme.dart';
 
 class CalendarScreen extends StatefulWidget {
@@ -52,23 +52,27 @@ class _CalendarScreenState extends State<CalendarScreen> {
 
           return Column(mainAxisSize: MainAxisSize.max, children: <Widget>[
             TableCalendar(
-              // calendarController: _calendarController,
-              // events: myModel.worldCalendarData,
               startingDayOfWeek: StartingDayOfWeek.monday,
-              // onDaySelected: _onDaySelected,
               calendarStyle: const CalendarStyle(
-                // selectedColor: zdvmOrange[100],
-                // todayColor: zdvmLgtBlue[100],
-                // markersColor: zdvmMidBlue[100],
                 outsideDaysVisible: false,
-                // weekendStyle:
-                //     TextStyle().copyWith(color: Constants.calenderColor),
-                // holidayStyle:
-                //     TextStyle().copyWith(color: Constants.calenderColor),
+                isTodayHighlighted: true,
+
+                todayDecoration: BoxDecoration(
+                    shape: BoxShape.circle,
+                    color: zdvLgtBlue
+                ),
+                selectedDecoration: BoxDecoration(
+                    shape: BoxShape.circle,
+                    color: zdvOrange
+                ),
+                markerDecoration: BoxDecoration(
+                shape: BoxShape.circle,
+                color: zdvMidBlue
+                ),
               ),
               daysOfWeekStyle: DaysOfWeekStyle(
                 weekendStyle:
-                    const TextStyle().copyWith(color: Constants.calenderColor),
+                    const TextStyle().copyWith(color: constants.calenderColor),
               ),
               headerStyle: HeaderStyle(
                 formatButtonTextStyle: const TextStyle()
@@ -83,6 +87,9 @@ class _CalendarScreenState extends State<CalendarScreen> {
               lastDay: DateTime.utc(2030, 3, 14),
               onDaySelected: _onDaySelected,
               eventLoader: _getEventsForDay,
+              selectedDayPredicate: (day){
+                return isSameDay(_selectedDay, day);
+              },
             ),
             const SizedBox(height: 8.0),
             Expanded(child: _buildEventList()),
@@ -106,7 +113,7 @@ class _CalendarScreenState extends State<CalendarScreen> {
         // _rangeSelectionMode = RangeSelectionMode.toggledOff;
       });
 
-      _selectedEvents = _getEventsForDay(selectedDay)!;
+      _selectedEvents = _getEventsForDay(selectedDay);
     }
   }
 
@@ -114,12 +121,6 @@ class _CalendarScreenState extends State<CalendarScreen> {
     final DateTime d = DateTime(selectedDay.year, selectedDay.month, selectedDay.day);
     return _myModel?.worldCalendarData![d]??[];
   }
-
-  // void _onDaySelected(DateTime day, List events) {
-  //   setState(() {
-  //     _selectedEvents = events;
-  //   });
-  // }
 
   Widget _buildEventList() {
     List<Widget> list = _selectedEvents

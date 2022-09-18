@@ -56,13 +56,10 @@ class _DetailScreenState extends State<DetailScreen> {
             builder: (context, myModel, child) {
           return Scaffold(
             appBar: AppBar(
-              title: myModel == null || myModel.activityDetail == null
+              title: myModel.activityDetail == null
                   ? const Text("Zwift Data Viewer")
-                  : Text(myModel.activityDetail!.name! +
-                      " (" +
-                      DateFormat.yMd().format(
-                          DateTime.parse(myModel.activityDetail!.startDate!)) +
-                      ")"),
+                  : Text("${myModel.activityDetail!.name!} (${DateFormat.yMd().format(
+                          DateTime.parse(myModel.activityDetail!.startDate!))})"),
               backgroundColor: Colors.transparent,
               elevation: 0.0,
               // actions: getActions()
@@ -109,16 +106,16 @@ class _DetailScreenState extends State<DetailScreen> {
                         type: BottomNavigationBarType.fixed,
                         unselectedItemColor: zdvmMidBlue[100],
                         fixedColor: zdvmOrange[100],
-                        items: [
-                          const BottomNavigationBarItem(
+                        items: const [
+                          BottomNavigationBarItem(
                             icon: Icon(Icons.list, key: AppKeys.activitiesTab),
                             label: "Details",
                           ),
-                          const BottomNavigationBarItem(
+                          BottomNavigationBarItem(
                             icon: Icon(Icons.show_chart, key: AppKeys.statsTab),
                             label: "Profile",
                           ),
-                          const BottomNavigationBarItem(
+                          BottomNavigationBarItem(
                             icon: Icon(Icons.calendar_today,
                                 key: AppKeys.calendarTab),
                             label: "Sections",

@@ -30,14 +30,14 @@ class _RouteProfileChartScreenState extends State<RouteProfileChartScreen> {
   Widget build(BuildContext context) {
     return Consumer<StreamsDataModel>(builder: (context, myModel, child) {
       _streamsDetail = myModel.combinedStreams == null
-          ? new StreamsDetailCollection()
+          ? StreamsDetailCollection()
           : myModel.combinedStreams;
       _chartData = createDataSet(myModel);
       return Selector<StreamsDataModel, bool>(
           selector: (context, model) => model.isLoading,
           builder: (context, isLoading, _) {
             if (isLoading) {
-              return Center(
+              return const Center(
                 child: CircularProgressIndicator(
                   key: AppKeys.activitiesLoading,
                 ),
@@ -53,41 +53,41 @@ class _RouteProfileChartScreenState extends State<RouteProfileChartScreen> {
                     child: charts.LineChart(
                   _chartData,
                   customSeriesRenderers: [
-                    new charts.LineRendererConfig(
+                    charts.LineRendererConfig(
                         // ID used to link series to this renderer.
                         customRendererId: 'customArea',
                         includeArea: true,
                         stacked: true),
-                    new charts.LineRendererConfig(
+                    charts.LineRendererConfig(
                         // ID used to link series to this renderer.
                         customRendererId: 'customArea2',
                         includeArea: false,
                         stacked: true),
                   ],
                   defaultRenderer:
-                      new charts.LineRendererConfig(includeArea: false),
+                      charts.LineRendererConfig(includeArea: false),
                   animate: true,
-                  primaryMeasureAxis: new charts.NumericAxisSpec(
+                  primaryMeasureAxis: const charts.NumericAxisSpec(
                       tickProviderSpec:
-                          new charts.StaticNumericTickProviderSpec(
+                          charts.StaticNumericTickProviderSpec(
                     // Create the ticks to be used the domain axis.
                     <charts.TickSpec<num>>[
-                      new charts.TickSpec(0, label: ''),
-                      new charts.TickSpec(1, label: ''),
-                      new charts.TickSpec(2, label: ''),
-                      new charts.TickSpec(3, label: ''),
-                      new charts.TickSpec(4, label: ''),
+                      charts.TickSpec(0, label: ''),
+                      charts.TickSpec(1, label: ''),
+                      charts.TickSpec(2, label: ''),
+                      charts.TickSpec(3, label: ''),
+                      charts.TickSpec(4, label: ''),
                     ],
                   )),
                   disjointMeasureAxes:
-                      new LinkedHashMap<String, charts.NumericAxisSpec>.from({
-                    'axis 1': new charts.NumericAxisSpec(),
-                    'axis 2': new charts.NumericAxisSpec(),
-                    'axis 3': new charts.NumericAxisSpec(),
-                    'axis 4': new charts.NumericAxisSpec(),
+                      LinkedHashMap<String, charts.NumericAxisSpec>.from({
+                    'axis 1': const charts.NumericAxisSpec(),
+                    'axis 2': const charts.NumericAxisSpec(),
+                    'axis 3': const charts.NumericAxisSpec(),
+                    'axis 4': const charts.NumericAxisSpec(),
                   }),
                   selectionModels: [
-                    new charts.SelectionModelConfig(
+                    charts.SelectionModelConfig(
                       type: charts.SelectionModelType.info,
                       changedListener: _onSelectionChanged,
                     )
@@ -96,12 +96,12 @@ class _RouteProfileChartScreenState extends State<RouteProfileChartScreen> {
                     // new charts.InitialSelection(selectedDataConfig: [
                     // new charts.SeriesDatumConfig<String>('Elevation', '0')
                     // ])
-                    new charts.LinePointHighlighter(
+                    charts.LinePointHighlighter(
                         showHorizontalFollowLine:
                             charts.LinePointHighlighterFollowLineType.none,
                         showVerticalFollowLine:
                             charts.LinePointHighlighterFollowLineType.nearest),
-                    new charts.SelectNearest(
+                    charts.SelectNearest(
                         eventTrigger: charts.SelectionTrigger.tapAndDrag)
                   ],
                 )),
@@ -136,25 +136,25 @@ class _RouteProfileChartScreenState extends State<RouteProfileChartScreen> {
     for (int x = 0; x < length; x++) {
       col = _streamsDetail!.stream![x];
       distance = col.distance;
-      elevationData.add(new DistanceValue(distance, col.altitude));
-      heartrateData.add(new DistanceValue(distance, col.heartrate.toDouble()));
-      wattsData.add(new DistanceValue(distance, col.watts.toDouble()));
-      cadenceData.add(new DistanceValue(distance, col.cadence.toDouble()));
-      gradeData.add(new DistanceValue(distance, col.gradeSmooth.toDouble()));
+      elevationData.add(DistanceValue(distance, col.altitude));
+      heartrateData.add(DistanceValue(distance, col.heartrate.toDouble()));
+      wattsData.add(DistanceValue(distance, col.watts.toDouble()));
+      cadenceData.add(DistanceValue(distance, col.cadence.toDouble()));
+      gradeData.add(DistanceValue(distance, col.gradeSmooth.toDouble()));
     }
 
     return [
-      new charts.Series<DistanceValue, double>(
+      charts.Series<DistanceValue, double>(
         id: 'Elevation',
         // colorFn specifies that the line will be blue.
-        colorFn: (_, __) => charts.MaterialPalette.gray.shade300,
+        colorFn: (_, __) => charts.MaterialPalette.green.shadeDefault,//gray.shade300,.gray.shade300,
         // areaColorFn specifies that the area skirt will be light blue.
-        areaColorFn: (_, __) => charts.MaterialPalette.gray.shade300,
+        areaColorFn: (_, __) => charts.MaterialPalette.green.shadeDefault,//gray.shade300,
         domainFn: (DistanceValue elevation, _) => elevation.distance,
         measureFn: (DistanceValue elevation, _) => elevation.value,
         data: elevationData,
       )..setAttribute(charts.rendererIdKey, 'customArea'),
-      new charts.Series<DistanceValue, double>(
+      charts.Series<DistanceValue, double>(
         id: 'Heartrate',
         // colorFn specifies that the line will be blue.
         colorFn: (_, __) => charts.MaterialPalette.red.shadeDefault,
@@ -172,7 +172,7 @@ class _RouteProfileChartScreenState extends State<RouteProfileChartScreen> {
       //   measureFn: (DistanceValue watts, _) => watts.value,
       //   data: wattsData,
       // )..setAttribute(charts.rendererIdKey, 'customArea2'),
-      new charts.Series<DistanceValue, double>(
+      charts.Series<DistanceValue, double>(
         id: 'Cadence',
         // colorFn specifies that the line will be blue.
         colorFn: (_, __) => charts.MaterialPalette.blue.shadeDefault,
@@ -205,17 +205,17 @@ class _RouteProfileChartScreenState extends State<RouteProfileChartScreen> {
     for (int x = 0; x < length; x++) {
       col = _streamsDetail!.stream![x];
       distance = col.distance;
-      elevationData.add(new DistanceValue(distance, col.altitude));
-      heartrateData.add(new DistanceValue(distance, col.heartrate.toDouble()));
-      wattsData.add(new DistanceValue(distance, col.watts.toDouble()));
-      cadenceData.add(new DistanceValue(distance, col.cadence.toDouble()));
-      gradeData.add(new DistanceValue(distance, col.gradeSmooth.toDouble()));
+      elevationData.add(DistanceValue(distance, col.altitude));
+      heartrateData.add(DistanceValue(distance, col.heartrate.toDouble()));
+      wattsData.add(DistanceValue(distance, col.watts.toDouble()));
+      cadenceData.add(DistanceValue(distance, col.cadence.toDouble()));
+      gradeData.add(DistanceValue(distance, col.gradeSmooth.toDouble()));
 
-      flElevationData.add(new FlSpot(distance, col.altitude));
-      flHeartRateData.add(new FlSpot(distance, col.heartrate.toDouble()));
-      flWattsData.add(new FlSpot(distance, col.watts.toDouble()));
-      flCadenceData.add(new FlSpot(distance, col.cadence.toDouble()));
-      flGradeData.add(new FlSpot(distance, col.gradeSmooth.toDouble()));
+      flElevationData.add(FlSpot(distance, col.altitude));
+      flHeartRateData.add(FlSpot(distance, col.heartrate.toDouble()));
+      flWattsData.add(FlSpot(distance, col.watts.toDouble()));
+      flCadenceData.add(FlSpot(distance, col.cadence.toDouble()));
+      flGradeData.add(FlSpot(distance, col.gradeSmooth.toDouble()));
     }
 
     //distance, alt

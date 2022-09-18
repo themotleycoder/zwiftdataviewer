@@ -38,6 +38,8 @@ class _RouteSectionDetailScreenState extends State<RouteSectionDetailScreen> {
     } else if (prRank == 3) {
       col = zdvOrange;
       text = '3';
+    } else {
+      text = "";
     }
 
     return new Stack(children: <Widget>[
@@ -108,6 +110,7 @@ class _RouteSectionDetailScreenState extends State<RouteSectionDetailScreen> {
               // margin: EdgeInsets.all(1.0),
               ),
           itemBuilder: (BuildContext context, int index) {
+            final SegmentEffort effort = _segmentEfforts![index];
             return Container(
               padding: EdgeInsets.fromLTRB(8.0, 0, 8.0, 0),
               child: Center(
@@ -116,7 +119,7 @@ class _RouteSectionDetailScreenState extends State<RouteSectionDetailScreen> {
                     color: Colors.white,
                     elevation: 0,
                     child: ListTile(
-                      leading: createIcon(_segmentEfforts![index].prRank!),
+                      leading: createIcon(effort.prRank??0),
                       title: Text(_segmentEfforts![index].segment!.name ?? "",
                           style: Constants.headerFontStyle),
                       subtitle: createSubTitle(_segmentEfforts![index], units),

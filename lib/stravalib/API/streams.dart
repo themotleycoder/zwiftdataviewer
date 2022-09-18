@@ -15,9 +15,7 @@ abstract class Streams {
     globals.displayInfo('Entering getStreamsByActivity');
 
     if (_header.containsKey('88') == false) {
-      final String reqStreams = 'https://www.strava.com/api/v3/activities/' +
-          id +
-          '/streams?keys=time,watts_calc,altitude,heartrate,cadence,distance,grade_smooth&key_by_type=true';
+      final String reqStreams = 'https://www.strava.com/api/v3/activities/$id/streams?keys=time,watts_calc,altitude,heartrate,cadence,distance,grade_smooth&key_by_type=true';
       var rep = await http.get(Uri.parse(reqStreams), headers: _header);
 
       if (rep.statusCode == 200) {
@@ -119,8 +117,9 @@ class StreamsDetailCollection {
     Stream gradeSmooth = Stream.fromJson(json["grade_smooth"]);
     stream = <CombinedStreams>[];
     if (distance.data != null) {
-      //for (int x = 0; x < distance.data?.length; x++) {
-      distance.data?.forEach((x) {
+      final int size = distance.data!.length??0;
+      for (int x = 0; x < size; x++) {
+      // distance.data?.forEach((x) {
         stream?.add(CombinedStreams(
             distance.data![x],
             time.data![x],
@@ -129,7 +128,7 @@ class StreamsDetailCollection {
             cadence.data![x],
             watts.data![x],
             gradeSmooth.data![x]));
-      });
+      }
     }
   }
 }
