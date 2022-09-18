@@ -39,7 +39,7 @@ class WebRepository implements ActivitiesRepository, StreamsRepository {
   @override
   Future<List<PhotoActivity>> loadActivityPhotos(int activityId) async {
     final List<PhotoActivity> photos =
-        await strava.getPhotosFromActivityById(activityId.toString());
+        await strava.getPhotosFromActivityById(activityId);
     return photos;
   }
 

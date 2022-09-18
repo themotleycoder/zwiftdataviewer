@@ -21,9 +21,7 @@ abstract class Activities {
     globals.displayInfo('Entering getActivityById');
 
     if (_header.containsKey('88') == false) {
-      final String reqActivity = 'https://www.strava.com/api/v3/activities/' +
-          id +
-          '?include_all_efforts=true';
+      final String reqActivity = 'https://www.strava.com/api/v3/activities/$id?include_all_efforts=true';
       var rep = await http.get(Uri.parse(reqActivity), headers: _header);
 
       if (rep.statusCode == 200) {
@@ -120,7 +118,7 @@ abstract class Activities {
   ///
   /// NOT WORKING yet
   ///
-  Future<List<PhotoActivity>> getPhotosFromActivityById(String id) async {
+  Future<List<PhotoActivity>> getPhotosFromActivityById(int id) async {
     var _header = globals.createHeader();
     var returnPhoto = <PhotoActivity>[];
 
@@ -128,7 +126,7 @@ abstract class Activities {
 
     if (_header.containsKey('88') == false) {
       final String reqActivity =
-          'https://www.strava.com/api/v3/activities/' + id + '/photos';
+          'https://www.strava.com/api/v3/activities/$id/photos';
       var rep = await http.get(Uri.parse(reqActivity), headers: _header);
 
       if (rep.statusCode == 200) {

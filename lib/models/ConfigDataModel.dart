@@ -55,13 +55,13 @@ class ConfigData {
 
   ConfigData.fromJson(Map<String, dynamic> json) {
     lastSyncDate = json['lastSyncDate'];
-    isMetric = json['isMetric'] != null ? json['isMetric'] : false;
+    isMetric = json['isMetric'] ?? false;
   }
 
   Map<String, dynamic> toJson() {
-    final Map<String, dynamic> data = new Map<String, dynamic>();
-    data['lastSyncDate'] = this.lastSyncDate;
-    data['isMetric'] = this.isMetric;
+    final Map<String, dynamic> data = <String, dynamic>{};
+    data['lastSyncDate'] = lastSyncDate;
+    data['isMetric'] = isMetric;
     return data;
   }
 }

@@ -27,8 +27,8 @@ class ActivitiesDataModel extends ChangeNotifier {
 
   List<SummaryActivity>? get activities => _activities;
 
-  GuestWorldId? _filter;
-  constants.DateFilter? _dateFilter;
+  GuestWorldId _filter = GuestWorldId.all;
+  constants.DateFilter _dateFilter = constants.DateFilter.all;
 
   GuestWorldId get filter => _filter!;
   constants.DateFilter get dateFilter => _dateFilter!;
@@ -73,8 +73,8 @@ class ActivitiesDataModel extends ChangeNotifier {
       ConfigData configData;
       final ConfigDataModel configDataModel =
           Provider.of<ConfigDataModel>(context, listen: false);
-      if (configDataModel == null || configDataModel.configData == null) {
-        configData = new ConfigData();
+      if (configDataModel.configData == null) {
+        configData = ConfigData();
         configData.lastSyncDate = constants.defaultDataDate;
         configData.isMetric = false;
       } else {
@@ -118,7 +118,7 @@ class ActivitiesDataModel extends ChangeNotifier {
 
   List<SummaryActivity> get filteredActivities {
     return _activities!.where((activity) {
-      if (_filter != null && _filter != GuestWorldId.all) {
+      if (_filter != GuestWorldId.all) {
         return worldsData[_filter]?.name == activity.name;
       } else {
         return true;

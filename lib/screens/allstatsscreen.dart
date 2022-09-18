@@ -99,24 +99,28 @@ class AllStatsScreen extends StatelessWidget {
     const String totalName = "Total";
 
     for (var activity in activities) {
-      double? distance =
-          Conversions.metersToDistance(context!, activity.distance!);
-      double? elevation =
-          Conversions.metersToHeight(context, activity.totalElevationGain!);
-      // distances[totalName] = distances[totalName] == null
-      //     ? distance
-      //     : distances[totalName] != null
-      //         ? distances[totalName] += distance
-      //         : distance;
-      // elevations[totalName] = elevations[totalName] == null
-      //     ? elevation
-      //     : elevations[totalName] += elevation;
-      // if (distances.containsKey(activity.startDateLocal?.year.toString())) {
-      //   distance += distances[activity.startDateLocal?.year.toString()]!;
-      //   elevation += elevations[activity.startDateLocal?.year.toString()]!;
-      // }
-      // distances[activity.startDateLocal.year.toString()] = distance;
-      // elevations[activity.startDateLocal.year.toString()] = elevation;
+      double distance =
+      Conversions.metersToDistance(context!, activity.distance!);
+      double elevation =
+      Conversions.metersToHeight(context, activity.totalElevationGain!);
+
+      double d = distances[totalName]??0;
+      double e = elevations[totalName]??0;
+
+      distances[totalName] = distances[totalName] == null
+          ? distance
+          : distances[totalName] = d+distance;
+      elevations[totalName] = elevations[totalName] == null
+          ? elevation
+          : elevations[totalName] = e+elevation;
+      if (distances.containsKey(activity.startDateLocal?.year.toString())) {
+        distance += distances[activity.startDateLocal?.year.toString()]!;
+        elevation += elevations[activity.startDateLocal?.year.toString()]!;
+      }
+
+      int? year = activity.startDateLocal?.year;
+      distances[year.toString()] = distance;
+      elevations[year.toString()] = elevation;
     }
 
     List<YearlyTotals> distanceData = [];

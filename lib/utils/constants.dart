@@ -11,26 +11,26 @@ enum DateFilter {
   all,
   month,
   week,
-  year,
+  year
 }
 
 TextStyle headerTextStyle =
-    new TextStyle(inherit: true, fontSize: 20.0, color: zdvDrkBlue);
+    new TextStyle(inherit: true, fontSize: 18.0, color: zdvDrkBlue);
 TextStyle bodyTextStyleComplete = new TextStyle(
     inherit: true,
-    fontSize: 20.0,
+    fontSize: 18.0,
     fontWeight: FontWeight.bold,
     color: zdvMidBlue);
 TextStyle bodyTextStyle = new TextStyle(
     inherit: true,
-    fontSize: 20.0,
+    fontSize: 18.0,
     fontWeight: FontWeight.bold,
     color: zdvDrkBlue);
 TextStyle inlineBodyTextStyle =
-    new TextStyle(inherit: true, fontSize: 20.0, color: zdvDrkBlue);
+    new TextStyle(inherit: true, fontSize: 18.0, color: zdvDrkBlue);
 TextStyle headerFontStyle = new TextStyle(
   inherit: true,
-  fontSize: 20.0,
+  fontSize: 18.0,
 );
 const double iconPadding = 8.0;
 const double rowHeight = 80;

@@ -153,9 +153,9 @@ final ThemeData myTheme = ThemeData(
     hoverColor: Color(0x0a000000),
     colorScheme: ColorScheme(
       primary: Color(0xffffffff),
-      primaryVariant: Color(0xff4d4d4d),
+      primaryContainer: Color(0xff4d4d4d),
       secondary: Color(0xff808080),
-      secondaryVariant: Color(0xff4d4d4d),
+      secondaryContainer: Color(0xff4d4d4d),
       surface: Color(0xffffffff),
       background: Color(0xffcccccc),
       error: Color(0xffd32f2f),

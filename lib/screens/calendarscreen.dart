@@ -11,7 +11,7 @@ import 'package:zwiftdataviewer/utils/constants.dart' as Constants;
 import 'package:zwiftdataviewer/utils/theme.dart';
 
 class CalendarScreen extends StatefulWidget {
-  const CalendarScreen();
+  const CalendarScreen({super.key});
 
   @override
   _CalendarScreenState createState() => _CalendarScreenState();
@@ -19,7 +19,9 @@ class CalendarScreen extends StatefulWidget {
 
 class _CalendarScreenState extends State<CalendarScreen> {
   // CalendarController _calendarController;
-  List _selectedEvents = [];
+  List<dynamic> _selectedEvents = [];
+  DateTime _selectedDay = DateTime.now();
+  WorldDataModel? _myModel;
 
   @override
   void initState() {
@@ -42,6 +44,7 @@ class _CalendarScreenState extends State<CalendarScreen> {
               ),
             );
           } else {
+            _myModel = myModel;
             _selectedEvents = (_selectedEvents.length < 2
                 ? myModel.worldCalendarData![t]
                 : _selectedEvents)!;
@@ -75,9 +78,11 @@ class _CalendarScreenState extends State<CalendarScreen> {
                   borderRadius: BorderRadius.circular(8.0),
                 ),
               ),
-              firstDay: DateTime.now(),
+              firstDay: DateTime.utc(2010, 10, 16),
               focusedDay: DateTime.now(),
-              lastDay: DateTime.now(),
+              lastDay: DateTime.utc(2030, 3, 14),
+              onDaySelected: _onDaySelected,
+              eventLoader: _getEventsForDay,
             ),
             const SizedBox(height: 8.0),
             Expanded(child: _buildEventList()),
@@ -91,42 +96,60 @@ class _CalendarScreenState extends State<CalendarScreen> {
     super.dispose();
   }
 
-  void _onDaySelected(DateTime day, List events) {
-    setState(() {
-      _selectedEvents = events;
-    });
+  void _onDaySelected(DateTime selectedDay, DateTime focusedDay) {
+    if (!isSameDay(_selectedDay, selectedDay)) {
+      setState(() {
+        _selectedDay = selectedDay;
+        // _focusedDay = focusedDay;
+        // _rangeStart = null; // Important to clean those
+        // _rangeEnd = null;
+        // _rangeSelectionMode = RangeSelectionMode.toggledOff;
+      });
+
+      _selectedEvents = _getEventsForDay(selectedDay)!;
+    }
   }
 
+  List<dynamic> _getEventsForDay(DateTime selectedDay){
+    final DateTime d = DateTime(selectedDay.year, selectedDay.month, selectedDay.day);
+    return _myModel?.worldCalendarData![d]??[];
+  }
+
+  // void _onDaySelected(DateTime day, List events) {
+  //   setState(() {
+  //     _selectedEvents = events;
+  //   });
+  // }
+
   Widget _buildEventList() {
-    List<Widget> list = [];
-    // _selectedEvents
-    //     .map((world) => Card(
-    //         color: Colors.white,
-    //         elevation: 0,
-    //         margin: const EdgeInsets.fromLTRB(8.0, 8.0, 8.0, 8.0),
-    //         child: InkWell(
-    //           child: ListTile(
-    //               leading: const Icon(Icons.map, size: 32.0, color: zdvOrange),
-    //               title: Text(worldsData[world.id]!.name??"NA"),
-    //               trailing: Icon(
-    //                 Icons.arrow_forward_ios,
-    //                 color: zdvmMidBlue[100],
-    //               ),
-    //               onTap: () {
-    //                 Navigator.push(
-    //                   context,
-    //                   MaterialPageRoute(
-    //                     builder: (_) {
-    //                       return WorldDetailScreen(
-    //                         worldId: world.id,
-    //                         worldData: worldsData[world.id]!,
-    //                       );
-    //                     },
-    //                   ),
-    //                 );
-    //               }),
-    //         )))
-    //     .toList();
+    List<Widget> list = _selectedEvents
+        .map((world) => Card(
+            color: Colors.white,
+            elevation: 0,
+            margin: const EdgeInsets.fromLTRB(8.0, 8.0, 8.0, 8.0),
+            child: InkWell(
+              child: ListTile(
+                  leading: const Icon(Icons.map, size: 32.0, color: zdvOrange),
+                  title: Text(worldsData[world.id]!.name??"NA"),
+                  trailing: Icon(
+                    Icons.arrow_forward_ios,
+                    color: zdvmMidBlue[100],
+                  ),
+                  onTap: () {
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                        builder: (_) {
+                          return WorldDetailScreen(
+                            worldId: world.id??1,
+                            worldData: worldsData[world.id]!,
+                          );
+                        },
+                      ),
+                    );
+                  }),
+            )))
+        .toList();
     //add watopia
     list.add(Card(
         color: Colors.white,

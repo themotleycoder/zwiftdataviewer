@@ -919,10 +919,7 @@ String toJsonDate(DateTime date) {
 //2020-07-19T15:44:53Z
   final DateFormat yearFormat = DateFormat('yyyy-MM-dd');
   final DateFormat timeFormat = DateFormat('Hms');
-  return yearFormat.format(date).toString() +
-      'T' +
-      timeFormat.format(date) +
-      'Z';
+  return '${yearFormat.format(date)}T${timeFormat.format(date)}Z';
 }
 
 class ActivityType {
