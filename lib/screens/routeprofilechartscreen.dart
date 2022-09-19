@@ -249,41 +249,81 @@ class _ProfileDataViewState extends State<ProfileDataView> {
         builder: (context, myModel, child) {
       CombinedStreams? selectedSeries = myModel.selectedStream;
       Map<String, String> units = Conversions.units(context);
-      return Expanded(
-        flex: 1,
-        child: GridView.count(
-          primary: false,
-          padding: const EdgeInsets.fromLTRB(8, 0, 8, 0),
-          crossAxisSpacing: 8,
-          mainAxisSpacing: 8,
-          childAspectRatio: MediaQuery.of(context).size.height / 300,
-          crossAxisCount: 2,
-          children: <Widget>[
-            gridViewItem(
-                '',
-                'Distance',
-                Conversions.metersToDistance(
-                        context, selectedSeries?.distance ?? 0)
-                    .toStringAsFixed(2),
-                units['distance']!),
-            gridViewItem(
-                '',
-                'Elevation',
-                Conversions.metersToHeight(
-                        context, selectedSeries?.altitude ?? 0)
-                    .toStringAsFixed(0),
-                units['height']!),
-            gridViewItem('', 'Heartrate',
-                (selectedSeries?.heartrate ?? 0).toString(), 'bpm'),
-            gridViewItem(
-                '', 'Power', (selectedSeries?.watts ?? 0).toString(), 'w'),
-            gridViewItem('', 'Cadence',
-                (selectedSeries?.cadence ?? 0).toString(), 'rpm'),
-            gridViewItem('', 'Grade',
-                (selectedSeries?.gradeSmooth ?? 0).toString(), '%'),
-          ],
-        ),
-      );
+      return
+        Expanded(
+             flex: 1,
+             child:
+        Container(
+        // top: 100,
+          margin: const EdgeInsets.fromLTRB(0, 16, 0, 0),
+          child: ListView(
+            // padding: const EdgeInsets.all(8.0),
+            children: <Widget>[
+              doubleDataHeaderLineItem(
+                [
+                  'Distance (${units['distance']!})',
+                  'Elevation (' + units['height']! + ')'
+                ],
+                [
+                  Conversions.metersToDistance(
+                      context, selectedSeries?.distance ?? 0)
+                      .toStringAsFixed(2),
+                  Conversions.metersToHeight(
+                      context, selectedSeries?.altitude ?? 0)
+                      .toStringAsFixed(0)
+                ],
+              ),
+              doubleDataHeaderLineItem(
+                ['Heartrate (bpm)', 'Power(w)'],
+                [
+                  (selectedSeries?.heartrate ?? 0).toString(),
+                  (selectedSeries?.watts ?? 0).toString()
+                ],
+              ),
+              doubleDataHeaderLineItem(
+                ['Cadence (rpm)', 'Grade (%)'],
+                [
+                  (selectedSeries?.cadence ?? 0).toString(),
+                  (selectedSeries?.gradeSmooth ?? 0).toString()
+                ],
+              )
+            ]
+          )));
+      //   Expanded(
+      //   flex: 1,
+      //   child: GridView.count(
+      //     primary: false,
+      //     padding: const EdgeInsets.fromLTRB(8, 0, 8, 0),
+      //     crossAxisSpacing: 8,
+      //     mainAxisSpacing: 8,
+      //     childAspectRatio: MediaQuery.of(context).size.height / 300,
+      //     crossAxisCount: 2,
+      //     children: <Widget>[
+      //       gridViewItem(
+      //           '',
+      //           'Distance',
+      //           Conversions.metersToDistance(
+      //                   context, selectedSeries?.distance ?? 0)
+      //               .toStringAsFixed(2),
+      //           units['distance']!),
+      //       gridViewItem(
+      //           '',
+      //           'Elevation',
+      //           Conversions.metersToHeight(
+      //                   context, selectedSeries?.altitude ?? 0)
+      //               .toStringAsFixed(0),
+      //           units['height']!),
+      //       gridViewItem('', 'Heartrate',
+      //           (selectedSeries?.heartrate ?? 0).toString(), 'bpm'),
+      //       gridViewItem(
+      //           '', 'Power', (selectedSeries?.watts ?? 0).toString(), 'w'),
+      //       gridViewItem('', 'Cadence',
+      //           (selectedSeries?.cadence ?? 0).toString(), 'rpm'),
+      //       gridViewItem('', 'Grade',
+      //           (selectedSeries?.gradeSmooth ?? 0).toString(), '%'),
+      //     ],
+      //   ),
+      // );
     });
   }
 }

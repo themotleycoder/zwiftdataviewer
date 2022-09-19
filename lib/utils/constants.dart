@@ -15,20 +15,20 @@ enum DateFilter {
 }
 
 TextStyle headerTextStyle =
-    new TextStyle(inherit: true, fontSize: 18.0, color: zdvDrkBlue);
-TextStyle bodyTextStyleComplete = new TextStyle(
+    const TextStyle(inherit: true, fontSize: 14.0, color: Colors.blueGrey);
+TextStyle bodyTextStyleComplete = const TextStyle(
     inherit: true,
     fontSize: 18.0,
     fontWeight: FontWeight.bold,
     color: zdvMidBlue);
-TextStyle bodyTextStyle = new TextStyle(
+TextStyle bodyTextStyle = const TextStyle(
     inherit: true,
     fontSize: 18.0,
     fontWeight: FontWeight.bold,
     color: zdvDrkBlue);
 TextStyle inlineBodyTextStyle =
-    new TextStyle(inherit: true, fontSize: 18.0, color: zdvDrkBlue);
-TextStyle headerFontStyle = new TextStyle(
+    const TextStyle(inherit: true, fontSize: 18.0, color: Colors.green);
+TextStyle headerFontStyle = const TextStyle(
   inherit: true,
   fontSize: 18.0,
 );
