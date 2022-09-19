@@ -119,15 +119,15 @@ abstract class Activities {
   /// NOT WORKING yet
   ///
   Future<List<PhotoActivity>> getPhotosFromActivityById(int id) async {
-    var _header = globals.createHeader();
+    var header = globals.createHeader();
     var returnPhoto = <PhotoActivity>[];
 
     globals.displayInfo('Entering getPhotosFromActivityById');
 
-    if (_header.containsKey('88') == false) {
+    if (header.containsKey('88') == false) {
       final String reqActivity =
           'https://www.strava.com/api/v3/activities/$id/photos';
-      var rep = await http.get(Uri.parse(reqActivity), headers: _header);
+      var rep = await http.get(Uri.parse(reqActivity), headers: header);
 
       if (rep.statusCode == 200) {
         globals.displayInfo(rep.statusCode.toString());

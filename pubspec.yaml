@@ -84,6 +84,7 @@ flutter:
      - assets/Zwift_logo.png
      - assets/background.png
      - assets/worldcalendar.html
+     - assets/zdvlogo.png
 
   # An image asset can refer to one or more resolution-specific "variants", see
   # https://flutter.dev/assets-and-images/#resolution-aware.

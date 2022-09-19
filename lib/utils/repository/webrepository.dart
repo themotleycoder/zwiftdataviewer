@@ -53,7 +53,7 @@ class WebRepository implements ActivitiesRepository, StreamsRepository {
     if (null != activities) {
       final directory = await getApplicationDocumentsDirectory();
       final path = directory.path;
-      final File _localActivityFile = File('$path/activities.json');
+      final File localActivityFile = File('$path/activities.json');
       String content = '[';
       for (int x = 0; x < activities.length; x++) {
         Map<String, dynamic> item = activities[x].toJson();
@@ -63,7 +63,7 @@ class WebRepository implements ActivitiesRepository, StreamsRepository {
         content += jsonEncode(item);
       }
       content += ']';
-      _localActivityFile.writeAsStringSync(content);
+      localActivityFile.writeAsStringSync(content);
     }
   }
 
