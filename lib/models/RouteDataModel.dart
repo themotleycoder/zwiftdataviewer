@@ -4,16 +4,16 @@ import 'package:zwiftdataviewer/utils/worlddata.dart';
 
 class RouteDataModel extends ChangeNotifier {
   final RouteRepository repository;
-  Map<int, List<RouteData>>? _routeData;
-  int? _worldFilter;
+  late Map<int, List<RouteData>> _routeData;
+  int _worldFilter = 0;
 
   bool _isLoading = false;
 
   bool get isLoading => _isLoading;
 
-  Map<int, List<RouteData>>? get routeData => _routeData;
+  Map<int, List<RouteData>> get routeData => _routeData;
 
-  routeType? _routeFilter;
+  routeType _routeFilter = routeType.basiconly;
 
   set filterWorldId(int worldId) {
     _worldFilter = worldId;
@@ -21,10 +21,10 @@ class RouteDataModel extends ChangeNotifier {
 
   set filter(routeType filter) {
     _routeFilter = filter;
-    notifyListeners();
+    // notifyListeners();
   }
 
-  set routeData(Map<int, List<RouteData>>? routeData) {
+  set routeData(Map<int, List<RouteData>> routeData) {
     _routeData = routeData;
     saveRouteData(_routeData!);
   }

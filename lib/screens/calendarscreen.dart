@@ -184,7 +184,7 @@ class _CalendarScreenState extends State<CalendarScreen> {
     );
   }
 
-  Future<Map<int?, List<RouteData>>> loadRoutes() async {
+  Future<Map<int, List<RouteData>>> loadRoutes() async {
     final FileRepository fileRepo = FileRepository();
     return await fileRepo.loadRouteData();
   }

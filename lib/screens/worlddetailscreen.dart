@@ -142,11 +142,7 @@ class _ExpandingCardState extends State<ExpandingCard> {
   List<Widget> loadMapImage(int worldId, int routeId) {
     final List<Widget> _painters = <Widget>[];
 
-    String url = 'https://zwifthacks.com/app/routes/svg/route/?world=' +
-        worldId.toString() +
-        '&route=' +
-        routeId.toString() +
-        '&showprofile=1&showlegend=1';
+    String url = 'https://zwifthacks.com/app/routes/svg/route/?world=$worldId&route=$routeId&showprofile=1&showlegend=1';
 
     List<String> uriNames = <String>[url];
 
@@ -246,10 +242,14 @@ class _ExpandingCardState extends State<ExpandingCard> {
   }
 
   launchURL(String url) async {
-    if (await canLaunch(url)) {
-      await launch(url);
+    String site = url.substring(url.indexOf('//')+2);
+    String path = site.substring(site.indexOf('/'));
+    site = site.substring(0, site.indexOf('/'));
+    final Uri uri = Uri.https(site, path);
+    if (await canLaunchUrl(uri)) {
+      await launchUrl(uri);
     } else {
-      throw 'Could not launch $url';
+      throw 'Could not launch $uri';
     }
   }
 }

@@ -157,8 +157,8 @@ class FileRepository
   }
 
   @override
-  Future<Map<int?, List<RouteData>>> loadRouteData() async {
-    Map<int?, List<RouteData>> routes = {};
+  Future<Map<int, List<RouteData>>> loadRouteData() async {
+    Map<int, List<RouteData>> routes = {};
     final file = await _localRoutesFile;
     try {
       final string = await file.readAsString();
@@ -183,7 +183,7 @@ class FileRepository
   }
 
   @override
-  Future saveRouteData(Map<int?, List<RouteData>> routeData) async {
+  Future saveRouteData(Map<int, List<RouteData>> routeData) async {
     if (null != routeData) {
       final file = await _localRoutesFile;
       String content = '[';
@@ -208,26 +208,35 @@ class FileRepository
   }
 
   @override
-  Future<Map<int?, List<RouteData>>> scrapeRouteData() async {
-    Map<int?, List<RouteData>> routes = {};
+  Future<Map<int, List<RouteData>>> scrapeRouteData() async {
+    final Map<int, List<RouteData>> routes = {};
     final response =
         await Client().get(Uri.parse('https://zwiftinsider.com/routes/'));
     if (response.statusCode == 200) {
       var doc = Parser.parse(response.body);
       var vals = doc.getElementsByClassName("wpv-loop js-wpv-loop")[0].children;
       for (dynamic val in vals) {
-        String url = val.children[1].innerHtml;
-        String world = val.children[2].innerHtml;
-        String distance = val.children[3].innerHtml;
-        String altitude = val.children[4].innerHtml;
-        String eventOnly = val.children[7].innerHtml;
-        String routeName =
-            url.substring(url.indexOf('>') + 1, url.indexOf('</a>'));
-        url = url.substring(url.indexOf('https'), url.indexOf('/">'));
-        int? id = worldLookupByName[world];
-
-        RouteData route =
+        int index = 0;
+        String routeName = "NA";
+        String url = val.children[index].innerHtml??"";
+        try {
+          routeName =
+              url.substring(url.indexOf('>') + 1, url.indexOf('</a>')) ?? "";
+        } catch (e) {
+          print('html parse error - scraping route data');
+          index += 1;
+          url = val.children[index].innerHtml ?? "";
+        }
+        url = url.substring(url.indexOf('https'), url.indexOf('/">')) ?? "";
+        final String world = val.children[index+1].innerHtml??"";
+        final String distance = val.children[index+2].innerHtml??"";
+        final String altitude = val.children[index+3].innerHtml??"";
+        final String leadin = val.children[index+4].innerHtml??"";
+        final String eventOnly = val.children[index+6].innerHtml??val.children[index+7]??"";
+        final int id = worldLookupByName[world]??0;
+        final RouteData route =
             RouteData(url, world, distance, altitude, eventOnly, routeName, id);
+
         if (route.eventOnly?.toLowerCase() != 'run only' &&
             route.eventOnly?.toLowerCase() != 'run only, event only') {
           if (!routes.containsKey(id)) {
