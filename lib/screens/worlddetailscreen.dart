@@ -29,7 +29,7 @@ class WorldDetailScreen extends StatelessWidget {
       routeDataModel.filter = routeType.basiconly;
       routeDataModel.filterWorldId = worldId;
       if (routeDataModel.isLoading) {
-        return Center(
+        return const Center(
           child: CircularProgressIndicator(
             key: AppKeys.activitiesLoading,
           ),
@@ -64,7 +64,7 @@ class WorldDetailScreen extends StatelessWidget {
 class ExpandingCard extends StatefulWidget {
   final RouteData _routeData;
 
-  ExpandingCard(this._routeData);
+  const ExpandingCard(this._routeData);
 
   @override
   _ExpandingCardState createState() => _ExpandingCardState();
@@ -75,7 +75,7 @@ class _ExpandingCardState extends State<ExpandingCard> {
   Widget build(BuildContext context) {
     return ExpandableNotifier(
         child: Padding(
-      padding: const EdgeInsets.all(10),
+      padding: const EdgeInsets.fromLTRB(8.0, 4, 8.0, 4),
       child: Card(
         clipBehavior: Clip.antiAlias,
         elevation: 0,
@@ -91,7 +91,7 @@ class _ExpandingCardState extends State<ExpandingCard> {
                   tapHeaderToExpand: true,
                 ),
                 header: Padding(
-                    padding: EdgeInsets.all(10),
+                    padding: const EdgeInsets.fromLTRB(16.0, 8.0, 16.0, 4.0),
                     child: Text(
                       widget._routeData.routeName ?? "",
                       // style: widget._routeData!=null?widget._routeData.completed
@@ -114,14 +114,14 @@ class _ExpandingCardState extends State<ExpandingCard> {
                     routeLineItem(
                         'Additonal Info', widget._routeData.eventOnly ?? "NA"),
                     eventLineItem('Route Completed', widget._routeData),
-                    iconLineItem('Route Details', Icon(Icons.arrow_forward_ios),
+                    iconLineItem('Route Details', const Icon(Icons.arrow_forward_ios),
                         widget._routeData.url ?? "NA"),
                     // routeProfile(),
                   ],
                 ),
                 builder: (_, collapsed, expanded) {
                   return Padding(
-                    padding: EdgeInsets.only(left: 10, right: 10, bottom: 10),
+                    padding: const EdgeInsets.fromLTRB(16.0, 4.0, 16.0, 8.0),
                     child: Expandable(
                       collapsed: collapsed,
                       expanded: expanded,
@@ -164,7 +164,7 @@ class _ExpandingCardState extends State<ExpandingCard> {
     return Container(
         height: rowHeight,
         child: Padding(
-          padding: EdgeInsets.only(left: 0, right: 0, bottom: 16),
+          padding: const EdgeInsets.only(left: 0, right: 0, bottom: 16),
           child: Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
@@ -189,7 +189,7 @@ class _ExpandingCardState extends State<ExpandingCard> {
     return Container(
         height: rowHeight,
         child: Padding(
-          padding: EdgeInsets.only(left: 0, right: 0, bottom: 16),
+          padding: const EdgeInsets.only(left: 0, right: 0, bottom: 16),
           child: Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
@@ -221,7 +221,7 @@ class _ExpandingCardState extends State<ExpandingCard> {
     return Container(
         height: rowHeight,
         child: Padding(
-          padding: EdgeInsets.only(left: 0, right: 0, bottom: 16),
+          padding: const EdgeInsets.only(left: 0, right: 0, bottom: 16),
           child: Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [

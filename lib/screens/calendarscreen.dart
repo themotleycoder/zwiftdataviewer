@@ -76,7 +76,7 @@ class _CalendarScreenState extends State<CalendarScreen> {
               ),
               headerStyle: HeaderStyle(
                 formatButtonTextStyle: const TextStyle()
-                    .copyWith(color: Colors.white, fontSize: 15.0),
+                    .copyWith(color: Colors.white, fontSize: 16.0),
                 formatButtonDecoration: BoxDecoration(
                   color: Colors.grey[400],
                   borderRadius: BorderRadius.circular(8.0),
