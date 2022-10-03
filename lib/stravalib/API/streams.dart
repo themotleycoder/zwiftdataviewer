@@ -1,10 +1,11 @@
+import 'dart:async';
+import 'dart:convert';
+
 import 'package:http/http.dart' as http;
 import 'package:zwiftdataviewer/stravalib/Models/fault.dart';
-import 'dart:convert';
-import 'dart:async';
 
-import '../globals.dart' as globals;
 import '../errorCodes.dart' as error;
+import '../globals.dart' as globals;
 
 abstract class Streams {
   Future<StreamsDetailCollection> getStreamsByActivity(String id) async {
@@ -15,7 +16,8 @@ abstract class Streams {
     globals.displayInfo('Entering getStreamsByActivity');
 
     if (_header.containsKey('88') == false) {
-      final String reqStreams = 'https://www.strava.com/api/v3/activities/$id/streams?keys=time,watts_calc,altitude,heartrate,cadence,distance,grade_smooth&key_by_type=true';
+      final String reqStreams =
+          'https://www.strava.com/api/v3/activities/$id/streams?keys=time,watts_calc,altitude,heartrate,cadence,distance,grade_smooth&key_by_type=true';
       var rep = await http.get(Uri.parse(reqStreams), headers: _header);
 
       if (rep.statusCode == 200) {
@@ -117,9 +119,9 @@ class StreamsDetailCollection {
     Stream gradeSmooth = Stream.fromJson(json["grade_smooth"]);
     stream = <CombinedStreams>[];
     if (distance.data != null) {
-      final int size = distance.data!.length??0;
+      final int size = distance.data!.length ?? 0;
       for (int x = 0; x < size; x++) {
-      // distance.data?.forEach((x) {
+        // distance.data?.forEach((x) {
         stream?.add(CombinedStreams(
             distance.data![x],
             time.data![x],

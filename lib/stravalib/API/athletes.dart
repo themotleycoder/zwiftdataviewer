@@ -1,17 +1,17 @@
 // athletes.dart
 
-import 'package:http/http.dart' as http;
-import 'dart:convert';
 import 'dart:async';
+import 'dart:convert';
 
-import '../Models/stats.dart';
-import '../Models/detailedAthlete.dart';
-import '../Models/zone.dart';
+import 'package:http/http.dart' as http;
+
 import '../Models/activity.dart';
+import '../Models/detailedAthlete.dart';
 import '../Models/fault.dart';
-
-import '../globals.dart' as globals;
+import '../Models/stats.dart';
+import '../Models/zone.dart';
 import '../errorCodes.dart' as error;
+import '../globals.dart' as globals;
 
 abstract class Athletes {
   Future<DetailedAthlete> updateLoggedInAthlete(double weight) async {

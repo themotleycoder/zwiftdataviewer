@@ -6,9 +6,11 @@ class WorldDataModel extends ChangeNotifier {
   final WorldCalendarRepository repository;
 
   Map<int, List<WorldData>>? _worldData;
+
   Map<int, List<WorldData>>? get worldData => _worldData;
 
   Map<DateTime, List<WorldData>>? _worldCalendarData;
+
   Map<DateTime, List<WorldData>>? get worldCalendarData => _worldCalendarData;
 
   // int _worldFilter;

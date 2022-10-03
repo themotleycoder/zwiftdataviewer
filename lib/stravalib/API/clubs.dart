@@ -1,15 +1,15 @@
 // clubs.dart
-import 'package:http/http.dart' as http;
-import 'dart:convert';
 import 'dart:async';
+import 'dart:convert';
 
-import '../Models/summaryAthlete.dart';
+import 'package:http/http.dart' as http;
+
 import '../Models/activity.dart';
 import '../Models/club.dart';
 import '../Models/fault.dart';
-
-import '../globals.dart' as globals;
+import '../Models/summaryAthlete.dart';
 import '../errorCodes.dart' as error;
+import '../globals.dart' as globals;
 
 abstract class Clubs {
   ///  Scope needed:

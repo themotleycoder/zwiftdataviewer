@@ -94,6 +94,7 @@ class RouteDetailScreen extends StatelessWidget {
 
 class PrefetchImageDemo extends StatefulWidget {
   final DetailedActivity detailedActivity;
+
   const PrefetchImageDemo({required Key key, required this.detailedActivity})
       : super(key: key);
 
@@ -105,9 +106,11 @@ class PrefetchImageDemo extends StatefulWidget {
 
 class _PrefetchImageDemoState extends State<PrefetchImageDemo> {
   final DetailedActivity detailedActivity;
+
   _PrefetchImageDemoState(this.detailedActivity);
 
   int _current = 0;
+
   @override
   Widget build(BuildContext context) {
     final List<String> imagesUrls = createUrls(
@@ -166,7 +169,8 @@ class _PrefetchImageDemoState extends State<PrefetchImageDemo> {
       imagesUrls = [];
       for (PhotoActivity image in activityPhotos) {
         String str = image.urls!["1800"];
-        imagesUrls.add(str);//.substring(0, str.lastIndexOf('-')) + "-768x419.jpg");
+        imagesUrls
+            .add(str); //.substring(0, str.lastIndexOf('-')) + "-768x419.jpg");
       }
     }
 

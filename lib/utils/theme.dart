@@ -101,15 +101,29 @@ const MaterialColor zdvmLgtBlue = MaterialColor(
   },
 );
 
+const Color zdvMidGreen = Color(0xFF40be59);
+const MaterialColor zdvmMidGreen = MaterialColor(
+  0xFFFFFFFF,
+  <int, Color>{
+    50: Color(0xFF40be59),
+    100: Color(0xFF40be59),
+    200: Color(0xFF40be59),
+    300: Color(0xFF40be59),
+    400: Color(0xFF40be59),
+    500: Color(0xFF40be59),
+    600: Color(0xFF40be59),
+    700: Color(0xFF40be59),
+    800: Color(0xFF40be59),
+    900: Color(0xFF40be59),
+  },
+);
+
+
 final ThemeData myTheme = ThemeData(
-  primarySwatch: zdvmOrange,
   brightness: Brightness.light,
   primaryColor: Color(0xfff8f8f8),
-  primaryColorBrightness: Brightness.dark,
   primaryColorLight: zdvmOrange,
   primaryColorDark: zdvmOrange,
-  accentColor: zdvmOrange,
-  accentColorBrightness: Brightness.dark,
   canvasColor: Color(0xfffafafa),
   scaffoldBackgroundColor: Color(0xfffafafa),
   bottomAppBarColor: Color(0x00ffffff),
@@ -120,7 +134,6 @@ final ThemeData myTheme = ThemeData(
   selectedRowColor: Color(0xfff5f5f5),
   unselectedWidgetColor: Color(0x8a000000),
   disabledColor: Color(0x61000000),
-  buttonColor: Color(0xffe0e0e0),
   toggleableActiveColor: Color(0xff666666),
   secondaryHeaderColor: Color(0xfff2f2f2),
   // textSelectionColor: Color(0xffcccccc),
@@ -516,11 +529,6 @@ final ThemeData myTheme = ThemeData(
     opacity: 1,
     size: 24,
   ),
-  accentIconTheme: IconThemeData(
-    color: Color(0xFF219EBC),
-    opacity: 1,
-    size: 24,
-  ),
   // sliderTheme: SliderThemeData(
   //   activeTrackColor: null,
   //   inactiveTrackColor: null,
@@ -585,5 +593,5 @@ final ThemeData myTheme = ThemeData(
       style: BorderStyle.none,
     ),
     borderRadius: BorderRadius.all(Radius.circular(0.0)),
-  )),
+  )), colorScheme: ColorScheme.fromSwatch(primarySwatch: zdvmOrange).copyWith(secondary: zdvmOrange),
 );

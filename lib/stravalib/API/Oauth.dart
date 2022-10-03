@@ -1,25 +1,23 @@
 // oauth.dart
 
-import 'package:flutter/foundation.dart';
-import 'package:http/http.dart' as http;
-import 'dart:io'; // Use in web mode only
 import 'dart:async';
 import 'dart:convert';
+import 'dart:io'; // Use in web mode only
 
-import 'package:url_launcher/url_launcher.dart';
+import 'package:flutter/foundation.dart';
+import 'package:http/http.dart' as http;
 import 'package:shared_preferences/shared_preferences.dart';
-
 // To handle browser return after auth is done
 import 'package:uni_links/uni_links.dart';
-
-import 'package:zwiftdataviewer/stravalib/errorCodes.dart' as error;
-import 'package:zwiftdataviewer/stravalib/globals.dart' as globals;
+import 'package:url_launcher/url_launcher.dart';
 // import 'constants.dart';
 import 'package:zwiftdataviewer/stravalib/API/constants.dart';
-// import '../Models/token.dart';
-import 'package:zwiftdataviewer/stravalib/Models/token.dart';
 // import '../Models/fault.dart';
 import 'package:zwiftdataviewer/stravalib/Models/fault.dart';
+// import '../Models/token.dart';
+import 'package:zwiftdataviewer/stravalib/Models/token.dart';
+import 'package:zwiftdataviewer/stravalib/errorCodes.dart' as error;
+import 'package:zwiftdataviewer/stravalib/globals.dart' as globals;
 
 ///===========================================
 /// Class related to Authorization processs
@@ -170,16 +168,16 @@ abstract class Auth {
       });
     }
 
-/****
-    if (Platform.isIOS) {
-      // Launch small http server to collect the answer from Strava
-      //------------------------------------------------------------
-      final server =
-          // await HttpServer.bind(InternetAddress.loopbackIPv4, 8080, shared: true);
-          await HttpServer.bind(InternetAddress.loopbackIPv4, 8080,
-              shared: true);
-      // server.listen((HttpRequest request) async {
-      await for (HttpRequest request in server) {
+    /****
+        if (Platform.isIOS) {
+        // Launch small http server to collect the answer from Strava
+        //------------------------------------------------------------
+        final server =
+        // await HttpServer.bind(InternetAddress.loopbackIPv4, 8080, shared: true);
+        await HttpServer.bind(InternetAddress.loopbackIPv4, 8080,
+        shared: true);
+        // server.listen((HttpRequest request) async {
+        await for (HttpRequest request in server) {
         // Get the answer from Strava
         final uri = request.uri;
 
@@ -194,10 +192,10 @@ abstract class Auth {
         onCodeReceived.add(code);
 
         globals.displayInfo('iOS Got the new code: $code');
-      }
-    }
-    // });
-***/
+        }
+        }
+        // });
+     ***/
   }
 
   /// Do Strava Authentication.

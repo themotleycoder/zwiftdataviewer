@@ -2,19 +2,19 @@ import 'dart:convert';
 import 'dart:io';
 
 import 'package:flutter/services.dart';
+import 'package:html/parser.dart' as Parser;
 import 'package:http/http.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:zwiftdataviewer/models/ConfigDataModel.dart';
 import 'package:zwiftdataviewer/models/RouteDataModel.dart';
 import 'package:zwiftdataviewer/models/WorldDataModel.dart';
-import 'package:zwiftdataviewer/stravalib/Models/activity.dart';
 import 'package:zwiftdataviewer/stravalib/API/streams.dart';
+import 'package:zwiftdataviewer/stravalib/Models/activity.dart';
+import 'package:zwiftdataviewer/utils/constants.dart' as constants;
 import 'package:zwiftdataviewer/utils/repository/activitesrepository.dart';
 import 'package:zwiftdataviewer/utils/repository/configrepository.dart';
 import 'package:zwiftdataviewer/utils/repository/routerepository.dart';
 import 'package:zwiftdataviewer/utils/repository/streamsrepository.dart';
-import 'package:zwiftdataviewer/utils/constants.dart' as constants;
-import 'package:html/parser.dart' as Parser;
 import 'package:zwiftdataviewer/utils/repository/worldcalendarrepository.dart';
 import 'package:zwiftdataviewer/utils/worlddata.dart';
 
@@ -218,7 +218,7 @@ class FileRepository
       for (dynamic val in vals) {
         int index = 0;
         String routeName = "NA";
-        String url = val.children[index].innerHtml??"";
+        String url = val.children[index].innerHtml ?? "";
         try {
           routeName =
               url.substring(url.indexOf('>') + 1, url.indexOf('</a>')) ?? "";
@@ -228,12 +228,13 @@ class FileRepository
           url = val.children[index].innerHtml ?? "";
         }
         url = url.substring(url.indexOf('https'), url.indexOf('/">')) ?? "";
-        final String world = val.children[index+1].innerHtml??"";
-        final String distance = val.children[index+2].innerHtml??"";
-        final String altitude = val.children[index+3].innerHtml??"";
-        final String leadin = val.children[index+4].innerHtml??"";
-        final String eventOnly = val.children[index+6].innerHtml??val.children[index+7]??"";
-        final int id = worldLookupByName[world]??0;
+        final String world = val.children[index + 1].innerHtml ?? "";
+        final String distance = val.children[index + 2].innerHtml ?? "";
+        final String altitude = val.children[index + 3].innerHtml ?? "";
+        final String leadin = val.children[index + 4].innerHtml ?? "";
+        final String eventOnly =
+            val.children[index + 6].innerHtml ?? val.children[index + 7] ?? "";
+        final int id = worldLookupByName[world] ?? 0;
         final RouteData route =
             RouteData(url, world, distance, altitude, eventOnly, routeName, id);
 

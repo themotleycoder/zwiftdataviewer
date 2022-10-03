@@ -1,13 +1,13 @@
 // activities.dart
+import 'dart:async';
+import 'dart:convert';
+
 import 'package:http/http.dart' as http;
 import 'package:zwiftdataviewer/stravalib/Models/fault.dart';
-import 'dart:convert';
-import 'dart:async';
-
-import '../globals.dart' as globals;
-import '../errorCodes.dart' as error;
 
 import '../Models/activity.dart';
+import '../errorCodes.dart' as error;
+import '../globals.dart' as globals;
 
 abstract class Activities {
   /// scope: activity:read
@@ -21,7 +21,8 @@ abstract class Activities {
     globals.displayInfo('Entering getActivityById');
 
     if (_header.containsKey('88') == false) {
-      final String reqActivity = 'https://www.strava.com/api/v3/activities/$id?include_all_efforts=true';
+      final String reqActivity =
+          'https://www.strava.com/api/v3/activities/$id?include_all_efforts=true';
       var rep = await http.get(Uri.parse(reqActivity), headers: _header);
 
       if (rep.statusCode == 200) {

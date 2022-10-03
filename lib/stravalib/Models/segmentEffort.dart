@@ -1,5 +1,6 @@
-import 'fault.dart';
 import 'package:zwiftdataviewer/stravalib/Models/athlete.dart';
+
+import 'fault.dart';
 
 class DetailedSegmentEffort {
   Fault? fault;
@@ -321,38 +322,38 @@ class SegmentEffort {
     return data;
   }
 
-  // Segment parseSegment(Map<String, dynamic> json) {
-  //   Segment segment = new Segment();
-  //   segment.id = json['id'];
-  //   segment.resourceState = json['resource_state'];
-  //   segment.name = json['name'];
-  //   segment.activityType = json['activity_type'];
-  //   segment.distance = json['distance'];
-  //   segment.averageGrade = json['average_grade'];
-  //   segment.maximumGrade = json['maximum_grade'];
-  //   segment.elevationHigh = json['elevation_high'];
-  //   segment.elevationLow = json['elevation_low'];
-  //   // "start_latlng": [
-  //   //     -11.63842,
-  //   //     166.948893
-  //   // ],
-  //   // "end_latlng": [
-  //   //     -11.636699,
-  //   //     166.95537
-  //   // ],
-  //   segment.startLatitude = json['start_latitude'];
-  //   segment.startLongitude = json['start_longitude'];
-  //   segment.endLatitude = json['end_latitude'];
-  //   segment.endLongitude = json['end_longitude'];
-  //   segment.climbCategory = json['climb_category'];
-  //   segment.city = json['city'];
-  //   segment.state = json['state'];
-  //   segment.country = json['country'];
-  //   segment.private = json['private'];
-  //   segment.hazardous = json['hazardous'];
-  //   segment.starred = json['starred'];
-  //   return segment;
-  // }
+// Segment parseSegment(Map<String, dynamic> json) {
+//   Segment segment = new Segment();
+//   segment.id = json['id'];
+//   segment.resourceState = json['resource_state'];
+//   segment.name = json['name'];
+//   segment.activityType = json['activity_type'];
+//   segment.distance = json['distance'];
+//   segment.averageGrade = json['average_grade'];
+//   segment.maximumGrade = json['maximum_grade'];
+//   segment.elevationHigh = json['elevation_high'];
+//   segment.elevationLow = json['elevation_low'];
+//   // "start_latlng": [
+//   //     -11.63842,
+//   //     166.948893
+//   // ],
+//   // "end_latlng": [
+//   //     -11.636699,
+//   //     166.95537
+//   // ],
+//   segment.startLatitude = json['start_latitude'];
+//   segment.startLongitude = json['start_longitude'];
+//   segment.endLatitude = json['end_latitude'];
+//   segment.endLongitude = json['end_longitude'];
+//   segment.climbCategory = json['climb_category'];
+//   segment.city = json['city'];
+//   segment.state = json['state'];
+//   segment.country = json['country'];
+//   segment.private = json['private'];
+//   segment.hazardous = json['hazardous'];
+//   segment.starred = json['starred'];
+//   return segment;
+// }
 }
 
 class ActivityEffort {
@@ -411,6 +412,7 @@ class Segment {
   double? maximumGrade;
   double? elevationHigh;
   double? elevationLow;
+
   //         "start_latlng": [
   //             -11.63842,
   //             166.948893

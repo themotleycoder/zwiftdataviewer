@@ -1,16 +1,14 @@
 // Upload file
 
 import 'dart:async';
-
 import 'dart:convert';
 
 import 'package:http/http.dart' as http;
 
 import '../Models/fault.dart';
 import '../Models/uploadActivity.dart';
-
-import '../globals.dart' as globals;
 import '../errorCodes.dart' as error;
+import '../globals.dart' as globals;
 
 abstract class Upload {
   /// Tested with gpx and tcx

@@ -6,6 +6,7 @@ import 'fault.dart';
 class RunningRace {
   Fault? fault;
   String? country;
+
   // List<int> routeIds;
   int? runningRaceType;
   double? distance;

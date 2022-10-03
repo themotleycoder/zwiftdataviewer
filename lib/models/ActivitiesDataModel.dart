@@ -4,25 +4,27 @@ import 'package:provider/provider.dart';
 import 'package:zwiftdataviewer/models/ConfigDataModel.dart';
 import 'package:zwiftdataviewer/stravalib/Models/activity.dart';
 import 'package:zwiftdataviewer/stravalib/globals.dart';
-import 'package:zwiftdataviewer/stravalib/strava.dart';
 import 'package:zwiftdataviewer/stravalib/globals.dart' as globals;
-import 'package:zwiftdataviewer/utils/files.dart' as fileUtils;
+import 'package:zwiftdataviewer/stravalib/strava.dart';
 import 'package:zwiftdataviewer/utils/constants.dart' as constants;
-import 'package:zwiftdataviewer/utils/worlddata.dart';
+import 'package:zwiftdataviewer/utils/files.dart' as fileUtils;
 import 'package:zwiftdataviewer/utils/repository/filerepository.dart';
 import 'package:zwiftdataviewer/utils/repository/webrepository.dart';
+import 'package:zwiftdataviewer/utils/worlddata.dart';
 
 class ActivitiesDataModel extends ChangeNotifier {
   List<SummaryActivity>? _activities = [];
   Strava? _strava;
   final FileRepository? fileRepository;
   final WebRepository? webRepository;
+
   // final ConfigData config;
 
   bool _isLoading = false;
   bool _isLoadingDetail = false;
 
   bool get isLoading => _isLoading;
+
   bool get isLoadingDetail => _isLoadingDetail;
 
   List<SummaryActivity>? get activities => _activities;
@@ -31,6 +33,7 @@ class ActivitiesDataModel extends ChangeNotifier {
   constants.DateFilter _dateFilter = constants.DateFilter.all;
 
   GuestWorldId get filter => _filter!;
+
   constants.DateFilter get dateFilter => _dateFilter!;
 
   set filter(GuestWorldId filter) {

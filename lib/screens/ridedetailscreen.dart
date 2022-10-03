@@ -6,15 +6,15 @@ import 'package:zwiftdataviewer/appkeys.dart';
 import 'package:zwiftdataviewer/models/ActivityDetailDataModel.dart';
 import 'package:zwiftdataviewer/models/ActivityPhotosDataModel.dart';
 import 'package:zwiftdataviewer/models/StreamsDataModel.dart';
+import 'package:zwiftdataviewer/screens/routedetailscreen.dart';
+import 'package:zwiftdataviewer/screens/routeprofilechartscreen.dart';
+import 'package:zwiftdataviewer/screens/routesectiondetailscreen.dart';
 import 'package:zwiftdataviewer/stravalib/API/streams.dart';
 import 'package:zwiftdataviewer/stravalib/Models/segmentEffort.dart';
 import 'package:zwiftdataviewer/stravalib/strava.dart';
 import 'package:zwiftdataviewer/utils/constants.dart';
 import 'package:zwiftdataviewer/utils/repository/filerepository.dart';
 import 'package:zwiftdataviewer/utils/repository/webrepository.dart';
-import 'package:zwiftdataviewer/screens/routedetailscreen.dart';
-import 'package:zwiftdataviewer/screens/routeprofilechartscreen.dart';
-import 'package:zwiftdataviewer/screens/routesectiondetailscreen.dart';
 import 'package:zwiftdataviewer/utils/theme.dart';
 
 class DetailScreen extends StatefulWidget {
@@ -58,8 +58,8 @@ class _DetailScreenState extends State<DetailScreen> {
             appBar: AppBar(
               title: myModel.activityDetail == null
                   ? const Text("Zwift Data Viewer")
-                  : Text("${myModel.activityDetail!.name!} (${DateFormat.yMd().format(
-                          DateTime.parse(myModel.activityDetail!.startDate!))})"),
+                  : Text(
+                      "${myModel.activityDetail!.name!} (${DateFormat.yMd().format(DateTime.parse(myModel.activityDetail!.startDate!))})"),
               backgroundColor: Colors.transparent,
               elevation: 0.0,
               // actions: getActions()

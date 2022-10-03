@@ -1,7 +1,7 @@
 import 'package:flutter/widgets.dart';
 import 'package:zwiftdataviewer/stravalib/API/streams.dart';
-import 'package:zwiftdataviewer/stravalib/strava.dart';
 import 'package:zwiftdataviewer/stravalib/globals.dart' as globals;
+import 'package:zwiftdataviewer/stravalib/strava.dart';
 import 'package:zwiftdataviewer/utils/repository/filerepository.dart';
 import 'package:zwiftdataviewer/utils/repository/webrepository.dart';
 

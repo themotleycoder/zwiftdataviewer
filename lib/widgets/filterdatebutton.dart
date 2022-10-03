@@ -20,8 +20,8 @@ class FilterDateButton extends StatelessWidget {
           builder: (context, model, _) {
             return PopupMenuButton<DateFilter>(
               key: AppKeys.filterDateButton,
-              tooltip:
-                  'filter', //ArchSampleLocalizations.of(context).filterTodos,
+              tooltip: 'filter',
+              //ArchSampleLocalizations.of(context).filterTodos,
               initialValue: model.dateFilter,
               onSelected: (dateFilter) => model.dateFilter = dateFilter,
               itemBuilder: (BuildContext context) => _items(context, model),

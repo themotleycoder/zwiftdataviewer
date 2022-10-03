@@ -44,7 +44,7 @@ dependencies:
   html: ^0.15.0
   expandable: ^5.0.1
   flutter_svg: ^1.0.3
-  fl_chart: ^0.50.1
+  fl_chart: ^0.55.2
   flutter:
     sdk: flutter
   table_calendar: ^3.0.5

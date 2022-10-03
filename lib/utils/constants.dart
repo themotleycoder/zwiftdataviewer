@@ -7,12 +7,7 @@ enum HomeScreenTab { activities, stats, calendar, settings }
 
 enum ActivityDetailScreenTab { details, profile, sections }
 
-enum DateFilter {
-  all,
-  month,
-  week,
-  year
-}
+enum DateFilter { all, month, week, year }
 
 TextStyle headerTextStyle =
     const TextStyle(inherit: true, fontSize: 16.0, color: Colors.blueGrey);

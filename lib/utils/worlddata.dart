@@ -27,7 +27,7 @@ final Map<String, int> worldLookupByName = {
   'Crit City': 8,
   'France': 10,
   'Paris': 11,
-  'Makuri Islands':12
+  'Makuri Islands': 12
 };
 
 enum routeType {
@@ -55,7 +55,8 @@ final Map<int, WorldData> worldsData = {
       10, GuestWorldId.france, 'France', 'https://zwiftinsider.com/france/'),
   11: WorldData(
       11, GuestWorldId.paris, 'Paris', 'https://zwiftinsider.com/paris/'),
-  12: WorldData(12, GuestWorldId.makuriislands, 'Makuri Islands', 'https://zwiftinsider.com/makuri-islands/')
+  12: WorldData(12, GuestWorldId.makuriislands, 'Makuri Islands',
+      'https://zwiftinsider.com/makuri-islands/')
 };
 
 // final Map<DateTime, List<int>> calendarModel = {

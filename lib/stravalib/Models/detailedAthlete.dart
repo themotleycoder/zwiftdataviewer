@@ -29,6 +29,7 @@ class DetailedAthlete {
   int? athleteType;
   String? datePreference;
   String? measurementPreference;
+
   // List<Null> clubs;
   int? ftp;
   double? weight;
@@ -91,14 +92,14 @@ class DetailedAthlete {
     athleteType = json['athlete_type'];
     datePreference = json['date_preference'];
     measurementPreference = json['measurement_preference'];
-    /**** 
-    if (json['clubs'] != null) {
-      clubs = List<Club>();
-      json['clubs'].forEach((v) {
+    /****
+        if (json['clubs'] != null) {
+        clubs = List<Club>();
+        json['clubs'].forEach((v) {
         clubs.add(Club.fromJson(v));
-      });
-    }
-  ***/
+        });
+        }
+     ***/
     ftp = json['ftp'];
     weight = json['weight'];
     if (json['bikes'] != null) {
@@ -141,10 +142,10 @@ class DetailedAthlete {
     data['date_preference'] = this.datePreference;
     data['measurement_preference'] = this.measurementPreference;
     /***
-    if (this.clubs != null) {
-      data['clubs'] = this.clubs.map((v) => v.toJson()).toList();
-    }
-  ***/
+        if (this.clubs != null) {
+        data['clubs'] = this.clubs.map((v) => v.toJson()).toList();
+        }
+     ***/
     data['ftp'] = this.ftp;
     data['weight'] = this.weight;
     if (this.bikes != null) {

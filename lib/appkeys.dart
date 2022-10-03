@@ -25,6 +25,7 @@ class AppKeys {
   static const yorkshireFilter = Key('__yorkshire__');
   static const watopiaFilter = Key('__watopia__');
   static const othersFilter = Key('__others__');
+
   // static const allFilter = Key('__allFilter__');
   // static const activeFilter = Key('__activeFilter__');
   // static const completedFilter = Key('__completedFilter__');

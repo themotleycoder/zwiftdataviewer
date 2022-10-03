@@ -1,12 +1,11 @@
+import 'package:charts_flutter/flutter.dart' as charts;
 import 'package:flutter/material.dart';
-import 'package:flutter/widgets.dart';
 import 'package:provider/provider.dart';
 import 'package:zwiftdataviewer/models/ActivitiesDataModel.dart';
 import 'package:zwiftdataviewer/stravalib/Models/activity.dart';
 import 'package:zwiftdataviewer/utils/conversions.dart';
 import 'package:zwiftdataviewer/utils/theme.dart';
-import 'package:zwiftdataviewer/widgets/listitemviews.dart' as listItemViews;
-import 'package:charts_flutter/flutter.dart' as charts;
+import 'package:zwiftdataviewer/widgets/listitemviews.dart' as list_item_views;
 
 class AllStatsScreen extends StatelessWidget {
   static const secondaryMeasureAxisId = 'secondaryMeasureAxisId';
@@ -15,14 +14,14 @@ class AllStatsScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    Map<String, double> _summaryData;
+    Map<String, double> summaryData;
     return Selector<ActivitiesDataModel, List<SummaryActivity>>(
         selector: (_, model) => model.dateFilteredActivities,
-        builder: (context, _activities, _) {
-          _summaryData = SummaryData.createSummaryData(_activities);
+        builder: (context, activities, _) {
+          summaryData = SummaryData.createSummaryData(activities);
           Map<String, String> units = Conversions.units(context);
           final List<charts.Series<dynamic, String>> seriesList =
-              generateChartData(context, units, _activities);
+              generateChartData(context, units, activities);
 
           return Column(
               mainAxisSize: MainAxisSize.max,
@@ -32,52 +31,41 @@ class AllStatsScreen extends StatelessWidget {
                 Expanded(
                     child: Padding(
                   padding: const EdgeInsets.all(8.0),
-                  child: charts.BarChart(
-                    seriesList,
-                    animate: true,
-                    behaviors: [charts.SeriesLegend()],
-                    barGroupingType: charts.BarGroupingType.grouped,
-                    primaryMeasureAxis: const charts.NumericAxisSpec(
-                        tickProviderSpec: charts.BasicNumericTickProviderSpec(
-                            desiredTickCount: 3)),
-                    secondaryMeasureAxis: const charts.NumericAxisSpec(
-                        tickProviderSpec: charts.BasicNumericTickProviderSpec(
-                            desiredTickCount: 3)),
-                  ),
+                  child: charts.BarChart(seriesList),
                 )),
                 Container(
                   padding: const EdgeInsets.fromLTRB(4, 0, 4, 0),
                   child: Column(
                     children: <Widget>[
-                      listItemViews.tripleDataLineItem(
+                      list_item_views.tripleDataLineItem(
                           "Distance",
                           Icons.explore,
                           ["Total", "Avg", "Longest"],
                           [
                             Conversions.metersToDistance(context,
-                                    _summaryData[StatsType.TotalDistance]!)
+                                    summaryData[StatsType.TotalDistance]!)
                                 .toStringAsFixed(2),
                             Conversions.metersToDistance(context,
-                                    _summaryData[StatsType.AvgDistance]!)
+                                    summaryData[StatsType.AvgDistance]!)
                                 .toStringAsFixed(2),
                             Conversions.metersToDistance(context,
-                                    _summaryData[StatsType.LongestDistance]!)
+                                    summaryData[StatsType.LongestDistance]!)
                                 .toStringAsFixed(2)
                           ],
                           units["distance"]!),
-                      listItemViews.tripleDataLineItem(
+                      list_item_views.tripleDataLineItem(
                         "Elevation",
                         Icons.explore,
                         ["Total", "Avg", "Highest"],
                         [
                           Conversions.metersToHeight(context,
-                                  _summaryData[StatsType.TotalElevation]!)
+                                  summaryData[StatsType.TotalElevation]!)
+                              .toStringAsFixed(2),
+                          Conversions.metersToHeight(
+                                  context, summaryData[StatsType.AvgElevation]!)
                               .toStringAsFixed(2),
                           Conversions.metersToHeight(context,
-                                  _summaryData[StatsType.AvgElevation]!)
-                              .toStringAsFixed(2),
-                          Conversions.metersToHeight(context,
-                                  _summaryData[StatsType.HighestElevation]!)
+                                  summaryData[StatsType.HighestElevation]!)
                               .toStringAsFixed(2)
                         ],
                         units['height']!,
@@ -100,19 +88,19 @@ class AllStatsScreen extends StatelessWidget {
 
     for (var activity in activities) {
       double distance =
-      Conversions.metersToDistance(context!, activity.distance!);
+          Conversions.metersToDistance(context!, activity.distance!);
       double elevation =
-      Conversions.metersToHeight(context, activity.totalElevationGain!);
+          Conversions.metersToHeight(context, activity.totalElevationGain!);
 
-      double d = distances[totalName]??0;
-      double e = elevations[totalName]??0;
+      double d = distances[totalName] ?? 0;
+      double e = elevations[totalName] ?? 0;
 
       distances[totalName] = distances[totalName] == null
           ? distance
-          : distances[totalName] = d+distance;
+          : distances[totalName] = d + distance;
       elevations[totalName] = elevations[totalName] == null
           ? elevation
-          : elevations[totalName] = e+elevation;
+          : elevations[totalName] = e + elevation;
       if (distances.containsKey(activity.startDateLocal?.year.toString())) {
         distance += distances[activity.startDateLocal?.year.toString()]!;
         elevation += elevations[activity.startDateLocal?.year.toString()]!;
@@ -134,14 +122,14 @@ class AllStatsScreen extends StatelessWidget {
 
     return [
       charts.Series<YearlyTotals, String>(
-        id: 'Distance (' + units['distance']! + ')',
+        id: 'Distance (${units['distance']!})',
         domainFn: (YearlyTotals totals, _) => totals.year,
         measureFn: (YearlyTotals totals, _) => totals.value,
         data: distanceData,
         seriesColor: charts.ColorUtil.fromDartColor(zdvOrange),
       ),
       charts.Series<YearlyTotals, String>(
-        id: 'Elevation (' + units['height']! + ')',
+        id: 'Elevation (${units['height']!})',
         domainFn: (YearlyTotals totals, _) => totals.year,
         measureFn: (YearlyTotals totals, _) => totals.value,
         data: elevationData,

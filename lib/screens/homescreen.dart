@@ -8,14 +8,14 @@ import 'package:zwiftdataviewer/screens/allstatsscreen.dart';
 import 'package:zwiftdataviewer/screens/calendarscreen.dart';
 import 'package:zwiftdataviewer/screens/settingscreen.dart';
 import 'package:zwiftdataviewer/secrets.dart';
+import 'package:zwiftdataviewer/stravalib/globals.dart' as Globals;
 import 'package:zwiftdataviewer/stravalib/strava.dart';
 import 'package:zwiftdataviewer/utils/constants.dart';
 import 'package:zwiftdataviewer/utils/repository/filerepository.dart';
 import 'package:zwiftdataviewer/utils/repository/webrepository.dart';
+import 'package:zwiftdataviewer/utils/theme.dart';
 import 'package:zwiftdataviewer/widgets/activitieslistview.dart';
 import 'package:zwiftdataviewer/widgets/filterdatebutton.dart';
-import 'package:zwiftdataviewer/stravalib/globals.dart' as Globals;
-import 'package:zwiftdataviewer/utils/theme.dart';
 
 class HomeScreen extends StatefulWidget {
   const HomeScreen();
@@ -109,8 +109,8 @@ class _HomeScreenState extends State<HomeScreen> {
               return BottomNavigationBar(
                 key: AppKeys.tabs,
                 currentIndex: HomeScreenTab.values.indexOf(tab),
-                onTap:
-                    onTabTapped, //(int index) => _tab.value = HomeScreenTab.values[index],
+                onTap: onTabTapped,
+                //(int index) => _tab.value = HomeScreenTab.values[index],
                 type: BottomNavigationBarType.fixed,
                 unselectedItemColor: zdvmMidBlue[100],
                 fixedColor: zdvmOrange[100],

@@ -2,16 +2,15 @@
 ///
 ///
 ///
+import 'dart:async';
+import 'dart:convert';
 
 import 'package:http/http.dart' as http;
-import 'dart:convert';
-import 'dart:async';
 
-import '../Models/segment.dart';
 import '../Models/fault.dart';
-
-import '../globals.dart' as globals;
+import '../Models/segment.dart';
 import '../errorCodes.dart' as error;
+import '../globals.dart' as globals;
 
 abstract class Segments {
   ///

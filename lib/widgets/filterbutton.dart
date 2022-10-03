@@ -20,8 +20,8 @@ class FilterButton extends StatelessWidget {
           builder: (context, model, _) {
             return PopupMenuButton<GuestWorldId>(
               key: AppKeys.filterButton,
-              tooltip:
-                  'filter', //ArchSampleLocalizations.of(context).filterTodos,
+              tooltip: 'filter',
+              //ArchSampleLocalizations.of(context).filterTodos,
               initialValue: model.filter,
               onSelected: (filter) => model.filter = filter,
               itemBuilder: (BuildContext context) => _items(context, model),

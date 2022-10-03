@@ -1,14 +1,15 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:zwiftdataviewer/models/ActivityDetailDataModel.dart';
-import 'package:zwiftdataviewer/stravalib/Models/segmentEffort.dart';
-import 'package:zwiftdataviewer/utils/conversions.dart';
 import 'package:zwiftdataviewer/stravalib/API/streams.dart';
+import 'package:zwiftdataviewer/stravalib/Models/segmentEffort.dart';
 import 'package:zwiftdataviewer/utils/constants.dart' as Constants;
+import 'package:zwiftdataviewer/utils/conversions.dart';
 import 'package:zwiftdataviewer/utils/theme.dart';
 
 class RouteSectionDetailScreen extends StatefulWidget {
   RouteSectionDetailScreen();
+
   final Map<int, String> _climbingCAT = {
     1: '4',
     2: '3',
@@ -119,7 +120,7 @@ class _RouteSectionDetailScreenState extends State<RouteSectionDetailScreen> {
                     color: Colors.white,
                     elevation: 0,
                     child: ListTile(
-                      leading: createIcon(effort.prRank??0),
+                      leading: createIcon(effort.prRank ?? 0),
                       title: Text(_segmentEfforts![index].segment!.name ?? "",
                           style: Constants.headerFontStyle),
                       subtitle: createSubTitle(_segmentEfforts![index], units),
