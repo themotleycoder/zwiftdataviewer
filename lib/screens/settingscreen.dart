@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter/widgets.dart';
 import 'package:provider/provider.dart';
 import 'package:zwiftdataviewer/appkeys.dart';
@@ -16,6 +17,7 @@ class SettingsScreen extends StatefulWidget {
 
 class _SettingsScreenState extends State<SettingsScreen> {
   ConfigData? _configData;
+  late String val;
 
   @override
   void initState() {
@@ -30,6 +32,32 @@ class _SettingsScreenState extends State<SettingsScreen> {
         padding: const EdgeInsets.all(8.0),
         alignment: Alignment.center,
         child: Column(children: [
+          createCard(
+              'FTP',
+              Expanded(
+                  child: Container(
+                margin: const EdgeInsets.fromLTRB(0, 0, 16, 0),
+                padding: const EdgeInsets.fromLTRB(0, 0, 0, 0),
+                child: TextField(
+                    textAlign: TextAlign.right,
+                    keyboardType: TextInputType.number,
+                    decoration: InputDecoration(
+                      hintText: _configData?.ftp?.toString() ?? '100',
+                      border: InputBorder.none,
+                    ),
+                    onSubmitted: (value) {
+                      setState(() {
+                        _configData!.ftp = int.parse(value);
+                        print(_configData!.ftp);
+                      });
+                      Provider.of<ConfigDataModel>(context, listen: false)
+                          .configData = _configData;
+                    },
+                    inputFormatters: <TextInputFormatter>[
+                      FilteringTextInputFormatter.digitsOnly
+                    ]),
+                // ],
+              ))),
           createCard(
             'Metric',
             Switch(

@@ -5,12 +5,18 @@ const int defaultDataDate = 1388563200;
 
 enum HomeScreenTab { activities, stats, calendar, settings }
 
-enum ActivityDetailScreenTab { details, profile, sections }
+enum ActivityDetailScreenTab { details, analysis, profile, sections }
 
 enum DateFilter { all, month, week, year }
 
-TextStyle headerTextStyle =
-    const TextStyle(inherit: true, fontSize: 16.0, color: Colors.blueGrey);
+TextStyle appBarTextStyle = const TextStyle(
+  inherit: true,
+  color: zdvDrkBlue,
+  fontSize: 16.0);
+TextStyle headerTextStyle = const TextStyle(
+    inherit: true,
+    fontSize: 16.0,
+    color: Colors.blueGrey);
 TextStyle bodyTextStyleComplete = const TextStyle(
     inherit: true,
     fontSize: 16.0,

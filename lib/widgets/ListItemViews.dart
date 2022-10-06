@@ -6,24 +6,24 @@ Widget singleDataLineItem(
   return Container(
       height: Constants.rowHeight,
       padding: const EdgeInsets.all(8.0),
-      decoration: BoxDecoration(
+      decoration: const BoxDecoration(
           border: Border(bottom: BorderSide(color: Constants.dividerColor))),
       child:
-          new Row(mainAxisAlignment: MainAxisAlignment.spaceBetween, children: [
-        new Row(children: [
+          Row(mainAxisAlignment: MainAxisAlignment.spaceBetween, children: [
+        Row(children: [
           Padding(
               padding: const EdgeInsets.only(right: Constants.iconPadding),
-              child: new Icon(icon,
+              child: Icon(icon,
                   size: Constants.iconSize, color: Constants.iconColor)),
-          new Text(
+          Text(
             title,
             style: Constants.headerTextStyle,
           ),
         ]),
-        new Row(crossAxisAlignment: CrossAxisAlignment.end, children: [
-          new Text(dataPoint,
+        Row(crossAxisAlignment: CrossAxisAlignment.end, children: [
+          Text(dataPoint,
               textAlign: TextAlign.right, style: Constants.bodyTextStyle),
-          new Text(" " + units,
+          Text(" $units",
               textAlign: TextAlign.right, style: Constants.inlineBodyTextStyle),
         ])
       ]));
@@ -97,7 +97,7 @@ Widget doubleDataHeaderLineItem(List<String> labels, List<String> dataPoints) {
               //     padding: const EdgeInsets.fromLTRB(16.0, 0.0, 16.0, 8.0),
               //     child: Text(title + " (" + units + ")",
               //         style: Constants.headerTextStyle)),
-              new Row(
+              Row(
                   mainAxisAlignment: MainAxisAlignment.spaceAround,
                   children: List.generate(labels.length, (index) {
                     return Column(
@@ -123,13 +123,13 @@ Widget doubleDataSingleHeaderLineItem(String title, IconData? icon,
           // decoration: BoxDecoration(
           //     border:
           //         Border(bottom: BorderSide(color: Constants.dividerColor))),
-          child: new Column(
+          child: Column(
             children: <Widget>[
               Container(
                   padding: const EdgeInsets.fromLTRB(16.0, 0.0, 16.0, 8.0),
                   child: Text(title + " (" + units + ")",
                       style: Constants.headerTextStyle)),
-              new Row(
+              Row(
                   mainAxisAlignment: MainAxisAlignment.spaceAround,
                   children: List.generate(labels.length, (index) {
                     return Column(
@@ -155,13 +155,13 @@ Widget tripleDataLineItem(String title, IconData icon, List<String> labels,
           // decoration: BoxDecoration(
           //     border:
           //         Border(bottom: BorderSide(color: Constants.dividerColor))),
-          child: new Column(
+          child: Column(
             children: <Widget>[
               Container(
                   padding: const EdgeInsets.fromLTRB(16.0, 0.0, 16.0, 8.0),
                   child: Text(title + " (" + units + ")",
                       style: Constants.headerTextStyle)),
-              new Row(
+              Row(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: List.generate(labels.length, (index) {
                     return Column(
@@ -181,7 +181,7 @@ Widget gridViewItem(
       padding: EdgeInsets.fromLTRB(0, 8.0, 0, 0),
       decoration: BoxDecoration(
           border: Border(bottom: BorderSide(color: Constants.dividerColor))),
-      child: new Row(mainAxisAlignment: MainAxisAlignment.center, children: [
+      child: Row(mainAxisAlignment: MainAxisAlignment.center, children: [
         Column(
           children: <Widget>[
             Text(label + " (" + units + ")", style: Constants.headerTextStyle),

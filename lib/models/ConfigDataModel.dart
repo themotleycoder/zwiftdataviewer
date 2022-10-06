@@ -50,18 +50,21 @@ class ConfigDataModel extends ChangeNotifier {
 class ConfigData {
   int? lastSyncDate;
   bool? isMetric = false;
+  int? ftp;
 
   ConfigData();
 
   ConfigData.fromJson(Map<String, dynamic> json) {
     lastSyncDate = json['lastSyncDate'];
     isMetric = json['isMetric'] ?? false;
+    ftp = json['ftp'] ?? 100;
   }
 
   Map<String, dynamic> toJson() {
     final Map<String, dynamic> data = <String, dynamic>{};
     data['lastSyncDate'] = lastSyncDate;
     data['isMetric'] = isMetric;
+    data['ftp'] = ftp;
     return data;
   }
 }

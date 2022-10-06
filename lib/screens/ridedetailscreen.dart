@@ -6,6 +6,7 @@ import 'package:zwiftdataviewer/appkeys.dart';
 import 'package:zwiftdataviewer/models/ActivityDetailDataModel.dart';
 import 'package:zwiftdataviewer/models/ActivityPhotosDataModel.dart';
 import 'package:zwiftdataviewer/models/StreamsDataModel.dart';
+import 'package:zwiftdataviewer/screens/routeanalysisscreen.dart';
 import 'package:zwiftdataviewer/screens/routedetailscreen.dart';
 import 'package:zwiftdataviewer/screens/routeprofilechartscreen.dart';
 import 'package:zwiftdataviewer/screens/routesectiondetailscreen.dart';
@@ -16,6 +17,7 @@ import 'package:zwiftdataviewer/utils/constants.dart';
 import 'package:zwiftdataviewer/utils/repository/filerepository.dart';
 import 'package:zwiftdataviewer/utils/repository/webrepository.dart';
 import 'package:zwiftdataviewer/utils/theme.dart';
+import 'package:zwiftdataviewer/utils/constants.dart' as Constants;
 
 class DetailScreen extends StatefulWidget {
   final int id;
@@ -50,16 +52,17 @@ class _DetailScreenState extends State<DetailScreen> {
                   webRepository: WebRepository(strava: widget.strava),
                   fileRepository: FileRepository())
                 ..loadActivityPhotos(widget.id)),
-          ChangeNotifierProvider(create: (context) => ActivitySelectDataModel())
-        ],
+          ChangeNotifierProvider(create: (context) => ActivitySelectDataModel()),
+          ChangeNotifierProvider(create: (context) => LapSelectDataModel())
+    ],
         child: Consumer<ActivityDetailDataModel>(
             builder: (context, myModel, child) {
           return Scaffold(
             appBar: AppBar(
               title: myModel.activityDetail == null
-                  ? const Text("Zwift Data Viewer")
+                  ? Text("Zwift Data Viewer", style: Constants.appBarTextStyle)
                   : Text(
-                      "${myModel.activityDetail!.name!} (${DateFormat.yMd().format(DateTime.parse(myModel.activityDetail!.startDate!))})"),
+                      "${myModel.activityDetail!.name!} (${DateFormat.yMd().format(DateTime.parse(myModel.activityDetail!.startDate!))})", style: Constants.appBarTextStyle),
               backgroundColor: Colors.transparent,
               elevation: 0.0,
               // actions: getActions()
@@ -84,6 +87,8 @@ class _DetailScreenState extends State<DetailScreen> {
                           switch (tab) {
                             case ActivityDetailScreenTab.profile:
                               return RouteProfileChartScreen();
+                            case ActivityDetailScreenTab.analysis:
+                              return RouteAnalysisScreen();
                             case ActivityDetailScreenTab.sections:
                               return RouteSectionDetailScreen();
                             case ActivityDetailScreenTab.details:
@@ -110,6 +115,10 @@ class _DetailScreenState extends State<DetailScreen> {
                           BottomNavigationBarItem(
                             icon: Icon(Icons.list, key: AppKeys.activitiesTab),
                             label: "Details",
+                          ),
+                          BottomNavigationBarItem(
+                            icon: Icon(Icons.insights, key: AppKeys.analysisTab),
+                            label: "Analysis",
                           ),
                           BottomNavigationBarItem(
                             icon: Icon(Icons.show_chart, key: AppKeys.statsTab),

@@ -16,37 +16,37 @@ const MaterialColor white = MaterialColor(
   },
 );
 
-const Color zdvOrange = Color(0xFFFB8500);
+const Color zdvOrange = Color(0xFFEF672F);
 const MaterialColor zdvmOrange = MaterialColor(
   0xFFFFFFFF,
   <int, Color>{
-    50: Color(0xFFFB8500),
-    100: Color(0xFFFB8500),
-    200: Color(0xFFFB8500),
-    300: Color(0xFFFB8500),
-    400: Color(0xFFFB8500),
-    500: Color(0xFFFB8500),
-    600: Color(0xFFFB8500),
-    700: Color(0xFFFB8500),
-    800: Color(0xFFFB8500),
-    900: Color(0xFFFB8500),
+    50: Color(0xFFEF672F),
+    100: Color(0xFFEF672F),
+    200: Color(0xFFEF672F),
+    300: Color(0xFFEF672F),
+    400: Color(0xFFEF672F),
+    500: Color(0xFFEF672F),
+    600: Color(0xFFEF672F),
+    700: Color(0xFFEF672F),
+    800: Color(0xFFEF672F),
+    900: Color(0xFFEF672F),
   },
 );
 
-const Color zdvYellow = Color(0xFFFFB703);
+const Color zdvYellow = Color(0xFFFBD84F);
 const MaterialColor zdvmYellow = MaterialColor(
   0xFFFFFFFF,
   <int, Color>{
-    50: Color(0xFFFFB703),
-    100: Color(0xFFFFB703),
-    200: Color(0xFFFFB703),
-    300: Color(0xFFFFB703),
-    400: Color(0xFFFFB703),
-    500: Color(0xFFFFB703),
-    600: Color(0xFFFFB703),
-    700: Color(0xFFFFB703),
-    800: Color(0xFFFFB703),
-    900: Color(0xFFFFB703),
+    50: Color(0xFFFBD84F),
+    100: Color(0xFFFBD84F),
+    200: Color(0xFFFBD84F),
+    300: Color(0xFFFBD84F),
+    400: Color(0xFFFBD84F),
+    500: Color(0xFFFBD84F),
+    600: Color(0xFFFBD84F),
+    700: Color(0xFFFBD84F),
+    800: Color(0xFFFBD84F),
+    900: Color(0xFFFBD84F),
   },
 );
 
@@ -67,20 +67,20 @@ const MaterialColor zdvmDrkBlue = MaterialColor(
   },
 );
 
-const Color zdvMidBlue = Color(0xFF219EBC);
+const Color zdvMidBlue = Color(0xFF2892C8);
 const MaterialColor zdvmMidBlue = MaterialColor(
   0xFFFFFFFF,
   <int, Color>{
-    50: Color(0xFF219EBC),
-    100: Color(0xFF219EBC),
-    200: Color(0xFF219EBC),
-    300: Color(0xFF219EBC),
-    400: Color(0xFF219EBC),
-    500: Color(0xFF219EBC),
-    600: Color(0xFF219EBC),
-    700: Color(0xFF219EBC),
-    800: Color(0xFF219EBC),
-    900: Color(0xFF219EBC),
+    50: Color(0xFF2892C8),
+    100: Color(0xFF2892C8),
+    200: Color(0xFF2892C8),
+    300: Color(0xFF2892C8),
+    400: Color(0xFF2892C8),
+    500: Color(0xFF2892C8),
+    600: Color(0xFF2892C8),
+    700: Color(0xFF2892C8),
+    800: Color(0xFF2892C8),
+    900: Color(0xFF2892C8),
   },
 );
 
@@ -101,20 +101,20 @@ const MaterialColor zdvmLgtBlue = MaterialColor(
   },
 );
 
-const Color zdvMidGreen = Color(0xFF40be59);
+const Color zdvMidGreen = Color(0xFF80D134);
 const MaterialColor zdvmMidGreen = MaterialColor(
   0xFFFFFFFF,
   <int, Color>{
-    50: Color(0xFF40be59),
-    100: Color(0xFF40be59),
-    200: Color(0xFF40be59),
-    300: Color(0xFF40be59),
-    400: Color(0xFF40be59),
-    500: Color(0xFF40be59),
-    600: Color(0xFF40be59),
-    700: Color(0xFF40be59),
-    800: Color(0xFF40be59),
-    900: Color(0xFF40be59),
+    50: Color(0xFF80D134),
+    100: Color(0xFF80D134),
+    200: Color(0xFF80D134),
+    300: Color(0xFF80D134),
+    400: Color(0xFF80D134),
+    500: Color(0xFF80D134),
+    600: Color(0xFF80D134),
+    700: Color(0xFF80D134),
+    800: Color(0xFF80D134),
+    900: Color(0xFF80D134),
   },
 );
 
@@ -139,7 +139,7 @@ final ThemeData myTheme = ThemeData(
   // textSelectionColor: Color(0xffcccccc),
   // cursorColor: Color(0xff4285f4),
   // textSelectionHandleColor: Color(0xffb3b3aa),
-  backgroundColor: Color(0xffcccccc),
+  backgroundColor: Color(0xffeeeef0),
   dialogBackgroundColor: Color(0xffffffff),
   indicatorColor: Color(0xff808080),
   hintColor: Color(0x8a000000),

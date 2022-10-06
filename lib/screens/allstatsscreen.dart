@@ -126,14 +126,14 @@ class AllStatsScreen extends StatelessWidget {
         domainFn: (YearlyTotals totals, _) => totals.year,
         measureFn: (YearlyTotals totals, _) => totals.value,
         data: distanceData,
-        seriesColor: charts.ColorUtil.fromDartColor(zdvOrange),
+        seriesColor: charts.ColorUtil.fromDartColor(zdvMidBlue),
       ),
       charts.Series<YearlyTotals, String>(
         id: 'Elevation (${units['height']!})',
         domainFn: (YearlyTotals totals, _) => totals.year,
         measureFn: (YearlyTotals totals, _) => totals.value,
         data: elevationData,
-        seriesColor: charts.ColorUtil.fromDartColor(zdvYellow),
+        seriesColor: charts.ColorUtil.fromDartColor(zdvMidGreen),
       )..setAttribute(charts.measureAxisIdKey, secondaryMeasureAxisId)
     ];
   }

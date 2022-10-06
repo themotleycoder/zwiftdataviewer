@@ -57,3 +57,18 @@ class ActivitySelectDataModel extends ChangeNotifier {
     notifyListeners();
   }
 }
+
+class LapSelectDataModel extends ChangeNotifier {
+  Laps? lap;
+
+  bool _isLoading = false;
+
+  bool get isLoading => _isLoading;
+
+  Laps? get selectedLap => lap;
+
+  setSelectedLap(Laps laps) {
+    this.lap = laps;
+    notifyListeners();
+  }
+}
