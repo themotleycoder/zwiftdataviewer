@@ -8,8 +8,7 @@ Widget singleDataLineItem(
       padding: const EdgeInsets.all(8.0),
       decoration: const BoxDecoration(
           border: Border(bottom: BorderSide(color: Constants.dividerColor))),
-      child:
-          Row(mainAxisAlignment: MainAxisAlignment.spaceBetween, children: [
+      child: Row(mainAxisAlignment: MainAxisAlignment.spaceBetween, children: [
         Row(children: [
           Padding(
               padding: const EdgeInsets.only(right: Constants.iconPadding),

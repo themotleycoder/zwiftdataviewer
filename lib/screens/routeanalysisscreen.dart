@@ -114,8 +114,9 @@ class _RouteAnalysisScreenState extends State<RouteAnalysisScreen> {
           domainFn: (LapTotals totals, _) => totals.lap,
           measureFn: (LapTotals totals, _) => totals.watts,
           data: wattsLineData,
-          colorFn: (LapTotals totals, _) => charts.MaterialPalette.gray.shade600
-      )..setAttribute(charts.rendererIdKey, 'customLine'),
+          colorFn: (LapTotals totals, _) =>
+              charts.MaterialPalette.gray.shade300)
+        ..setAttribute(charts.rendererIdKey, 'customLine'),
       charts.Series<LapTotals, String>(
           id: 'power',
           domainFn: (LapTotals totals, _) => totals.lap,
@@ -140,7 +141,6 @@ class _RouteAnalysisScreenState extends State<RouteAnalysisScreen> {
               return charts.MaterialPalette.gray.shadeDefault;
             }
           })),
-
     ];
   }
 }

@@ -1,4 +1,3 @@
-import 'dart:collection';
 import 'package:charts_flutter/flutter.dart' as charts;
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
@@ -7,8 +6,9 @@ import 'package:zwiftdataviewer/models/StreamsDataModel.dart';
 import 'package:zwiftdataviewer/screens/ridedetailscreen.dart';
 import 'package:zwiftdataviewer/stravalib/API/streams.dart';
 import 'package:zwiftdataviewer/utils/conversions.dart';
-import 'package:zwiftdataviewer/widgets/ListItemViews.dart';
 import 'package:zwiftdataviewer/utils/theme.dart';
+import 'package:zwiftdataviewer/widgets/ListItemViews.dart';
+
 import '../appkeys.dart';
 
 class RouteProfileChartScreen extends StatefulWidget {
@@ -156,7 +156,8 @@ class _RouteProfileChartScreenState extends State<RouteProfileChartScreen> {
       charts.Series<DistanceValue, double>(
         id: 'Heartrate',
         //colorFn: (_, __) => charts.ColorUtil.fromDartColor(zdvmOrange),//,
-        seriesColor: charts.ColorUtil.fromDartColor(zdvOrange),//
+        seriesColor: charts.ColorUtil.fromDartColor(zdvOrange),
+        //
         domainFn: (DistanceValue heartrate, _) => heartrate.distance,
         measureFn: (DistanceValue heartrate, _) => heartrate.value,
         data: heartrateData,

@@ -14,10 +14,10 @@ import 'package:zwiftdataviewer/stravalib/API/streams.dart';
 import 'package:zwiftdataviewer/stravalib/Models/segmentEffort.dart';
 import 'package:zwiftdataviewer/stravalib/strava.dart';
 import 'package:zwiftdataviewer/utils/constants.dart';
+import 'package:zwiftdataviewer/utils/constants.dart' as Constants;
 import 'package:zwiftdataviewer/utils/repository/filerepository.dart';
 import 'package:zwiftdataviewer/utils/repository/webrepository.dart';
 import 'package:zwiftdataviewer/utils/theme.dart';
-import 'package:zwiftdataviewer/utils/constants.dart' as Constants;
 
 class DetailScreen extends StatefulWidget {
   final int id;
@@ -52,9 +52,10 @@ class _DetailScreenState extends State<DetailScreen> {
                   webRepository: WebRepository(strava: widget.strava),
                   fileRepository: FileRepository())
                 ..loadActivityPhotos(widget.id)),
-          ChangeNotifierProvider(create: (context) => ActivitySelectDataModel()),
+          ChangeNotifierProvider(
+              create: (context) => ActivitySelectDataModel()),
           ChangeNotifierProvider(create: (context) => LapSelectDataModel())
-    ],
+        ],
         child: Consumer<ActivityDetailDataModel>(
             builder: (context, myModel, child) {
           return Scaffold(
@@ -62,7 +63,8 @@ class _DetailScreenState extends State<DetailScreen> {
               title: myModel.activityDetail == null
                   ? Text("Zwift Data Viewer", style: Constants.appBarTextStyle)
                   : Text(
-                      "${myModel.activityDetail!.name!} (${DateFormat.yMd().format(DateTime.parse(myModel.activityDetail!.startDate!))})", style: Constants.appBarTextStyle),
+                      "${myModel.activityDetail!.name!} (${DateFormat.yMd().format(DateTime.parse(myModel.activityDetail!.startDate!))})",
+                      style: Constants.appBarTextStyle),
               backgroundColor: Colors.transparent,
               elevation: 0.0,
               // actions: getActions()
@@ -117,7 +119,8 @@ class _DetailScreenState extends State<DetailScreen> {
                             label: "Details",
                           ),
                           BottomNavigationBarItem(
-                            icon: Icon(Icons.insights, key: AppKeys.analysisTab),
+                            icon:
+                                Icon(Icons.insights, key: AppKeys.analysisTab),
                             label: "Analysis",
                           ),
                           BottomNavigationBarItem(

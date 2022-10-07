@@ -118,43 +118,42 @@ class _PrefetchImageDemoState extends State<PrefetchImageDemo> {
             .activityPhotos);
     return Stack(alignment: Alignment.bottomCenter, children: [
       CarouselSlider.builder(
-    itemCount: imagesUrls.length,
-    options: CarouselOptions(
-        autoPlay:
-            imagesUrls.length > 1 ? true : false,
-        // aspectRatio: 2.0,
-        viewportFraction: 1,
-        enlargeCenterPage: false,
-        onPageChanged: (index, reason) {
-          setState(() {
-            _current = index;
-          });
-        }),
-    itemBuilder: (context, index, index2) {
-      return Center(
-        child: FadeInImage.assetNetwork(
-        placeholder: 'assets/Zwift_logo.png', image: imagesUrls[index]),
-      );
-    },
+        itemCount: imagesUrls.length,
+        options: CarouselOptions(
+            autoPlay: imagesUrls.length > 1 ? true : false,
+            // aspectRatio: 2.0,
+            viewportFraction: 1,
+            enlargeCenterPage: false,
+            onPageChanged: (index, reason) {
+              setState(() {
+                _current = index;
+              });
+            }),
+        itemBuilder: (context, index, index2) {
+          return Center(
+            child: FadeInImage.assetNetwork(
+                placeholder: 'assets/Zwift_logo.png', image: imagesUrls[index]),
+          );
+        },
       ),
       Container(
-      padding: const EdgeInsets.fromLTRB(0, 0, 0, 24),
-      child: Row(
-        mainAxisAlignment: MainAxisAlignment.center,
-        children: imagesUrls.map((url) {
-          int index = imagesUrls.indexOf(url);
-          return Container(
-            width: 8.0,
-            height: 8.0,
-            margin:
-                const EdgeInsets.symmetric(vertical: 10.0, horizontal: 2.0),
-            decoration: BoxDecoration(
-              shape: BoxShape.circle,
-              color: _current == index ? Colors.white : Colors.white54,
-            ),
-          );
-        }).toList(),
-      )),
+          padding: const EdgeInsets.fromLTRB(0, 0, 0, 24),
+          child: Row(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: imagesUrls.map((url) {
+              int index = imagesUrls.indexOf(url);
+              return Container(
+                width: 8.0,
+                height: 8.0,
+                margin:
+                    const EdgeInsets.symmetric(vertical: 10.0, horizontal: 2.0),
+                decoration: BoxDecoration(
+                  shape: BoxShape.circle,
+                  color: _current == index ? Colors.white : Colors.white54,
+                ),
+              );
+            }).toList(),
+          )),
     ]);
   }
 

@@ -120,7 +120,6 @@ const MaterialColor zdvmMidGreen = MaterialColor(
   },
 );
 
-
 final ThemeData myTheme = ThemeData(
   brightness: Brightness.light,
   primaryColor: Color(0xfff8f8f8),
@@ -595,5 +594,7 @@ final ThemeData myTheme = ThemeData(
       style: BorderStyle.none,
     ),
     borderRadius: BorderRadius.all(Radius.circular(0.0)),
-  )), colorScheme: ColorScheme.fromSwatch(primarySwatch: zdvmOrange).copyWith(secondary: zdvmOrange),
+  )),
+  colorScheme: ColorScheme.fromSwatch(primarySwatch: zdvmOrange)
+      .copyWith(secondary: zdvmOrange),
 );

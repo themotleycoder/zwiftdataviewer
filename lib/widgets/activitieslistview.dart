@@ -144,48 +144,49 @@ class ActivitySearch extends SearchDelegate<SummaryActivity> {
       separatorBuilder: (BuildContext context, int index) => Container(),
       itemBuilder: (BuildContext context, int index) {
         return buildListItem(context, results[index], strava);
-          // margin: EdgeInsets.all(1.0),
+        // margin: EdgeInsets.all(1.0),
       },
     );
   }
 
-  Widget buildListItem(BuildContext context, SummaryActivity summaryActivity, Strava strava){
+  Widget buildListItem(
+      BuildContext context, SummaryActivity summaryActivity, Strava strava) {
     return Container(
         padding: const EdgeInsets.fromLTRB(8.0, 0, 8.0, 0),
-    child: Center(
-    child: InkWell(child:
-      Card(
-        color: Colors.white,
-        elevation: 0,
-        child: ListTile(
-      leading: const Icon(Icons.directions_bike,
-          size: 32.0, color: zdvOrange),
-      title: Text(summaryActivity.name ?? "NA",
-          style: Constants.headerFontStyle),
-      subtitle: Text(DateFormat.yMd().add_jm().format(
-          summaryActivity.startDateLocal ?? DateTime.now())),
-      trailing: Icon(
-        Icons.arrow_forward_ios,
-        color: zdvmMidBlue[100],
-      ),
-      onTap: () {
-        Navigator.push(
-          context,
-          MaterialPageRoute(
-            builder: (_) {
-              return DetailScreen(
-                id: summaryActivity.id ?? -1,
-                strava: strava,
-                // onRemove: () {
-                //   Navigator.pop(context);
-                //   onRemove(context, todo);
-                // },
-              );
-            },
-          ),
-        );
-      },
-      // onItemClick(_activities[index], context);
-    )))));
+        child: Center(
+            child: InkWell(
+                child: Card(
+                    color: Colors.white,
+                    elevation: 0,
+                    child: ListTile(
+                      leading: const Icon(Icons.directions_bike,
+                          size: 32.0, color: zdvOrange),
+                      title: Text(summaryActivity.name ?? "NA",
+                          style: Constants.headerFontStyle),
+                      subtitle: Text(DateFormat.yMd().add_jm().format(
+                          summaryActivity.startDateLocal ?? DateTime.now())),
+                      trailing: Icon(
+                        Icons.arrow_forward_ios,
+                        color: zdvmMidBlue[100],
+                      ),
+                      onTap: () {
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                            builder: (_) {
+                              return DetailScreen(
+                                id: summaryActivity.id ?? -1,
+                                strava: strava,
+                                // onRemove: () {
+                                //   Navigator.pop(context);
+                                //   onRemove(context, todo);
+                                // },
+                              );
+                            },
+                          ),
+                        );
+                      },
+                      // onItemClick(_activities[index], context);
+                    )))));
   }
 }

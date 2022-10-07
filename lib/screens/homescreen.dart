@@ -52,8 +52,9 @@ class _HomeScreenState extends State<HomeScreen> {
         child: Scaffold(
           // extendBodyBehindAppBar: true,
           appBar: AppBar(
-              title: Text("Zwift Data Viewer",
-                  style: appBarTextStyle,
+              title: Text(
+                "Zwift Data Viewer",
+                style: appBarTextStyle,
               ),
               backgroundColor: Colors.transparent,
               elevation: 0.0,
