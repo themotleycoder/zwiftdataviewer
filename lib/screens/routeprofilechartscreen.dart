@@ -206,7 +206,7 @@ class _ProfileDataViewState extends State<ProfileDataView> {
                       [
                         Conversions.metersToDistance(
                                 context, selectedSeries?.distance ?? 0)
-                            .toStringAsFixed(2),
+                            .toStringAsFixed(1),
                         Conversions.metersToHeight(
                                 context, selectedSeries?.altitude ?? 0)
                             .toStringAsFixed(0)

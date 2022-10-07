@@ -8,7 +8,7 @@ import 'package:zwiftdataviewer/utils/conversions.dart';
 import 'package:zwiftdataviewer/utils/theme.dart';
 
 class RouteSectionDetailScreen extends StatefulWidget {
-  RouteSectionDetailScreen();
+  RouteSectionDetailScreen({super.key});
 
   final Map<int, String> _climbingCAT = {
     1: '4',
@@ -43,13 +43,13 @@ class _RouteSectionDetailScreenState extends State<RouteSectionDetailScreen> {
       text = "";
     }
 
-    return new Stack(children: <Widget>[
+    return Stack(children: <Widget>[
       Icon(Icons.bookmark, size: 48.0, color: col),
       Positioned.fill(
           child: Align(
         alignment: Alignment.center,
         child: Text(text,
-            style: new TextStyle(
+            style: const TextStyle(
               fontWeight: FontWeight.normal,
               fontSize: 16.0,
               color: Colors.white,
@@ -61,7 +61,7 @@ class _RouteSectionDetailScreenState extends State<RouteSectionDetailScreen> {
   Row createSubTitle(SegmentEffort segmentEffort, Map<String, String> units) {
     String distance =
         Conversions.metersToDistance(context, segmentEffort.distance ?? 0)
-            .toStringAsFixed(2);
+            .toStringAsFixed(1);
     String elevation = Conversions.metersToHeight(
             context, segmentEffort.segment?.elevationHigh ?? 0)
         .toStringAsFixed(0);

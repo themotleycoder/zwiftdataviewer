@@ -4,8 +4,10 @@ import 'package:provider/provider.dart';
 import 'package:zwiftdataviewer/models/ActivityDetailDataModel.dart';
 import 'package:zwiftdataviewer/stravalib/Models/activity.dart';
 import 'package:zwiftdataviewer/utils/conversions.dart';
+
 import '../appkeys.dart';
 import '../models/ConfigDataModel.dart';
+import '../utils/theme.dart';
 import '../widgets/listitemviews.dart';
 
 class RouteAnalysisScreen extends StatefulWidget {
@@ -66,6 +68,11 @@ class _RouteAnalysisScreenState extends State<RouteAnalysisScreen> {
                                   changedListener: _onSelectionChanged,
                                 )
                               ],
+                              behaviors: [
+                                // charts.InitialSelection(selectedDataConfig: [
+                                //   charts.SeriesDatumConfig<String>('power', '1')
+                                // ])
+                              ],
                             ))),
                     const ProfileDataView(),
                   ]))
@@ -76,7 +83,7 @@ class _RouteAnalysisScreenState extends State<RouteAnalysisScreen> {
   }
 
   _onSelectionChanged(charts.SelectionModel model) {
-    int? selection = model.selectedDatum[0].index;
+    int? selection = model.selectedDatum[0].index??0;
     // selectedLap = model.selectedSeries[0] as Laps;
     selectedLap = _laps![selection!];
     Provider.of<LapSelectDataModel>(context, listen: false)
@@ -94,7 +101,7 @@ class _RouteAnalysisScreenState extends State<RouteAnalysisScreen> {
 
     return [
       charts.Series<LapTotals, String>(
-          id: 'Watts',
+          id: 'power',
           domainFn: (LapTotals totals, _) => totals.lap,
           measureFn: (LapTotals totals, _) => totals.watts,
           data: wattsData,
@@ -104,18 +111,18 @@ class _RouteAnalysisScreenState extends State<RouteAnalysisScreen> {
               return charts.MaterialPalette.gray.shadeDefault;
             } else if (totals.watts >= ftp * .60 &&
                 totals.watts <= ftp * .75) {
-              return charts.MaterialPalette.blue.shadeDefault;
+              return charts.ColorUtil.fromDartColor(zdvMidBlue);
             } else if (totals.watts > ftp * .75 &&
                 totals.watts <= ftp * .89) {
-              return charts.MaterialPalette.green.shadeDefault;
+              return charts.ColorUtil.fromDartColor(zdvMidGreen);
             } else if (totals.watts > ftp * .89 &&
                 totals.watts <= ftp * 1.04) {
-              return charts.MaterialPalette.yellow.shadeDefault;
+              return charts.ColorUtil.fromDartColor(zdvYellow);
             } else if (totals.watts > ftp * 1.04 &&
                 totals.watts <= ftp * 1.18) {
-              return charts.MaterialPalette.deepOrange.shadeDefault;
+              return charts.ColorUtil.fromDartColor(zdvOrange);
             } else if (totals.watts > ftp * 1.18) {
-              return charts.MaterialPalette.red.shadeDefault;
+              return charts.ColorUtil.fromDartColor(zdvRed);
             } else {
               return charts.MaterialPalette.gray.shadeDefault;
             }

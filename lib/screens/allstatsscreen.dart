@@ -44,13 +44,13 @@ class AllStatsScreen extends StatelessWidget {
                           [
                             Conversions.metersToDistance(context,
                                     summaryData[StatsType.TotalDistance]!)
-                                .toStringAsFixed(2),
+                                .toStringAsFixed(1),
                             Conversions.metersToDistance(context,
                                     summaryData[StatsType.AvgDistance]!)
-                                .toStringAsFixed(2),
+                                .toStringAsFixed(1),
                             Conversions.metersToDistance(context,
                                     summaryData[StatsType.LongestDistance]!)
-                                .toStringAsFixed(2)
+                                .toStringAsFixed(1)
                           ],
                           units["distance"]!),
                       list_item_views.tripleDataLineItem(
@@ -60,13 +60,13 @@ class AllStatsScreen extends StatelessWidget {
                         [
                           Conversions.metersToHeight(context,
                                   summaryData[StatsType.TotalElevation]!)
-                              .toStringAsFixed(2),
+                              .toStringAsFixed(1),
                           Conversions.metersToHeight(
                                   context, summaryData[StatsType.AvgElevation]!)
-                              .toStringAsFixed(2),
+                              .toStringAsFixed(1),
                           Conversions.metersToHeight(context,
                                   summaryData[StatsType.HighestElevation]!)
-                              .toStringAsFixed(2)
+                              .toStringAsFixed(1)
                         ],
                         units['height']!,
                       )

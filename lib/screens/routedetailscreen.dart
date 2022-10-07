@@ -36,13 +36,13 @@ class RouteDetailScreen extends StatelessWidget {
               children: <Widget>[
                 doubleDataHeaderLineItem(
                   [
-                    'Distance (' + units['distance']! + ')',
-                    'Elevation (' + units['height']! + ')'
+                    'Distance (${units['distance']!})',
+                    'Elevation (${units['height']!})'
                   ],
                   [
                     Conversions.metersToDistance(
                             context, activity.distance ?? 0)
-                        .toStringAsFixed(2),
+                        .toStringAsFixed(1),
                     Conversions.metersToHeight(
                             context, activity.totalElevationGain ?? 0)
                         .toStringAsFixed(0)
@@ -79,9 +79,9 @@ class RouteDetailScreen extends StatelessWidget {
                     ['Avg', 'Max'],
                     [
                       Conversions.mpsToMph(activity.averageSpeed!)
-                          .toStringAsFixed(2),
+                          .toStringAsFixed(1),
                       Conversions.mpsToMph(activity.maxSpeed!)
-                          .toStringAsFixed(2),
+                          .toStringAsFixed(1),
                     ],
                     'mph'),
               ],
@@ -116,48 +116,46 @@ class _PrefetchImageDemoState extends State<PrefetchImageDemo> {
     final List<String> imagesUrls = createUrls(
         Provider.of<ActivityPhotosDataModel>(context, listen: true)
             .activityPhotos);
-    return Container(
-        child: Stack(alignment: Alignment.bottomCenter, children: [
+    return Stack(alignment: Alignment.bottomCenter, children: [
       CarouselSlider.builder(
-        itemCount: imagesUrls.length,
-        options: CarouselOptions(
-            autoPlay:
-                imagesUrls != null && imagesUrls.length > 1 ? true : false,
-            // aspectRatio: 2.0,
-            viewportFraction: 1,
-            enlargeCenterPage: false,
-            onPageChanged: (index, reason) {
-              setState(() {
-                _current = index;
-              });
-            }),
-        itemBuilder: (context, index, index2) {
-          return Container(
-              child: Center(
-            child: FadeInImage.assetNetwork(
-                placeholder: 'assets/Zwift_logo.png', image: imagesUrls[index]),
-          ));
-        },
+    itemCount: imagesUrls.length,
+    options: CarouselOptions(
+        autoPlay:
+            imagesUrls.length > 1 ? true : false,
+        // aspectRatio: 2.0,
+        viewportFraction: 1,
+        enlargeCenterPage: false,
+        onPageChanged: (index, reason) {
+          setState(() {
+            _current = index;
+          });
+        }),
+    itemBuilder: (context, index, index2) {
+      return Center(
+        child: FadeInImage.assetNetwork(
+        placeholder: 'assets/Zwift_logo.png', image: imagesUrls[index]),
+      );
+    },
       ),
       Container(
-          padding: const EdgeInsets.fromLTRB(0, 0, 0, 24),
-          child: Row(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: imagesUrls.map((url) {
-              int index = imagesUrls.indexOf(url);
-              return Container(
-                width: 8.0,
-                height: 8.0,
-                margin:
-                    const EdgeInsets.symmetric(vertical: 10.0, horizontal: 2.0),
-                decoration: BoxDecoration(
-                  shape: BoxShape.circle,
-                  color: _current == index ? Colors.white : Colors.white54,
-                ),
-              );
-            }).toList(),
-          )),
-    ]));
+      padding: const EdgeInsets.fromLTRB(0, 0, 0, 24),
+      child: Row(
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: imagesUrls.map((url) {
+          int index = imagesUrls.indexOf(url);
+          return Container(
+            width: 8.0,
+            height: 8.0,
+            margin:
+                const EdgeInsets.symmetric(vertical: 10.0, horizontal: 2.0),
+            decoration: BoxDecoration(
+              shape: BoxShape.circle,
+              color: _current == index ? Colors.white : Colors.white54,
+            ),
+          );
+        }).toList(),
+      )),
+    ]);
   }
 
   List<String> createUrls(List<PhotoActivity>? activityPhotos) {
@@ -175,9 +173,9 @@ class _PrefetchImageDemoState extends State<PrefetchImageDemo> {
     }
 
     WidgetsBinding.instance.addPostFrameCallback((_) {
-      imagesUrls.forEach((imageUrl) {
+      for (var imageUrl in imagesUrls) {
         precacheImage(NetworkImage(imageUrl), context);
-      });
+      }
     });
 
     setState(() {});

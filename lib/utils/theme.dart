@@ -50,6 +50,8 @@ const MaterialColor zdvmYellow = MaterialColor(
   },
 );
 
+const Color zdvRed = Color(0xFFDE4842);
+
 const Color zdvDrkBlue = Color(0xFF023047);
 const MaterialColor zdvmDrkBlue = MaterialColor(
   0xFFFFFFFF,
