@@ -25,9 +25,9 @@ class _RouteAnalysisScreenState extends State<RouteAnalysisScreen> {
   @override
   Widget build(BuildContext context) {
     Map<String, String> units = Conversions.units(context);
-    _ftp = Provider.of<ConfigDataModel>(context, listen: false)
-        .configData
-        ?.ftp??0;
+    _ftp =
+        Provider.of<ConfigDataModel>(context, listen: false).configData?.ftp ??
+            0;
     return Consumer<ActivityDetailDataModel>(
         builder: (context, myModel, child) {
       _laps = myModel.activityDetail?.laps;
@@ -54,9 +54,16 @@ class _RouteAnalysisScreenState extends State<RouteAnalysisScreen> {
                     Expanded(
                         child: Padding(
                             padding: const EdgeInsets.all(8.0),
-                            child: charts.BarChart(
+                            child: charts.OrdinalComboChart(
                               seriesList,
                               animate: true,
+                              defaultRenderer: charts.BarRendererConfig(
+                                  groupingType: charts.BarGroupingType.grouped),
+                              customSeriesRenderers: [
+                                charts.LineRendererConfig(
+                                    // ID used to link series to this renderer.
+                                    customRendererId: 'customLine')
+                              ],
                               domainAxis: const charts.OrdinalAxisSpec(
                                   // Make sure that we draw the domain axis line.
                                   showAxisLine: true,
@@ -83,7 +90,7 @@ class _RouteAnalysisScreenState extends State<RouteAnalysisScreen> {
   }
 
   _onSelectionChanged(charts.SelectionModel model) {
-    int? selection = model.selectedDatum[0].index??0;
+    int? selection = model.selectedDatum[0].index ?? 0;
     // selectedLap = model.selectedSeries[0] as Laps;
     selectedLap = _laps![selection!];
     Provider.of<LapSelectDataModel>(context, listen: false)
@@ -93,13 +100,22 @@ class _RouteAnalysisScreenState extends State<RouteAnalysisScreen> {
   List<charts.Series<LapTotals, String>> generateChartData(
       BuildContext? context, Map<String, String> units, List<Laps> laps) {
     final List<LapTotals> wattsData = [];
+    final List<LapTotals> wattsLineData = [];
     var count = 0;
     for (var lap in laps) {
       count += 1;
       wattsData.add(LapTotals(count.toString(), lap.averageWatts ?? 0));
+      wattsLineData.add(LapTotals(count.toString(), _ftp.toDouble()));
     }
 
     return [
+      charts.Series<LapTotals, String>(
+          id: 'ftp',
+          domainFn: (LapTotals totals, _) => totals.lap,
+          measureFn: (LapTotals totals, _) => totals.watts,
+          data: wattsLineData,
+          colorFn: (LapTotals totals, _) => charts.MaterialPalette.gray.shade600
+      )..setAttribute(charts.rendererIdKey, 'customLine'),
       charts.Series<LapTotals, String>(
           id: 'power',
           domainFn: (LapTotals totals, _) => totals.lap,
@@ -109,14 +125,11 @@ class _RouteAnalysisScreenState extends State<RouteAnalysisScreen> {
             final double ftp = _ftp.toDouble();
             if (totals.watts < ftp * .60) {
               return charts.MaterialPalette.gray.shadeDefault;
-            } else if (totals.watts >= ftp * .60 &&
-                totals.watts <= ftp * .75) {
+            } else if (totals.watts >= ftp * .60 && totals.watts <= ftp * .75) {
               return charts.ColorUtil.fromDartColor(zdvMidBlue);
-            } else if (totals.watts > ftp * .75 &&
-                totals.watts <= ftp * .89) {
+            } else if (totals.watts > ftp * .75 && totals.watts <= ftp * .89) {
               return charts.ColorUtil.fromDartColor(zdvMidGreen);
-            } else if (totals.watts > ftp * .89 &&
-                totals.watts <= ftp * 1.04) {
+            } else if (totals.watts > ftp * .89 && totals.watts <= ftp * 1.04) {
               return charts.ColorUtil.fromDartColor(zdvYellow);
             } else if (totals.watts > ftp * 1.04 &&
                 totals.watts <= ftp * 1.18) {
@@ -126,7 +139,8 @@ class _RouteAnalysisScreenState extends State<RouteAnalysisScreen> {
             } else {
               return charts.MaterialPalette.gray.shadeDefault;
             }
-          }))
+          })),
+
     ];
   }
 }
@@ -148,8 +162,7 @@ class ProfileDataView extends StatefulWidget {
 class _ProfileDataViewState extends State<ProfileDataView> {
   @override
   Widget build(BuildContext context) {
-    return Consumer<LapSelectDataModel>(
-        builder: (context, myModel, child) {
+    return Consumer<LapSelectDataModel>(builder: (context, myModel, child) {
       Laps? selectedSeries = myModel.selectedLap;
       Map<String, String> units = Conversions.units(context);
       return Expanded(
@@ -161,14 +174,11 @@ class _ProfileDataViewState extends State<ProfileDataView> {
                   // padding: const EdgeInsets.all(8.0),
                   children: <Widget>[
                     doubleDataHeaderLineItem(
+                      ['Time', 'Avg Power (w)'],
                       [
-                        'Time',
-                        'Avg Power (w)'
-                      ],
-                      [
-                        Conversions.secondsToTime(selectedSeries?.elapsedTime ?? 0),
-                        (selectedSeries?.averageWatts ?? 0)
-                            .toStringAsFixed(1),
+                        Conversions.secondsToTime(
+                            selectedSeries?.elapsedTime ?? 0),
+                        (selectedSeries?.averageWatts ?? 0).toStringAsFixed(1),
                       ],
                     ),
                     doubleDataHeaderLineItem(
@@ -177,7 +187,6 @@ class _ProfileDataViewState extends State<ProfileDataView> {
                         'Avg Speed (${units['speed']!})',
                       ],
                       [
-
                         (selectedSeries?.averageCadence ?? 0)
                             .toStringAsFixed(0),
                         Conversions.mpsToMph(selectedSeries?.maxSpeed ?? 0)
@@ -193,12 +202,11 @@ class _ProfileDataViewState extends State<ProfileDataView> {
                         Conversions.metersToDistance(
                                 context, selectedSeries?.distance ?? 0)
                             .toStringAsFixed(1),
-                        Conversions.metersToHeight(
-                                context, selectedSeries?.totalElevationGain ?? 0)
+                        Conversions.metersToHeight(context,
+                                selectedSeries?.totalElevationGain ?? 0)
                             .toStringAsFixed(0)
                       ],
                     ),
-
                   ])));
     });
   }
