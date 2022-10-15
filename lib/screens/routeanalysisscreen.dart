@@ -16,7 +16,7 @@ class RouteAnalysisScreen extends StatefulWidget {
 }
 
 class _RouteAnalysisScreenState extends State<RouteAnalysisScreen>
-    with SingleTickerProviderStateMixin {
+    with TickerProviderStateMixin {
   @override
   Widget build(BuildContext context) {
     final controller = TabController(length: 3, vsync: this);
@@ -33,28 +33,26 @@ class _RouteAnalysisScreenState extends State<RouteAnalysisScreen>
               );
             }
             return Column(children: <Widget>[
-              Container(
-                child: TabBar(
-                  indicatorColor: Colors.transparent,
-                  unselectedLabelColor: zdvmMidBlue[100],
-                  labelColor: zdvmOrange[100],
-                  indicatorSize: TabBarIndicatorSize.tab,
-                  controller: controller,
-                  tabs: const [
-                    Tab(
-                      icon: Icon(Icons.terrain),
-                      // text: 'Profile',
-                    ),
-                    Tab(
-                      icon: Icon(Icons.bolt),
-                      // text: 'Power',
-                    ),
-                    Tab(
-                      icon: Icon(Icons.schedule),
-                      // text: 'Time',
-                    ),
-                  ],
-                ),
+              TabBar(
+                indicatorColor: Colors.transparent,
+                unselectedLabelColor: zdvmMidBlue[100],
+                labelColor: zdvmOrange[100],
+                indicatorSize: TabBarIndicatorSize.tab,
+                controller: controller,
+                tabs: const [
+                  Tab(
+                    icon: Icon(Icons.terrain),
+                    // text: 'Profile',
+                  ),
+                  Tab(
+                    icon: Icon(Icons.bolt),
+                    // text: 'Power',
+                  ),
+                  Tab(
+                    icon: Icon(Icons.schedule),
+                    // text: 'Time',
+                  ),
+                ],
               ),
               Expanded(
                   child: Padding(
@@ -64,21 +62,15 @@ class _RouteAnalysisScreenState extends State<RouteAnalysisScreen>
                   children: const <Widget>[
                     Card(
                       elevation: 0,
-                      child: Expanded(
-                        child: RouteAnalysisProfileChartScreen(),
-                      ),
+                      child: RouteAnalysisProfileChartScreen(),
                     ),
                     Card(
                       elevation: 0,
-                      child: Expanded(
-                        child: WattsDataView(),
-                      ),
+                      child: WattsDataView(),
                     ),
                     Card(
                       elevation: 0,
-                      child: Expanded(
-                        child: TimeDataView(),
-                      ),
+                      child: TimeDataView(),
                     ),
                   ],
                 ),
