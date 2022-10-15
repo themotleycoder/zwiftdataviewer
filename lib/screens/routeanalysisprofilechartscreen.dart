@@ -3,7 +3,6 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:zwiftdataviewer/models/ActivityDetailDataModel.dart';
 import 'package:zwiftdataviewer/models/StreamsDataModel.dart';
-import 'package:zwiftdataviewer/screens/ridedetailscreen.dart';
 import 'package:zwiftdataviewer/stravalib/API/streams.dart';
 import 'package:zwiftdataviewer/utils/conversions.dart';
 import 'package:zwiftdataviewer/utils/theme.dart';
@@ -11,15 +10,16 @@ import 'package:zwiftdataviewer/widgets/ListItemViews.dart';
 
 import '../appkeys.dart';
 
-class RouteProfileChartScreen extends StatefulWidget {
-  const RouteProfileChartScreen({super.key});
+class RouteAnalysisProfileChartScreen extends StatefulWidget {
+  const RouteAnalysisProfileChartScreen({super.key});
 
   @override
-  _RouteProfileChartScreenState createState() =>
-      _RouteProfileChartScreenState();
+  _RouteAnalysisProfileChartScreenState createState() =>
+      _RouteAnalysisProfileChartScreenState();
 }
 
-class _RouteProfileChartScreenState extends State<RouteProfileChartScreen> {
+class _RouteAnalysisProfileChartScreenState
+    extends State<RouteAnalysisProfileChartScreen> {
   List<charts.Series<DistanceValue, double>> _chartData = [];
   StreamsDetailCollection? _streamsDetail;
   CombinedStreams? selectionModel;
@@ -39,69 +39,56 @@ class _RouteProfileChartScreenState extends State<RouteProfileChartScreen> {
                 ),
               );
             }
-            return Container(
-              // height: 200.0,
-              // child: Card(
-              //     elevation: 0,
-              //     margin: EdgeInsets.all(8.0),
-              child: Column(children: [
-                Expanded(
-                    child: charts.LineChart(
-                  _chartData,
-                  customSeriesRenderers: [
-                    charts.LineRendererConfig(
-                        // ID used to link series to this renderer.
-                        customRendererId: 'customArea',
-                        includeArea: true,
-                        stacked: true),
-                    charts.LineRendererConfig(
-                        // ID used to link series to this renderer.
-                        customRendererId: 'customArea2',
-                        includeArea: false,
-                        stacked: true),
-                    charts.LineRendererConfig(
-                        // ID used to link series to this renderer.
-                        customRendererId: 'customArea3',
-                        includeArea: false,
-                        stacked: true),
-                  ],
-                  defaultRenderer:
-                      charts.LineRendererConfig(includeArea: false),
-                  animate: true,
-                  // primaryMeasureAxis: const charts.NumericAxisSpec(
-                  //   tickProviderSpec: charts.BasicNumericTickProviderSpec(
-                  //       desiredTickCount: 5),
-                  // ),
-                  // secondaryMeasureAxis: const charts.NumericAxisSpec(
-                  //   tickProviderSpec: charts.BasicNumericTickProviderSpec(
-                  //       desiredTickCount: 5),
-                  // ),
-                  // disjointMeasureAxes:
-                  //     LinkedHashMap<String, charts.NumericAxisSpec>.from({
-                  //   'axis 1': const charts.NumericAxisSpec(),
-                  //   'axis 2': const charts.NumericAxisSpec(),
-                  //   'axis 3': const charts.NumericAxisSpec(),
-                  //   // 'axis 4': const charts.NumericAxisSpec(),
-                  // }),
-                  selectionModels: [
-                    charts.SelectionModelConfig(
-                      type: charts.SelectionModelType.info,
-                      changedListener: _onSelectionChanged,
-                    )
-                  ],
-                  behaviors: [
-                    charts.LinePointHighlighter(
-                        showHorizontalFollowLine:
-                            charts.LinePointHighlighterFollowLineType.none,
-                        showVerticalFollowLine:
-                            charts.LinePointHighlighterFollowLineType.nearest),
-                    charts.SelectNearest(
-                        eventTrigger: charts.SelectionTrigger.tapAndDrag)
-                  ],
-                )),
-                ProfileDataView(),
-              ]),
-            );
+            return Column(children: [
+              Expanded(
+                  child: charts.LineChart(
+                _chartData,
+                customSeriesRenderers: [
+                  charts.LineRendererConfig(
+                      // ID used to link series to this renderer.
+                      customRendererId: 'customArea',
+                      includeArea: true,
+                      stacked: true),
+                  charts.LineRendererConfig(
+                      // ID used to link series to this renderer.
+                      customRendererId: 'customArea2',
+                      includeArea: false,
+                      stacked: true),
+                  charts.LineRendererConfig(
+                      // ID used to link series to this renderer.
+                      customRendererId: 'customArea3',
+                      includeArea: false,
+                      stacked: true),
+                ],
+                defaultRenderer: charts.LineRendererConfig(includeArea: false),
+                animate: true,
+                primaryMeasureAxis: const charts.NumericAxisSpec(
+                  tickProviderSpec:
+                      charts.BasicNumericTickProviderSpec(desiredTickCount: 6),
+                ),
+                secondaryMeasureAxis: const charts.NumericAxisSpec(
+                  tickProviderSpec:
+                      charts.BasicNumericTickProviderSpec(desiredTickCount: 6),
+                ),
+                selectionModels: [
+                  charts.SelectionModelConfig(
+                    type: charts.SelectionModelType.info,
+                    changedListener: _onSelectionChanged,
+                  )
+                ],
+                behaviors: [
+                  charts.LinePointHighlighter(
+                      showHorizontalFollowLine:
+                          charts.LinePointHighlighterFollowLineType.none,
+                      showVerticalFollowLine:
+                          charts.LinePointHighlighterFollowLineType.nearest),
+                  charts.SelectNearest(
+                      eventTrigger: charts.SelectionTrigger.tapAndDrag)
+                ],
+              )),
+              const ProfileDataView(),
+            ]);
+            // ]);
           });
     });
   }
@@ -202,7 +189,7 @@ class _ProfileDataViewState extends State<ProfileDataView> {
                     doubleDataHeaderLineItem(
                       [
                         'Distance (${units['distance']!})',
-                        'Elevation (' + units['height']! + ')'
+                        'Elevation (${units['height']!})'
                       ],
                       [
                         Conversions.metersToDistance(
@@ -228,41 +215,13 @@ class _ProfileDataViewState extends State<ProfileDataView> {
                       ],
                     )
                   ])));
-      //   Expanded(
-      //   flex: 1,
-      //   child: GridView.count(
-      //     primary: false,
-      //     padding: const EdgeInsets.fromLTRB(8, 0, 8, 0),
-      //     crossAxisSpacing: 8,
-      //     mainAxisSpacing: 8,
-      //     childAspectRatio: MediaQuery.of(context).size.height / 300,
-      //     crossAxisCount: 2,
-      //     children: <Widget>[
-      //       gridViewItem(
-      //           '',
-      //           'Distance',
-      //           Conversions.metersToDistance(
-      //                   context, selectedSeries?.distance ?? 0)
-      //               .toStringAsFixed(2),
-      //           units['distance']!),
-      //       gridViewItem(
-      //           '',
-      //           'Elevation',
-      //           Conversions.metersToHeight(
-      //                   context, selectedSeries?.altitude ?? 0)
-      //               .toStringAsFixed(0),
-      //           units['height']!),
-      //       gridViewItem('', 'Heartrate',
-      //           (selectedSeries?.heartrate ?? 0).toString(), 'bpm'),
-      //       gridViewItem(
-      //           '', 'Power', (selectedSeries?.watts ?? 0).toString(), 'w'),
-      //       gridViewItem('', 'Cadence',
-      //           (selectedSeries?.cadence ?? 0).toString(), 'rpm'),
-      //       gridViewItem('', 'Grade',
-      //           (selectedSeries?.gradeSmooth ?? 0).toString(), '%'),
-      //     ],
-      //   ),
-      // );
     });
   }
+}
+
+class DistanceValue {
+  final double distance;
+  final double value;
+
+  DistanceValue(this.distance, this.value);
 }

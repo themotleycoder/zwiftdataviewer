@@ -5,7 +5,7 @@ const int defaultDataDate = 1388563200;
 
 enum HomeScreenTab { activities, stats, calendar, settings }
 
-enum ActivityDetailScreenTab { details, analysis, profile, sections }
+enum ActivityDetailScreenTab { details, analysis, sections }
 
 enum DateFilter { all, month, week, year }
 

@@ -5,6 +5,7 @@ class AppKeys {
   static const tabs = Key('__tabs__');
   static const activitiesTab = Key('__activitiesTab__');
   static const analysisTab = Key('__analysisTab__');
+  static const sectionsTab = Key('__sectionsTab__');
   static const statsTab = Key('__statsTab__');
   static const calendarTab = Key('__calendarTab__');
   static const settingsTab = Key('__settingsTab__');
