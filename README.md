@@ -1,16 +1,23 @@
 # zwiftdataviewer
 
-Zwift Data Viewer
+## Background
+
+I wanted to learn Flutter and decided to combine this opportunity with the chance to buuld an app that could better visaulize my stats from riding in Zwift. Unfortunelty Zwift has a closed API! However after some digging I realized I could pull the required data from Zwift via my Strava account, Strava has an API.
+
+## Pre-reqs
+- Strava developer account
+- Flutter/Dart installed
+- IDE to code in - I use Android Developer Studio because I am coding on linux and deploying to an Android device and so cant build a iOS version 
 
 ## Getting Started
+1. Pull the code down
+2. In the `project_root/lib` directory create a file called 'secrets.dart'
+3. Paste (or type) the following into the file:
 
-This project is a starting point for a Flutter application.
+```
+final String secret = "strava_secret";
+final String clientId = "strava_client";
+```
 
-A few resources to get you started if this is your first Flutter project:
-
-- [Lab: Write your first Flutter app](https://flutter.dev/docs/get-started/codelab)
-- [Cookbook: Useful Flutter samples](https://flutter.dev/docs/cookbook)
-
-For help getting started with Flutter, view our
-[online documentation](https://flutter.dev/docs), which offers tutorials,
-samples, guidance on mobile development, and a full API reference.
+4. Replace placeholders (strava_secret, strava_client) with your Strava developer API information
+5. Compile and run!
