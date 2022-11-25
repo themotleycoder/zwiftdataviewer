@@ -132,7 +132,7 @@ class _PrefetchImageDemoState extends State<PrefetchImageDemo> {
         itemBuilder: (context, index, index2) {
           return Center(
             child: FadeInImage.assetNetwork(
-                placeholder: 'assets/Zwift_logo.png', image: imagesUrls[index]),
+                placeholder: 'assets/zwiftdatalogo.png', image: imagesUrls[index]),
           );
         },
       ),

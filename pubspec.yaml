@@ -81,10 +81,8 @@ flutter:
      - assets/testjson/activity_test.json
      - assets/testjson/streams_test.json
      - assets/testjson/photos_test.json
-     - assets/Zwift_logo.png
-     - assets/background.png
-     - assets/worldcalendar.html
-     - assets/zdvlogo.png
+     - assets/zwiftdatalogo.png
+#     - assets/worldcalendar.html
 
   # An image asset can refer to one or more resolution-specific "variants", see
   # https://flutter.dev/assets-and-images/#resolution-aware.
