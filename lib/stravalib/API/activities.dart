@@ -126,8 +126,11 @@ abstract class Activities {
     globals.displayInfo('Entering getPhotosFromActivityById');
 
     if (header.containsKey('88') == false) {
-      final String reqActivity =
-          'https://www.strava.com/api/v3/activities/$id/photos';
+      String reqActivity =
+          'https://www.strava.com/api/v3/activities/$id/photos?size=1000&photo_sources=true';
+
+      //reqActivity = 'https://dgtzuqphqg23d.cloudfront.net/b8da1a6b-c6ac-47d5-9ee1-008ffe8d83e1-2048x1119.jpg';
+
       var rep = await http.get(Uri.parse(reqActivity), headers: header);
 
       if (rep.statusCode == 200) {

@@ -4,10 +4,10 @@ import 'package:provider/provider.dart';
 import 'package:zwiftdataviewer/models/ActivityDetailDataModel.dart';
 import 'package:zwiftdataviewer/stravalib/Models/activity.dart';
 import 'package:zwiftdataviewer/utils/conversions.dart';
+import 'package:zwiftdataviewer/widgets/shortdataanalysis.dart';
 
 import '../models/ConfigDataModel.dart';
 import '../utils/theme.dart';
-import '../widgets/listitemviews.dart';
 
 class WattsDataView extends StatefulWidget {
   const WattsDataView({super.key});
@@ -138,47 +138,7 @@ class _WattsProfileDataViewState extends State<WattsProfileDataView> {
     return Consumer<LapSelectDataModel>(builder: (context, myModel, child) {
       Laps? selectedSeries = myModel.selectedLap;
       Map<String, String> units = Conversions.units(context);
-      return Expanded(
-          flex: 1,
-          // child: Container(
-          //         // top: 100,
-          //         margin: const EdgeInsets.fromLTRB(0, 16, 0, 0),
-          child: ListView(
-              // padding: const EdgeInsets.all(8.0),
-              children: <Widget>[
-                doubleDataHeaderLineItem(
-                  ['Time', 'Avg Power (w)'],
-                  [
-                    Conversions.secondsToTime(selectedSeries?.elapsedTime ?? 0),
-                    (selectedSeries?.averageWatts ?? 0).toStringAsFixed(1),
-                  ],
-                ),
-                doubleDataHeaderLineItem(
-                  [
-                    'Avg Cadence (rpm)',
-                    'Avg Speed (${units['speed']!})',
-                  ],
-                  [
-                    (selectedSeries?.averageCadence ?? 0).toStringAsFixed(0),
-                    Conversions.mpsToMph(selectedSeries?.maxSpeed ?? 0)
-                        .toStringAsFixed(1),
-                  ],
-                ),
-                doubleDataHeaderLineItem(
-                  [
-                    'Distance (${units['distance']!})',
-                    'Elevation Gain (${units['height']!})'
-                  ],
-                  [
-                    Conversions.metersToDistance(
-                            context, selectedSeries?.distance ?? 0)
-                        .toStringAsFixed(1),
-                    Conversions.metersToHeight(
-                            context, selectedSeries?.totalElevationGain ?? 0)
-                        .toStringAsFixed(0)
-                  ],
-                ),
-              ]));
+      return ShortDataAnalysis(selectedSeries);
     });
   }
 }

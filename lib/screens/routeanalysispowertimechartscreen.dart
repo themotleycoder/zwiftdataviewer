@@ -7,6 +7,7 @@ import '../models/ConfigDataModel.dart';
 import '../stravalib/Models/activity.dart';
 import '../utils/conversions.dart';
 import '../utils/theme.dart';
+import '../widgets/shortdataanalysis.dart';
 
 class TimeDataView extends StatefulWidget {
   const TimeDataView({super.key});
@@ -62,7 +63,9 @@ class _TimeDataView extends State<TimeDataView> {
                     //   //   charts.SeriesDatumConfig<String>('power', '1')
                     //   // ])
                     // ],
-                  ))]);
+                  )),
+              PowerTimeProfileDataView()
+            ]);
         });
   }
 
@@ -121,6 +124,33 @@ class _TimeDataView extends State<TimeDataView> {
             }
           }))
     ];
+  }
+
+  _onSelectionChanged(charts.SelectionModel model) {
+    // int? selection = model.selectedDatum[0].index ?? 0;
+    // selectedLap = model.selectedSeries[0] as Laps;
+    // selectedLap = _laps![selection];
+    // Provider.of<LapSelectDataModel>(context, listen: false)
+    //     .setSelectedLap(selectedLap);
+  }
+
+}
+
+class PowerTimeProfileDataView extends StatefulWidget {
+  const PowerTimeProfileDataView({super.key});
+
+  @override
+  _PowerTimeProfileDataViewState createState() => _PowerTimeProfileDataViewState();
+}
+
+class _PowerTimeProfileDataViewState extends State<PowerTimeProfileDataView> {
+  @override
+  Widget build(BuildContext context) {
+    return Consumer<LapSelectDataModel>(builder: (context, myModel, child) {
+      Laps? selectedSeries = myModel.selectedLap;
+      Map<String, String> units = Conversions.units(context);
+      return ShortDataAnalysis(selectedSeries);
+    });
   }
 }
 
