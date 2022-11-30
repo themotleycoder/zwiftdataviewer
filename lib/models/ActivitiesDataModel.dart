@@ -166,3 +166,18 @@ class ActivitiesDataModel extends ChangeNotifier {
     return activity;
   }
 }
+
+class SummaryActivitySelectDataModel extends ChangeNotifier {
+  SummaryActivity? activity;
+
+  bool _isLoading = false;
+
+  bool get isLoading => _isLoading;
+
+  SummaryActivity? get selectedActivity => activity;
+
+  setSelectedActivity(SummaryActivity activity) {
+    this.activity = activity;
+    notifyListeners();
+  }
+}

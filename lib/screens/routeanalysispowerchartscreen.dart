@@ -71,7 +71,6 @@ class _WattsDataViewState extends State<WattsDataView> {
 
   _onSelectionChanged(charts.SelectionModel model) {
     int? selection = model.selectedDatum[0].index ?? 0;
-    // selectedLap = model.selectedSeries[0] as Laps;
     selectedLap = _laps![selection];
     Provider.of<LapSelectDataModel>(context, listen: false)
         .setSelectedLap(selectedLap);

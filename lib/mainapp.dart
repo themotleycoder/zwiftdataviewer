@@ -3,7 +3,8 @@ import 'package:provider/provider.dart';
 import 'package:zwiftdataviewer/models/ConfigDataModel.dart';
 import 'package:zwiftdataviewer/models/RouteDataModel.dart';
 import 'package:zwiftdataviewer/routes.dart';
-import 'package:zwiftdataviewer/screens/allstatsscreen.dart';
+import 'package:zwiftdataviewer/screens/allstatsrootscreen.dart';
+import 'package:zwiftdataviewer/screens/allstatsscreendistelev.dart';
 import 'package:zwiftdataviewer/screens/calendarscreen.dart';
 import 'package:zwiftdataviewer/screens/homescreen.dart';
 import 'package:zwiftdataviewer/screens/settingscreen.dart';
@@ -36,7 +37,7 @@ class ZwiftViewerApp extends StatelessWidget {
               //     ProviderLocalizations.of(context).appTitle,
               routes: {
                 AppRoutes.home: (context) => HomeScreen(),
-                AppRoutes.allStats: (context) => AllStatsScreen(),
+                AppRoutes.allStats: (context) => AllStatsRootScreen(),
                 AppRoutes.allStats: (context) => CalendarScreen(),
                 AppRoutes.settings: (context) => SettingsScreen(),
               },

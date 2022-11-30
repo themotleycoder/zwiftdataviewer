@@ -4,7 +4,6 @@ import 'package:zwiftdataviewer/appkeys.dart';
 import 'package:zwiftdataviewer/models/ActivitiesDataModel.dart';
 import 'package:zwiftdataviewer/models/ConfigDataModel.dart';
 // import 'package:zwiftdataviewer/models/RouteDataModel.dart';
-import 'package:zwiftdataviewer/screens/allstatsscreen.dart';
 import 'package:zwiftdataviewer/screens/calendarscreen.dart';
 import 'package:zwiftdataviewer/screens/settingscreen.dart';
 import 'package:zwiftdataviewer/secrets.dart';
@@ -16,6 +15,8 @@ import 'package:zwiftdataviewer/utils/repository/webrepository.dart';
 import 'package:zwiftdataviewer/utils/theme.dart';
 import 'package:zwiftdataviewer/widgets/activitieslistview.dart';
 import 'package:zwiftdataviewer/widgets/filterdatebutton.dart';
+
+import 'allstatsrootscreen.dart';
 
 class HomeScreen extends StatefulWidget {
   const HomeScreen();
@@ -83,7 +84,7 @@ class _HomeScreenState extends State<HomeScreen> {
                   builder: (context, tab, _) {
                     switch (tab) {
                       case HomeScreenTab.stats:
-                        return AllStatsScreen();
+                        return AllStatsRootScreen();
                       case HomeScreenTab.calendar:
                         return const CalendarScreen();
                       case HomeScreenTab.settings:

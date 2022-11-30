@@ -16,6 +16,8 @@ import 'package:zwiftdataviewer/utils/repository/filerepository.dart';
 import 'package:zwiftdataviewer/utils/repository/webrepository.dart';
 import 'package:zwiftdataviewer/utils/theme.dart';
 
+import '../models/ActivitiesDataModel.dart';
+
 class DetailScreen extends StatefulWidget {
   final int id;
   final Strava strava;
@@ -51,7 +53,9 @@ class _DetailScreenState extends State<DetailScreen> {
                 ..loadActivityPhotos(widget.id)),
           ChangeNotifierProvider(
               create: (context) => ActivitySelectDataModel()),
-          ChangeNotifierProvider(create: (context) => LapSelectDataModel())
+          ChangeNotifierProvider(create: (context) => LapSelectDataModel()),
+          ChangeNotifierProvider(
+              create: (context) => SummaryActivitySelectDataModel())
         ],
         child: Consumer<ActivityDetailDataModel>(
             builder: (context, myModel, child) {

@@ -13,7 +13,7 @@ class RouteDetailScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final Map<String, String> units = Conversions.units(context);
+    // final Map<String, String> units = Conversions.units(context);
     return Consumer<ActivityDetailDataModel>(
         builder: (context, myModel, child) {
       final DetailedActivity? activity = myModel.activityDetail;
@@ -25,14 +25,150 @@ class RouteDetailScreen extends StatelessWidget {
           ),
         );
       }
+      return OrientationBuilder(builder: (context, orientation) {
+        if (orientation == Orientation.portrait) {
+          return Stack(children: <Widget>[
+            PrefetchImageDemo(detailedActivity: activity!, key: key!),
+            RenderDetails(detailedActivity: activity!)
+          ]);
+        } else {
+          return Row(children: <Widget>[
+            PrefetchImageDemo(detailedActivity: activity!, key: key!),
+            RenderDetails(detailedActivity: activity!)
+          ]);
+        }
+        // });
+      });
+    });
+  }
+}
 
-      return Stack(children: <Widget>[
-        PrefetchImageDemo(detailedActivity: activity!, key: key!),
-        Container(
-            // top: 100,
+class PrefetchImageDemo extends StatefulWidget {
+  final DetailedActivity detailedActivity;
+
+  const PrefetchImageDemo({required Key key, required this.detailedActivity})
+      : super(key: key);
+
+  @override
+  State<StatefulWidget> createState() {
+    return _PrefetchImageDemoState(detailedActivity);
+  }
+}
+
+class _PrefetchImageDemoState extends State<PrefetchImageDemo> {
+  final DetailedActivity detailedActivity;
+
+  _PrefetchImageDemoState(this.detailedActivity);
+
+  int _current = 0;
+
+  @override
+  Widget build(BuildContext context) {
+    final List<String> imagesUrls = createUrls(
+        Provider.of<ActivityPhotosDataModel>(context, listen: true)
+            .activityPhotos);
+    return Expanded(
+        child: Stack(alignment: Alignment.bottomCenter, children: [
+      CarouselSlider.builder(
+        itemCount: imagesUrls.length,
+        options: CarouselOptions(
+            autoPlay: imagesUrls.length > 1 ? true : false,
+            // aspectRatio: 2.0,
+            viewportFraction: 1,
+            enlargeCenterPage: false,
+            onPageChanged: (index, reason) {
+              if (!mounted) {
+                setState(() {
+                  _current = index;
+                });
+              }
+            }),
+        itemBuilder: (context, index, index2) {
+          return Center(
+            child: FadeInImage.assetNetwork(
+                placeholder: 'assets/zwiftdatalogo.png',
+                image: imagesUrls[index]),
+          );
+        },
+      ),
+      Container(
+          padding: const EdgeInsets.fromLTRB(0, 0, 0, 24),
+          child: Row(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: imagesUrls.map((url) {
+              int index = imagesUrls.indexOf(url);
+              return Container(
+                width: 8.0,
+                height: 8.0,
+                margin:
+                    const EdgeInsets.symmetric(vertical: 10.0, horizontal: 2.0),
+                decoration: BoxDecoration(
+                  shape: BoxShape.circle,
+                  color: _current == index ? Colors.white : Colors.white54,
+                ),
+              );
+            }).toList(),
+          )),
+    ]));
+  }
+
+  List<String> createUrls(List<PhotoActivity>? activityPhotos) {
+    List<String> imagesUrls = [
+      detailedActivity.photos!.primary!.urls!.s600.toString()
+    ];
+
+    if (activityPhotos != null && activityPhotos.length > 1) {
+      imagesUrls = [];
+      for (PhotoActivity image in activityPhotos) {
+        String str = image.urls!["1000"];
+        imagesUrls
+            .add(str); //.substring(0, str.lastIndexOf('-')) + "-768x419.jpg");
+      }
+    }
+
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      for (var imageUrl in imagesUrls) {
+        precacheImage(NetworkImage(imageUrl), context);
+      }
+    });
+
+    if (mounted) {
+      setState(() {});
+    }
+    return imagesUrls;
+  }
+}
+
+class RenderDetails extends StatefulWidget {
+  final DetailedActivity detailedActivity;
+
+  const RenderDetails({required this.detailedActivity});
+
+  // : super(key: key);
+
+  @override
+  State<StatefulWidget> createState() {
+    return _RenderDetailsState(detailedActivity);
+  }
+}
+
+class _RenderDetailsState extends State<RenderDetails> {
+  final DetailedActivity activity;
+
+  _RenderDetailsState(this.activity);
+
+  int _current = 0;
+
+  @override
+  Widget build(BuildContext context) {
+    final Map<String, String> units = Conversions.units(context);
+
+    return Expanded(
+        child: Container(
+// top: 100,
             margin: const EdgeInsets.fromLTRB(0, 240, 0, 0),
             child: ListView(
-              // padding: const EdgeInsets.all(8.0),
+// padding: const EdgeInsets.all(8.0),
               children: <Widget>[
                 doubleDataHeaderLineItem(
                   [
@@ -85,99 +221,6 @@ class RouteDetailScreen extends StatelessWidget {
                     ],
                     'mph'),
               ],
-            )),
-      ]);
-      // });
-    });
-  }
-}
-
-class PrefetchImageDemo extends StatefulWidget {
-  final DetailedActivity detailedActivity;
-
-  const PrefetchImageDemo({required Key key, required this.detailedActivity})
-      : super(key: key);
-
-  @override
-  State<StatefulWidget> createState() {
-    return _PrefetchImageDemoState(detailedActivity);
-  }
-}
-
-class _PrefetchImageDemoState extends State<PrefetchImageDemo> {
-  final DetailedActivity detailedActivity;
-
-  _PrefetchImageDemoState(this.detailedActivity);
-
-  int _current = 0;
-
-  @override
-  Widget build(BuildContext context) {
-    final List<String> imagesUrls = createUrls(
-        Provider.of<ActivityPhotosDataModel>(context, listen: true)
-            .activityPhotos);
-    return Stack(alignment: Alignment.bottomCenter, children: [
-      CarouselSlider.builder(
-        itemCount: imagesUrls.length,
-        options: CarouselOptions(
-            autoPlay: imagesUrls.length > 1 ? true : false,
-            // aspectRatio: 2.0,
-            viewportFraction: 1,
-            enlargeCenterPage: false,
-            onPageChanged: (index, reason) {
-              setState(() {
-                _current = index;
-              });
-            }),
-        itemBuilder: (context, index, index2) {
-          return Center(
-            child: FadeInImage.assetNetwork(
-                placeholder: 'assets/zwiftdatalogo.png', image: imagesUrls[index]),
-          );
-        },
-      ),
-      Container(
-          padding: const EdgeInsets.fromLTRB(0, 0, 0, 24),
-          child: Row(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: imagesUrls.map((url) {
-              int index = imagesUrls.indexOf(url);
-              return Container(
-                width: 8.0,
-                height: 8.0,
-                margin:
-                    const EdgeInsets.symmetric(vertical: 10.0, horizontal: 2.0),
-                decoration: BoxDecoration(
-                  shape: BoxShape.circle,
-                  color: _current == index ? Colors.white : Colors.white54,
-                ),
-              );
-            }).toList(),
-          )),
-    ]);
-  }
-
-  List<String> createUrls(List<PhotoActivity>? activityPhotos) {
-    List<String> imagesUrls = [
-      detailedActivity.photos!.primary!.urls!.s600.toString()
-    ];
-
-    if (activityPhotos != null && activityPhotos.length > 1) {
-      imagesUrls = [];
-      for (PhotoActivity image in activityPhotos) {
-        String str = image.urls!["1000"];
-        imagesUrls
-            .add(str); //.substring(0, str.lastIndexOf('-')) + "-768x419.jpg");
-      }
-    }
-
-    WidgetsBinding.instance.addPostFrameCallback((_) {
-      for (var imageUrl in imagesUrls) {
-        precacheImage(NetworkImage(imageUrl), context);
-      }
-    });
-
-    setState(() {});
-    return imagesUrls;
+            )));
   }
 }

@@ -1,4 +1,4 @@
-import 'package:charts_flutter/flutter.dart' as charts;
+    import 'package:charts_flutter/flutter.dart' as charts;
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:zwiftdataviewer/models/ActivitiesDataModel.dart';
@@ -7,17 +7,19 @@ import 'package:zwiftdataviewer/utils/conversions.dart';
 import 'package:zwiftdataviewer/utils/theme.dart';
 import 'package:zwiftdataviewer/widgets/listitemviews.dart' as list_item_views;
 
-class AllStatsScreen extends StatelessWidget {
+class AllStatsScreenDistElev extends StatelessWidget {
+
   static const secondaryMeasureAxisId = 'secondaryMeasureAxisId';
 
-  const AllStatsScreen({Key? key}) : super(key: key);
+  const AllStatsScreenDistElev({Key? key}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
-    Map<String, double> summaryData;
-    return Selector<ActivitiesDataModel, List<SummaryActivity>>(
-        selector: (_, model) => model.dateFilteredActivities,
-        builder: (context, activities, _) {
+
+    return Consumer<ActivitiesDataModel>(
+        builder: (context, myModel, child) {
+          List<SummaryActivity> activities = myModel.activities??[];
+          Map<String, double> summaryData;
           summaryData = SummaryData.createSummaryData(activities);
           Map<String, String> units = Conversions.units(context);
           final List<charts.Series<dynamic, String>> seriesList =
