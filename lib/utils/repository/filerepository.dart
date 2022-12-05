@@ -216,7 +216,7 @@ class FileRepository
       var doc = Parser.parse(response.body);
       var vals = doc.getElementsByClassName("wpv-loop js-wpv-loop")[0].children;
       for (dynamic val in vals) {
-        int index = 0;
+        int index = 1;
         String routeName = "NA";
         String url = val.children[index].innerHtml ?? "";
         try {
@@ -224,8 +224,10 @@ class FileRepository
               url.substring(url.indexOf('>') + 1, url.indexOf('</a>')) ?? "";
         } catch (e) {
           print('html parse error - scraping route data');
-          index += 1;
+          index -= 1;
           url = val.children[index].innerHtml ?? "";
+          routeName =
+              url.substring(url.indexOf('>') + 1, url.indexOf('</a>')) ?? "";
         }
         url = url.substring(url.indexOf('https'), url.indexOf('/">')) ?? "";
         final String world = val.children[index + 1].innerHtml ?? "";
@@ -233,7 +235,7 @@ class FileRepository
         final String altitude = val.children[index + 3].innerHtml ?? "";
         final String leadin = val.children[index + 4].innerHtml ?? "";
         final String eventOnly =
-            val.children[index + 6].innerHtml ?? val.children[index + 7] ?? "";
+            val.children[index + 5].innerHtml ?? val.children[index + 7] ?? "";
         final int id = worldLookupByName[world] ?? 0;
         final RouteData route =
             RouteData(url, world, distance, altitude, eventOnly, routeName, id);
