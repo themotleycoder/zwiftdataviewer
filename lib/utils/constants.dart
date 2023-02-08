@@ -10,7 +10,7 @@ enum ActivityDetailScreenTab { details, analysis, sections }
 enum DateFilter { all, month, week, year }
 
 TextStyle appBarTextStyle =
-    const TextStyle(inherit: true, color: zdvDrkBlue, fontSize: 16.0);
+    const TextStyle(inherit: true, color: Colors.white, fontSize: 16.0);
 TextStyle headerTextStyle =
     const TextStyle(inherit: true, fontSize: 16.0, color: Colors.blueGrey);
 TextStyle bodyTextStyleComplete = const TextStyle(

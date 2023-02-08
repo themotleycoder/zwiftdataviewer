@@ -18,29 +18,61 @@ class ZwiftViewerApp extends StatelessWidget {
     required this.configRepository,
   });
 
+
   @override
   Widget build(BuildContext context) {
-    return ListenableProvider<ConfigDataModel>(
-        create: (context) =>
-            ConfigDataModel(repository: FileRepository())..loadConfig(),
-        child: ListenableProvider<RouteDataModel>(
-            create: (context) =>
-                RouteDataModel(repository: FileRepository())..loadRouteData(),
-            child: MaterialApp(
-              title: 'Zwift Data Viewer',
-              theme: myTheme,
-              // localizationsDelegates: [
-              //   ArchSampleLocalizationsDelegate(),
-              //   ProviderLocalizationsDelegate(),
-              // ],
-              // onGenerateTitle: (context) =>
-              //     ProviderLocalizations.of(context).appTitle,
-              routes: {
-                AppRoutes.home: (context) => HomeScreen(),
-                AppRoutes.allStats: (context) => AllStatsRootScreen(),
-                AppRoutes.allStats: (context) => CalendarScreen(),
-                AppRoutes.settings: (context) => SettingsScreen(),
-              },
-            )));
+    return MultiProvider(
+        providers: [
+          ChangeNotifierProvider(
+              create: (context) =>
+                  ConfigDataModel(repository: configRepository)..loadConfig()),
+          ChangeNotifierProvider(
+              create: (context) => RouteDataModel(repository: FileRepository())
+                ..loadRouteData()),
+        ],
+        child: MaterialApp(
+          title: 'Zwift Data Viewer',
+          theme: myTheme,
+          // localizationsDelegates: [
+          //   ArchSampleLocalizationsDelegate(),
+          //   ProviderLocalizationsDelegate(),
+          // ],
+          // onGenerateTitle: (context) =>
+          //     ProviderLocalizations.of(context).appTitle,
+          routes: {
+            AppRoutes.home: (context) => HomeScreen(),
+            AppRoutes.allStats: (context) => AllStatsRootScreen(),
+            AppRoutes.allStats: (context) => CalendarScreen(),
+            AppRoutes.settings: (context) => SettingsScreen(),
+          },
+        ));
   }
 }
+
+
+  // @override
+  // Widget build(BuildContext context) {
+  //   return ListenableProvider<ConfigDataModel>(
+  //       create: (context) =>
+  //           ConfigDataModel(repository: FileRepository())..loadConfig(),
+  //       child: ListenableProvider<RouteDataModel>(
+  //           create: (context) =>
+  //               RouteDataModel(repository: FileRepository())..loadRouteData(),
+  //           child: MaterialApp(
+  //             title: 'Zwift Data Viewer',
+  //             theme: myTheme,
+  //             // localizationsDelegates: [
+  //             //   ArchSampleLocalizationsDelegate(),
+  //             //   ProviderLocalizationsDelegate(),
+  //             // ],
+  //             // onGenerateTitle: (context) =>
+  //             //     ProviderLocalizations.of(context).appTitle,
+  //             routes: {
+  //               AppRoutes.home: (context) => HomeScreen(),
+  //               AppRoutes.allStats: (context) => AllStatsRootScreen(),
+  //               AppRoutes.allStats: (context) => CalendarScreen(),
+  //               AppRoutes.settings: (context) => SettingsScreen(),
+  //             },
+  //           )));
+  // }
+// }

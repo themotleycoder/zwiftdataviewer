@@ -86,7 +86,7 @@ class ActivitiesDataModel extends ChangeNotifier {
 
       final int beforeDate = (DateTime.now().millisecondsSinceEpoch);
       final int afterDate = constants.defaultDataDate;
-      //configData.lastSyncDate;
+      configData.lastSyncDate;
 
       if (!isInDebug) {
         webRepository!

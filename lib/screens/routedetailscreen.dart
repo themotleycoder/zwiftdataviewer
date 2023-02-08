@@ -6,6 +6,7 @@ import 'package:zwiftdataviewer/models/ActivityDetailDataModel.dart';
 import 'package:zwiftdataviewer/models/ActivityPhotosDataModel.dart';
 import 'package:zwiftdataviewer/stravalib/Models/activity.dart';
 import 'package:zwiftdataviewer/utils/conversions.dart';
+import 'package:zwiftdataviewer/utils/theme.dart';
 import 'package:zwiftdataviewer/widgets/ListItemViews.dart';
 
 class RouteDetailScreen extends StatelessWidget {
@@ -27,7 +28,7 @@ class RouteDetailScreen extends StatelessWidget {
       }
       return OrientationBuilder(builder: (context, orientation) {
         if (orientation == Orientation.portrait) {
-          return Stack(children: <Widget>[
+          return Column(children: <Widget>[
             PrefetchImageDemo(detailedActivity: activity!, key: key!),
             RenderDetails(detailedActivity: activity!)
           ]);
@@ -67,15 +68,17 @@ class _PrefetchImageDemoState extends State<PrefetchImageDemo> {
     final List<String> imagesUrls = createUrls(
         Provider.of<ActivityPhotosDataModel>(context, listen: true)
             .activityPhotos);
-    return Expanded(
-        child: Stack(alignment: Alignment.bottomCenter, children: [
-      CarouselSlider.builder(
+    return Container(
+      color: zdvMidBlue,
+      margin: const EdgeInsets.fromLTRB(0, 0, 0, 5.0),
+      child: CarouselSlider.builder(
         itemCount: imagesUrls.length,
         options: CarouselOptions(
             autoPlay: imagesUrls.length > 1 ? true : false,
-            // aspectRatio: 2.0,
-            viewportFraction: 1,
-            enlargeCenterPage: false,
+            aspectRatio: 1.8,
+            padEnds: false,
+            viewportFraction: 1.0,
+            enlargeCenterPage: true,
             onPageChanged: (index, reason) {
               if (!mounted) {
                 setState(() {
@@ -90,26 +93,8 @@ class _PrefetchImageDemoState extends State<PrefetchImageDemo> {
                 image: imagesUrls[index]),
           );
         },
-      ),
-      Container(
-          padding: const EdgeInsets.fromLTRB(0, 0, 0, 24),
-          child: Row(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: imagesUrls.map((url) {
-              int index = imagesUrls.indexOf(url);
-              return Container(
-                width: 8.0,
-                height: 8.0,
-                margin:
-                    const EdgeInsets.symmetric(vertical: 10.0, horizontal: 2.0),
-                decoration: BoxDecoration(
-                  shape: BoxShape.circle,
-                  color: _current == index ? Colors.white : Colors.white54,
-                ),
-              );
-            }).toList(),
-          )),
-    ]));
+      )
+    );
   }
 
   List<String> createUrls(List<PhotoActivity>? activityPhotos) {
@@ -164,9 +149,9 @@ class _RenderDetailsState extends State<RenderDetails> {
     final Map<String, String> units = Conversions.units(context);
 
     return Expanded(
-        child: Container(
+        // child: Container(
 // top: 100,
-            margin: const EdgeInsets.fromLTRB(0, 240, 0, 0),
+//             margin: const EdgeInsets.fromLTRB(0, 230, 0, 0),
             child: ListView(
 // padding: const EdgeInsets.all(8.0),
               children: <Widget>[
@@ -221,6 +206,6 @@ class _RenderDetailsState extends State<RenderDetails> {
                     ],
                     'mph'),
               ],
-            )));
+            ));//);
   }
 }

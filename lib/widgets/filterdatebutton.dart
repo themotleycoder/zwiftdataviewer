@@ -25,7 +25,7 @@ class FilterDateButton extends StatelessWidget {
               initialValue: model.dateFilter,
               onSelected: (dateFilter) => model.dateFilter = dateFilter,
               itemBuilder: (BuildContext context) => _items(context, model),
-              icon: const Icon(Icons.filter_list),
+              icon: const Icon(Icons.filter_list, color: Colors.white),
             );
           },
         ),

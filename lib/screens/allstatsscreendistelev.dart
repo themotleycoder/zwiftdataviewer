@@ -1,4 +1,4 @@
-    import 'package:charts_flutter/flutter.dart' as charts;
+import 'package:charts_flutter/flutter.dart' as charts;
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:zwiftdataviewer/models/ActivitiesDataModel.dart';
@@ -6,21 +6,21 @@ import 'package:zwiftdataviewer/stravalib/Models/activity.dart';
 import 'package:zwiftdataviewer/utils/conversions.dart';
 import 'package:zwiftdataviewer/utils/theme.dart';
 import 'package:zwiftdataviewer/widgets/listitemviews.dart' as list_item_views;
+import '../utils/Stats.dart' as stats;
 
 class AllStatsScreenDistElev extends StatelessWidget {
 
+  const AllStatsScreenDistElev({super.key});
   static const secondaryMeasureAxisId = 'secondaryMeasureAxisId';
-
-  const AllStatsScreenDistElev({Key? key}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
-
-    return Consumer<ActivitiesDataModel>(
-        builder: (context, myModel, child) {
-          List<SummaryActivity> activities = myModel.activities??[];
+    final model = Provider.of<ActivitiesDataModel>(context);
+    return Selector<ActivitiesDataModel, List<SummaryActivity>>(
+        selector: (_, model) => model.dateFilteredActivities,
+        builder: (context, activities, child) {
           Map<String, double> summaryData;
-          summaryData = SummaryData.createSummaryData(activities);
+          summaryData = stats.SummaryData.createSummaryData(activities);
           Map<String, String> units = Conversions.units(context);
           final List<charts.Series<dynamic, String>> seriesList =
               generateChartData(context, units, activities);
@@ -45,13 +45,15 @@ class AllStatsScreenDistElev extends StatelessWidget {
                           ["Total", "Avg", "Longest"],
                           [
                             Conversions.metersToDistance(context,
-                                    summaryData[StatsType.TotalDistance]!)
+                                    summaryData[stats.StatsType.TotalDistance]!)
                                 .toStringAsFixed(1),
                             Conversions.metersToDistance(context,
-                                    summaryData[StatsType.AvgDistance]!)
+                                    summaryData[stats.StatsType.AvgDistance]!)
                                 .toStringAsFixed(1),
-                            Conversions.metersToDistance(context,
-                                    summaryData[StatsType.LongestDistance]!)
+                            Conversions.metersToDistance(
+                                    context,
+                                    summaryData[
+                                        stats.StatsType.LongestDistance]!)
                                 .toStringAsFixed(1)
                           ],
                           units["distance"]!),
@@ -61,13 +63,15 @@ class AllStatsScreenDistElev extends StatelessWidget {
                         ["Total", "Avg", "Highest"],
                         [
                           Conversions.metersToHeight(context,
-                                  summaryData[StatsType.TotalElevation]!)
-                              .toStringAsFixed(1),
-                          Conversions.metersToHeight(
-                                  context, summaryData[StatsType.AvgElevation]!)
+                                  summaryData[stats.StatsType.TotalElevation]!)
                               .toStringAsFixed(1),
                           Conversions.metersToHeight(context,
-                                  summaryData[StatsType.HighestElevation]!)
+                                  summaryData[stats.StatsType.AvgElevation]!)
+                              .toStringAsFixed(1),
+                          Conversions.metersToHeight(
+                                  context,
+                                  summaryData[
+                                      stats.StatsType.HighestElevation]!)
                               .toStringAsFixed(1)
                         ],
                         units['height']!,
@@ -146,42 +150,4 @@ class YearlyTotals {
   final double value;
 
   YearlyTotals(this.year, this.value);
-}
-
-class StatsType {
-  static const String TotalDistance = "TotalDistance";
-  static const String AvgDistance = "AvgDistance";
-  static const String TotalElevation = "TotalElevation";
-  static const String AvgElevation = "AvgElevation";
-  static const String LongestDistance = "LongestDistance";
-  static const String HighestElevation = "HighestElevation";
-}
-
-class SummaryData {
-  static Map<String, double> createSummaryData(
-      List<SummaryActivity> activities) {
-    Map<String, double> data = <String, double>{};
-    double distance = 0.0;
-    double elevation = 0.0;
-    double longestDistance = 0.0;
-    double highestElevation = 0.0;
-    for (var activity in activities) {
-      distance += activity.distance!;
-      elevation += activity.totalElevationGain!;
-      if (activity.distance! > longestDistance) {
-        longestDistance = activity.distance!;
-      }
-      if (activity.totalElevationGain! > highestElevation) {
-        highestElevation = activity.totalElevationGain!;
-      }
-    }
-    data[StatsType.TotalDistance] = distance;
-    data[StatsType.AvgDistance] = distance / activities.length;
-    data[StatsType.TotalElevation] = elevation;
-    data[StatsType.AvgElevation] = elevation / activities.length;
-    data[StatsType.LongestDistance] = longestDistance;
-    data[StatsType.HighestElevation] = highestElevation;
-
-    return data;
-  }
 }

@@ -29,7 +29,7 @@ class _AllStatsRootScreenState extends State<AllStatsRootScreen>
         child: Selector<ActivitiesDataModel, List<SummaryActivity>>(
             selector: (_, model) => model.dateFilteredActivities,
             builder: (context, activities, _) {
-              // summaryData = SummaryData.createSummaryData(activities);
+              //summaryData = stats.SummaryData.createSummaryData(activities);
               return Column(children: <Widget>[
                 TabBar(
                   indicatorColor: Colors.transparent,
@@ -54,7 +54,7 @@ class _AllStatsRootScreenState extends State<AllStatsRootScreen>
                 ),
                 Expanded(
                     child: Padding(
-                  padding: EdgeInsets.fromLTRB(4, 0, 4, 4),
+                  padding: const EdgeInsets.fromLTRB(4, 0, 4, 4),
                   child: TabBarView(
                     controller: controller,
                     children: const <Widget>[

@@ -57,7 +57,7 @@ class _HomeScreenState extends State<HomeScreen> {
                 "Zwift Data Viewer",
                 style: appBarTextStyle,
               ),
-              backgroundColor: Colors.transparent,
+              backgroundColor: zdvMidBlue,
               elevation: 0.0,
               actions: getActions()),
           body: Stack(children: [
@@ -84,7 +84,7 @@ class _HomeScreenState extends State<HomeScreen> {
                   builder: (context, tab, _) {
                     switch (tab) {
                       case HomeScreenTab.stats:
-                        return AllStatsRootScreen();
+                        return const AllStatsRootScreen();
                       case HomeScreenTab.calendar:
                         return const CalendarScreen();
                       case HomeScreenTab.settings:
@@ -164,7 +164,7 @@ class _HomeScreenState extends State<HomeScreen> {
                 context: context,
                 delegate: ActivitySearch(myModel.activities!));
           },
-          icon: const Icon(Icons.search),
+          icon: const Icon(Icons.search, color: Colors.white),
         );
       }));
     }

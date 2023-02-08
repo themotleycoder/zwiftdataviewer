@@ -66,8 +66,14 @@ class _DetailScreenState extends State<DetailScreen> {
                   : Text(
                       "${myModel.activityDetail!.name!} (${DateFormat.yMd().format(DateTime.parse(myModel.activityDetail!.startDate!))})",
                       style: constants.appBarTextStyle),
-              backgroundColor: Colors.transparent,
+              backgroundColor: zdvMidBlue,
               elevation: 0.0,
+              leading: IconButton(
+              icon: Icon(Icons.arrow_back, color: Colors.white),
+                onPressed: () {
+                  Navigator.pop(context);
+                },
+              )
               // actions: getActions()
             ),
             body: Selector<ActivityDetailDataModel, ActivityDetailDataModel>(
@@ -139,8 +145,3 @@ class _DetailScreenState extends State<DetailScreen> {
     setState(() {});
   }
 }
-// b8da1a6b-c6ac-47d5-9ee1-008ffe8d83e1
-//https://dgtzuqphqg23d.cloudfront.net/b8da1a6b-c6ac-47d5-9ee1-008ffe8d83e1-2048x1119.jpg
-//https://dgtzuqphqg23d.cloudfront.net/36g6Y0M5YBcZzgdNu7-B0fK1jLFIn54WNCQrQ7I05_4-2048x1119.jpg
-//https://dgtzuqphqg23d.cloudfront.net/ZMbbz70STfig6elMyDqL6iJQc70DTbkjLlxL_ZBngyw-2048x1119.jpg
-//https://dgtzuqphqg23d.cloudfront.net/36g6Y0M5YBcZzgdNu7-B0fK1jLFIn54WNCQrQ7I05_4-2048x1119.jpg

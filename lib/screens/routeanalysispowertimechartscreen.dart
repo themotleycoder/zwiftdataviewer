@@ -40,24 +40,6 @@ class _TimeDataView extends State<TimeDataView> {
                   child: charts.PieChart(
                     seriesList2,
                     animate: true,
-                    // defaultRenderer: charts.BarRendererConfig(
-                    //     groupingType: charts.BarGroupingType.grouped),
-                    // customSeriesRenderers: [
-                    //   charts.LineRendererConfig(
-                    //     // ID used to link series to this renderer.
-                    //       customRendererId: 'customLine')
-                    // ],
-                    // domainAxis: const charts.OrdinalAxisSpec(
-                    //   // Make sure that we draw the domain axis line.
-                    //     showAxisLine: true,
-                    //     // But don't draw anything else.
-                    //     renderSpec: charts.NoneRenderSpec()),
-                    // selectionModels: [
-                    //   charts.SelectionModelConfig(
-                    //     type: charts.SelectionModelType.info,
-                    //     changedListener: _onSelectionChanged,
-                    //   )
-                    // ],
                     // behaviors: [
                     //   // charts.InitialSelection(selectedDataConfig: [
                     //   //   charts.SeriesDatumConfig<String>('power', '1')

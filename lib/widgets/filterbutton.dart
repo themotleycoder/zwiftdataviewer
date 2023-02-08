@@ -25,7 +25,7 @@ class FilterButton extends StatelessWidget {
               initialValue: model.filter,
               onSelected: (filter) => model.filter = filter,
               itemBuilder: (BuildContext context) => _items(context, model),
-              icon: const Icon(Icons.filter_list),
+              icon: const Icon(Icons.filter_list, color: Colors.white),
             );
           },
         ),
