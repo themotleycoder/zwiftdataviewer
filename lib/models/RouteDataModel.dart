@@ -74,10 +74,10 @@ class RouteDataModel extends ChangeNotifier {
   List<RouteData> get filteredRoutes {
     return _routeData![_worldFilter]!.where((route) {
       switch (_routeFilter) {
-        case routeType.eventonly:
-          return route.eventOnly?.toLowerCase() == "event only";
-        case routeType.basiconly:
-          return route.eventOnly?.toLowerCase() != "event only";
+        // case routeType.eventonly:
+        //   return route.eventOnly?.toLowerCase() == "event only";
+        // case routeType.basiconly:
+        //   return route.eventOnly?.toLowerCase() != "event only";
         default:
           return true;
       }

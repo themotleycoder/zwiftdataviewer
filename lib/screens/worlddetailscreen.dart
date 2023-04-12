@@ -1,6 +1,5 @@
 import 'package:expandable/expandable.dart';
 import 'package:flutter/material.dart';
-//import 'package:flutter_svg/avd.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:provider/provider.dart';
 import 'package:url_launcher/url_launcher.dart';
@@ -9,7 +8,6 @@ import 'package:zwiftdataviewer/models/RouteDataModel.dart';
 import 'package:zwiftdataviewer/models/WorldDataModel.dart';
 import 'package:zwiftdataviewer/utils/constants.dart' as Constants;
 import 'package:zwiftdataviewer/utils/theme.dart';
-// import 'package:zwiftdataviewer/utils/conversions.dart';
 import 'package:zwiftdataviewer/utils/worlddata.dart';
 
 double rowHeight = 40;
@@ -73,6 +71,10 @@ class ExpandingCard extends StatefulWidget {
 class _ExpandingCardState extends State<ExpandingCard> {
   @override
   Widget build(BuildContext context) {
+    String routeName = widget._routeData.routeName ?? "";
+    if (widget._routeData.eventOnly == "Event Only"){
+      routeName = "$routeName (Event Only)";
+    }
     return ExpandableNotifier(
         child: Padding(
       padding: const EdgeInsets.fromLTRB(8.0, 4, 8.0, 4),
@@ -93,7 +95,7 @@ class _ExpandingCardState extends State<ExpandingCard> {
                 header: Padding(
                     padding: const EdgeInsets.fromLTRB(16.0, 8.0, 16.0, 4.0),
                     child: Text(
-                      widget._routeData.routeName ?? "",
+                      routeName,
                       // style: widget._routeData!=null?widget._routeData.completed
                       //     Constants.bodyTextStyleComplete
                       //     : Constants.bodyTextStyle,
