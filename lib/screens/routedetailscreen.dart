@@ -105,7 +105,7 @@ class _PrefetchImageDemoState extends State<PrefetchImageDemo> {
     if (activityPhotos != null && activityPhotos.length > 1) {
       imagesUrls = [];
       for (PhotoActivity image in activityPhotos) {
-        String str = image.urls!["1000"];
+        String str = image.urls!["1800"]??image.urls!["1000"]??image.urls!["600"]??image.urls!["200"]??image.urls!["100"]??image.urls!["50"]??image.urls!["25"]??image.urls!["10"]??image.urls!["5"]??image.urls!["3"]??image.urls!["2"]??image.urls!["1"]??image.urls!["0"]??"";
         imagesUrls
             .add(str); //.substring(0, str.lastIndexOf('-')) + "-768x419.jpg");
       }
