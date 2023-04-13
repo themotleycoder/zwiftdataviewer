@@ -1,5 +1,3 @@
-import 'dart:ffi';
-
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:syncfusion_flutter_charts/charts.dart';
@@ -17,7 +15,6 @@ class AllStatsScreenDistElev extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final model = Provider.of<ActivitiesDataModel>(context);
     return Selector<ActivitiesDataModel, List<SummaryActivity>>(
         selector: (_, model) => model.dateFilteredActivities,
         builder: (context, activities, child) {
@@ -33,7 +30,7 @@ class AllStatsScreenDistElev extends StatelessWidget {
                 Expanded(
                     child: Padding(
                   padding: const EdgeInsets.all(8.0),
-                  child: _buildMultipleAxisLineChart(context, units, activities),//charts.BarChart(seriesList),
+                  child: buildChart(context, units, activities),//charts.BarChart(seriesList),
                 )),
                 Container(
                   padding: const EdgeInsets.fromLTRB(4, 0, 4, 0),
@@ -84,10 +81,11 @@ class AllStatsScreenDistElev extends StatelessWidget {
   }
 
   /// Returns the chart with multiple axes.
-  SfCartesianChart _buildMultipleAxisLineChart(BuildContext? context,
+  SfCartesianChart buildChart(BuildContext? context,
       Map<String, String> units, List<SummaryActivity> chartData) {
     late bool isCardView = true;
     return SfCartesianChart(
+      // plotAreaBorderWidth: 0,
       // title: ChartTitle(
       //     text: 'chart test'),
       legend: Legend(isVisible: !isCardView),
@@ -95,44 +93,52 @@ class AllStatsScreenDistElev extends StatelessWidget {
       /// API for multiple axis. It can returns the various axis to the chart.
       axes: <ChartAxis>[
         NumericAxis(
-            opposedPosition: true,
-            name: 'yAxis1',
-            majorGridLines: const MajorGridLines(width: 0),
-            labelFormat: '{value}',
-            minimum: 0,
+          opposedPosition: true,
+          name: 'yAxis1',
+          axisLine: const AxisLine(width: 0),
+          majorGridLines: const MajorGridLines(width: 0),
+          // minorGridLines: const MinorGridLines(width: 0),
+          majorTickLines: const MajorTickLines(width: 0),
+          labelFormat: '{value}',
+          minimum: 0,
         )
       ],
-      primaryXAxis: CategoryAxis(),
+      primaryXAxis: CategoryAxis(majorGridLines: const MajorGridLines(width: 0),),
       primaryYAxis: NumericAxis(
-        majorGridLines: const MajorGridLines(width: 0),
+        axisLine: const AxisLine(width: 0),
+        //majorGridLines: const MajorGridLines(width: 0),
+        // minorGridLines: const MinorGridLines(width: 0),
+        majorTickLines: const MajorTickLines(width: 0),
         opposedPosition: false,
         labelFormat: '{value}',
         minimum: 0,
       ),
-      series: _getMultipleAxisLineSeries( context, units, chartData),
+      series: buildDataSeries( context, units, chartData),
       tooltipBehavior: TooltipBehavior(enable: true),
     );
   }
 
   /// Returns the list of chart series which need to
   /// render on the multiple axes chart.
-  List<ChartSeries<YearlyTotals, String>> _getMultipleAxisLineSeries(BuildContext? context,
+  List<ChartSeries<YearlyTotals, String>> buildDataSeries(BuildContext? context,
       Map<String, String> units,
       List<SummaryActivity> activities) {
     var chartData = generateChartData(context, units, activities);
     return <ChartSeries<YearlyTotals, String>>[
       ColumnSeries<YearlyTotals, String>(
-          dataSource: chartData!,
+          dataSource: chartData,
           xValueMapper: (YearlyTotals sales, _) => sales.year as String,
           yValueMapper: (YearlyTotals sales, _) => sales.distance,
           name: 'Distance',
+          borderRadius: BorderRadius.circular(2),
           color: zdvMidBlue),
       ColumnSeries<YearlyTotals, String>(
-          dataSource: chartData!,
+          dataSource: chartData,
           yAxisName: 'yAxis1',
           xValueMapper: (YearlyTotals sales, _) => sales.year as String,
           yValueMapper: (YearlyTotals sales, _) => sales.elevation,
           name: 'Elevation',
+          borderRadius: BorderRadius.circular(2),
       color: zdvMidGreen)
     ];
   }

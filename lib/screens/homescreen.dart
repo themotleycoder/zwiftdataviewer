@@ -3,7 +3,7 @@ import 'package:provider/provider.dart';
 import 'package:zwiftdataviewer/appkeys.dart';
 import 'package:zwiftdataviewer/models/ActivitiesDataModel.dart';
 import 'package:zwiftdataviewer/models/ConfigDataModel.dart';
-// import 'package:zwiftdataviewer/models/RouteDataModel.dart';
+import 'package:zwiftdataviewer/screens/allstatsrootscreen.dart';
 import 'package:zwiftdataviewer/screens/calendarscreen.dart';
 import 'package:zwiftdataviewer/screens/settingscreen.dart';
 import 'package:zwiftdataviewer/secrets.dart';
@@ -15,8 +15,6 @@ import 'package:zwiftdataviewer/utils/repository/webrepository.dart';
 import 'package:zwiftdataviewer/utils/theme.dart';
 import 'package:zwiftdataviewer/widgets/activitieslistview.dart';
 import 'package:zwiftdataviewer/widgets/filterdatebutton.dart';
-
-import 'allstatsrootscreen.dart';
 
 class HomeScreen extends StatefulWidget {
   const HomeScreen();
@@ -42,8 +40,6 @@ class _HomeScreenState extends State<HomeScreen> {
     final Strava strava = Strava(Globals.isInDebug, secret);
     final ConfigDataModel configDataModel =
         Provider.of<ConfigDataModel>(context, listen: false);
-    // final RouteDataModel routeDataModel =
-    //     Provider.of<RouteDataModel>(context, listen: false);
 
     return ChangeNotifierProvider<ActivitiesDataModel>(
         create: (context) => ActivitiesDataModel(
@@ -91,16 +87,10 @@ class _HomeScreenState extends State<HomeScreen> {
                         return const SettingsScreen();
                       case HomeScreenTab.activities:
                       default:
-                        return Consumer<ActivitiesDataModel>(
-                            builder: (context, myModel, child) {
-                          return ActivitiesListView(myModel.activities!
-                              // onRemove: (context, todo) {
-                              //   Provider.of<ActivitiesDataModel>(context, listen: false)
-                              //       .removeTodo(todo);
-                              //   _showUndoSnackbar(context, todo);
-                              // },
-                              );
-                        });
+                        // return Consumer<ActivitiesDataModel>(
+                        //     builder: (context, myModel, child) {
+                          return ActivitiesListView();
+                        // });
                     }
                   },
                 );
