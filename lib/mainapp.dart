@@ -4,7 +4,6 @@ import 'package:zwiftdataviewer/models/ConfigDataModel.dart';
 import 'package:zwiftdataviewer/models/RouteDataModel.dart';
 import 'package:zwiftdataviewer/routes.dart';
 import 'package:zwiftdataviewer/screens/allstatsrootscreen.dart';
-import 'package:zwiftdataviewer/screens/allstatsscreendistelev.dart';
 import 'package:zwiftdataviewer/screens/calendarscreen.dart';
 import 'package:zwiftdataviewer/screens/homescreen.dart';
 import 'package:zwiftdataviewer/screens/settingscreen.dart';
