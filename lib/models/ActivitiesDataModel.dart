@@ -202,8 +202,7 @@ class ActivitiesDataModel extends ChangeNotifier {
   final FileRepository? fileRepository;
   final WebRepository? webRepository;
 
-  StreamController<ActivityLoadingStatus> _loadingController =
-  StreamController<ActivityLoadingStatus>();
+  final StreamController<ActivityLoadingStatus> _loadingController = StreamController<ActivityLoadingStatus>();
 
   ActivitiesDataModel({required this.fileRepository, required this.webRepository});
 

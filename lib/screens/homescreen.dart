@@ -64,18 +64,18 @@ class _HomeScreenState extends State<HomeScreen> {
                     //   fit: BoxFit.cover,
                     // ),
                     )),
-            Selector<ActivitiesDataModel, bool>(
-              selector: (context, model) => model.isLoading,
-              builder: (context, isLoading, _) {
-                if (isLoading || configDataModel.isLoading) {
-                  return const Center(
-                    child: CircularProgressIndicator(
-                      key: AppKeys.activitiesLoading,
-                    ),
-                  );
-                }
+            // Selector<ActivitiesDataModel, bool>(
+            //   selector: (context, model) => model.isLoading,
+            //   builder: (context, isLoading, _) {
+            //     if (isLoading || configDataModel.isLoading) {
+            //       return const Center(
+            //         child: CircularProgressIndicator(
+            //           key: AppKeys.activitiesLoading,
+            //         ),
+            //       );
+            //     }
 
-                return ValueListenableBuilder<HomeScreenTab>(
+                ValueListenableBuilder<HomeScreenTab>(
                   valueListenable: _tab,
                   builder: (context, tab, _) {
                     switch (tab) {
@@ -93,9 +93,9 @@ class _HomeScreenState extends State<HomeScreen> {
                         // });
                     }
                   },
-                );
-              },
-            )
+                )
+              // },
+            // )
           ]),
           bottomNavigationBar: ValueListenableBuilder<HomeScreenTab>(
             valueListenable: _tab,
