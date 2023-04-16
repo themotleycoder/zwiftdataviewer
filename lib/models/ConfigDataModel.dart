@@ -51,6 +51,7 @@ class ConfigData {
   int? lastSyncDate;
   bool? isMetric = false;
   int? ftp;
+  bool? dataLoaded = false;
 
   ConfigData();
 
@@ -58,6 +59,7 @@ class ConfigData {
     lastSyncDate = json['lastSyncDate'];
     isMetric = json['isMetric'] ?? false;
     ftp = json['ftp'] ?? 100;
+    dataLoaded = json['dataLoaded'] ?? false;
   }
 
   Map<String, dynamic> toJson() {
@@ -65,6 +67,7 @@ class ConfigData {
     data['lastSyncDate'] = lastSyncDate;
     data['isMetric'] = isMetric;
     data['ftp'] = ftp;
+    data['dataLoaded'] = dataLoaded;
     return data;
   }
 }

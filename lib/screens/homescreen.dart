@@ -44,6 +44,7 @@ class _HomeScreenState extends State<HomeScreen> {
     return ChangeNotifierProvider<ActivitiesDataModel>(
         create: (context) => ActivitiesDataModel(
             fileRepository: FileRepository(),
+            context: context,
             webRepository: WebRepository(strava: strava))
           ..loadActivities(context),
         child: Scaffold(

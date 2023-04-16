@@ -13,87 +13,77 @@ import 'package:zwiftdataviewer/utils/constants.dart' as Constants;
 import 'package:zwiftdataviewer/utils/theme.dart';
 
 class ActivitiesListView extends StatelessWidget {
-  // final List<SummaryActivity> _activities;
 
-  const ActivitiesListView({Key? key}) : super(key: key);
-
-  @override
   Widget build(BuildContext context) {
     final ConfigDataModel configDataModel =
         Provider.of<ConfigDataModel>(context, listen: false);
     final Strava strava = Strava(Globals.isInDebug, secret);
-        return Container(
-            margin: const EdgeInsets.fromLTRB(0, 8, 0, 8),
-            child: Selector<ActivitiesDataModel, bool>(
-                selector: (context, model) => model.isLoading,
-                builder: (context, isLoading, _) {
-                  if (isLoading || configDataModel.isLoading) {
-                    return const Center(
-                      child: CircularProgressIndicator(
-                        key: AppKeys.activitiesLoading,
-                      ),
-                    );
-                  }
+    ActivitiesDataModel activitiesDataModel = Provider.of<ActivitiesDataModel>(context);
 
-                  return Consumer<ActivitiesDataModel>(
-                      builder: (context, myModel, child) {
-                    return ListView.separated(
-                      itemCount: myModel.activities!.length,
-                      separatorBuilder: (BuildContext context, int index) =>
-                          Container(
-                              // padding: EdgeInsets.all(5.0),
-                              // child: Center(),
-                              // color: Colors.white,
-                              // margin: EdgeInsets.all(1.0),
-                              ),
-                      itemBuilder: (BuildContext context, int index) {
-                        return Container(
-                          padding: const EdgeInsets.fromLTRB(8.0, 0, 8.0, 0),
-                          child: Center(
-                              child: InkWell(
-                            child: Card(
-                                color: white,
-                                elevation: 0,
-                                child: ListTile(
-                                  leading: const Icon(Icons.directions_bike,
-                                      size: 32.0, color: zdvOrange),
-                                  title: Text(myModel.activities![index].name ?? "",
-                                      style: Constants.headerFontStyle),
-                                  subtitle: Text(DateFormat.yMd()
-                                      .add_jm()
-                                      .format(
-                                      myModel.activities![index].startDateLocal!)),
-                                  trailing: const Icon(
-                                    Icons.arrow_forward_ios,
-                                    color: zdvMidBlue,
-                                  ),
-                                  onTap: () {
-                                    Navigator.push(
-                                      context,
-                                      MaterialPageRoute(
-                                        builder: (_) {
-                                          return DetailScreen(
-                                            id: myModel.activities![index].id ?? -1,
-                                            strava: strava,
-                                            // onRemove: () {
-                                            //   Navigator.pop(context);
-                                            //   onRemove(context, todo);
-                                            // },
-                                          );
-                                        },
-                                      ),
+    return Container(
+        margin: const EdgeInsets.fromLTRB(0, 8, 0, 8),
+        child: StreamBuilder<List<SummaryActivity>>(
+            stream: activitiesDataModel.activitiesStream,
+            builder: (context, snapshot) {
+              if (snapshot.hasError) {
+                return Center(
+                    child: Text('An error occurred: ${snapshot.error}'));
+              }
+
+              if (snapshot.connectionState == ConnectionState.waiting) {
+                return Center(child: CircularProgressIndicator());
+              }
+
+              List<SummaryActivity> activities = snapshot.data ?? [];
+              return ListView.builder(
+                itemCount: activities?.length ?? 0,
+                itemBuilder: (context, index) {
+                  return Container(
+                    padding: const EdgeInsets.fromLTRB(8.0, 0, 8.0, 0),
+                    child: Center(
+                        child: InkWell(
+                      child: Card(
+                          color: white,
+                          elevation: 0,
+                          child: ListTile(
+                            leading: const Icon(Icons.directions_bike,
+                                size: 32.0, color: zdvOrange),
+                            title: Text(
+                                activities![index].name ??
+                                    "",
+                                style: Constants.headerFontStyle),
+                            subtitle: Text(DateFormat.yMd().add_jm().format(
+                                activities![index].startDateLocal!)),
+                            trailing: const Icon(
+                              Icons.arrow_forward_ios,
+                              color: zdvMidBlue,
+                            ),
+                            onTap: () {
+                              Navigator.push(
+                                context,
+                                MaterialPageRoute(
+                                  builder: (_) {
+                                    return DetailScreen(
+                                      id: activities![index].id ??
+                                          -1,
+                                      strava: strava,
+                                      // onRemove: () {
+                                      //   Navigator.pop(context);
+                                      //   onRemove(context, todo);
+                                      // },
                                     );
                                   },
-                                  // onItemClick(_activities[index], context);
-                                )),
+                                ),
+                              );
+                            },
+                            // onItemClick(_activities[index], context);
                           )),
-                          // margin: EdgeInsets.all(1.0),
-                        );
-                      },
-                    );
-                  });
-                }));
-    // });
+                    )),
+                    // margin: EdgeInsets.all(1.0),
+                  );
+                },
+              );
+            }));
   }
 }
 
