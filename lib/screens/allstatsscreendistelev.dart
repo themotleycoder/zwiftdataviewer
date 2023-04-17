@@ -7,6 +7,8 @@ import 'package:zwiftdataviewer/utils/conversions.dart';
 import 'package:zwiftdataviewer/utils/theme.dart';
 import 'package:zwiftdataviewer/widgets/listitemviews.dart' as list_item_views;
 import '../utils/Stats.dart' as stats;
+import '../utils/charts.dart';
+import '../utils/yearlytotals.dart';
 
 class AllStatsScreenDistElev extends StatelessWidget {
 
@@ -123,7 +125,7 @@ class AllStatsScreenDistElev extends StatelessWidget {
   List<ChartSeries<YearlyTotals, String>> buildDataSeries(BuildContext? context,
       Map<String, String> units,
       List<SummaryActivity> activities) {
-    var chartData = generateChartData(context, units, activities);
+    var chartData = ChartsData.generateColumnChartData(context, units, activities);
     return <ChartSeries<YearlyTotals, String>>[
       ColumnSeries<YearlyTotals, String>(
           dataSource: chartData,
@@ -143,54 +145,48 @@ class AllStatsScreenDistElev extends StatelessWidget {
     ];
   }
 
-  List<YearlyTotals> generateChartData(
-      BuildContext? context,
-      Map<String, String> units,
-      List<SummaryActivity> activities) {
-    /// Create series list with multiple series
-    final Map<String, double> distances = {};
-    final Map<String, double> elevations = {};
-    const String totalName = "Total";
-
-    for (var activity in activities) {
-      double distance =
-      Conversions.metersToDistance(context!, activity.distance!);
-      double elevation =
-      Conversions.metersToHeight(context, activity.totalElevationGain!);
-
-      double d = distances[totalName] ?? 0;
-      double e = elevations[totalName] ?? 0;
-
-      distances[totalName] = distances[totalName] == null
-          ? distance
-          : distances[totalName] = d + distance;
-      elevations[totalName] = elevations[totalName] == null
-          ? elevation
-          : elevations[totalName] = e + elevation;
-      if (distances.containsKey(activity.startDateLocal?.year.toString())) {
-        distance += distances[activity.startDateLocal?.year.toString()]!;
-        elevation += elevations[activity.startDateLocal?.year.toString()]!;
-      }
-
-      int? year = activity.startDateLocal?.year;
-      distances[year.toString()] = distance;
-      elevations[year.toString()] = elevation;
-    }
-
-    List<YearlyTotals> chartData = [];
-    for (String key in distances.keys) {
-      chartData.add(YearlyTotals(
-          year: key, distance: distances[key], elevation: elevations[key]));
-    }
-    return chartData;
-  }
+  // List<YearlyTotals> generateChartData(
+  //     BuildContext? context,
+  //     Map<String, String> units,
+  //     List<SummaryActivity> activities) {
+  //   /// Create series list with multiple series
+  //   final Map<String, double> distances = {};
+  //   final Map<String, double> elevations = {};
+  //   const String totalName = "Total";
+  //
+  //   for (var activity in activities) {
+  //     double distance =
+  //     Conversions.metersToDistance(context!, activity.distance!);
+  //     double elevation =
+  //     Conversions.metersToHeight(context, activity.totalElevationGain!);
+  //
+  //     double d = distances[totalName] ?? 0;
+  //     double e = elevations[totalName] ?? 0;
+  //
+  //     distances[totalName] = distances[totalName] == null
+  //         ? distance
+  //         : distances[totalName] = d + distance;
+  //     elevations[totalName] = elevations[totalName] == null
+  //         ? elevation
+  //         : elevations[totalName] = e + elevation;
+  //     if (distances.containsKey(activity.startDateLocal?.year.toString())) {
+  //       distance += distances[activity.startDateLocal?.year.toString()]!;
+  //       elevation += elevations[activity.startDateLocal?.year.toString()]!;
+  //     }
+  //
+  //     int? year = activity.startDateLocal?.year;
+  //     distances[year.toString()] = distance;
+  //     elevations[year.toString()] = elevation;
+  //   }
+  //
+  //   List<YearlyTotals> chartData = [];
+  //   for (String key in distances.keys) {
+  //     chartData.add(YearlyTotals(
+  //         year: key, distance: distances[key], elevation: elevations[key]));
+  //   }
+  //   return chartData;
+  // }
 }
 
-class YearlyTotals {
-  final String? year;
-  final double? distance;
-  final double? elevation;
 
-  YearlyTotals({this.year, this.distance, this.elevation});
-}
 

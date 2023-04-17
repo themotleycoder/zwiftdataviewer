@@ -261,8 +261,7 @@ class ActivitiesDataModel extends ChangeNotifier {
     // }
 
     //after
-    var afterDate =
-        1681736392; //await getAfterParameter();//   configData.getAfterParameter();
+    var afterDate = await getAfterParameter();//   configData.getAfterParameter();
     //afterDate = 1680307200; //test date Saturday, April 1, 2023 12:00:00 AM
     //now
     final beforeDate = (DateTime.now().millisecondsSinceEpoch / 1000).round();
