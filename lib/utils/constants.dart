@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:zwiftdataviewer/utils/theme.dart';
 
-const int defaultDataDate = 1388563200;
+const int defaultDataDate = 1420070400; //default is Thursday, January 1, 2015 12:00:00 AM
 
 enum HomeScreenTab { activities, stats, calendar, settings }
 

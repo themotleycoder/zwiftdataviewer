@@ -225,10 +225,11 @@ class ActivitiesDataModel extends ChangeNotifier {
     notifyListeners();
   }
 
-  StreamController<List<SummaryActivity>> _activitiesController =
-  StreamController<List<SummaryActivity>>.broadcast();
+  // final StreamController<List<SummaryActivity>> _activitiesController =
+  //     StreamController<List<SummaryActivity>>.broadcast();
 
-  Stream<List<SummaryActivity>> get activitiesStream => _activitiesController.stream;
+  // Stream<List<SummaryActivity>> get activitiesStream =>
+  //     _activitiesController.stream;
 
   ActivitiesDataModel({
     required this.fileRepository,
@@ -242,18 +243,36 @@ class ActivitiesDataModel extends ChangeNotifier {
 
   void addActivities(List<SummaryActivity> activities) {
     _activities = activities;
-    _activitiesController.add(_activities!);
+    // _activitiesController.add(_activities!);
     notifyListeners();
   }
 
-  Future loadActivities([context]) {
+  Future loadActivities([context]) async {
     _isLoading = true;
+
+    // ConfigData configData;
+    // final ConfigDataModel configDataModel = Provider.of<ConfigDataModel>(context, listen: false);
+    // if (configDataModel.configData == null) {
+    //   configData = ConfigData();
+    //   configData.lastSyncDate = constants.defaultDataDate;
+    //   configData.isMetric = false;
+    // } else {
+    //   configData = configDataModel.configData!;
+    // }
+
+    //after
+    var afterDate =
+        1681736392; //await getAfterParameter();//   configData.getAfterParameter();
+    //afterDate = 1680307200; //test date Saturday, April 1, 2023 12:00:00 AM
+    //now
+    final beforeDate = (DateTime.now().millisecondsSinceEpoch / 1000).round();
+
     notifyListeners();
     return fileRepository!
-        .loadActivities(constants.defaultDataDate, constants.defaultDataDate)
+        .loadActivities(beforeDate, afterDate!)
         .then((loadedActivities) {
       _activities!.addAll(loadedActivities);
-      _activitiesController.add(_activities!);
+      // _activitiesController.add(_activities!);
       _isLoading = false;
       notifyListeners();
     }).then((loadedActivities) {
@@ -261,41 +280,28 @@ class ActivitiesDataModel extends ChangeNotifier {
         _isLoading = true;
         notifyListeners();
       }
-      ConfigData configData;
-      final ConfigDataModel configDataModel =
-      Provider.of<ConfigDataModel>(context, listen: false);
-      if (configDataModel.configData == null) {
-        configData = ConfigData();
-        configData.lastSyncDate = constants.defaultDataDate;
-        configData.isMetric = false;
-      } else {
-        configData = configDataModel.configData!;
-      }
 
-      final int beforeDate = (DateTime.now().millisecondsSinceEpoch);
-      final int afterDate = constants.defaultDataDate;
-      configData.lastSyncDate;
+      //final int beforeDate = (DateTime.now().millisecondsSinceEpoch);
+      // final int afterDate = constants.defaultDataDate;
+      //configData.lastSyncDate;
 
       if (!isInDebug) {
         webRepository!
-            .loadActivities(beforeDate, afterDate)
+            .loadActivities(
+                (DateTime.now().millisecondsSinceEpoch / 1000).round(),
+                afterDate!)
             .then((webloadedActivities) {
           if (webloadedActivities != null && webloadedActivities.length > 0) {
             _activities = webloadedActivities.cast<SummaryActivity>();
-            _activitiesController.add(_activities!);
-            final int startDate =
-                webloadedActivities[webloadedActivities.length - 1]!
-                    .startDateLocal!
-                    .millisecondsSinceEpoch;
-            final int elapsedTime =
-                webloadedActivities[webloadedActivities.length - 1]!
-                    .elapsedTime! *
-                    1000;
+            // _activitiesController.add(_activities!);
             fileRepository!.saveActivities(_activities!);
-            configData.lastSyncDate = startDate + elapsedTime;
-            configDataModel.configData = configData;
+            // configData.lastSyncDate = beforeDate;
+            // configDataModel.configData = configData;
             notifyListeners();
             _isLoading = false;
+            // if (_activities!=null) {
+            storeAfterParameter(beforeDate);
+            // }
           }
         });
       } else {
@@ -355,12 +361,10 @@ class ActivitiesDataModel extends ChangeNotifier {
   }
 
   void dispose() {
-    _activitiesController.close();
+    // _activitiesController.close();
     super.dispose();
   }
 }
-
-
 
 enum ActivityLoadingStatus {
   loading,
@@ -369,4 +373,3 @@ enum ActivityLoadingStatus {
   loadedFromWeb,
   done,
 }
-

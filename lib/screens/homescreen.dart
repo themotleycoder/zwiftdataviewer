@@ -16,8 +16,10 @@ import 'package:zwiftdataviewer/utils/theme.dart';
 import 'package:zwiftdataviewer/widgets/activitieslistview.dart';
 import 'package:zwiftdataviewer/widgets/filterdatebutton.dart';
 
+import '../stravalib/Models/activity.dart';
+
 class HomeScreen extends StatefulWidget {
-  const HomeScreen();
+  const HomeScreen({super.key});
 
   @override
   _HomeScreenState createState() => _HomeScreenState();
@@ -38,15 +40,23 @@ class _HomeScreenState extends State<HomeScreen> {
   @override
   Widget build(BuildContext context) {
     final Strava strava = Strava(Globals.isInDebug, secret);
-    final ConfigDataModel configDataModel =
-        Provider.of<ConfigDataModel>(context, listen: false);
+    // final ConfigDataModel configDataModel =
+    //     Provider.of<ConfigDataModel>(context, listen: false);
+
+    //ActivitiesDataModel activitiesDataModel = Provider.of<ActivitiesDataModel>(context);
 
     return ChangeNotifierProvider<ActivitiesDataModel>(
         create: (context) => ActivitiesDataModel(
-            fileRepository: FileRepository(),
-            context: context,
-            webRepository: WebRepository(strava: strava))
-          ..loadActivities(context),
+      fileRepository: FileRepository(),
+      webRepository: WebRepository(strava: strava),
+      context: context,
+    ),
+      //ChangeNotifierProvider<ActivitiesDataModel>(
+        // create: (context) => ActivitiesDataModel(
+        //     fileRepository: FileRepository(),
+        //     context: context,
+        //     webRepository: WebRepository(strava: strava))
+        //   ..loadActivities(context),
         child: Scaffold(
           // extendBodyBehindAppBar: true,
           appBar: AppBar(
@@ -79,6 +89,7 @@ class _HomeScreenState extends State<HomeScreen> {
                 ValueListenableBuilder<HomeScreenTab>(
                   valueListenable: _tab,
                   builder: (context, tab, _) {
+                    ActivitiesDataModel activitiesDataModel = Provider.of<ActivitiesDataModel>(context);
                     switch (tab) {
                       case HomeScreenTab.stats:
                         return const AllStatsRootScreen();

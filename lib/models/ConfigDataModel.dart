@@ -1,4 +1,5 @@
 import 'package:flutter/widgets.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import 'package:zwiftdataviewer/utils/repository/configrepository.dart';
 
 class ConfigDataModel extends ChangeNotifier {
@@ -16,18 +17,19 @@ class ConfigDataModel extends ChangeNotifier {
     saveConfig(_configData!);
   }
 
-  Future<Future<Null>> loadConfig() async {
+  Future<void> loadConfig() async {
     _isLoading = true;
     notifyListeners();
 
-    return repository.loadConfig().then((loadedConfig) {
+    try {
+      final loadedConfig = await repository.loadConfig();
       _configData = loadedConfig;
+    } catch (error) {
+      // handle error here
+    } finally {
       _isLoading = false;
       notifyListeners();
-    }).catchError((err) {
-      _isLoading = false;
-      notifyListeners();
-    });
+    }
   }
 
   Future<Future<Null>> saveConfig(ConfigData config) async {
@@ -70,4 +72,15 @@ class ConfigData {
     data['dataLoaded'] = dataLoaded;
     return data;
   }
+}
+
+Future<void> storeAfterParameter(int lastRequestTime) async {
+  final prefs = await SharedPreferences.getInstance();
+  await prefs.setInt('after_param', lastRequestTime);
+}
+
+// Retrieve the stored after parameter
+Future<int?> getAfterParameter() async {
+  final prefs = await SharedPreferences.getInstance();
+  return prefs.getInt('after_param')??1420070400; //default is Thursday, January 1, 2015 12:00:00 AM
 }

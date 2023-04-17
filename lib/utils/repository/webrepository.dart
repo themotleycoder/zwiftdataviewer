@@ -19,8 +19,8 @@ class WebRepository implements ActivitiesRepository, StreamsRepository {
   Future<List<SummaryActivity?>?> loadActivities(
       int beforeDate, int afterDate) async {
     await getClient();
-    beforeDate = (beforeDate / 1000).round();
-    afterDate = (afterDate / 1000).round();
+    // beforeDate = (beforeDate / 1000).round();
+    // afterDate = (afterDate / 1000).round();
     return await strava.getLoggedInAthleteActivities(
             beforeDate, afterDate, null)
         //   .then((activities) {
