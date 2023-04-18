@@ -7,6 +7,7 @@ import 'package:zwiftdataviewer/stravalib/Models/activity.dart';
 import 'package:zwiftdataviewer/utils/conversions.dart';
 import 'package:zwiftdataviewer/utils/theme.dart';
 import 'package:zwiftdataviewer/widgets/ListItemViews.dart';
+import '../utils/charts.dart';
 
 class AllStatsScreenScatter extends StatefulWidget {
   const AllStatsScreenScatter({super.key});
@@ -81,30 +82,30 @@ class _AllStatsScreenScatterState extends State<AllStatsScreenScatter> {
         });
   }
 
-  // List<charts.Series<SummaryActivity, double>> generateChartData(
-  //     BuildContext? context,
-  //     Map<String, String> units,
-  //     List<SummaryActivity> activities) {
-  //   /// Create series list with multiple series
-  //   final Map<int, List<SummaryActivity>> result = {};
-  //   final List<int> years = [];
-  //
-  //   for (var activity in activities) {
-  //     int year = activity.startDateLocal!.year;
-  //     if (!result.containsKey(year)) {
-  //       result[year] = [];
-  //     }
-  //     if (!years.contains(year)) {
-  //       years.add(year);
-  //     }
-  //
-  //     result[year]!.add(activity);
-  //   }
-  //
-  //   final Map<int, Color> colors = generateColor(years);
-  //
-  //   return buildChartSeriesList(context!, result, colors);
-  // }
+  List<charts.Series<SummaryActivity, double>> generateChartData(
+      BuildContext? context,
+      Map<String, String> units,
+      List<SummaryActivity> activities) {
+    /// Create series list with multiple series
+    final Map<int, List<SummaryActivity>> result = {};
+    final List<int> years = [];
+
+    for (var activity in activities) {
+      int year = activity.startDateLocal!.year;
+      if (!result.containsKey(year)) {
+        result[year] = [];
+      }
+      if (!years.contains(year)) {
+        years.add(year);
+      }
+
+      result[year]!.add(activity);
+    }
+
+    final Map<int, Color> colors = generateColor(years);
+
+    return ChartsData.buildChartSeriesList(context!, result, colors);
+  }
 
   _onSelectionChanged(charts.SelectionModel model) {
     int? selection = model.selectedDatum[0].index ?? 0;
@@ -114,35 +115,6 @@ class _AllStatsScreenScatterState extends State<AllStatsScreenScatter> {
         .setSelectedActivity(selectedRide);
   }
 }
-
-// List<charts.Series<SummaryActivity, double>> buildChartSeriesList(
-//     BuildContext context,
-//     Map<int, List<SummaryActivity>> activities,
-//     Map<int, Color> colors) {
-//   final List<charts.Series<SummaryActivity, double>> chartSeries = [];
-//
-//   for (int key in activities.keys) {
-//     final List<SummaryActivity> distance = activities[key]!;
-//     chartSeries.add(charts.Series<SummaryActivity, double>(
-//       id: key.toString().substring(2),
-//       // Providing a color function is optional.
-//       colorFn: (SummaryActivity stats, _) {
-//         // Bucket the measure column value into 3 distinct colors.
-//         return charts.ColorUtil.fromDartColor(
-//             colors[stats.startDateLocal!.year]!);
-//       },
-//       domainFn: (SummaryActivity stats, _) =>
-//           Conversions.metersToDistance(context, stats.distance ?? 0),
-//       measureFn: (SummaryActivity stats, _) =>
-//           Conversions.metersToHeight(context, stats.totalElevationGain ?? 0),
-//       // Providing a radius function is optional.
-//       // radiusPxFn: (SummaryActivity stats, _) => sales.radius,
-//       data: distance,
-//     ));
-//   }
-//
-//   return chartSeries;
-// }
 
 Map<int, Color> generateColor(List<int> years) {
   ColorPalette palette = ColorPalette.splitComplimentary(

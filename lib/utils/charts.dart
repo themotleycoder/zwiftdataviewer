@@ -1,9 +1,8 @@
 import 'package:flutter/widgets.dart';
-import 'package:flutter_palette/flutter_palette.dart';
-import 'package:zwiftdataviewer/utils/theme.dart';
 import 'package:zwiftdataviewer/utils/yearlytotals.dart';
 import '../stravalib/Models/activity.dart';
 import 'conversions.dart';
+import 'package:charts_flutter/flutter.dart' as charts;
 
 class ChartsData {
   static List<YearlyTotals> generateColumnChartData(BuildContext? context,
@@ -46,40 +45,14 @@ class ChartsData {
     return chartData;
   }
 
-  static List<YearlyTotals> generateScatterChartData(
-      BuildContext? context,
-      Map<String, String> units,
-      List<SummaryActivity> activities) {
-    /// Create series list with multiple series
-    final Map<int, List<SummaryActivity>> result = {};
-    final List<int> years = [];
+  static List<charts.Series<SummaryActivity, double>> buildChartSeriesList(
+      BuildContext context,
+      Map<int, List<SummaryActivity>> activities,
+      Map<int, Color> colors) {
+    final List<charts.Series<SummaryActivity, double>> chartSeries = [];
 
-    for (var activity in activities) {
-      int year = activity.startDateLocal!.year;
-      if (!result.containsKey(year)) {
-        result[year] = [];
-      }
-      if (!years.contains(year)) {
-        years.add(year);
-      }
-
-      result[year]!.add(activity);
-    }
-
-    final Map<int, Color> colors = generateColor(years);
-
-  //   return buildChartSeriesList(context!, result, colors);
-  // }
-  //
-  // static List<charts.Series<SummaryActivity, double>> buildChartSeriesList(
-  //     BuildContext context,
-  //     Map<int, List<SummaryActivity>> activities,
-  //     Map<int, Color> colors) {
-
-    // final List<charts.Series<SummaryActivity, double>> chartSeries = [];
-
-    for (int key in result.keys) {
-      final List<SummaryActivity> distance = result[key]!;
+    for (int key in activities.keys) {
+      final List<SummaryActivity> distance = activities[key]!;
       chartSeries.add(charts.Series<SummaryActivity, double>(
         id: key.toString().substring(2),
         // Providing a color function is optional.
@@ -98,32 +71,6 @@ class ChartsData {
       ));
     }
 
-    List<YearlyTotals> chartData = [];
-    for (String key in distances.keys) {
-      chartData.add(YearlyTotals(
-          year: key, distance: distances[key], elevation: elevations[key]));
-    }
-    return chartData;
-
-    // return chartSeries;
+    return chartSeries;
   }
-}
-
-Map<int, Color> generateColor(List<int> years) {
-  ColorPalette palette = ColorPalette.splitComplimentary(
-    zdvMidGreen,
-    numberOfColors: years.length,
-    hueVariability: 30,
-    saturationVariability: 30,
-    brightnessVariability: 30,
-  );
-
-  int x = 0;
-  final Map<int, Color> colors = {};
-  for (Color color in palette) {
-    colors[years[x]] = color;
-    x += 1;
-  }
-
-  return colors;
 }
