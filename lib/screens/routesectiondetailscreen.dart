@@ -7,6 +7,8 @@ import 'package:zwiftdataviewer/utils/constants.dart' as Constants;
 import 'package:zwiftdataviewer/utils/conversions.dart';
 import 'package:zwiftdataviewer/utils/theme.dart';
 
+import '../utils/constants.dart';
+
 class RouteSectionDetailScreen extends StatefulWidget {
   RouteSectionDetailScreen({super.key});
 
@@ -118,7 +120,7 @@ class _RouteSectionDetailScreenState extends State<RouteSectionDetailScreen> {
                   child: InkWell(
                 child: Card(
                     color: Colors.white,
-                    elevation: 0,
+                    elevation: defaultCardElevation,
                     child: ListTile(
                       leading: createIcon(effort.prRank ?? 0),
                       title: Text(_segmentEfforts![index].segment!.name ?? "",

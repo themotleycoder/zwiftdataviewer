@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:zwiftdataviewer/utils/constants.dart' as constants;
 
+import '../utils/constants.dart';
+
 Widget singleDataLineItem(
     String title, IconData icon, String dataPoint, String units) {
   return Container(
@@ -31,24 +33,16 @@ Widget singleDataLineItem(
 Widget singleDataHeaderLineItem(String dataPoint) {
   return Card(
       color: Colors.white,
-      elevation: 0,
+      elevation: defaultCardElevation,
       margin: const EdgeInsets.fromLTRB(8.0, 4, 8.0, 4),
-      // height: 80,
-      // padding: const EdgeInsets.fromLTRB(16.0, 8.0, 16.0, 8.0),
-      // decoration: BoxDecoration(
-      //     border: Border(bottom: BorderSide(color: Constants.dividerColor))),
       child: Container(
-          // height: 80,
+          alignment: Alignment.center,
           padding: const EdgeInsets.fromLTRB(16.0, 8.0, 16.0, 8.0),
           child: Column(
+            crossAxisAlignment: CrossAxisAlignment.center,
             children: <Widget>[
-              Row(mainAxisAlignment: MainAxisAlignment.spaceAround, children: [
-                Column(
-                  children: <Widget>[
-                    Text(dataPoint, style: constants.bodyTextStyle),
-                  ],
-                )
-              ])
+              Text(dataPoint,
+                  style: constants.bodyTextStyle),
             ],
           )));
 }
@@ -56,7 +50,7 @@ Widget singleDataHeaderLineItem(String dataPoint) {
 Widget doubleDataHeaderLineItem(List<String> labels, List<String> dataPoints) {
   return Card(
       color: Colors.white,
-      elevation: 0,
+      elevation: defaultCardElevation,
       margin: const EdgeInsets.fromLTRB(8.0, 4, 8.0, 4),
       // height: 80,
       // padding: const EdgeInsets.fromLTRB(16.0, 8.0, 16.0, 8.0),
@@ -88,7 +82,7 @@ Widget doubleDataHeaderLineItem(List<String> labels, List<String> dataPoints) {
 Widget doubleDataSingleHeaderLineItem(String title, IconData? icon,
     List<String> labels, List<String> dataPoints, String units) {
   return Card(
-      elevation: 0,
+      elevation: defaultCardElevation,
       color: Colors.white,
       margin: const EdgeInsets.fromLTRB(8.0, 4, 8.0, 4),
       child: Container(
@@ -120,7 +114,7 @@ Widget doubleDataSingleHeaderLineItem(String title, IconData? icon,
 Widget tripleDataSingleHeaderLineItem(
     List<String> labels, List<String> dataPoints) {
   return Card(
-      elevation: 0,
+      elevation: defaultCardElevation,
       color: Colors.white,
       margin: const EdgeInsets.fromLTRB(8.0, 4, 8.0, 4),
       child: Container(
@@ -152,7 +146,7 @@ Widget tripleDataLineItem(String title, IconData? icon, List<String> labels,
     List<String> dataPoints, String units) {
   return Card(
       color: Colors.white,
-      elevation: 0,
+      elevation: defaultCardElevation,
       margin: const EdgeInsets.fromLTRB(8.0, 4, 8.0, 4),
       child: Container(
           height: 100,

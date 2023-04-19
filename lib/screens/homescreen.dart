@@ -16,6 +16,7 @@ import 'package:zwiftdataviewer/utils/theme.dart';
 import 'package:zwiftdataviewer/widgets/activitieslistview.dart';
 import 'package:zwiftdataviewer/widgets/filterdatebutton.dart';
 
+import '../delegates/activitysearchdelegate.dart';
 import '../stravalib/Models/activity.dart';
 
 class HomeScreen extends StatefulWidget {
@@ -101,7 +102,7 @@ class _HomeScreenState extends State<HomeScreen> {
                       default:
                         // return Consumer<ActivitiesDataModel>(
                         //     builder: (context, myModel, child) {
-                          return ActivitiesListView();
+                          return const ActivitiesListView();
                         // });
                     }
                   },

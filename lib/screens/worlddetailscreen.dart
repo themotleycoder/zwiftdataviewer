@@ -10,6 +10,8 @@ import 'package:zwiftdataviewer/utils/constants.dart' as Constants;
 import 'package:zwiftdataviewer/utils/theme.dart';
 import 'package:zwiftdataviewer/utils/worlddata.dart';
 
+import '../utils/constants.dart';
+
 double rowHeight = 40;
 
 class WorldDetailScreen extends StatelessWidget {
@@ -80,7 +82,7 @@ class _ExpandingCardState extends State<ExpandingCard> {
       padding: const EdgeInsets.fromLTRB(8.0, 4, 8.0, 4),
       child: Card(
         clipBehavior: Clip.antiAlias,
-        elevation: 0,
+        elevation: defaultCardElevation,
         child: Column(
           children: <Widget>[
             ScrollOnExpand(

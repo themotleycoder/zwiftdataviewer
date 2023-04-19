@@ -10,6 +10,8 @@ import 'package:zwiftdataviewer/utils/repository/filerepository.dart';
 import 'package:zwiftdataviewer/utils/theme.dart';
 import 'package:zwiftdataviewer/utils/worlddata.dart';
 
+import '../utils/constants.dart';
+
 class CalendarScreen extends StatefulWidget {
   const CalendarScreen({super.key});
 
@@ -120,7 +122,7 @@ class _CalendarScreenState extends State<CalendarScreen> {
     List<Widget> list = _selectedEvents
         .map((world) => Card(
             color: Colors.white,
-            elevation: 0,
+            elevation: defaultCardElevation,
             margin: const EdgeInsets.fromLTRB(8.0, 8.0, 8.0, 8.0),
             child: InkWell(
               child: ListTile(
@@ -148,7 +150,7 @@ class _CalendarScreenState extends State<CalendarScreen> {
     //add watopia
     list.add(Card(
         color: Colors.white,
-        elevation: 0,
+        elevation: defaultCardElevation,
         margin: const EdgeInsets.fromLTRB(8.0, 8.0, 8.0, 8.0),
         child: InkWell(
           child: ListTile(

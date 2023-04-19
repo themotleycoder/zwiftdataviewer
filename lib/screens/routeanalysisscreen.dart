@@ -6,6 +6,7 @@ import 'package:zwiftdataviewer/screens/routeanalysispowertimechartscreen.dart';
 import 'package:zwiftdataviewer/screens/routeanalysisprofilechartscreen.dart';
 
 import '../appkeys.dart';
+import '../utils/constants.dart';
 import '../utils/theme.dart';
 
 class RouteAnalysisScreen extends StatefulWidget {
@@ -61,15 +62,15 @@ class _RouteAnalysisScreenState extends State<RouteAnalysisScreen>
                   controller: controller,
                   children: const <Widget>[
                     Card(
-                      elevation: 0,
+                      elevation: defaultCardElevation,
                       child: RouteAnalysisProfileChartScreen(),
                     ),
                     Card(
-                      elevation: 0,
+                      elevation: defaultCardElevation,
                       child: WattsDataView(),
                     ),
                     Card(
-                      elevation: 0,
+                      elevation: defaultCardElevation,
                       child: TimeDataView(),
                     ),
                   ],

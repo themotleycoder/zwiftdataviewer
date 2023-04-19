@@ -22,7 +22,8 @@ TextStyle bodyTextStyle = const TextStyle(
     inherit: true,
     fontSize: 16.0,
     fontWeight: FontWeight.bold,
-    color: zdvDrkBlue);
+    color: zdvDrkBlue,
+    overflow: TextOverflow.ellipsis,);
 TextStyle inlineBodyTextStyle =
     const TextStyle(inherit: true, fontSize: 16.0, color: Colors.green);
 TextStyle headerFontStyle = const TextStyle(
@@ -36,3 +37,4 @@ const Color iconColor = zdvmOrange;
 const Color dividerColor = Colors.black12;
 const double boxSize = 10.0;
 Color? calenderColor = Colors.grey[600];
+const double defaultCardElevation = 0.0;

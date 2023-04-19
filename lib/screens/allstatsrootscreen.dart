@@ -3,6 +3,7 @@ import 'package:provider/provider.dart';
 import 'package:zwiftdataviewer/screens/AllStatsScreenDistElev.dart';
 import '../models/ActivitiesDataModel.dart';
 import '../stravalib/Models/activity.dart';
+import '../utils/constants.dart';
 import '../utils/theme.dart';
 import 'allstatsscreenscatter.dart';
 
@@ -59,15 +60,15 @@ class _AllStatsRootScreenState extends State<AllStatsRootScreen>
                     controller: controller,
                     children: const <Widget>[
                       Card(
-                        elevation: 0,
+                        elevation: defaultCardElevation,
                         child: AllStatsScreenDistElev(),
                       ),
                       Card(
-                        elevation: 0,
+                        elevation: defaultCardElevation,
                         child: AllStatsScreenScatter(),
                       ),
                       Card(
-                        elevation: 0,
+                        elevation: defaultCardElevation,
                         // child: AllStatsScreenDistElev(),
                       ),
                     ],

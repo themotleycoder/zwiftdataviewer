@@ -8,6 +8,8 @@ import 'package:zwiftdataviewer/utils/constants.dart' as Constants;
 import 'package:zwiftdataviewer/utils/repository/filerepository.dart';
 import 'package:zwiftdataviewer/utils/theme.dart';
 
+import '../utils/constants.dart';
+
 class SettingsScreen extends StatefulWidget {
   const SettingsScreen();
 
@@ -108,12 +110,12 @@ class _SettingsScreenState extends State<SettingsScreen> {
 
   Card createCard(String label, Widget widget) {
     return Card(
-        elevation: 0,
+        elevation: defaultCardElevation,
         child:
             Row(mainAxisAlignment: MainAxisAlignment.spaceBetween, children: [
           Container(
-            child: Text(label, style: Constants.headerTextStyle),
             margin: const EdgeInsets.fromLTRB(16.0, 8.0, 16.0, 8.0),
+            child: Text(label, style: Constants.headerTextStyle),
           ),
           widget
         ]));
