@@ -290,9 +290,13 @@ class ActivitiesDataModel extends ChangeNotifier {
                 (DateTime.now().millisecondsSinceEpoch / 1000).round(),
                 afterDate!)
             .then((webloadedActivities) {
-          if (webloadedActivities != null && webloadedActivities.length > 0) {
+          if (webloadedActivities != null && webloadedActivities.isNotEmpty) {
+            if (_activities!.isNotEmpty) {
+              webloadedActivities.addAll(
+                  _activities as Iterable<SummaryActivity>);
+            }
             _activities = webloadedActivities.cast<SummaryActivity>();
-            // _activitiesController.add(_activities!);
+
             fileRepository!.saveActivities(_activities!);
             // configData.lastSyncDate = beforeDate;
             // configDataModel.configData = configData;

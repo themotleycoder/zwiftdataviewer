@@ -52,7 +52,7 @@ class ChartsData {
     final List<charts.Series<SummaryActivity, double>> chartSeries = [];
 
     for (int key in activities.keys) {
-      final List<SummaryActivity> distance = activities[key]!;
+      final List<SummaryActivity>distance = activities[key]!;
       chartSeries.add(charts.Series<SummaryActivity, double>(
         id: key.toString().substring(2),
         // Providing a color function is optional.
