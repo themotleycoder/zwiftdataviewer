@@ -294,6 +294,7 @@ class ActivitiesDataModel extends ChangeNotifier {
             if (_activities!.isNotEmpty) {
               webloadedActivities.addAll(
                   _activities as Iterable<SummaryActivity>);
+              storeAfterParameter(beforeDate);
             }
             _activities = webloadedActivities.cast<SummaryActivity>();
 
@@ -303,7 +304,7 @@ class ActivitiesDataModel extends ChangeNotifier {
             notifyListeners();
             _isLoading = false;
             // if (_activities!=null) {
-            storeAfterParameter(beforeDate);
+
             // }
           }
         });

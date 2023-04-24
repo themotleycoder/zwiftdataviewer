@@ -1,9 +1,11 @@
 import 'package:charts_flutter/flutter.dart' as charts;
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+import 'package:syncfusion_flutter_charts/charts.dart';
 import 'package:zwiftdataviewer/models/ActivityDetailDataModel.dart';
 import 'package:zwiftdataviewer/models/StreamsDataModel.dart';
 import 'package:zwiftdataviewer/stravalib/API/streams.dart';
+import 'package:zwiftdataviewer/stravalib/Models/activity.dart';
 import 'package:zwiftdataviewer/utils/conversions.dart';
 import 'package:zwiftdataviewer/utils/theme.dart';
 import 'package:zwiftdataviewer/widgets/ListItemViews.dart';
@@ -28,7 +30,7 @@ class _RouteAnalysisProfileChartScreenState
   Widget build(BuildContext context) {
     return Consumer<StreamsDataModel>(builder: (context, myModel, child) {
       _streamsDetail = myModel.combinedStreams ?? StreamsDetailCollection();
-      _chartData = createDataSet(myModel);
+      // _chartData = createDataSet(myModel);
       return Selector<StreamsDataModel, bool>(
           selector: (context, model) => model.isLoading,
           builder: (context, isLoading, _) {
@@ -41,51 +43,8 @@ class _RouteAnalysisProfileChartScreenState
             }
             return Column(children: [
               Expanded(
-                  child: charts.LineChart(
-                _chartData,
-                customSeriesRenderers: [
-                  charts.LineRendererConfig(
-                      // ID used to link series to this renderer.
-                      customRendererId: 'customArea',
-                      includeArea: true,
-                      stacked: true),
-                  charts.LineRendererConfig(
-                      // ID used to link series to this renderer.
-                      customRendererId: 'customArea2',
-                      includeArea: false,
-                      stacked: true),
-                  charts.LineRendererConfig(
-                      // ID used to link series to this renderer.
-                      customRendererId: 'customArea3',
-                      includeArea: false,
-                      stacked: true),
-                ],
-                defaultRenderer: charts.LineRendererConfig(includeArea: false),
-                animate: true,
-                primaryMeasureAxis: const charts.NumericAxisSpec(
-                  tickProviderSpec:
-                      charts.BasicNumericTickProviderSpec(desiredTickCount: 6),
-                ),
-                secondaryMeasureAxis: const charts.NumericAxisSpec(
-                  tickProviderSpec:
-                      charts.BasicNumericTickProviderSpec(desiredTickCount: 6),
-                ),
-                selectionModels: [
-                  charts.SelectionModelConfig(
-                    type: charts.SelectionModelType.info,
-                    changedListener: _onSelectionChanged,
-                  )
-                ],
-                behaviors: [
-                  charts.LinePointHighlighter(
-                      showHorizontalFollowLine:
-                          charts.LinePointHighlighterFollowLineType.none,
-                      showVerticalFollowLine:
-                          charts.LinePointHighlighterFollowLineType.nearest),
-                  charts.SelectNearest(
-                      eventTrigger: charts.SelectionTrigger.tapAndDrag)
-                ],
-              )),
+                child: _buildLineChart(myModel),
+              ),
               const ProfileDataView(),
             ]);
             // ]);
@@ -93,22 +52,60 @@ class _RouteAnalysisProfileChartScreenState
     });
   }
 
-  _onSelectionChanged(charts.SelectionModel model) {
-    int? selection = model.selectedDatum[0].index;
-    CombinedStreams stream = _streamsDetail!.stream![selection!];
-    // Provider.of<StreamsDataModel>(context, listen: false)
-    //     .setSelectedSeries(stream);
-    Provider.of<ActivitySelectDataModel>(context, listen: false)
-        .setSelectedSeries(stream);
+  _buildLineChart(StreamsDataModel streamsDataModel) {
+    final List<XyDataSeries<DistanceValue, num>> dataSet =
+        createDataSet(streamsDataModel);
+    return SfCartesianChart(
+        onTrackballPositionChanging: (TrackballArgs args) {
+          CombinedStreams streamObj = _streamsDetail!.stream![args.chartPointInfo.seriesIndex!];
+          Provider.of<ActivitySelectDataModel>(context, listen: false)
+              .setSelectedSeries(streamObj);
+        },
+      plotAreaBorderWidth: 0,
+      // title: ChartTitle(text: isCardView ? '' : 'Inflation - Consumer price'),
+      legend: Legend(
+          isVisible: true,
+          overflowMode: LegendItemOverflowMode.wrap,
+          position: LegendPosition.top),
+      primaryXAxis: NumericAxis(
+          // intervalType: DateTimeIntervalType.minutes,
+          edgeLabelPlacement: EdgeLabelPlacement.shift,
+          interval: 2,
+          majorGridLines: const MajorGridLines(width: 0)),
+      primaryYAxis: NumericAxis(
+          labelFormat: ' ',
+          axisLine: const AxisLine(width: 0),
+          majorTickLines: const MajorTickLines(color: Colors.transparent)),
+      series: dataSet,
+      tooltipBehavior: TooltipBehavior(enable: true),
+      trackballBehavior: TrackballBehavior(
+        enable: true,
+        markerSettings: TrackballMarkerSettings(
+          markerVisibility: true
+              ? TrackballVisibilityMode.visible
+              : TrackballVisibilityMode.hidden,
+          height: 10,
+          width: 10,
+          borderWidth: 1,
+        ),
+        hideDelay: 3 * 1000,
+        activationMode: ActivationMode.singleTap,
+        shouldAlwaysShow: true,
+      ),
+    );
   }
 
-  List<charts.Series<DistanceValue, double>> createDataSet(
+  _onSelectionChanged(SelectionArgs model) {
+
+  }
+
+  List<XyDataSeries<DistanceValue, num>> createDataSet(
       StreamsDataModel streamsDetail) {
     final List<DistanceValue> elevationData = [];
     final List<DistanceValue> heartrateData = [];
     final List<DistanceValue> wattsData = [];
-    final List<DistanceValue> cadenceData = [];
-    final List<DistanceValue> gradeData = [];
+    // final List<DistanceValue> cadenceData = [];
+    // final List<DistanceValue> gradeData = [];
     // SegmentEffort segment;
     double distance = 0.0;
     CombinedStreams col;
@@ -119,47 +116,41 @@ class _RouteAnalysisProfileChartScreenState
       elevationData.add(DistanceValue(distance, col.altitude));
       heartrateData.add(DistanceValue(distance, col.heartrate.toDouble()));
       wattsData.add(DistanceValue(distance, col.watts.toDouble()));
-      cadenceData.add(DistanceValue(distance, col.cadence.toDouble()));
-      gradeData.add(DistanceValue(distance, col.gradeSmooth.toDouble()));
+
+      // cadenceData.add(DistanceValue(distance, col.cadence.toDouble()));
+      // gradeData.add(DistanceValue(distance, col.gradeSmooth.toDouble()));
     }
 
-    return [
-      charts.Series<DistanceValue, double>(
-        id: 'Watts',
-        seriesColor: charts.ColorUtil.fromDartColor(zdvMidBlue),
-        domainFn: (DistanceValue watts, _) => watts.distance,
-        measureFn: (DistanceValue watts, _) => watts.value,
-        data: wattsData,
-      ),
-      // ..setAttribute(charts.rendererIdKey, 'customArea'),
-      charts.Series<DistanceValue, double>(
-        id: 'Elevation',
-        seriesColor: charts.ColorUtil.fromDartColor(zdvMidGreen),
-        areaColorFn: (_, __) => charts.ColorUtil.fromDartColor(zdvMidGreen),
-        domainFn: (DistanceValue elevation, _) => elevation.distance,
-        measureFn: (DistanceValue elevation, _) => elevation.value,
-        data: elevationData,
-      )..setAttribute(charts.rendererIdKey, 'customArea'),
-      charts.Series<DistanceValue, double>(
-        id: 'Heartrate',
-        //colorFn: (_, __) => charts.ColorUtil.fromDartColor(zdvmOrange),//,
-        seriesColor: charts.ColorUtil.fromDartColor(zdvOrange),
-        //
-        domainFn: (DistanceValue heartrate, _) => heartrate.distance,
-        measureFn: (DistanceValue heartrate, _) => heartrate.value,
-        data: heartrateData,
-      ),
-      // ..setAttribute(charts.rendererIdKey, 'customArea2'),
-      // charts.Series<DistanceValue, double>(
-      //   id: 'Cadence',
-      //   // colorFn specifies that the line will be blue.
-      //   colorFn: (_, __) => charts.MaterialPalette.deepOrange.shadeDefault,
-      //   // areaColorFn specifies that the area skirt will be light blue.
-      //   domainFn: (DistanceValue cadence, _) => cadence.distance,
-      //   measureFn: (DistanceValue cadence, _) => cadence.value,
-      //   data: cadenceData,
-      // )
-      // )..setAttribute(charts.rendererIdKey, 'customArea3'),
+    return <XyDataSeries<DistanceValue, num>>[
+      SplineAreaSeries<DistanceValue, num>(
+          animationDuration: 1500,
+          dataSource: elevationData!,
+          color: zdvMidGreen,
+          opacity: 1,
+          name: 'Elevation',
+          xValueMapper: (DistanceValue elevation, _) => elevation.distance,
+          yValueMapper: (DistanceValue elevation, _) => elevation.value,
+          markerSettings: const MarkerSettings(isVisible: false)),
+      SplineSeries<DistanceValue, num>(
+          animationDuration: 1500,
+          dataSource: wattsData!,
+          xValueMapper: (DistanceValue watts, _) => watts.distance,
+          yValueMapper: (DistanceValue watts, _) => watts.value / 10,
+          width: 1,
+          opacity: 0.8,
+          color: zdvMidBlue,
+          name: 'Watts',
+          markerSettings: const MarkerSettings(isVisible: false)),
+      SplineSeries<DistanceValue, num>(
+          animationDuration: 1500,
+          dataSource: heartrateData!,
+          width: 1,
+          opacity: 0.8,
+          color: zdvRed,
+          name: 'Heart Rate',
+          xValueMapper: (DistanceValue heartrate, _) => heartrate.distance,
+          yValueMapper: (DistanceValue heartrate, _) => heartrate.value,
+          markerSettings: const MarkerSettings(isVisible: false)),
     ];
   }
 }

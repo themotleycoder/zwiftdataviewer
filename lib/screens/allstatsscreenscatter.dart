@@ -1,22 +1,14 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_palette/flutter_palette.dart';
 import 'package:provider/provider.dart';
 import 'package:syncfusion_flutter_charts/charts.dart';
 import 'package:zwiftdataviewer/models/ActivitiesDataModel.dart';
 import 'package:zwiftdataviewer/stravalib/Models/activity.dart';
 import 'package:zwiftdataviewer/utils/conversions.dart';
-import 'package:zwiftdataviewer/utils/theme.dart';
 import 'package:zwiftdataviewer/widgets/ListItemViews.dart';
 import '../utils/charts.dart';
 
-class AllStatsScreenScatter extends StatefulWidget {
+class AllStatsScreenScatter extends StatelessWidget {
   const AllStatsScreenScatter({super.key});
-
-  @override
-  _AllStatsScreenScatterState createState() => _AllStatsScreenScatterState();
-}
-
-class _AllStatsScreenScatterState extends State<AllStatsScreenScatter> {
   @override
   Widget build(BuildContext context) {
     return Selector<ActivitiesDataModel, List<SummaryActivity>>(
@@ -30,13 +22,13 @@ class _AllStatsScreenScatterState extends State<AllStatsScreenScatter> {
               children: [
                 Expanded(
                     child: Padding(
-                  padding: const EdgeInsets.all(8.0),
+                  padding: const EdgeInsets.fromLTRB(0, 4, 0, 4),
                   child: buildScatterChart(context, units, activities),
                 )),
                 Consumer<SummaryActivitySelectDataModel>(
                     builder: (context, summaryActivity, child) {
                   return Container(
-                    padding: const EdgeInsets.fromLTRB(4, 0, 4, 0),
+                    padding: const EdgeInsets.all(0),
                     child: Column(
                       children: <Widget>[
                         singleDataHeaderLineItem(
@@ -72,19 +64,22 @@ class _AllStatsScreenScatterState extends State<AllStatsScreenScatter> {
 
   SfCartesianChart buildScatterChart(
       BuildContext context, units, List<SummaryActivity> activities) {
-
     final Map<int, List<SummaryActivity>> result =
-    groupActivitiesByYear(activities);
+        groupActivitiesByYear(activities);
 
-    final chartSeries = getScatterSeries(context, units, result);
+    final chartSeries = ChartsData.getScatterSeries(context, units, result);
 
     return SfCartesianChart(
-      primaryXAxis: NumericAxis(),
+      primaryXAxis: NumericAxis(
+        labelFormat: '{value}',
+        title: AxisTitle(text: 'Distance (${units['distance']!})'),
+      ),
       primaryYAxis: NumericAxis(
         majorGridLines: const MajorGridLines(width: 0),
         opposedPosition: false,
         labelFormat: '{value}',
         minimum: 0,
+        title: AxisTitle(text: 'Elevation (${units['height']!})'),
       ),
       series: chartSeries,
       legend: Legend(
@@ -93,30 +88,6 @@ class _AllStatsScreenScatterState extends State<AllStatsScreenScatter> {
         borderWidth: 1,
       ),
     );
-  }
-
-  List<ChartSeries<dynamic, dynamic>> getScatterSeries(
-      BuildContext context, units, Map<int, List<SummaryActivity>> activities) {
-    final List<int> years = activities.keys.toList();
-    final List<ChartSeries<dynamic, dynamic>> chartSeries = [];
-
-    final Map<int, Color> colors = generateColor(years);
-
-    for (int key in colors.keys) {
-      chartSeries.add(ScatterSeries<SummaryActivity, double>(
-        name: key.toString().substring(2),
-        color: colors[key], // Set the color property for the series
-        pointColorMapper: (SummaryActivity stats, _) {
-          return colors[stats.startDateLocal!.year]!;
-        },
-        xValueMapper: (SummaryActivity stats, _) =>
-            Conversions.metersToDistance(context, stats.distance ?? 0),
-        yValueMapper: (SummaryActivity stats, _) =>
-            Conversions.metersToHeight(context, stats.totalElevationGain ?? 0),
-        dataSource: activities[key]!,
-      ));
-    }
-    return chartSeries;
   }
 
   Map<int, List<SummaryActivity>> groupActivitiesByYear(
@@ -133,20 +104,4 @@ class _AllStatsScreenScatterState extends State<AllStatsScreenScatter> {
 
     return groupedActivities;
   }
-}
-
-Map<int, Color> generateColor(List<int> years) {
-  if (years == null || years.isEmpty) {
-    return {};
-  }
-
-  final ColorPalette palette = ColorPalette.splitComplimentary(
-    zdvMidGreen,
-    numberOfColors: years.length,
-    hueVariability: 30,
-    saturationVariability: 30,
-    brightnessVariability: 30,
-  );
-
-  return { for (var entry in years.asMap().entries) entry.value : palette[entry.key] };
 }

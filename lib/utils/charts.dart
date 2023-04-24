@@ -1,11 +1,43 @@
 import 'package:flutter/widgets.dart';
+import 'package:flutter_palette/flutter_palette.dart';
+import 'package:provider/provider.dart';
+import 'package:syncfusion_flutter_charts/charts.dart';
+import 'package:zwiftdataviewer/utils/theme.dart';
 import 'package:zwiftdataviewer/utils/yearlytotals.dart';
+import '../models/ActivitiesDataModel.dart';
 import '../stravalib/Models/activity.dart';
 import 'conversions.dart';
-import 'package:charts_flutter/flutter.dart' as charts;
 
 class ChartsData {
-  static List<YearlyTotals> generateColumnChartData(BuildContext? context,
+  static
+
+      /// Returns the list of chart series which need to
+      /// render on the multiple axes chart.
+      List<ChartSeries<YearlyTotals, String>> getMultipleAxisLineSeries(
+          BuildContext? context,
+          Map<String, String> units,
+          List<SummaryActivity> activities) {
+    var chartData = generateChartData(context, units, activities);
+    return <ChartSeries<YearlyTotals, String>>[
+      ColumnSeries<YearlyTotals, String>(
+          dataSource: chartData!,
+          xValueMapper: (YearlyTotals stats, _) => stats.year as String,
+          yValueMapper: (YearlyTotals stats, _) =>
+              (stats.distance ?? 0 / 1000).roundToDouble(),
+          name: 'Distance',
+          color: zdvMidBlue),
+      ColumnSeries<YearlyTotals, String>(
+          dataSource: chartData!,
+          yAxisName: 'yAxis1',
+          xValueMapper: (YearlyTotals stats, _) => stats.year as String,
+          yValueMapper: (YearlyTotals stats, _) =>
+              (stats.elevation ?? 0 / 1000).roundToDouble(),
+          name: 'Elevation',
+          color: zdvMidGreen)
+    ];
+  }
+
+  static List<YearlyTotals> generateChartData(BuildContext? context,
       Map<String, String> units, List<SummaryActivity> activities) {
     /// Create series list with multiple series
     final Map<String, double> distances = {};
@@ -45,32 +77,61 @@ class ChartsData {
     return chartData;
   }
 
-  static List<charts.Series<SummaryActivity, double>> buildChartSeriesList(
-      BuildContext context,
-      Map<int, List<SummaryActivity>> activities,
-      Map<int, Color> colors) {
-    final List<charts.Series<SummaryActivity, double>> chartSeries = [];
+  static List<ChartSeries<dynamic, dynamic>> getScatterSeries(
+      BuildContext context, units, Map<int, List<SummaryActivity>> activities) {
+    final List<int> years = activities.keys.toList();
+    final List<ChartSeries<dynamic, dynamic>> chartSeries = [];
 
-    for (int key in activities.keys) {
-      final List<SummaryActivity>distance = activities[key]!;
-      chartSeries.add(charts.Series<SummaryActivity, double>(
-        id: key.toString().substring(2),
-        // Providing a color function is optional.
-        colorFn: (SummaryActivity stats, _) {
-          // Bucket the measure column value into 3 distinct colors.
-          return charts.ColorUtil.fromDartColor(
-              colors[stats.startDateLocal!.year]!);
+    final Map<int, Color> colors = generateColor(years);
+
+    for (int key in colors.keys) {
+      chartSeries.add(ScatterSeries<SummaryActivity, double>(
+        name: key.toString().substring(2),
+        color: colors[key],
+        // Set the color property for the series
+        pointColorMapper: (SummaryActivity stats, _) {
+          return colors[stats.startDateLocal!.year]!;
         },
-        domainFn: (SummaryActivity stats, _) =>
-            Conversions.metersToDistance(context, stats.distance ?? 0),
-        measureFn: (SummaryActivity stats, _) =>
-            Conversions.metersToHeight(context, stats.totalElevationGain ?? 0),
-        // Providing a radius function is optional.
-        // radiusPxFn: (SummaryActivity stats, _) => sales.radius,
-        data: distance,
+        xValueMapper: (SummaryActivity stats, _) =>
+            Conversions.metersToDistance(
+                context, (stats.distance ?? 0).roundToDouble()),
+        yValueMapper: (SummaryActivity stats, _) => Conversions.metersToHeight(
+            context, (stats.totalElevationGain ?? 0).roundToDouble()),
+        dataSource: activities[key]!,
+        selectionBehavior: SelectionBehavior(enable: true),
+        initialSelectedDataIndexes: const [0],
+        onPointTap: (ChartPointDetails details) {
+          // Get the index of the tapped data point
+          final int pointIndex = details.pointIndex!;
+          // Get the corresponding SummaryActivity object and do something with it
+          _onSelectionChanged(context, activities[key]![pointIndex]);
+        },
       ));
     }
-
     return chartSeries;
+  }
+
+  static _onSelectionChanged(
+      BuildContext context, SummaryActivity selectedRide) {
+    Provider.of<SummaryActivitySelectDataModel>(context, listen: false)
+        .setSelectedActivity(selectedRide);
+  }
+
+  static Map<int, Color> generateColor(List<int> years) {
+    if (years.isEmpty) {
+      return {};
+    }
+
+    final ColorPalette palette = ColorPalette.splitComplimentary(
+      zdvMidGreen,
+      numberOfColors: years.length,
+      hueVariability: 30,
+      saturationVariability: 30,
+      brightnessVariability: 30,
+    );
+
+    return {
+      for (var entry in years.asMap().entries) entry.value: palette[entry.key]
+    };
   }
 }
