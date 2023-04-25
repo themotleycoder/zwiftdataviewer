@@ -22,7 +22,7 @@ class RouteAnalysisProfileChartScreen extends StatefulWidget {
 
 class _RouteAnalysisProfileChartScreenState
     extends State<RouteAnalysisProfileChartScreen> {
-  List<charts.Series<DistanceValue, double>> _chartData = [];
+  // List<charts.Series<DistanceValue, double>> _chartData = [];
   StreamsDetailCollection? _streamsDetail;
   CombinedStreams? selectionModel;
 
@@ -30,7 +30,7 @@ class _RouteAnalysisProfileChartScreenState
   Widget build(BuildContext context) {
     return Consumer<StreamsDataModel>(builder: (context, myModel, child) {
       _streamsDetail = myModel.combinedStreams ?? StreamsDetailCollection();
-      // _chartData = createDataSet(myModel);
+
       return Selector<StreamsDataModel, bool>(
           selector: (context, model) => model.isLoading,
           builder: (context, isLoading, _) {
@@ -57,10 +57,16 @@ class _RouteAnalysisProfileChartScreenState
         createDataSet(streamsDataModel);
     return SfCartesianChart(
         onTrackballPositionChanging: (TrackballArgs args) {
-          CombinedStreams streamObj = _streamsDetail!.stream![args.chartPointInfo.seriesIndex!];
-          Provider.of<ActivitySelectDataModel>(context, listen: false)
-              .setSelectedSeries(streamObj);
+          final CombinedStreams streamObj = _streamsDetail!.stream![args.chartPointInfo.seriesIndex!];
+          // Provider.of<ActivitySelectDataModel>(context, listen: false)
+          //     .setSelectedSeries(streamObj);
+          _onSelectionChanged(streamObj);
         },
+      // onSelectionChanged: (SelectionArgs args) {
+      //   final CombinedStreams streamObj = _streamsDetail!.stream![args.seriesIndex!];
+      //   Provider.of<ActivitySelectDataModel>(context, listen: false)
+      //       .setSelectedSeries(streamObj);
+      // },
       plotAreaBorderWidth: 0,
       // title: ChartTitle(text: isCardView ? '' : 'Inflation - Consumer price'),
       legend: Legend(
@@ -70,33 +76,34 @@ class _RouteAnalysisProfileChartScreenState
       primaryXAxis: NumericAxis(
           // intervalType: DateTimeIntervalType.minutes,
           edgeLabelPlacement: EdgeLabelPlacement.shift,
-          interval: 2,
-          majorGridLines: const MajorGridLines(width: 0)),
+          majorGridLines: const MajorGridLines(width: 0),
+          minimum: 0),
       primaryYAxis: NumericAxis(
           labelFormat: ' ',
           axisLine: const AxisLine(width: 0),
           majorTickLines: const MajorTickLines(color: Colors.transparent)),
-      series: dataSet,
-      tooltipBehavior: TooltipBehavior(enable: true),
+      tooltipBehavior: TooltipBehavior(enable: false),
       trackballBehavior: TrackballBehavior(
         enable: true,
-        markerSettings: TrackballMarkerSettings(
-          markerVisibility: true
-              ? TrackballVisibilityMode.visible
-              : TrackballVisibilityMode.hidden,
+        markerSettings: const TrackballMarkerSettings(
+          markerVisibility: TrackballVisibilityMode.visible,
           height: 10,
           width: 10,
           borderWidth: 1,
         ),
-        hideDelay: 3 * 1000,
+        hideDelay: 3000,
         activationMode: ActivationMode.singleTap,
         shouldAlwaysShow: true,
       ),
+      series: dataSet,
     );
   }
 
-  _onSelectionChanged(SelectionArgs model) {
-
+  _onSelectionChanged(CombinedStreams model) {
+    print('Alt:${model.altitude}');
+    print('Alt2:${Conversions.metersToHeight(context, model.altitude)}');
+    Provider.of<ActivitySelectDataModel>(context, listen: false)
+        .setSelectedSeries(model);
   }
 
   List<XyDataSeries<DistanceValue, num>> createDataSet(
@@ -113,7 +120,9 @@ class _RouteAnalysisProfileChartScreenState
     for (int x = 0; x < length; x++) {
       col = _streamsDetail!.stream![x];
       distance = Conversions.metersToDistance(context, col.distance);
-      elevationData.add(DistanceValue(distance, col.altitude));
+      var h = Conversions.metersToHeight(
+          context, col.altitude);
+      elevationData.add(DistanceValue(distance, h.toDouble()));
       heartrateData.add(DistanceValue(distance, col.heartrate.toDouble()));
       wattsData.add(DistanceValue(distance, col.watts.toDouble()));
 

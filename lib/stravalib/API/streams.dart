@@ -1,5 +1,6 @@
 import 'dart:async';
 import 'dart:convert';
+import 'dart:ui';
 
 import 'package:http/http.dart' as http;
 import 'package:zwiftdataviewer/stravalib/Models/fault.dart';
@@ -120,7 +121,7 @@ class StreamsDetailCollection {
     stream = <CombinedStreams>[];
     if (distance.data != null) {
       final int size = distance.data!.length ?? 0;
-      for (int x = 0; x < size; x++) {
+      for (int x = 0; x < size; x+=10) {
         // distance.data?.forEach((x) {
         stream?.add(CombinedStreams(
             distance.data![x],
@@ -146,4 +147,18 @@ class CombinedStreams {
 
   CombinedStreams(this.distance, this.time, this.altitude, this.heartrate,
       this.cadence, this.watts, this.gradeSmooth);
+}
+
+class LapSummaryObject {
+  final int lap;
+  double distance;
+  int time;
+  double altitude;
+  int heartrate;
+  int cadence;
+  double watts;
+  final Color color;
+
+  LapSummaryObject(this.lap, this.distance, this.time, this.altitude, this.heartrate,
+      this.cadence, this.watts, this.color);
 }
