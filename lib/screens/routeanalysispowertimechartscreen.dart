@@ -30,7 +30,7 @@ class TimeDataView extends StatelessWidget {
           child: ChangeNotifierProvider<SelectedLapSummaryObjectModel>(
             create: (_) => SelectedLapSummaryObjectModel(),
             child: Column(
-              children: [
+              children: const [
                 Expanded(child: DisplayChart()),
                 PowerTimeProfileDataView(),
               ],
@@ -43,13 +43,15 @@ class TimeDataView extends StatelessWidget {
 }
 
 class DisplayChart extends StatelessWidget {
+  const DisplayChart({super.key});
+
   @override
   Widget build(BuildContext context) {
     final lapSummaryData = Provider.of<LapSummaryDataModel>(context);
     return SfCircularChart(
       series: _createSampleData(lapSummaryData),
       onSelectionChanged: (SelectionArgs args) =>
-          onSelectionChanged(context!, args),
+          onSelectionChanged(context, args),
     );
   }
 
@@ -83,6 +85,8 @@ class DisplayChart extends StatelessWidget {
 }
 
 class PowerTimeProfileDataView extends StatelessWidget {
+  const PowerTimeProfileDataView({super.key});
+
   @override
   Widget build(BuildContext context) {
     return Consumer<SelectedLapSummaryObjectModel>(
@@ -135,37 +139,42 @@ class LapSummaryDataModel extends ChangeNotifier {
           LapSummaryObject(x, 0, 0.0, 0, 0.0, 0, 0, 0, 0, _onColorSelect(x)));
     }
     for (var lap in laps) {
+      int time = lap.elapsedTime ?? 0;
       double watts = lap.averageWatts ?? 0;
       double speed = lap.averageSpeed ?? 0;
       double cadence = lap.averageCadence ?? 0;
+      double distance = lap.distance ?? 0;
+      //double heartrate = lap. ?? 0;
       if (watts < ftp * .60) {
-        lapSummaryObjects![0].count += 1;
-        lapSummaryObjects![0].time += lap.elapsedTime ?? 0;
-        lapSummaryObjects![0].watts += watts;
-        lapSummaryObjects![0].speed += speed;
-        lapSummaryObjects![0].cadence += cadence;
+        _incrementSummaryObject(
+            lapSummaryObjects![0], time, watts, speed, cadence, distance);
       } else if (watts >= ftp * .60 && watts <= ftp * .75) {
-        lapSummaryObjects![1].count += 1;
-        lapSummaryObjects![1].time += lap.elapsedTime ?? 0;
-        lapSummaryObjects![1].watts += watts;
+        _incrementSummaryObject(
+            lapSummaryObjects![1], time, watts, speed, cadence, distance);
       } else if (watts > ftp * .75 && watts <= ftp * .89) {
-        lapSummaryObjects![2].count += 1;
-        lapSummaryObjects![2].time += lap.elapsedTime ?? 0;
-        lapSummaryObjects![2].watts += watts;
+        _incrementSummaryObject(
+            lapSummaryObjects![2], time, watts, speed, cadence, distance);
       } else if (watts > ftp * .89 && watts <= ftp * 1.04) {
-        lapSummaryObjects![3].count += 1;
-        lapSummaryObjects![3].time += lap.elapsedTime ?? 0;
-        lapSummaryObjects![3].watts += watts;
+        _incrementSummaryObject(
+            lapSummaryObjects![3], time, watts, speed, cadence, distance);
       } else if (watts > ftp * 1.04 && watts <= ftp * 1.18) {
-        lapSummaryObjects![4].count += 1;
-        lapSummaryObjects![4].time += lap.elapsedTime ?? 0;
-        lapSummaryObjects![4].watts += watts;
+        _incrementSummaryObject(
+            lapSummaryObjects![4], time, watts, speed, cadence, distance);
       } else if (watts > ftp * 1.18) {
-        lapSummaryObjects![5].count += 1;
-        lapSummaryObjects![5].time += lap.elapsedTime ?? 0;
-        lapSummaryObjects![5].watts += watts;
+        _incrementSummaryObject(
+            lapSummaryObjects![5], time, watts, speed, cadence, distance);
       } else {}
     }
+  }
+
+  _incrementSummaryObject(LapSummaryObject lapSummaryObject, int time,
+      double watts, double speed, double cadence, double distance) {
+    lapSummaryObject.count += 1;
+    lapSummaryObject.time += time;
+    lapSummaryObject.watts += watts;
+    lapSummaryObject.speed += speed;
+    lapSummaryObject.cadence += cadence;
+    lapSummaryObject.distance += distance;
   }
 
   Color _onColorSelect(idx) {
