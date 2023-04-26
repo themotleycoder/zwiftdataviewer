@@ -88,3 +88,19 @@ class LapSummaryDataModel extends ChangeNotifier {
   }
 
 }
+
+class LapSummaryObject with ChangeNotifier {
+  final int lap;
+  double count = 0.0;
+  double distance;
+  int time;
+  double altitude;
+  double heartrate;
+  double cadence;
+  double watts;
+  double speed;
+  final Color color;
+
+  LapSummaryObject(this.lap, this.count, this.distance, this.time, this.altitude,
+      this.heartrate, this.cadence, this.watts, this.speed, this.color);
+}
