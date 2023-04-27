@@ -49,13 +49,13 @@ class DisplayChart extends StatelessWidget {
   Widget build(BuildContext context) {
     final lapSummaryData = Provider.of<LapSummaryDataModel>(context);
     return SfCircularChart(
-      series: _createSampleData(lapSummaryData),
+      series: _createDataSet(lapSummaryData),
       onSelectionChanged: (SelectionArgs args) =>
           onSelectionChanged(context, args),
     );
   }
 
-  List<PieSeries<LapSummaryObject, int>> _createSampleData(
+  List<PieSeries<LapSummaryObject, int>> _createDataSet(
       LapSummaryDataModel lapSummaryData) {
     return [
       PieSeries<LapSummaryObject, int>(

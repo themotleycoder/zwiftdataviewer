@@ -1,90 +1,74 @@
-import 'package:charts_flutter/flutter.dart' as charts;
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:syncfusion_flutter_charts/charts.dart';
 import 'package:zwiftdataviewer/models/ActivityDetailDataModel.dart';
 import 'package:zwiftdataviewer/models/StreamsDataModel.dart';
 import 'package:zwiftdataviewer/stravalib/API/streams.dart';
-import 'package:zwiftdataviewer/stravalib/Models/activity.dart';
 import 'package:zwiftdataviewer/utils/conversions.dart';
 import 'package:zwiftdataviewer/utils/theme.dart';
 import 'package:zwiftdataviewer/widgets/ListItemViews.dart';
-
 import '../appkeys.dart';
 
-class RouteAnalysisProfileChartScreen extends StatefulWidget {
+class RouteAnalysisProfileChartScreen extends StatelessWidget {
   const RouteAnalysisProfileChartScreen({super.key});
 
   @override
-  _RouteAnalysisProfileChartScreenState createState() =>
-      _RouteAnalysisProfileChartScreenState();
+  Widget build(BuildContext context) {
+    return Consumer<ActivityDetailDataModel>(
+        builder: (context, myModel, child) {
+      return Consumer<StreamsDataModel>(builder: (context, myModel, child) {
+        return ChangeNotifierProvider<SelectedStreamObjectModel>(
+            create: (_) => SelectedStreamObjectModel(),
+            child: Selector<StreamsDataModel, bool>(
+                selector: (context, model) => model.isLoading,
+                builder: (context, isLoading, _) {
+                  if (isLoading) {
+                    return const Center(
+                      child: CircularProgressIndicator(
+                        key: AppKeys.activitiesLoading,
+                      ),
+                    );
+                  }
+                  return Column(children: const [
+                    Expanded(
+                      child: DisplayChart(),
+                    ),
+                    ProfileDataView(),
+                  ]);
+                  // ]);
+                }));
+      });
+    });
+  }
 }
 
-class _RouteAnalysisProfileChartScreenState
-    extends State<RouteAnalysisProfileChartScreen> {
-  // List<charts.Series<DistanceValue, double>> _chartData = [];
-  StreamsDetailCollection? _streamsDetail;
-  CombinedStreams? selectionModel;
+class DisplayChart extends StatelessWidget {
+  const DisplayChart({super.key});
 
   @override
   Widget build(BuildContext context) {
-    return Consumer<StreamsDataModel>(builder: (context, myModel, child) {
-      _streamsDetail = myModel.combinedStreams ?? StreamsDetailCollection();
-
-      return Selector<StreamsDataModel, bool>(
-          selector: (context, model) => model.isLoading,
-          builder: (context, isLoading, _) {
-            if (isLoading) {
-              return const Center(
-                child: CircularProgressIndicator(
-                  key: AppKeys.activitiesLoading,
-                ),
-              );
-            }
-            return Column(children: [
-              Expanded(
-                child: _buildLineChart(myModel),
-              ),
-              const ProfileDataView(),
-            ]);
-            // ]);
-          });
-    });
-  }
-
-  _buildLineChart(StreamsDataModel streamsDataModel) {
-    final List<XyDataSeries<DistanceValue, num>> dataSet =
-        createDataSet(streamsDataModel);
+    final Map<String, String> units = Conversions.units(context);
+    var combinedStreams =
+        Provider.of<StreamsDataModel>(context).combinedStreams;
     return SfCartesianChart(
-        onTrackballPositionChanging: (TrackballArgs args) {
-          final CombinedStreams streamObj = _streamsDetail!.stream![args.chartPointInfo.seriesIndex!];
-          // Provider.of<ActivitySelectDataModel>(context, listen: false)
-          //     .setSelectedSeries(streamObj);
-          _onSelectionChanged(streamObj);
-        },
-      // onSelectionChanged: (SelectionArgs args) {
-      //   final CombinedStreams streamObj = _streamsDetail!.stream![args.seriesIndex!];
-      //   Provider.of<ActivitySelectDataModel>(context, listen: false)
-      //       .setSelectedSeries(streamObj);
-      // },
+      tooltipBehavior: null,
       plotAreaBorderWidth: 0,
-      // title: ChartTitle(text: isCardView ? '' : 'Inflation - Consumer price'),
       legend: Legend(
           isVisible: true,
           overflowMode: LegendItemOverflowMode.wrap,
           position: LegendPosition.top),
       primaryXAxis: NumericAxis(
-          // intervalType: DateTimeIntervalType.minutes,
-          edgeLabelPlacement: EdgeLabelPlacement.shift,
+          title: AxisTitle(text: 'Distance (${units['distance']!})'),
           majorGridLines: const MajorGridLines(width: 0),
           minimum: 0),
       primaryYAxis: NumericAxis(
           labelFormat: ' ',
           axisLine: const AxisLine(width: 0),
           majorTickLines: const MajorTickLines(color: Colors.transparent)),
-      tooltipBehavior: TooltipBehavior(enable: false),
       trackballBehavior: TrackballBehavior(
         enable: true,
+        tooltipSettings: const InteractiveTooltip(
+            enable: false),
         markerSettings: const TrackballMarkerSettings(
           markerVisibility: TrackballVisibilityMode.visible,
           height: 10,
@@ -95,19 +79,14 @@ class _RouteAnalysisProfileChartScreenState
         activationMode: ActivationMode.singleTap,
         shouldAlwaysShow: true,
       ),
-      series: dataSet,
+      series: _createDataSet(context, combinedStreams),
+      onTrackballPositionChanging: (TrackballArgs args) =>
+          onTBSelectionChanged(context, args),
     );
   }
 
-  _onSelectionChanged(CombinedStreams model) {
-    print('Alt:${model.altitude}');
-    print('Alt2:${Conversions.metersToHeight(context, model.altitude)}');
-    Provider.of<ActivitySelectDataModel>(context, listen: false)
-        .setSelectedSeries(model);
-  }
-
-  List<XyDataSeries<DistanceValue, num>> createDataSet(
-      StreamsDataModel streamsDetail) {
+  List<XyDataSeries<DistanceValue, num>> _createDataSet(
+      BuildContext context, StreamsDetailCollection? combinedStreams) {
     final List<DistanceValue> elevationData = [];
     final List<DistanceValue> heartrateData = [];
     final List<DistanceValue> wattsData = [];
@@ -115,13 +94,12 @@ class _RouteAnalysisProfileChartScreenState
     // final List<DistanceValue> gradeData = [];
     // SegmentEffort segment;
     double distance = 0.0;
-    CombinedStreams col;
-    final int length = _streamsDetail?.stream?.length ?? 0;
+    CombinedStreams? col;
+    final int length = combinedStreams?.stream!.length ?? 0;
     for (int x = 0; x < length; x++) {
-      col = _streamsDetail!.stream![x];
-      distance = Conversions.metersToDistance(context, col.distance);
-      var h = Conversions.metersToHeight(
-          context, col.altitude);
+      col = combinedStreams?.stream![x];
+      distance = Conversions.metersToDistance(context, col!.distance);
+      var h = Conversions.metersToHeight(context, col.altitude);
       elevationData.add(DistanceValue(distance, h.toDouble()));
       heartrateData.add(DistanceValue(distance, col.heartrate.toDouble()));
       wattsData.add(DistanceValue(distance, col.watts.toDouble()));
@@ -139,6 +117,8 @@ class _RouteAnalysisProfileChartScreenState
           name: 'Elevation',
           xValueMapper: (DistanceValue elevation, _) => elevation.distance,
           yValueMapper: (DistanceValue elevation, _) => elevation.value,
+          dataLabelSettings: const DataLabelSettings(isVisible: false),
+          enableTooltip: false,
           markerSettings: const MarkerSettings(isVisible: false)),
       SplineSeries<DistanceValue, num>(
           animationDuration: 1500,
@@ -149,6 +129,8 @@ class _RouteAnalysisProfileChartScreenState
           opacity: 0.8,
           color: zdvMidBlue,
           name: 'Watts',
+          dataLabelSettings: const DataLabelSettings(isVisible: false),
+          enableTooltip: false,
           markerSettings: const MarkerSettings(isVisible: false)),
       SplineSeries<DistanceValue, num>(
           animationDuration: 1500,
@@ -159,24 +141,30 @@ class _RouteAnalysisProfileChartScreenState
           name: 'Heart Rate',
           xValueMapper: (DistanceValue heartrate, _) => heartrate.distance,
           yValueMapper: (DistanceValue heartrate, _) => heartrate.value,
+          dataLabelSettings: const DataLabelSettings(isVisible: false),
+          enableTooltip: false,
           markerSettings: const MarkerSettings(isVisible: false)),
     ];
   }
+
+  onTBSelectionChanged(BuildContext context, TrackballArgs args) {
+    var dataPointIndex = args.chartPointInfo.dataPointIndex;
+    var combinedStreams =
+        Provider.of<StreamsDataModel>(context, listen: false).combinedStreams;
+    var combinedStream = combinedStreams?.stream![dataPointIndex!];
+    Provider.of<SelectedStreamObjectModel>(context, listen: false)
+        .setSelectedCombinedStream(combinedStream);
+  }
 }
 
-class ProfileDataView extends StatefulWidget {
+class ProfileDataView extends StatelessWidget {
   const ProfileDataView({super.key});
 
   @override
-  _ProfileDataViewState createState() => _ProfileDataViewState();
-}
-
-class _ProfileDataViewState extends State<ProfileDataView> {
-  @override
   Widget build(BuildContext context) {
-    return Consumer<ActivitySelectDataModel>(
-        builder: (context, myModel, child) {
-      CombinedStreams? selectedSeries = myModel.selectedStream;
+    return Consumer<SelectedStreamObjectModel>(
+        builder: (context, selectedCombinedStream, child) {
+      final selectedSeries = selectedCombinedStream.selectedCombinedStreams;
       Map<String, String> units = Conversions.units(context);
       return Expanded(
           flex: 1,
@@ -216,6 +204,17 @@ class _ProfileDataViewState extends State<ProfileDataView> {
                     )
                   ])));
     });
+  }
+}
+
+class SelectedStreamObjectModel extends ChangeNotifier {
+  CombinedStreams? _combinedStreamsObject;
+
+  CombinedStreams? get selectedCombinedStreams => _combinedStreamsObject;
+
+  void setSelectedCombinedStream(CombinedStreams? combinedStreamsObject) {
+    _combinedStreamsObject = combinedStreamsObject;
+    notifyListeners();
   }
 }
 

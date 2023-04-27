@@ -73,21 +73,21 @@ class LapSelectDataModel extends ChangeNotifier {
   }
 }
 
-class LapSummaryDataModel extends ChangeNotifier {
-
-  LapSummaryObject? model;
-
-  bool _isLoading = false;
-
-  bool get isLoading => _isLoading;
-
-  LapSummaryObject? get summaryObject => model;
-
-  void setSummaryModel(LapSummaryObject model) {
-    this.model = model;
-  }
-
-}
+// class LapSummaryDataModel extends ChangeNotifier {
+//
+//   LapSummaryObject? model;
+//
+//   bool _isLoading = false;
+//
+//   bool get isLoading => _isLoading;
+//
+//   LapSummaryObject? get summaryObject => model;
+//
+//   void setSummaryModel(LapSummaryObject model) {
+//     this.model = model;
+//   }
+//
+// }
 
 class LapSummaryObject with ChangeNotifier {
   final int lap;

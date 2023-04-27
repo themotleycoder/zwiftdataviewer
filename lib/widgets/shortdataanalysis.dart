@@ -70,7 +70,7 @@ class ShortDataAnalysisForLapSummary extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final Strava strava = Strava(Globals.isInDebug, secret);
-    Map<String, String> units = Conversions.units(context);
+    final Map<String, String> units = Conversions.units(context);
     final double watts = (_lapSummaryObject?.watts ?? 0) / (_lapSummaryObject?.count ?? 0);
     final double cadence = (_lapSummaryObject?.cadence ?? 0) / (_lapSummaryObject?.count ?? 0);
     final double speed = (_lapSummaryObject?.speed ?? 0) / (_lapSummaryObject?.count ?? 0);

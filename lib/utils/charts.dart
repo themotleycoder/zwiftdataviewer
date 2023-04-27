@@ -19,13 +19,7 @@ class ChartsData {
           List<SummaryActivity> activities) {
     var chartData = generateChartData(context, units, activities);
     return <ChartSeries<YearlyTotals, String>>[
-      ColumnSeries<YearlyTotals, String>(
-          dataSource: chartData!,
-          xValueMapper: (YearlyTotals stats, _) => stats.year as String,
-          yValueMapper: (YearlyTotals stats, _) =>
-              (stats.distance ?? 0 / 1000).roundToDouble(),
-          name: 'Distance',
-          color: zdvMidBlue),
+
       ColumnSeries<YearlyTotals, String>(
           dataSource: chartData!,
           yAxisName: 'yAxis1',
