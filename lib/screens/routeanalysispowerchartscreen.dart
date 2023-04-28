@@ -119,7 +119,7 @@ class DisplayChart extends StatelessWidget {
     );
   }
 
-  List<ChartSeries<LapTotals, double>> _createDataSet(BuildContext context,
+  List<ChartSeries<LapTotals, String>> _createDataSet(BuildContext context,
       LapSummaryDataModel lapSummaryData) {
     final double ftp =
     (Provider.of<ConfigDataModel>(context, listen: false).configData?.ftp ??
@@ -135,10 +135,10 @@ class DisplayChart extends StatelessWidget {
     }
 
     return [
-      ColumnSeries<LapTotals, double>(
+      ColumnSeries<LapTotals, String>(
           dataSource: wattsData!,
           yAxisName: 'yAxis1',
-          xValueMapper: (LapTotals stats, _) => stats.watts,
+          xValueMapper: (LapTotals stats, _) => stats.lap as String,
           yValueMapper: (LapTotals stats, _) =>
               (stats.watts ?? 0).roundToDouble(),
           name: 'Elevation',
