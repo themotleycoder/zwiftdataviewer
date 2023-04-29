@@ -1,4 +1,5 @@
 // import 'package:charts_flutter/flutter.dart' as charts;
+//import 'package:charts_flutter/flutter.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:syncfusion_flutter_charts/charts.dart';
@@ -26,84 +27,84 @@ class WattsDataView extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final double ftp =
-    (Provider.of<ConfigDataModel>(context, listen: false).configData?.ftp ??
-        0)
-        .toDouble();
+        (Provider.of<ConfigDataModel>(context, listen: false).configData?.ftp ??
+                0)
+            .toDouble();
     return Consumer<ActivityDetailDataModel>(
         builder: (context, myModel, child) {
-          return ChangeNotifierProxyProvider<ActivityDetailDataModel,
-              LapSummaryDataModel>(
-              create: (_) => LapSummaryDataModel(),
-              lazy: false,
-              update: (context, activityDetailDataModel, lapSummaryDataModel) {
-                final newActivityDetailDataModel =
-                Provider.of<ActivityDetailDataModel>(context, listen: false);
-                lapSummaryDataModel?.updateFrom(newActivityDetailDataModel, ftp);
-                return lapSummaryDataModel!;
-              },
-      child: Column(children: const [
+      // return ChangeNotifierProxyProvider<ActivityDetailDataModel,
+      //         LapSummaryDataModel>(
+      //     create: (_) => LapSummaryDataModel(),
+      //     lazy: false,
+      //     update: (context, activityDetailDataModel, lapSummaryDataModel) {
+      //       final newActivityDetailDataModel =
+      //           Provider.of<ActivityDetailDataModel>(context, listen: false);
+      //       lapSummaryDataModel?.updateFrom(newActivityDetailDataModel, ftp);
+      //       return lapSummaryDataModel!;
+      //     },
+      return Column(children: const [
         Expanded(
             // padding: const EdgeInsets.all(8.0),
             child: DisplayChart()),
-
         WattsProfileDataView()
-      ]));
+      ]);
     });
+    // });
   }
 
-  // _onSelectionChanged(charts.SelectionModel model) {
-  //   int? selection = model.selectedDatum[0].index ?? 0;
-  //   selectedLap = _laps![selection];
-  //   Provider.of<LapSelectDataModel>(context, listen: false)
-  //       .setSelectedLap(selectedLap);
-  // }
-  //
-  // List<charts.Series<LapTotals, String>> generateChartData(
-  //     BuildContext? context, Map<String, String> units, List<Laps> laps) {
-  //   final List<LapTotals> wattsData = [];
-  //   final List<LapTotals> wattsLineData = [];
-  //   var count = 0;
-  //   for (var lap in laps) {
-  //     count += 1;
-  //     wattsData.add(LapTotals(count.toString(), lap.averageWatts ?? 0));
-  //     wattsLineData.add(LapTotals(count.toString(), _ftp.toDouble()));
-  //   }
-  //
-  //   return [
-  //     charts.Series<LapTotals, String>(
-  //         id: 'ftp',
-  //         domainFn: (LapTotals totals, _) => totals.lap,
-  //         measureFn: (LapTotals totals, _) => totals.watts,
-  //         data: wattsLineData,
-  //         colorFn: (LapTotals totals, _) =>
-  //             charts.MaterialPalette.gray.shade300)
-  //       ..setAttribute(charts.rendererIdKey, 'customLine'),
-  //     charts.Series<LapTotals, String>(
-  //         id: 'power',
-  //         domainFn: (LapTotals totals, _) => totals.lap,
-  //         measureFn: (LapTotals totals, _) => totals.watts,
-  //         data: wattsData,
-  //         colorFn: ((LapTotals totals, _) {
-  //           final double ftp = _ftp.toDouble();
-  //           if (totals.watts < ftp * .60) {
-  //             return charts.MaterialPalette.gray.shadeDefault;
-  //           } else if (totals.watts >= ftp * .60 && totals.watts <= ftp * .75) {
-  //             return charts.ColorUtil.fromDartColor(zdvMidBlue);
-  //           } else if (totals.watts > ftp * .75 && totals.watts <= ftp * .89) {
-  //             return charts.ColorUtil.fromDartColor(zdvMidGreen);
-  //           } else if (totals.watts > ftp * .89 && totals.watts <= ftp * 1.04) {
-  //             return charts.ColorUtil.fromDartColor(zdvYellow);
-  //           } else if (totals.watts > ftp * 1.04 &&
-  //               totals.watts <= ftp * 1.18) {
-  //             return charts.ColorUtil.fromDartColor(zdvOrange);
-  //           } else if (totals.watts > ftp * 1.18) {
-  //             return charts.ColorUtil.fromDartColor(zdvRed);
-  //           } else {
-  //             return charts.MaterialPalette.gray.shadeDefault;
-  //           }
-  //         })),
-  //   ];
-  // }
+// _onSelectionChanged(charts.SelectionModel model) {
+//   int? selection = model.selectedDatum[0].index ?? 0;
+//   selectedLap = _laps![selection];
+//   Provider.of<LapSelectDataModel>(context, listen: false)
+//       .setSelectedLap(selectedLap);
+// }
+//
+// List<charts.Series<LapTotals, String>> generateChartData(
+//     BuildContext? context, Map<String, String> units, List<Laps> laps) {
+//   final List<LapTotals> wattsData = [];
+//   final List<LapTotals> wattsLineData = [];
+//   var count = 0;
+//   for (var lap in laps) {
+//     count += 1;
+//     wattsData.add(LapTotals(count.toString(), lap.averageWatts ?? 0));
+//     wattsLineData.add(LapTotals(count.toString(), _ftp.toDouble()));
+//   }
+//
+//   return [
+//     charts.Series<LapTotals, String>(
+//         id: 'ftp',
+//         domainFn: (LapTotals totals, _) => totals.lap,
+//         measureFn: (LapTotals totals, _) => totals.watts,
+//         data: wattsLineData,
+//         colorFn: (LapTotals totals, _) =>
+//             charts.MaterialPalette.gray.shade300)
+//       ..setAttribute(charts.rendererIdKey, 'customLine'),
+//     charts.Series<LapTotals, String>(
+//         id: 'power',
+//         domainFn: (LapTotals totals, _) => totals.lap,
+//         measureFn: (LapTotals totals, _) => totals.watts,
+//         data: wattsData,
+//         colorFn: ((LapTotals totals, _) {
+//           final double ftp = _ftp.toDouble();
+//           if (totals.watts < ftp * .60) {
+//             return charts.MaterialPalette.gray.shadeDefault;
+//           } else if (totals.watts >= ftp * .60 && totals.watts <= ftp * .75) {
+//             return charts.ColorUtil.fromDartColor(zdvMidBlue);
+//           } else if (totals.watts > ftp * .75 && totals.watts <= ftp * .89) {
+//             return charts.ColorUtil.fromDartColor(zdvMidGreen);
+//           } else if (totals.watts > ftp * .89 && totals.watts <= ftp * 1.04) {
+//             return charts.ColorUtil.fromDartColor(zdvYellow);
+//           } else if (totals.watts > ftp * 1.04 &&
+//               totals.watts <= ftp * 1.18) {
+//             return charts.ColorUtil.fromDartColor(zdvOrange);
+//           } else if (totals.watts > ftp * 1.18) {
+//             return charts.ColorUtil.fromDartColor(zdvRed);
+//           } else {
+//             return charts.MaterialPalette.gray.shadeDefault;
+//           }
+//         })),
+//   ];
+// }
 }
 
 class DisplayChart extends StatelessWidget {
@@ -111,38 +112,68 @@ class DisplayChart extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final lapSummaryData = Provider.of<LapSummaryDataModel>(context);
+    final activityDetailDataModel =
+        Provider.of<ActivityDetailDataModel>(context);
     return SfCartesianChart(
-      series: _createDataSet(context, lapSummaryData),
-      // onSelectionChanged: (SelectionArgs args) =>
-      //     onSelectionChanged(context, args),
+      primaryXAxis: CategoryAxis(),
+      primaryYAxis: CategoryAxis(
+        minimum: 0,
+        //maximum: lapSummaryData.maxWatts.toDouble(),
+        // interval: 50,
+        // numberFormat: NumberFormat.compact()
+      ),
+      series: _createDataSet(context, activityDetailDataModel),
+      onSelectionChanged: (SelectionArgs args) =>
+          onSelectionChanged(context, args),
     );
   }
 
-  List<ChartSeries<LapTotals, String>> _createDataSet(BuildContext context,
-      LapSummaryDataModel lapSummaryData) {
+  List<ChartSeries<LapSummaryObject, String>> _createDataSet(
+      BuildContext context, ActivityDetailDataModel activityDetailDataModel) {
     final double ftp =
-    (Provider.of<ConfigDataModel>(context, listen: false).configData?.ftp ??
-        0)
-        .toDouble();
+        (Provider.of<ConfigDataModel>(context, listen: false).configData?.ftp ??
+                0)
+            .toDouble();
     final List<LapTotals> wattsData = [];
     final List<LapTotals> wattsLineData = [];
+    final List<LapSummaryObject> lapSummaries = [];
     var count = 0;
-    for (var lap in lapSummaryData.lapSummaryObjects!) {
+
+    //lapSummaryData.activityDetail?.laps
+
+    for (var lap in activityDetailDataModel.activityDetail?.laps ?? []) {
       count += 1;
-      wattsData.add(LapTotals(count.toString(), lap.watts ?? 0));
-      wattsLineData.add(LapTotals(count.toString(), ftp.toDouble()));
+      wattsData.add(LapTotals(count.toString(), lap.averageWatts,
+          getColorForWatts(lap.averageWatts, ftp)));
+      wattsLineData
+          .add(LapTotals(count.toString(), ftp.toDouble(), Colors.black));
+
+      lapSummaries.add(
+        LapSummaryObject(0, count.toDouble(), lap.distance, 0, 0.0, 0, 0, lap.averageWatts, 0, getColorForWatts(lap.averageWatts, ftp)));
     }
 
     return [
-      ColumnSeries<LapTotals, String>(
-          dataSource: wattsData!,
-          yAxisName: 'yAxis1',
-          xValueMapper: (LapTotals stats, _) => stats.lap as String,
-          yValueMapper: (LapTotals stats, _) =>
-              (stats.watts ?? 0).roundToDouble(),
-          name: 'Elevation',
-          color: zdvMidGreen)
+      ColumnSeries<LapSummaryObject, String>(
+        dataSource: lapSummaries!,
+        yAxisName: 'yAxis1',
+        xValueMapper: (LapSummaryObject totals, _) => totals.count.toString(),
+        yValueMapper: (LapSummaryObject totals, _) =>
+            (totals.watts ?? 0).roundToDouble(),
+        pointColorMapper: (LapSummaryObject totals, _) => totals.color,
+        name: 'Elevation',
+        selectionBehavior: SelectionBehavior(
+          enable: true,
+          unselectedOpacity: 0.5,
+          // selectedColor: Colors.red,
+          // selectedBorderColor: Colors.red,
+          // selectedBorderWidth: 2,
+        ),
+      ),
+      // LineSeries(
+      //     dataSource: wattsLineData,
+      //     xValueMapper: (LapTotals totals, _) => totals.lap,
+      //     yValueMapper: (LapTotals totals, _) =>
+      //         (totals.watts ?? 0).roundToDouble(),)
       // charts.Series<LapTotals, String>(
       //     id: 'ftp',
       //     domainFn: (LapTotals totals, _) => totals.lap,
@@ -175,17 +206,43 @@ class DisplayChart extends StatelessWidget {
       //         return charts.MaterialPalette.gray.shadeDefault;
       //       }
       //     })),
-
     ];
   }
 
-  // onSelectionChanged(BuildContext buildContext, SelectionArgs args) {
-  //   final lapSummaryData =
-  //   Provider.of<LapSummaryDataModel>(buildContext, listen: false);
-  //   var lapSummaryObject = lapSummaryData.lapSummaryObjects![args.pointIndex];
-  //   Provider.of<SelectedLapSummaryObjectModel>(buildContext, listen: false)
-  //       .setSelectedLapSummaryObject(lapSummaryObject);
-  // }
+  onSelectionChanged(BuildContext context, SelectionArgs args) {
+    var dataPointIndex = args.pointIndex;
+    // var combinedStreams =
+    //     Provider.of<StreamsDataModel>(context, listen: false).combinedStreams;
+    // var combinedStream = combinedStreams?.stream![dataPointIndex!];
+    // Provider.of<SelectedStreamObjectModel>(context, listen: false)
+    //     .setSelectedCombinedStream(combinedStream);
+  }
+
+// onSelectionChanged(BuildContext buildContext, SelectionArgs args) {
+//   final lapSummaryData =
+//   Provider.of<LapSummaryDataModel>(buildContext, listen: false);
+//   var lapSummaryObject = lapSummaryData.lapSummaryObjects![args.pointIndex];
+//   Provider.of<SelectedLapSummaryObjectModel>(buildContext, listen: false)
+//       .setSelectedLapSummaryObject(lapSummaryObject);
+// }
+
+  Color getColorForWatts(double watts, double ftp) {
+    if (watts < ftp * .60) {
+      return Colors.grey;
+    } else if (watts >= ftp * .60 && watts <= ftp * .75) {
+      return zdvMidBlue;
+    } else if (watts > ftp * .75 && watts <= ftp * .89) {
+      return zdvMidGreen;
+    } else if (watts > ftp * .89 && watts <= ftp * 1.04) {
+      return zdvYellow;
+    } else if (watts > ftp * 1.04 && watts <= ftp * 1.18) {
+      return zdvOrange;
+    } else if (watts > ftp * 1.18) {
+      return zdvRed;
+    } else {
+      return Colors.grey;
+    }
+  }
 }
 
 class WattsProfileDataView extends StatefulWidget {
@@ -209,88 +266,95 @@ class _WattsProfileDataViewState extends State<WattsProfileDataView> {
 class LapTotals {
   final String lap;
   final double watts;
+  final Color colorForWatts;
 
-  LapTotals(this.lap, this.watts);
+  LapTotals(this.lap, this.watts, this.colorForWatts);
 }
 
-class LapSummaryDataModel extends ChangeNotifier {
-  List<LapSummaryObject>? model;
-
-  bool _isLoading = false;
-
-  bool get isLoading => _isLoading;
-
-  List<LapSummaryObject>? get lapSummaryObjects => model;
-
-  void setLapSummaryModel(List<LapSummaryObject> model) {
-    this.model = model;
-  }
-
-  void addLapSummaryObject(LapSummaryObject model) {
-    this.model!.add(model);
-  }
-
-  void updateFrom(ActivityDetailDataModel myModel, double ftp) {
-    model = [];
-    var laps = myModel.activityDetail?.laps ?? [];
-    for (int x = 1; x <= 6; x++) {
-      model!.add(
-          LapSummaryObject(x, 0, 0.0, 0, 0.0, 0, 0, 0, 0, _onColorSelect(x)));
-    }
-    for (var lap in laps) {
-      int time = lap.elapsedTime ?? 0;
-      double watts = lap.averageWatts ?? 0;
-      double speed = lap.averageSpeed ?? 0;
-      double cadence = lap.averageCadence ?? 0;
-      double distance = lap.distance ?? 0;
-      //double heartrate = lap. ?? 0;
-      if (watts < ftp * .60) {
-        _incrementSummaryObject(
-            lapSummaryObjects![0], time, watts, speed, cadence, distance);
-      } else if (watts >= ftp * .60 && watts <= ftp * .75) {
-        _incrementSummaryObject(
-            lapSummaryObjects![1], time, watts, speed, cadence, distance);
-      } else if (watts > ftp * .75 && watts <= ftp * .89) {
-        _incrementSummaryObject(
-            lapSummaryObjects![2], time, watts, speed, cadence, distance);
-      } else if (watts > ftp * .89 && watts <= ftp * 1.04) {
-        _incrementSummaryObject(
-            lapSummaryObjects![3], time, watts, speed, cadence, distance);
-      } else if (watts > ftp * 1.04 && watts <= ftp * 1.18) {
-        _incrementSummaryObject(
-            lapSummaryObjects![4], time, watts, speed, cadence, distance);
-      } else if (watts > ftp * 1.18) {
-        _incrementSummaryObject(
-            lapSummaryObjects![5], time, watts, speed, cadence, distance);
-      } else {}
-    }
-  }
-
-  _incrementSummaryObject(LapSummaryObject lapSummaryObject, int time,
-      double watts, double speed, double cadence, double distance) {
-    lapSummaryObject.count += 1;
-    lapSummaryObject.time += time;
-    lapSummaryObject.watts += watts;
-    lapSummaryObject.speed += speed;
-    lapSummaryObject.cadence += cadence;
-    lapSummaryObject.distance += distance;
-  }
-
-  Color _onColorSelect(idx) {
-    if (idx == 1) {
-      return Colors.grey;
-    } else if (idx == 2) {
-      return zdvMidBlue;
-    } else if (idx == 3) {
-      return zdvMidGreen;
-    } else if (idx == 4) {
-      return zdvYellow;
-    } else if (idx == 5) {
-      return zdvOrange;
-    } else if (idx == 6) {
-      return zdvRed;
-    } else {
-      return Colors.grey;
-    }
-  }
-}
+// class LapSummaryDataModel extends ChangeNotifier {
+//   List<LapSummaryObject>? model;
+//
+//   bool _isLoading = false;
+//
+//   bool get isLoading => _isLoading;
+//
+//   List<LapSummaryObject>? get lapSummaryObjects => model;
+//
+//   void setLapSummaryModel(List<LapSummaryObject> model) {
+//     this.model = model;
+//   }
+//
+//   void addLapSummaryObject(LapSummaryObject model) {
+//     this.model!.add(model);
+//   }
+//
+//   void updateFrom(ActivityDetailDataModel myModel, double ftp) {
+//     model = [];
+//     var laps = myModel.activityDetail?.laps ?? [];
+//
+//       final List<LapTotals> wattsData = [];
+//   final List<LapTotals> wattsLineData = [];
+//   var count = 0;
+//   for (var lap in laps) {
+//     count += 1;
+//     wattsData.add(LapTotals(count.toString(), lap.averageWatts ?? 0));
+//     wattsLineData.add(LapTotals(count.toString(), ftp.toDouble()));
+//   }
+//
+//     // for (var lap in laps) {
+//     //   int time = lap.elapsedTime ?? 0;
+//     //   double watts = lap.averageWatts ?? 0;
+//     //   double speed = lap.averageSpeed ?? 0;
+//     //   double cadence = lap.averageCadence ?? 0;
+//     //   double distance = lap.distance ?? 0;
+//     //   //double heartrate = lap. ?? 0;
+//     //   if (watts < ftp * .60) {
+//     //     _incrementSummaryObject(
+//     //         lapSummaryObjects![0], time, watts, speed, cadence, distance);
+//     //   } else if (watts >= ftp * .60 && watts <= ftp * .75) {
+//     //     _incrementSummaryObject(
+//     //         lapSummaryObjects![1], time, watts, speed, cadence, distance);
+//     //   } else if (watts > ftp * .75 && watts <= ftp * .89) {
+//     //     _incrementSummaryObject(
+//     //         lapSummaryObjects![2], time, watts, speed, cadence, distance);
+//     //   } else if (watts > ftp * .89 && watts <= ftp * 1.04) {
+//     //     _incrementSummaryObject(
+//     //         lapSummaryObjects![3], time, watts, speed, cadence, distance);
+//     //   } else if (watts > ftp * 1.04 && watts <= ftp * 1.18) {
+//     //     _incrementSummaryObject(
+//     //         lapSummaryObjects![4], time, watts, speed, cadence, distance);
+//     //   } else if (watts > ftp * 1.18) {
+//     //     _incrementSummaryObject(
+//     //         lapSummaryObjects![5], time, watts, speed, cadence, distance);
+//     //   } else {}
+//     // }
+//   }
+//
+//   _incrementSummaryObject(LapSummaryObject lapSummaryObject, int time,
+//       double watts, double speed, double cadence, double distance) {
+//     lapSummaryObject.count += 1;
+//     lapSummaryObject.time += time;
+//     lapSummaryObject.watts += watts;
+//     lapSummaryObject.speed += speed;
+//     lapSummaryObject.cadence += cadence;
+//     lapSummaryObject.distance += distance;
+//   }
+//
+//   // Color _onColorSelect(idx) {
+//   //   if (idx == 1) {
+//   //     return Colors.grey;
+//   //   } else if (idx == 2) {
+//   //     return zdvMidBlue;
+//   //   } else if (idx == 3) {
+//   //     return zdvMidGreen;
+//   //   } else if (idx == 4) {
+//   //     return zdvYellow;
+//   //   } else if (idx == 5) {
+//   //     return zdvOrange;
+//   //   } else if (idx == 6) {
+//   //     return zdvRed;
+//   //   } else {
+//   //     return Colors.grey;
+//   //   }
+//   // }
+// }
