@@ -4,7 +4,7 @@ import 'package:syncfusion_flutter_charts/charts.dart';
 import 'package:zwiftdataviewer/models/ActivitiesDataModel.dart';
 import 'package:zwiftdataviewer/stravalib/Models/activity.dart';
 import 'package:zwiftdataviewer/utils/conversions.dart';
-import 'package:zwiftdataviewer/widgets/ListItemViews.dart';
+import 'package:zwiftdataviewer/widgets/listitemviews.dart';
 
 import '../utils/charts.dart';
 

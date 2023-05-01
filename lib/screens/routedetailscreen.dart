@@ -6,8 +6,8 @@ import 'package:zwiftdataviewer/models/ActivityDetailDataModel.dart';
 import 'package:zwiftdataviewer/models/ActivityPhotosDataModel.dart';
 import 'package:zwiftdataviewer/stravalib/Models/activity.dart';
 import 'package:zwiftdataviewer/utils/conversions.dart';
-import 'package:zwiftdataviewer/utils/theme.dart';
-import 'package:zwiftdataviewer/widgets/ListItemViews.dart';
+
+import '../widgets/iconitemwidgets.dart';
 
 class RouteDetailScreen extends StatelessWidget {
   const RouteDetailScreen({required Key key}) : super(key: key);
@@ -69,16 +69,16 @@ class _PrefetchImageDemoState extends State<PrefetchImageDemo> {
         Provider.of<ActivityPhotosDataModel>(context, listen: true)
             .activityPhotos);
     return Container(
-        color: zdvMidBlue,
+        color: Colors.white,
         margin: const EdgeInsets.fromLTRB(0, 0, 0, 5.0),
         child: CarouselSlider.builder(
           itemCount: imagesUrls.length,
           options: CarouselOptions(
               autoPlay: imagesUrls.length > 1 ? true : false,
-              aspectRatio: 1.8,
-              padEnds: false,
-              viewportFraction: 1.0,
-              enlargeCenterPage: true,
+              // aspectRatio: 1.5,
+              // enlargeFactor: 1.0,
+              // viewportFraction: 1.0,
+              enlargeCenterPage: false,
               onPageChanged: (index, reason) {
                 if (!mounted) {
                   setState(() {
@@ -154,67 +154,72 @@ class _RenderDetailsState extends State<RenderDetails> {
 
   _RenderDetailsState(this.activity);
 
-  int _current = 0;
-
   @override
   Widget build(BuildContext context) {
     final Map<String, String> units = Conversions.units(context);
 
     return Expanded(
-        // child: Container(
-// top: 100,
-//             margin: const EdgeInsets.fromLTRB(0, 230, 0, 0),
-        child: ListView(
-// padding: const EdgeInsets.all(8.0),
-      children: <Widget>[
-        doubleDataHeaderLineItem(
-          [
-            'Distance (${units['distance']!})',
-            'Elevation (${units['height']!})'
-          ],
-          [
-            Conversions.metersToDistance(context, activity.distance ?? 0)
-                .toStringAsFixed(1),
-            Conversions.metersToHeight(
-                    context, activity.totalElevationGain ?? 0)
-                .toStringAsFixed(0)
-          ],
-        ),
-        doubleDataHeaderLineItem(
-          ['Time', 'Calories'],
-          [
-            Conversions.secondsToTime(activity.elapsedTime!),
-            activity.calories!.toStringAsFixed(0)
-          ],
-        ),
-        doubleDataSingleHeaderLineItem(
-            'HeartRate',
-            null,
-            ['Avg', 'Max'],
-            [
-              activity.averageHeartrate.toString(),
-              activity.maxHeartrate.toString()
-            ],
-            'bpm'),
-        doubleDataSingleHeaderLineItem(
-            'Watts',
-            null,
-            ['Avg', 'Max'],
-            [
-              activity.averageWatts!.toStringAsFixed(0),
-              activity.maxWatts!.toStringAsFixed(0),
-            ],
-            'w'),
-        doubleDataSingleHeaderLineItem(
-            'Speed',
-            null,
-            ['Avg', 'Max'],
-            [
-              Conversions.mpsToMph(activity.averageSpeed!).toStringAsFixed(1),
-              Conversions.mpsToMph(activity.maxSpeed!).toStringAsFixed(1),
-            ],
-            'mph'),
-      ],
-    )); //);
+        child: Container(
+            padding: const EdgeInsets.all(8.0),
+            child: ListView(
+              children: <Widget>[
+                IconHeaderDataRow([
+                  IconDataObject(
+                      'Distance',
+                      Conversions.metersToDistance(
+                              context, activity.distance ?? 0)
+                          .toStringAsFixed(1),
+                      Icons.route,
+                      units: units['distance']),
+                  IconDataObject(
+                      'Elevation',
+                      Conversions.metersToHeight(
+                              context, activity.totalElevationGain ?? 0)
+                          .toStringAsFixed(0),
+                      Icons.filter_hdr,
+                      units: units['height'])
+                ]),
+                IconHeaderDataRow([
+                  IconDataObject(
+                      'Time',
+                      Conversions.secondsToTime(activity.elapsedTime!),
+                      Icons.schedule),
+                  IconDataObject('Calories',
+                      activity.calories!.toStringAsFixed(0), Icons.local_pizza),
+                ]),
+                IconHeaderDataRow([
+                  IconDataObject('Avg', activity.averageHeartrate.toString(),
+                      Icons.favorite,
+                      units: 'bpm'),
+                  IconDataObject(
+                      'Max', activity.maxHeartrate.toString(), Icons.favorite,
+                      units: 'bpm'),
+                ]),
+                IconHeaderDataRow([
+                  IconDataObject(
+                      'Avg',
+                      activity.averageWatts!.toStringAsFixed(0),
+                      Icons.electric_bolt,
+                      units: 'w'),
+                  IconDataObject('Max', activity.maxWatts!.toStringAsFixed(0),
+                      Icons.electric_bolt,
+                      units: 'w'),
+                ]),
+                IconHeaderDataRow([
+                  IconDataObject(
+                      'Avg',
+                      Conversions.mpsToMph(activity.averageSpeed!)
+                          .toStringAsFixed(1),
+                      Icons.speed,
+                      units: units['speed']),
+                  IconDataObject(
+                      'Max',
+                      Conversions.mpsToMph(activity.maxSpeed!)
+                          .toStringAsFixed(1),
+                      Icons.speed,
+                      units: units['speed']),
+                ]),
+              ],
+            ))); //);
   }
 }

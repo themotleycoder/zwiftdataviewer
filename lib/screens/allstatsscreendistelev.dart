@@ -6,8 +6,8 @@ import 'package:zwiftdataviewer/stravalib/Models/activity.dart';
 import 'package:zwiftdataviewer/utils/conversions.dart';
 import 'package:zwiftdataviewer/widgets/listitemviews.dart' as list_item_views;
 
-import '../utils/Stats.dart' as stats;
 import '../utils/charts.dart';
+import '../utils/stats.dart' as stats;
 
 class AllStatsScreenDistElev extends StatelessWidget {
   const AllStatsScreenDistElev({super.key});

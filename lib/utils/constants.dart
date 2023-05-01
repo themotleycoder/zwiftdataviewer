@@ -13,7 +13,7 @@ enum DateFilter { all, month, week, year }
 TextStyle appBarTextStyle =
     const TextStyle(inherit: true, color: Colors.white, fontSize: 16.0);
 TextStyle headerTextStyle =
-    const TextStyle(inherit: true, fontSize: 16.0, color: Colors.blueGrey);
+    const TextStyle(inherit: true, fontSize: 12.0, color: Colors.blueGrey);
 TextStyle bodyTextStyleComplete = const TextStyle(
     inherit: true,
     fontSize: 16.0,

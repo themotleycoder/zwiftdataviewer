@@ -39,43 +39,64 @@ Widget singleDataHeaderLineItem(String dataPoint) {
           alignment: Alignment.center,
           padding: const EdgeInsets.fromLTRB(16.0, 8.0, 16.0, 8.0),
           child: Column(
-            crossAxisAlignment: CrossAxisAlignment.center,
+            crossAxisAlignment: CrossAxisAlignment.start,
+            mainAxisAlignment: MainAxisAlignment.start,
             children: <Widget>[
               Text(dataPoint, style: constants.bodyTextStyle),
             ],
           )));
 }
 
-Widget doubleDataHeaderLineItem(List<String> labels, List<String> dataPoints) {
-  return Card(
-      color: Colors.white,
-      elevation: defaultCardElevation,
-      margin: const EdgeInsets.fromLTRB(8.0, 4, 8.0, 4),
+Widget ColumnStackedDataHeaderLineItem(
+    List<String> labels, List<String> dataPoints) {
+  return Container(
       // height: 80,
-      // padding: const EdgeInsets.fromLTRB(16.0, 8.0, 16.0, 8.0),
-      // decoration: BoxDecoration(
-      //     border: Border(bottom: BorderSide(color: Constants.dividerColor))),
-      child: Container(
-          height: 80,
-          padding: const EdgeInsets.fromLTRB(16.0, 8.0, 16.0, 8.0),
-          child: Column(
-            children: <Widget>[
-              // Container(
-              //     padding: const EdgeInsets.fromLTRB(16.0, 0.0, 16.0, 8.0),
-              //     child: Text(title + " (" + units + ")",
-              //         style: Constants.headerTextStyle)),
-              Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceAround,
-                  children: List.generate(labels.length, (index) {
-                    return Column(
-                      children: <Widget>[
-                        Text(labels[index], style: constants.headerTextStyle),
-                        Text(dataPoints[index], style: constants.bodyTextStyle)
-                      ],
-                    );
-                  }))
-            ],
-          )));
+      padding: const EdgeInsets.fromLTRB(16.0, 8.0, 16.0, 8.0),
+      child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: List.generate(labels.length, (index) {
+            return Container(
+                padding: const EdgeInsets.fromLTRB(0, 0.0, 0.0, 16.0),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  mainAxisAlignment: MainAxisAlignment.start,
+                  children: <Widget>[
+                    Text(labels[index].toUpperCase(),
+                        style: constants.headerTextStyle),
+                    Text(dataPoints[index], style: constants.bodyTextStyle)
+                  ],
+                ));
+          })));
+}
+
+Widget doubleDataHeaderLineItem(List<String> labels, List<String> dataPoints) {
+  // return Card(
+  //     color: Colors.white,
+  //     elevation: defaultCardElevation,
+  //     margin: const EdgeInsets.fromLTRB(8.0, 4, 8.0, 4),
+  return Container(
+      height: 80,
+      padding: const EdgeInsets.fromLTRB(16.0, 8.0, 16.0, 8.0),
+      child: Column(
+        children: <Widget>[
+          // Container(
+          //     padding: const EdgeInsets.fromLTRB(16.0, 0.0, 16.0, 8.0),
+          //     child: Text(title + " (" + units + ")",
+          //         style: Constants.headerTextStyle)),
+          Row(
+              mainAxisAlignment: MainAxisAlignment.spaceAround,
+              children: List.generate(labels.length, (index) {
+                return Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  mainAxisAlignment: MainAxisAlignment.start,
+                  children: <Widget>[
+                    Text(labels[index], style: constants.headerTextStyle),
+                    Text(dataPoints[index], style: constants.bodyTextStyle)
+                  ],
+                );
+              }))
+        ],
+      ));
 }
 
 Widget doubleDataSingleHeaderLineItem(String title, IconData? icon,
@@ -100,6 +121,8 @@ Widget doubleDataSingleHeaderLineItem(String title, IconData? icon,
                   mainAxisAlignment: MainAxisAlignment.spaceAround,
                   children: List.generate(labels.length, (index) {
                     return Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      mainAxisAlignment: MainAxisAlignment.start,
                       children: <Widget>[
                         Text(labels[index], style: constants.headerTextStyle),
                         Text(dataPoints[index], style: constants.bodyTextStyle)
@@ -131,6 +154,8 @@ Widget tripleDataSingleHeaderLineItem(
                   mainAxisAlignment: MainAxisAlignment.spaceAround,
                   children: List.generate(labels.length, (index) {
                     return Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      mainAxisAlignment: MainAxisAlignment.start,
                       children: <Widget>[
                         Text(labels[index], style: constants.headerTextStyle),
                         Text(dataPoints[index], style: constants.bodyTextStyle)
@@ -163,6 +188,8 @@ Widget tripleDataLineItem(String title, IconData? icon, List<String> labels,
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: List.generate(labels.length, (index) {
                     return Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      mainAxisAlignment: MainAxisAlignment.start,
                       children: <Widget>[
                         Text(labels[index], style: constants.headerTextStyle),
                         Text(dataPoints[index], style: constants.bodyTextStyle)

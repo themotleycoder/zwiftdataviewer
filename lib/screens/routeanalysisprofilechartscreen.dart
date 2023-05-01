@@ -6,9 +6,9 @@ import 'package:zwiftdataviewer/models/StreamsDataModel.dart';
 import 'package:zwiftdataviewer/stravalib/API/streams.dart';
 import 'package:zwiftdataviewer/utils/conversions.dart';
 import 'package:zwiftdataviewer/utils/theme.dart';
-import 'package:zwiftdataviewer/widgets/ListItemViews.dart';
 
 import '../appkeys.dart';
+import '../widgets/iconitemwidgets.dart';
 
 class RouteAnalysisProfileChartScreen extends StatelessWidget {
   const RouteAnalysisProfileChartScreen({super.key});
@@ -174,34 +174,46 @@ class ProfileDataView extends StatelessWidget {
               child: ListView(
                   // padding: const EdgeInsets.all(8.0),
                   children: <Widget>[
-                    doubleDataHeaderLineItem(
-                      [
-                        'Distance (${units['distance']!})',
-                        'Elevation (${units['height']!})'
-                      ],
-                      [
-                        Conversions.metersToDistance(
-                                context, selectedSeries?.distance ?? 0)
-                            .toStringAsFixed(1),
-                        Conversions.metersToHeight(
-                                context, selectedSeries?.altitude ?? 0)
-                            .toStringAsFixed(0)
-                      ],
-                    ),
-                    doubleDataHeaderLineItem(
-                      ['Heartrate (bpm)', 'Power(w)'],
-                      [
-                        (selectedSeries?.heartrate ?? 0).toString(),
-                        (selectedSeries?.watts ?? 0).toString()
-                      ],
-                    ),
-                    doubleDataHeaderLineItem(
-                      ['Cadence (rpm)', 'Grade (%)'],
-                      [
-                        (selectedSeries?.cadence ?? 0).toString(),
-                        (selectedSeries?.gradeSmooth ?? 0).toString()
-                      ],
-                    )
+                    IconHeaderDataRow([
+                      IconDataObject(
+                          'Distance',
+                          Conversions.metersToDistance(
+                                  context, selectedSeries?.distance ?? 0)
+                              .toStringAsFixed(1),
+                          Icons.route,
+                          units: units['distance']),
+                      IconDataObject(
+                          'Elevation',
+                          Conversions.metersToHeight(
+                                  context, selectedSeries?.altitude ?? 0)
+                              .toStringAsFixed(0),
+                          Icons.filter_hdr,
+                          units: units['height'])
+                    ]),
+                    IconHeaderDataRow([
+                      IconDataObject(
+                          'Heartrate',
+                          (selectedSeries?.heartrate ?? 0).toString(),
+                          Icons.favorite,
+                          units: 'bpm'),
+                      IconDataObject(
+                          'Power',
+                          (selectedSeries?.watts ?? 0).toString(),
+                          Icons.electric_bolt,
+                          units: 'w')
+                    ]),
+                    IconHeaderDataRow([
+                      IconDataObject(
+                          'Cadence',
+                          (selectedSeries?.cadence ?? 0).toString(),
+                          Icons.autorenew,
+                          units: 'rpm'),
+                      IconDataObject(
+                          'Grade',
+                          (selectedSeries?.gradeSmooth ?? 0).toString(),
+                          Icons.network_cell,
+                          units: '%')
+                    ]),
                   ])));
     });
   }
