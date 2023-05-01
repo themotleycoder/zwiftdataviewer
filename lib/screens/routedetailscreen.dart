@@ -69,32 +69,31 @@ class _PrefetchImageDemoState extends State<PrefetchImageDemo> {
         Provider.of<ActivityPhotosDataModel>(context, listen: true)
             .activityPhotos);
     return Container(
-      color: zdvMidBlue,
-      margin: const EdgeInsets.fromLTRB(0, 0, 0, 5.0),
-      child: CarouselSlider.builder(
-        itemCount: imagesUrls.length,
-        options: CarouselOptions(
-            autoPlay: imagesUrls.length > 1 ? true : false,
-            aspectRatio: 1.8,
-            padEnds: false,
-            viewportFraction: 1.0,
-            enlargeCenterPage: true,
-            onPageChanged: (index, reason) {
-              if (!mounted) {
-                setState(() {
-                  _current = index;
-                });
-              }
-            }),
-        itemBuilder: (context, index, index2) {
-          return Center(
-            child: FadeInImage.assetNetwork(
-                placeholder: 'assets/zwiftdatalogo.png',
-                image: imagesUrls[index]),
-          );
-        },
-      )
-    );
+        color: zdvMidBlue,
+        margin: const EdgeInsets.fromLTRB(0, 0, 0, 5.0),
+        child: CarouselSlider.builder(
+          itemCount: imagesUrls.length,
+          options: CarouselOptions(
+              autoPlay: imagesUrls.length > 1 ? true : false,
+              aspectRatio: 1.8,
+              padEnds: false,
+              viewportFraction: 1.0,
+              enlargeCenterPage: true,
+              onPageChanged: (index, reason) {
+                if (!mounted) {
+                  setState(() {
+                    _current = index;
+                  });
+                }
+              }),
+          itemBuilder: (context, index, index2) {
+            return Center(
+              child: FadeInImage.assetNetwork(
+                  placeholder: 'assets/zwiftdatalogo.png',
+                  image: imagesUrls[index]),
+            );
+          },
+        ));
   }
 
   List<String> createUrls(List<PhotoActivity>? activityPhotos) {
@@ -105,7 +104,20 @@ class _PrefetchImageDemoState extends State<PrefetchImageDemo> {
     if (activityPhotos != null && activityPhotos.length > 1) {
       imagesUrls = [];
       for (PhotoActivity image in activityPhotos) {
-        String str = image.urls!["1800"]??image.urls!["1000"]??image.urls!["600"]??image.urls!["200"]??image.urls!["100"]??image.urls!["50"]??image.urls!["25"]??image.urls!["10"]??image.urls!["5"]??image.urls!["3"]??image.urls!["2"]??image.urls!["1"]??image.urls!["0"]??"";
+        String str = image.urls!["1800"] ??
+            image.urls!["1000"] ??
+            image.urls!["600"] ??
+            image.urls!["200"] ??
+            image.urls!["100"] ??
+            image.urls!["50"] ??
+            image.urls!["25"] ??
+            image.urls!["10"] ??
+            image.urls!["5"] ??
+            image.urls!["3"] ??
+            image.urls!["2"] ??
+            image.urls!["1"] ??
+            image.urls!["0"] ??
+            "";
         imagesUrls
             .add(str); //.substring(0, str.lastIndexOf('-')) + "-768x419.jpg");
       }
@@ -152,60 +164,57 @@ class _RenderDetailsState extends State<RenderDetails> {
         // child: Container(
 // top: 100,
 //             margin: const EdgeInsets.fromLTRB(0, 230, 0, 0),
-            child: ListView(
+        child: ListView(
 // padding: const EdgeInsets.all(8.0),
-              children: <Widget>[
-                doubleDataHeaderLineItem(
-                  [
-                    'Distance (${units['distance']!})',
-                    'Elevation (${units['height']!})'
-                  ],
-                  [
-                    Conversions.metersToDistance(
-                            context, activity.distance ?? 0)
-                        .toStringAsFixed(1),
-                    Conversions.metersToHeight(
-                            context, activity.totalElevationGain ?? 0)
-                        .toStringAsFixed(0)
-                  ],
-                ),
-                doubleDataHeaderLineItem(
-                  ['Time', 'Calories'],
-                  [
-                    Conversions.secondsToTime(activity.elapsedTime!),
-                    activity.calories!.toStringAsFixed(0)
-                  ],
-                ),
-                doubleDataSingleHeaderLineItem(
-                    'HeartRate',
-                    null,
-                    ['Avg', 'Max'],
-                    [
-                      activity.averageHeartrate.toString(),
-                      activity.maxHeartrate.toString()
-                    ],
-                    'bpm'),
-                doubleDataSingleHeaderLineItem(
-                    'Watts',
-                    null,
-                    ['Avg', 'Max'],
-                    [
-                      activity.averageWatts!.toStringAsFixed(0),
-                      activity.maxWatts!.toStringAsFixed(0),
-                    ],
-                    'w'),
-                doubleDataSingleHeaderLineItem(
-                    'Speed',
-                    null,
-                    ['Avg', 'Max'],
-                    [
-                      Conversions.mpsToMph(activity.averageSpeed!)
-                          .toStringAsFixed(1),
-                      Conversions.mpsToMph(activity.maxSpeed!)
-                          .toStringAsFixed(1),
-                    ],
-                    'mph'),
-              ],
-            ));//);
+      children: <Widget>[
+        doubleDataHeaderLineItem(
+          [
+            'Distance (${units['distance']!})',
+            'Elevation (${units['height']!})'
+          ],
+          [
+            Conversions.metersToDistance(context, activity.distance ?? 0)
+                .toStringAsFixed(1),
+            Conversions.metersToHeight(
+                    context, activity.totalElevationGain ?? 0)
+                .toStringAsFixed(0)
+          ],
+        ),
+        doubleDataHeaderLineItem(
+          ['Time', 'Calories'],
+          [
+            Conversions.secondsToTime(activity.elapsedTime!),
+            activity.calories!.toStringAsFixed(0)
+          ],
+        ),
+        doubleDataSingleHeaderLineItem(
+            'HeartRate',
+            null,
+            ['Avg', 'Max'],
+            [
+              activity.averageHeartrate.toString(),
+              activity.maxHeartrate.toString()
+            ],
+            'bpm'),
+        doubleDataSingleHeaderLineItem(
+            'Watts',
+            null,
+            ['Avg', 'Max'],
+            [
+              activity.averageWatts!.toStringAsFixed(0),
+              activity.maxWatts!.toStringAsFixed(0),
+            ],
+            'w'),
+        doubleDataSingleHeaderLineItem(
+            'Speed',
+            null,
+            ['Avg', 'Max'],
+            [
+              Conversions.mpsToMph(activity.averageSpeed!).toStringAsFixed(1),
+              Conversions.mpsToMph(activity.maxSpeed!).toStringAsFixed(1),
+            ],
+            'mph'),
+      ],
+    )); //);
   }
 }

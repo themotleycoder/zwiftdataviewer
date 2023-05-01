@@ -3,6 +3,7 @@ import 'package:provider/provider.dart';
 import 'package:syncfusion_flutter_charts/charts.dart';
 import 'package:zwiftdataviewer/models/ActivityDetailDataModel.dart';
 import 'package:zwiftdataviewer/widgets/shortdataanalysis.dart';
+
 import '../models/ConfigDataModel.dart';
 import '../utils/theme.dart';
 
@@ -86,7 +87,7 @@ class DisplayChart extends StatelessWidget {
     var dataPointIndex = args.pointIndex;
     final lapSummaryModel =
         Provider.of<LapSummaryDataModel>(context, listen: false);
-    var lapSummaryObject = lapSummaryModel.model?[dataPointIndex];
+    var lapSummaryObject = lapSummaryModel.model[dataPointIndex];
     Provider.of<SelectedLapSummaryObjectModel>(context, listen: false)
         .setSelectedLapSummaryObject(lapSummaryObject);
   }
@@ -146,8 +147,16 @@ class LapSummaryDataModel extends ChangeNotifier {
 
   void updateFrom(ActivityDetailDataModel myModel, double ftp) {
     for (var lap in myModel.activityDetail?.laps ?? []) {
-      model?.add(LapSummaryObject(0, lap.lapIndex, lap.distance, lap.movingTime, lap.totalElevationGain,
-          lap.averageCadence, lap.averageWatts, lap.averageSpeed, getColorForWatts(lap.averageWatts, ftp)));
+      model?.add(LapSummaryObject(
+          0,
+          lap.lapIndex,
+          lap.distance,
+          lap.movingTime,
+          lap.totalElevationGain,
+          lap.averageCadence,
+          lap.averageWatts,
+          lap.averageSpeed,
+          getColorForWatts(lap.averageWatts, ftp)));
     }
     notifyListeners();
   }

@@ -74,7 +74,7 @@ class _ExpandingCardState extends State<ExpandingCard> {
   @override
   Widget build(BuildContext context) {
     String routeName = widget._routeData.routeName ?? "";
-    if (widget._routeData.eventOnly == "Event Only"){
+    if (widget._routeData.eventOnly == "Event Only") {
       routeName = "$routeName (Event Only)";
     }
     return ExpandableNotifier(

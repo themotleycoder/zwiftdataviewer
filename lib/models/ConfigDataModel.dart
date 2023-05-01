@@ -82,5 +82,6 @@ Future<void> storeAfterParameter(int lastRequestTime) async {
 // Retrieve the stored after parameter
 Future<int?> getAfterParameter() async {
   final prefs = await SharedPreferences.getInstance();
-  return prefs.getInt('after_param')??1420070400; //default is Thursday, January 1, 2015 12:00:00 AM
+  return prefs.getInt('after_param') ??
+      1420070400; //default is Thursday, January 1, 2015 12:00:00 AM
 }

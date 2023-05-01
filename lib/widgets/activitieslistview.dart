@@ -13,7 +13,6 @@ import 'package:zwiftdataviewer/utils/theme.dart';
 import '../utils/constants.dart';
 
 class ActivitiesListView extends StatelessWidget {
-
   const ActivitiesListView({super.key});
 
   @override
@@ -76,5 +75,3 @@ class ActivitiesListView extends StatelessWidget {
     // }));
   }
 }
-
-

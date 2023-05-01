@@ -61,21 +61,22 @@ class _DetailScreenState extends State<DetailScreen> {
             builder: (context, myModel, child) {
           return Scaffold(
             appBar: AppBar(
-              title: myModel.activityDetail == null
-                  ? Text("Zwift Data Viewer", style: constants.appBarTextStyle)
-                  : Text(
-                      "${myModel.activityDetail!.name!} (${DateFormat.yMd().format(DateTime.parse(myModel.activityDetail!.startDate!))})",
-                      style: constants.appBarTextStyle),
-              backgroundColor: zdvMidBlue,
-              elevation: 0.0,
-              leading: IconButton(
-              icon: Icon(Icons.arrow_back, color: Colors.white),
-                onPressed: () {
-                  Navigator.pop(context);
-                },
-              )
-              // actions: getActions()
-            ),
+                title: myModel.activityDetail == null
+                    ? Text("Zwift Data Viewer",
+                        style: constants.appBarTextStyle)
+                    : Text(
+                        "${myModel.activityDetail!.name!} (${DateFormat.yMd().format(DateTime.parse(myModel.activityDetail!.startDate!))})",
+                        style: constants.appBarTextStyle),
+                backgroundColor: zdvMidBlue,
+                elevation: 0.0,
+                leading: IconButton(
+                  icon: Icon(Icons.arrow_back, color: Colors.white),
+                  onPressed: () {
+                    Navigator.pop(context);
+                  },
+                )
+                // actions: getActions()
+                ),
             body: Selector<ActivityDetailDataModel, ActivityDetailDataModel>(
                 selector: (context, activityDetailDataModel) =>
                     activityDetailDataModel,

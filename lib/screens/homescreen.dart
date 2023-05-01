@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:zwiftdataviewer/appkeys.dart';
 import 'package:zwiftdataviewer/models/ActivitiesDataModel.dart';
-import 'package:zwiftdataviewer/models/ConfigDataModel.dart';
 import 'package:zwiftdataviewer/screens/allstatsrootscreen.dart';
 import 'package:zwiftdataviewer/screens/calendarscreen.dart';
 import 'package:zwiftdataviewer/screens/settingscreen.dart';
@@ -17,7 +16,6 @@ import 'package:zwiftdataviewer/widgets/activitieslistview.dart';
 import 'package:zwiftdataviewer/widgets/filterdatebutton.dart';
 
 import '../delegates/activitysearchdelegate.dart';
-import '../stravalib/Models/activity.dart';
 
 class HomeScreen extends StatefulWidget {
   const HomeScreen({super.key});
@@ -48,11 +46,11 @@ class _HomeScreenState extends State<HomeScreen> {
 
     return ChangeNotifierProvider<ActivitiesDataModel>(
         create: (context) => ActivitiesDataModel(
-      fileRepository: FileRepository(),
-      webRepository: WebRepository(strava: strava),
-      context: context,
-    ),
-      //ChangeNotifierProvider<ActivitiesDataModel>(
+              fileRepository: FileRepository(),
+              webRepository: WebRepository(strava: strava),
+              context: context,
+            ),
+        //ChangeNotifierProvider<ActivitiesDataModel>(
         // create: (context) => ActivitiesDataModel(
         //     fileRepository: FileRepository(),
         //     context: context,
@@ -87,27 +85,28 @@ class _HomeScreenState extends State<HomeScreen> {
             //       );
             //     }
 
-                ValueListenableBuilder<HomeScreenTab>(
-                  valueListenable: _tab,
-                  builder: (context, tab, _) {
-                    ActivitiesDataModel activitiesDataModel = Provider.of<ActivitiesDataModel>(context);
-                    switch (tab) {
-                      case HomeScreenTab.stats:
-                        return const AllStatsRootScreen();
-                      case HomeScreenTab.calendar:
-                        return const CalendarScreen();
-                      case HomeScreenTab.settings:
-                        return const SettingsScreen();
-                      case HomeScreenTab.activities:
-                      default:
-                        // return Consumer<ActivitiesDataModel>(
-                        //     builder: (context, myModel, child) {
-                          return const ActivitiesListView();
-                        // });
-                    }
-                  },
-                )
-              // },
+            ValueListenableBuilder<HomeScreenTab>(
+              valueListenable: _tab,
+              builder: (context, tab, _) {
+                ActivitiesDataModel activitiesDataModel =
+                    Provider.of<ActivitiesDataModel>(context);
+                switch (tab) {
+                  case HomeScreenTab.stats:
+                    return const AllStatsRootScreen();
+                  case HomeScreenTab.calendar:
+                    return const CalendarScreen();
+                  case HomeScreenTab.settings:
+                    return const SettingsScreen();
+                  case HomeScreenTab.activities:
+                  default:
+                    // return Consumer<ActivitiesDataModel>(
+                    //     builder: (context, myModel, child) {
+                    return const ActivitiesListView();
+                  // });
+                }
+              },
+            )
+            // },
             // )
           ]),
           bottomNavigationBar: ValueListenableBuilder<HomeScreenTab>(

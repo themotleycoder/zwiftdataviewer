@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:zwiftdataviewer/screens/AllStatsScreenDistElev.dart';
+
 import '../models/ActivitiesDataModel.dart';
 import '../stravalib/Models/activity.dart';
 import '../utils/constants.dart';

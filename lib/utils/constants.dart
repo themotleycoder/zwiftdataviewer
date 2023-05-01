@@ -1,7 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:zwiftdataviewer/utils/theme.dart';
 
-const int defaultDataDate = 1420070400; //default is Thursday, January 1, 2015 12:00:00 AM
+const int defaultDataDate =
+    1420070400; //default is Thursday, January 1, 2015 12:00:00 AM
 
 enum HomeScreenTab { activities, stats, calendar, settings }
 
@@ -19,11 +20,12 @@ TextStyle bodyTextStyleComplete = const TextStyle(
     fontWeight: FontWeight.bold,
     color: zdvMidBlue);
 TextStyle bodyTextStyle = const TextStyle(
-    inherit: true,
-    fontSize: 16.0,
-    fontWeight: FontWeight.bold,
-    color: zdvDrkBlue,
-    overflow: TextOverflow.ellipsis,);
+  inherit: true,
+  fontSize: 16.0,
+  fontWeight: FontWeight.bold,
+  color: zdvDrkBlue,
+  overflow: TextOverflow.ellipsis,
+);
 TextStyle inlineBodyTextStyle =
     const TextStyle(inherit: true, fontSize: 16.0, color: Colors.green);
 TextStyle headerFontStyle = const TextStyle(

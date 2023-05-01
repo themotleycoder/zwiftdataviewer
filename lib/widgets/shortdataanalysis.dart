@@ -1,11 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:zwiftdataviewer/models/ActivityDetailDataModel.dart';
 import 'package:zwiftdataviewer/secrets.dart';
-import 'package:zwiftdataviewer/stravalib/Models/activity.dart';
 import 'package:zwiftdataviewer/stravalib/globals.dart' as Globals;
 import 'package:zwiftdataviewer/stravalib/strava.dart';
-import '../widgets/listitemviews.dart';
+
 import '../utils/conversions.dart';
+import '../widgets/listitemviews.dart';
 
 class ShortDataAnalysis extends StatelessWidget {
   final LapSummaryObject? lapSummaryObject;

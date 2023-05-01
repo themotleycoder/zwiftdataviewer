@@ -7,6 +7,7 @@ import 'package:zwiftdataviewer/stravalib/API/streams.dart';
 import 'package:zwiftdataviewer/utils/conversions.dart';
 import 'package:zwiftdataviewer/utils/theme.dart';
 import 'package:zwiftdataviewer/widgets/ListItemViews.dart';
+
 import '../appkeys.dart';
 
 class RouteAnalysisProfileChartScreen extends StatelessWidget {
@@ -67,8 +68,7 @@ class DisplayChart extends StatelessWidget {
           majorTickLines: const MajorTickLines(color: Colors.transparent)),
       trackballBehavior: TrackballBehavior(
         enable: true,
-        tooltipSettings: const InteractiveTooltip(
-            enable: false),
+        tooltipSettings: const InteractiveTooltip(enable: false),
         markerSettings: const TrackballMarkerSettings(
           markerVisibility: TrackballVisibilityMode.visible,
           height: 10,

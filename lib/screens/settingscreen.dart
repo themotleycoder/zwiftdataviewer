@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:flutter/widgets.dart';
 import 'package:provider/provider.dart';
 import 'package:zwiftdataviewer/appkeys.dart';
 import 'package:zwiftdataviewer/models/ConfigDataModel.dart';
@@ -101,11 +100,11 @@ class _SettingsScreenState extends State<SettingsScreen> {
   }
 
   refreshRouteData() {
-    new FileRepository().scrapeRouteData();
+    FileRepository().scrapeRouteData();
   }
 
   refreshCalendarData() {
-    new FileRepository().scrapeWorldCalendarData();
+    FileRepository().scrapeWorldCalendarData();
   }
 
   Card createCard(String label, Widget widget) {

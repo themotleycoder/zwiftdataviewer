@@ -5,10 +5,12 @@ import 'package:zwiftdataviewer/models/ActivitiesDataModel.dart';
 import 'package:zwiftdataviewer/stravalib/Models/activity.dart';
 import 'package:zwiftdataviewer/utils/conversions.dart';
 import 'package:zwiftdataviewer/widgets/ListItemViews.dart';
+
 import '../utils/charts.dart';
 
 class AllStatsScreenScatter extends StatelessWidget {
   const AllStatsScreenScatter({super.key});
+
   @override
   Widget build(BuildContext context) {
     return Selector<ActivitiesDataModel, List<SummaryActivity>>(

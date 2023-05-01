@@ -4,6 +4,7 @@ import 'package:provider/provider.dart';
 import 'package:syncfusion_flutter_charts/charts.dart';
 import 'package:zwiftdataviewer/utils/theme.dart';
 import 'package:zwiftdataviewer/utils/yearlytotals.dart';
+
 import '../models/ActivitiesDataModel.dart';
 import '../stravalib/Models/activity.dart';
 import 'conversions.dart';

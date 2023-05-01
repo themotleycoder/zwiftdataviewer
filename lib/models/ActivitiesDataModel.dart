@@ -2,7 +2,6 @@ import 'dart:async';
 
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
-import 'package:provider/provider.dart';
 import 'package:zwiftdataviewer/models/ConfigDataModel.dart';
 import 'package:zwiftdataviewer/stravalib/Models/activity.dart';
 import 'package:zwiftdataviewer/stravalib/globals.dart';
@@ -261,7 +260,8 @@ class ActivitiesDataModel extends ChangeNotifier {
     // }
 
     //after
-    var afterDate = await getAfterParameter();//   configData.getAfterParameter();
+    var afterDate =
+        await getAfterParameter(); //   configData.getAfterParameter();
     //afterDate = 1680307200; //test date Saturday, April 1, 2023 12:00:00 AM
     //now
     final beforeDate = (DateTime.now().millisecondsSinceEpoch / 1000).round();
@@ -292,8 +292,8 @@ class ActivitiesDataModel extends ChangeNotifier {
             .then((webloadedActivities) {
           if (webloadedActivities != null && webloadedActivities.isNotEmpty) {
             if (_activities!.isNotEmpty) {
-              webloadedActivities.addAll(
-                  _activities as Iterable<SummaryActivity>);
+              webloadedActivities
+                  .addAll(_activities as Iterable<SummaryActivity>);
               storeAfterParameter(beforeDate);
             }
             _activities = webloadedActivities.cast<SummaryActivity>();

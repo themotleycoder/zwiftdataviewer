@@ -79,12 +79,13 @@ class LapSummaryObject with ChangeNotifier {
   double distance;
   int time;
   double altitude;
+
   // double heartrate;
   double cadence;
   double watts;
   double speed;
   final Color color;
 
-  LapSummaryObject(this.lap, this.count, this.distance, this.time, this.altitude,
-      this.cadence, this.watts, this.speed, this.color);
+  LapSummaryObject(this.lap, this.count, this.distance, this.time,
+      this.altitude, this.cadence, this.watts, this.speed, this.color);
 }

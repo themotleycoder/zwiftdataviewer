@@ -1,13 +1,14 @@
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
+import 'package:zwiftdataviewer/secrets.dart';
+import 'package:zwiftdataviewer/stravalib/globals.dart' as globals;
+import 'package:zwiftdataviewer/utils/constants.dart' as constants;
+
 import '../screens/ridedetailscreen.dart';
 import '../stravalib/Models/activity.dart';
 import '../stravalib/strava.dart';
 import '../utils/constants.dart';
 import '../utils/theme.dart';
-import 'package:zwiftdataviewer/stravalib/globals.dart' as globals;
-import 'package:zwiftdataviewer/utils/constants.dart' as constants;
-import 'package:zwiftdataviewer/secrets.dart';
 
 class ActivitySearch extends SearchDelegate<SummaryActivity> {
   final List<SummaryActivity> activities;
@@ -46,9 +47,9 @@ class ActivitySearch extends SearchDelegate<SummaryActivity> {
     query.isEmpty
         ? suggestionList = activities //In the true case
         : suggestionList.addAll(activities.where(
-      // In the false case
-          (element) => element.name!.toLowerCase().contains(query),
-    ));
+            // In the false case
+            (element) => element.name!.toLowerCase().contains(query),
+          ));
     final Strava strava = Strava(globals.isInDebug, secret);
 
     return ListView.builder(
@@ -64,9 +65,9 @@ class ActivitySearch extends SearchDelegate<SummaryActivity> {
     List<SummaryActivity> results = selectedResult == null
         ? activities
         : activities
-        .where(
-            (element) => element.name!.contains(selectedResult?.name ?? ""))
-        .toList();
+            .where(
+                (element) => element.name!.contains(selectedResult?.name ?? ""))
+            .toList();
 
     final Strava strava = Strava(globals.isInDebug, secret);
 

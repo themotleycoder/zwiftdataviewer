@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:syncfusion_flutter_charts/charts.dart';
+
 import '../models/ActivityDetailDataModel.dart';
 import '../models/ConfigDataModel.dart';
 import '../utils/theme.dart';
@@ -135,8 +136,8 @@ class LapSummaryDataModel extends ChangeNotifier {
     model = [];
     var laps = myModel.activityDetail?.laps ?? [];
     for (int x = 1; x <= 6; x++) {
-      model!.add(
-          LapSummaryObject(x, 0, 0.0, 0, 0.0, 0, 0, 0, _onColorSelect(x)));
+      model!
+          .add(LapSummaryObject(x, 0, 0.0, 0, 0.0, 0, 0, 0, _onColorSelect(x)));
     }
     for (var lap in laps) {
       int time = lap.elapsedTime ?? 0;

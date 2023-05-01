@@ -41,8 +41,7 @@ Widget singleDataHeaderLineItem(String dataPoint) {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.center,
             children: <Widget>[
-              Text(dataPoint,
-                  style: constants.bodyTextStyle),
+              Text(dataPoint, style: constants.bodyTextStyle),
             ],
           )));
 }
