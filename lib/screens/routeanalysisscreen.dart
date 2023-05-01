@@ -63,11 +63,11 @@ class _RouteAnalysisScreenState extends State<RouteAnalysisScreen>
                   children: const <Widget>[
                     Card(
                       elevation: defaultCardElevation,
-                      child: WattsDataView(),
+                      child: RouteAnalysisProfileChartScreen(),
                     ),
                     Card(
                       elevation: defaultCardElevation,
-                      child: RouteAnalysisProfileChartScreen(),
+                      child: WattsDataView(),
                     ),
                     Card(
                       elevation: defaultCardElevation,

@@ -26,13 +26,15 @@ class Conversions {
   }
 
   static String secondsToTime(int seconds) {
-    final List val = Duration(seconds: seconds).toString().split(':');
-    return (val[0] +
-        ":" +
-        val[1] +
-        ":" +
-        double.parse(val[2]).round().toString()); // +
-    // "s");
+    int hours = (seconds ~/ 3600) % 24;
+    int minutes = (seconds ~/ 60) % 60;
+    int remainingSeconds = seconds % 60;
+
+    String hoursStr = hours.toString().padLeft(2, '0');
+    String minutesStr = minutes.toString().padLeft(2, '0');
+    String secondsStr = remainingSeconds.toString().padLeft(2, '0');
+
+    return '$hoursStr:$minutesStr:$secondsStr';
   }
 
   static double mpsToMph(double mps) {

@@ -136,7 +136,7 @@ class LapSummaryDataModel extends ChangeNotifier {
     var laps = myModel.activityDetail?.laps ?? [];
     for (int x = 1; x <= 6; x++) {
       model!.add(
-          LapSummaryObject(x, 0, 0.0, 0, 0.0, 0, 0, 0, 0, _onColorSelect(x)));
+          LapSummaryObject(x, 0, 0.0, 0, 0.0, 0, 0, 0, _onColorSelect(x)));
     }
     for (var lap in laps) {
       int time = lap.elapsedTime ?? 0;
@@ -144,7 +144,6 @@ class LapSummaryDataModel extends ChangeNotifier {
       double speed = lap.averageSpeed ?? 0;
       double cadence = lap.averageCadence ?? 0;
       double distance = lap.distance ?? 0;
-      //double heartrate = lap. ?? 0;
       if (watts < ftp * .60) {
         _incrementSummaryObject(
             lapSummaryObjects![0], time, watts, speed, cadence, distance);
