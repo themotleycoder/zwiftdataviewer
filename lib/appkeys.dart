@@ -18,6 +18,9 @@ class AppKeys {
   static const filterButton = Key('__filterButton__');
   static const filterDateButton = Key('__filterDateButton__');
   static const allFilter = Key('__all__');
+  static const yearFilter = Key('__year__');
+  static const monthFilter = Key('__month__');
+  static const weekFilter = Key('__week__');
   static const londonFilter = Key('__london__');
   static const innsbruckFilter = Key('__innsbruck__');
   static const richmondFilter = Key('__richmond__');

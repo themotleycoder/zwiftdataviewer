@@ -1,52 +1,63 @@
 import 'package:flutter/material.dart';
-import 'package:provider/provider.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
+// import 'package:provider/provider.dart';
 import 'package:syncfusion_flutter_charts/charts.dart';
-import 'package:zwiftdataviewer/models/ActivityDetailDataModel.dart';
+// import 'package:zwiftdataviewer/models/ActivityDetailDataModel.dart';
 import 'package:zwiftdataviewer/widgets/shortdataanalysis.dart';
 
 import '../models/ConfigDataModel.dart';
+import '../providers/activity_detail_provider.dart';
+import '../stravalib/Models/activity.dart';
 import '../utils/theme.dart';
 
-class WattsDataView extends StatelessWidget {
+class WattsDataView extends ConsumerWidget {
   const WattsDataView({super.key});
 
   @override
-  Widget build(BuildContext context) {
-    final double ftp =
-        (Provider.of<ConfigDataModel>(context, listen: false).configData?.ftp ??
-                0)
-            .toDouble();
-    return Consumer<ActivityDetailDataModel>(
-        builder: (context, myModel, child) {
-      return ChangeNotifierProxyProvider<ActivityDetailDataModel,
-              LapSummaryDataModel>(
-          create: (_) => LapSummaryDataModel(),
-          lazy: false,
-          update: (context, activityDetailDataModel, lapSummaryDataModel) {
-            final newActivityDetailDataModel =
-                Provider.of<ActivityDetailDataModel>(context, listen: false);
-            lapSummaryDataModel?.updateFrom(newActivityDetailDataModel, ftp);
-            return lapSummaryDataModel!;
-          },
-          child: ChangeNotifierProvider<SelectedLapSummaryObjectModel>(
-            create: (_) => SelectedLapSummaryObjectModel(),
-            child: Column(
+  Widget build(BuildContext context, WidgetRef ref) {
+
+
+
+
+
+    //     (Provider.of<ConfigDataModel>(context, listen: false).configData?.ftp ??
+    //             0)
+    //         .toDouble();
+    // return Consumer<ActivityDetailDataModel>(
+    //     builder: (context, myModel, child) {
+    //   return ChangeNotifierProxyProvider<ActivityDetailDataModel,
+    //           LapSummaryDataModel>(
+    //       create: (_) => LapSummaryDataModel(),
+    //       lazy: false,
+    //       update: (context, activityDetailDataModel, lapSummaryDataModel) {
+    //         final newActivityDetailDataModel =
+    //             Provider.of<ActivityDetailDataModel>(context, listen: false);
+    //         lapSummaryDataModel?.updateFrom(newActivityDetailDataModel, ftp);
+    //         return lapSummaryDataModel!;
+    //       },
+    //       child: ChangeNotifierProvider<SelectedLapSummaryObjectModel>(
+    //         create: (_) => SelectedLapSummaryObjectModel(),
+            return Column(
               children: const [
                 Expanded(child: DisplayChart()),
                 WattsProfileDataView(),
               ],
-            ),
-          ));
-    });
+            );
+    //       ));
+    // });
   }
 }
 
-class DisplayChart extends StatelessWidget {
+class DisplayChart extends ConsumerWidget {
   const DisplayChart({super.key});
 
   @override
-  Widget build(BuildContext context) {
-    final lapSummaryData = Provider.of<LapSummaryDataModel>(context);
+  Widget build(BuildContext context, WidgetRef ref) {
+    //final lapSummaryData = Provider.of<LapSummaryDataModel>(context);
+    final activityDetail = ref.watch(activityDetailProvider.notifier).activityDetail;
+    final lapSummaryData = ref.watch(lapSummaryDataProvider.notifier);
+    final double ftp = 229;
+    lapSummaryData.loadData(activityDetail, ftp);
     return SfCartesianChart(
       primaryXAxis: NumericAxis(),
       primaryYAxis: NumericAxis(
@@ -62,11 +73,26 @@ class DisplayChart extends StatelessWidget {
   }
 
   List<ChartSeries<LapSummaryObject, int>> _createDataSet(
-      BuildContext context, LapSummaryDataModel lapSummaryData) {
+      BuildContext context, LapSummaryProvider lapSummaryData) {
+    final double ftp = 229;
+    //     (Provider.of<ConfigDataModel>(context, listen: false).configData?.ftp ??
+    //             0)
+    //         .toDouble();
+
     return [
+      LineSeries<LapSummaryObject, int>(
+          dataSource: lapSummaryData.summaryData,
+          xValueMapper: (LapSummaryObject totals, _) => totals.count,
+          yValueMapper: (LapSummaryObject totals, _) => ftp,
+          selectionBehavior: SelectionBehavior(
+            enable: false,
+          ),
+          enableTooltip: false,
+          name: 'FTP'
+      ),
       ColumnSeries<LapSummaryObject, int>(
-        dataSource: lapSummaryData.lapSummaryObjects,
-        yAxisName: 'yAxis1',
+        dataSource: lapSummaryData.summaryData,
+        // yAxisName: 'yAxis1',
         xValueMapper: (LapSummaryObject totals, _) => totals.count,
         yValueMapper: (LapSummaryObject totals, _) =>
             (totals.watts).roundToDouble(),
@@ -75,36 +101,34 @@ class DisplayChart extends StatelessWidget {
         selectionBehavior: SelectionBehavior(
           enable: true,
           unselectedOpacity: 0.5,
-          // selectedColor: Colors.red,
-          // selectedBorderColor: Colors.red,
-          // selectedBorderWidth: 2,
         ),
       ),
+
     ];
   }
 
   onSelectionChanged(BuildContext context, SelectionArgs args) {
     var dataPointIndex = args.pointIndex;
-    final lapSummaryModel =
-        Provider.of<LapSummaryDataModel>(context, listen: false);
-    var lapSummaryObject = lapSummaryModel.model[dataPointIndex];
-    Provider.of<SelectedLapSummaryObjectModel>(context, listen: false)
-        .setSelectedLapSummaryObject(lapSummaryObject);
+    // final lapSummaryModel =
+    //     Provider.of<LapSummaryDataModel>(context, listen: false);
+    // var lapSummaryObject = lapSummaryModel.model[dataPointIndex];
+    // Provider.of<SelectedLapSummaryObjectModel>(context, listen: false)
+    //     .setSelectedLapSummaryObject(lapSummaryObject);
   }
 }
 
-class WattsProfileDataView extends StatelessWidget {
+class WattsProfileDataView extends ConsumerWidget {
   const WattsProfileDataView({super.key});
 
   @override
-  Widget build(BuildContext context) {
-    return Consumer<SelectedLapSummaryObjectModel>(
-        builder: (context, selectedLapSummaryObjectModel, child) {
-      final lapSummaryObject =
-          selectedLapSummaryObjectModel.selectedLapSummaryObject;
-      return ShortDataAnalysis(lapSummaryObject);
-    });
-  }
+  Widget build(BuildContext context, WidgetRef ref) {
+    //final lapSummaryObject = ref.watch(selectedLapSummaryProvider.notifier).selectedLapSummaryObject;
+    // return Consumer<SelectedLapSummaryProvider>(
+    //     builder: (context, selectedLapSummaryObjectModel, child) {
+    //   final lapSummaryObject =
+    //       selectedLapSummaryObjectModel.selectedLapSummaryObject;
+      return const ShortDataAnalysis();
+    }
 }
 
 class LapTotals {
@@ -115,16 +139,30 @@ class LapTotals {
   LapTotals(this.lap, this.watts, this.colorForWatts);
 }
 
-class LapSummaryDataModel extends ChangeNotifier {
-  List<LapSummaryObject> model = [];
-  bool _isLoading = false;
+class LapSummaryProvider extends StateNotifier<List<LapSummaryObject>> {
+  LapSummaryProvider() : super([]);
 
-  bool get isLoading => _isLoading;
+  // List<LapSummaryObject> model = [];
+  // bool _isLoading = false;
+  //
+  // bool get isLoading => _isLoading;
 
-  List<LapSummaryObject> get lapSummaryObjects => model;
+  // List<LapSummaryObject> get lapSummaryObjects => model;
 
-  void setLapSummaryModel(List<LapSummaryObject> model) {
-    this.model = model;
+
+
+  // void setLapSummaryModel(List<LapSummaryObject> model) {
+  //   this.model = model;
+  // }
+
+  get summaryData => state;
+
+  setLapSummaryObjects(List<LapSummaryObject> model) {
+    state = model;
+  }
+
+  void add(LapSummaryObject lapSummaryObject) {
+    state = [...state, lapSummaryObject];
   }
 
   Color getColorForWatts(double watts, double ftp) {
@@ -145,9 +183,10 @@ class LapSummaryDataModel extends ChangeNotifier {
     }
   }
 
-  void updateFrom(ActivityDetailDataModel myModel, double ftp) {
-    for (var lap in myModel.activityDetail?.laps ?? []) {
-      model?.add(LapSummaryObject(
+  void loadData(DetailedActivity detailedActivity, double currentFtp) {
+
+    for (var lap in detailedActivity.laps ?? []) {
+      add(LapSummaryObject(
           0,
           lap.lapIndex,
           lap.distance,
@@ -156,19 +195,29 @@ class LapSummaryDataModel extends ChangeNotifier {
           lap.averageCadence,
           lap.averageWatts,
           lap.averageSpeed,
-          getColorForWatts(lap.averageWatts, ftp)));
+          getColorForWatts(lap.averageWatts, currentFtp),
+      ));
     }
-    notifyListeners();
+    // notifyListeners();
   }
 }
 
-class SelectedLapSummaryObjectModel extends ChangeNotifier {
-  LapSummaryObject? _selectedLapSummaryObject;
+final lapSummaryDataProvider = StateNotifierProvider<LapSummaryProvider, List<LapSummaryObject>>((ref) {
+  return LapSummaryProvider();
+});
 
-  LapSummaryObject? get selectedLapSummaryObject => _selectedLapSummaryObject;
+class SelectedLapSummaryProvider extends StateNotifier<LapSummaryObject> {
+  SelectedLapSummaryProvider() : super(LapSummaryObject(0, 0, 0, 0, 0, 0, 0, 0, Colors.grey));
 
-  void setSelectedLapSummaryObject(LapSummaryObject? lapSummaryObject) {
-    _selectedLapSummaryObject = lapSummaryObject;
-    notifyListeners();
+  LapSummaryObject? get selectedLapSummaryObject => state;
+
+  void setSelectedLapSummaryObject(LapSummaryObject lapSummaryObject) {
+    state = lapSummaryObject;
   }
 }
+
+final selectedLapSummaryProvider =
+StateNotifierProvider<SelectedLapSummaryProvider, LapSummaryObject>((ref) {
+  return SelectedLapSummaryProvider();
+});
+

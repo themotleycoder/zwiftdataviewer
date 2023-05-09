@@ -1,67 +1,59 @@
 import 'package:flutter/material.dart';
-import 'package:provider/provider.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:syncfusion_flutter_charts/charts.dart';
-import 'package:zwiftdataviewer/models/ActivitiesDataModel.dart';
 import 'package:zwiftdataviewer/stravalib/Models/activity.dart';
 import 'package:zwiftdataviewer/utils/conversions.dart';
 import 'package:zwiftdataviewer/widgets/listitemviews.dart';
 
+import '../providers/filters_provider.dart';
+import '../providers/summary_activity_provider.dart';
 import '../utils/charts.dart';
 
-class AllStatsScreenScatter extends StatelessWidget {
+class AllStatsScreenScatter extends ConsumerWidget {
   const AllStatsScreenScatter({super.key});
 
   @override
-  Widget build(BuildContext context) {
-    return Selector<ActivitiesDataModel, List<SummaryActivity>>(
-        selector: (_, model) => model.dateFilteredActivities,
-        builder: (context, activities, child) {
-          Map<String, String> units = Conversions.units(context);
-          return Column(
-              mainAxisSize: MainAxisSize.max,
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              crossAxisAlignment: CrossAxisAlignment.stretch,
-              children: [
-                Expanded(
-                    child: Padding(
-                  padding: const EdgeInsets.fromLTRB(0, 4, 0, 4),
-                  child: buildScatterChart(context, units, activities),
-                )),
-                Consumer<SummaryActivitySelectDataModel>(
-                    builder: (context, summaryActivity, child) {
-                  return Container(
-                    padding: const EdgeInsets.all(0),
-                    child: Column(
-                      children: <Widget>[
-                        singleDataHeaderLineItem(
-                            summaryActivity.activity?.name ??
-                                "No ride selected"),
-                        tripleDataSingleHeaderLineItem(
-                          [
-                            'Distance (${units['distance']!})',
-                            'Elevation (${units['height']!})',
-                            'Time'
-                          ],
-                          [
-                            Conversions.metersToDistance(context,
-                                    summaryActivity.activity?.distance ?? 0)
-                                .toStringAsFixed(1),
-                            Conversions.metersToHeight(
-                                    context,
-                                    summaryActivity
-                                            .activity?.totalElevationGain ??
-                                        0)
-                                .toStringAsFixed(1),
-                            Conversions.secondsToTime(
-                                summaryActivity.activity?.elapsedTime ?? 0),
-                          ],
-                        ),
-                      ],
-                    ),
-                  );
-                })
-              ]);
-        });
+  Widget build(BuildContext context, WidgetRef ref) {
+    final filteredActivities = ref.read(dateActivityFiltersProvider);
+    final SummaryActivity summaryActivity = ref.watch(summaryActivityProvider);
+
+    Map<String, String> units = Conversions.units(context);
+    return Column(
+        mainAxisSize: MainAxisSize.max,
+        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+        crossAxisAlignment: CrossAxisAlignment.stretch,
+        children: [
+          Expanded(
+              child: Padding(
+            padding: const EdgeInsets.fromLTRB(0, 4, 0, 4),
+            child: buildScatterChart(context, units, filteredActivities),
+          )),
+          Container(
+            padding: const EdgeInsets.all(0),
+            child: Column(
+              children: <Widget>[
+                singleDataHeaderLineItem(
+                    summaryActivity.name ?? "No ride selected"),
+                tripleDataSingleHeaderLineItem(
+                  [
+                    'Distance (${units['distance']!})',
+                    'Elevation (${units['height']!})',
+                    'Time'
+                  ],
+                  [
+                    Conversions.metersToDistance(
+                            context, summaryActivity.distance ?? 0)
+                        .toStringAsFixed(1),
+                    Conversions.metersToHeight(
+                            context, summaryActivity.totalElevationGain ?? 0)
+                        .toStringAsFixed(1),
+                    Conversions.secondsToTime(summaryActivity.elapsedTime ?? 0),
+                  ],
+                ),
+              ],
+            ),
+          )
+        ]);
   }
 
   SfCartesianChart buildScatterChart(

@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:provider/provider.dart';
 import 'package:zwiftdataviewer/models/ActivityDetailDataModel.dart';
 import 'package:zwiftdataviewer/screens/routeanalysispowerchartscreen.dart';
@@ -6,33 +7,37 @@ import 'package:zwiftdataviewer/screens/routeanalysispowertimechartscreen.dart';
 import 'package:zwiftdataviewer/screens/routeanalysisprofilechartscreen.dart';
 
 import '../appkeys.dart';
+import '../providers/activity_detail_provider.dart';
+import '../stravalib/Models/activity.dart';
 import '../utils/constants.dart';
 import '../utils/theme.dart';
 
-class RouteAnalysisScreen extends StatefulWidget {
+class RouteAnalysisScreen extends ConsumerStatefulWidget {
   const RouteAnalysisScreen({super.key});
 
   @override
   _RouteAnalysisScreenState createState() => _RouteAnalysisScreenState();
 }
 
-class _RouteAnalysisScreenState extends State<RouteAnalysisScreen>
-    with TickerProviderStateMixin {
+class _RouteAnalysisScreenState extends ConsumerState<RouteAnalysisScreen> with TickerProviderStateMixin {
   @override
   Widget build(BuildContext context) {
     final controller = TabController(length: 3, vsync: this);
-    return Consumer<ActivityDetailDataModel>(
-        builder: (context, myModel, child) {
-      return Selector<ActivityDetailDataModel, bool>(
-          selector: (context, model) => model.isLoading,
-          builder: (context, isLoading, _) {
-            if (isLoading) {
-              return const Center(
-                child: CircularProgressIndicator(
-                  key: AppKeys.activitiesLoading,
-                ),
-              );
-            }
+
+    final DetailedActivity detailedActivity = ref.watch(activityDetailProvider.notifier).activityDetail;
+
+    // return Consumer<ActivityDetailDataModel>(
+    //     builder: (context, myModel, child) {
+    //   return Selector<ActivityDetailDataModel, bool>(
+    //       selector: (context, model) => model.isLoading,
+    //       builder: (context, isLoading, _) {
+    //         if (isLoading) {
+    //           return const Center(
+    //             child: CircularProgressIndicator(
+    //               key: AppKeys.activitiesLoading,
+    //             ),
+    //           );
+    //         }
             return Column(children: <Widget>[
               TabBar(
                 indicatorColor: Colors.transparent,
@@ -77,7 +82,7 @@ class _RouteAnalysisScreenState extends State<RouteAnalysisScreen>
                 ),
               ))
             ]);
-          });
-    });
+          // });
+    // });
   }
 }

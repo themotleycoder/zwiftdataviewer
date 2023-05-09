@@ -68,7 +68,7 @@ class LapSelectDataModel extends ChangeNotifier {
   Laps? get selectedLap => lap;
 
   setSelectedLap(Laps laps) {
-    this.lap = laps;
+    lap = laps;
     notifyListeners();
   }
 }
@@ -79,8 +79,6 @@ class LapSummaryObject with ChangeNotifier {
   double distance;
   int time;
   double altitude;
-
-  // double heartrate;
   double cadence;
   double watts;
   double speed;

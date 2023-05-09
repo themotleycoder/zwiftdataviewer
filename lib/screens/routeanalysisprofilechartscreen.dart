@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:provider/provider.dart';
 import 'package:syncfusion_flutter_charts/charts.dart';
 import 'package:zwiftdataviewer/models/ActivityDetailDataModel.dart';
@@ -8,28 +9,35 @@ import 'package:zwiftdataviewer/utils/conversions.dart';
 import 'package:zwiftdataviewer/utils/theme.dart';
 
 import '../appkeys.dart';
+import '../providers/activity_detail_provider.dart';
+import '../providers/streams_provider.dart';
+import '../stravalib/Models/activity.dart';
 import '../widgets/iconitemwidgets.dart';
 
-class RouteAnalysisProfileChartScreen extends StatelessWidget {
+class RouteAnalysisProfileChartScreen extends ConsumerWidget {
   const RouteAnalysisProfileChartScreen({super.key});
 
   @override
-  Widget build(BuildContext context) {
-    return Consumer<ActivityDetailDataModel>(
-        builder: (context, myModel, child) {
-      return Consumer<StreamsDataModel>(builder: (context, myModel, child) {
-        return ChangeNotifierProvider<SelectedStreamObjectModel>(
-            create: (_) => SelectedStreamObjectModel(),
-            child: Selector<StreamsDataModel, bool>(
-                selector: (context, model) => model.isLoading,
-                builder: (context, isLoading, _) {
-                  if (isLoading) {
-                    return const Center(
-                      child: CircularProgressIndicator(
-                        key: AppKeys.activitiesLoading,
-                      ),
-                    );
-                  }
+  Widget build(BuildContext context, WidgetRef ref) {
+
+    final DetailedActivity detailedActivity = ref.watch(activityDetailProvider.notifier).activityDetail;
+    ref.watch(streamsProvider.notifier);
+
+    // return Consumer<ActivityDetailDataModel>(
+    //     builder: (context, myModel, child) {
+    //   return Consumer<StreamsDataModel>(builder: (context, myModel, child) {
+    //     return ChangeNotifierProvider<SelectedStreamObjectModel>(
+    //         create: (_) => SelectedStreamObjectModel(),
+    //         child: Selector<StreamsDataModel, bool>(
+    //             selector: (context, model) => model.isLoading,
+    //             builder: (context, isLoading, _) {
+    //               if (isLoading) {
+    //                 return const Center(
+    //                   child: CircularProgressIndicator(
+    //                     key: AppKeys.activitiesLoading,
+    //                   ),
+    //                 );
+    //               }
                   return Column(children: const [
                     Expanded(
                       child: DisplayChart(),
@@ -37,20 +45,21 @@ class RouteAnalysisProfileChartScreen extends StatelessWidget {
                     ProfileDataView(),
                   ]);
                   // ]);
-                }));
-      });
-    });
+      //           }));
+      // });
+    // });
   }
 }
 
-class DisplayChart extends StatelessWidget {
+class DisplayChart extends ConsumerWidget {
   const DisplayChart({super.key});
 
   @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context, WidgetRef ref) {
     final Map<String, String> units = Conversions.units(context);
-    var combinedStreams =
-        Provider.of<StreamsDataModel>(context).combinedStreams;
+    var streams = ref.watch(streamsProvider.notifier).streams;
+    // var combinedStreams = ref.watch(combinedStreamsProvider.notifier).selectedStream;
+        // Provider.of<StreamsDataModel>(context).combinedStreams;
     return SfCartesianChart(
       tooltipBehavior: null,
       plotAreaBorderWidth: 0,
@@ -79,7 +88,7 @@ class DisplayChart extends StatelessWidget {
         activationMode: ActivationMode.singleTap,
         shouldAlwaysShow: true,
       ),
-      series: _createDataSet(context, combinedStreams),
+      series: _createDataSet(context, streams),
       onTrackballPositionChanging: (TrackballArgs args) =>
           onTBSelectionChanged(context, args),
     );
@@ -149,22 +158,28 @@ class DisplayChart extends StatelessWidget {
 
   onTBSelectionChanged(BuildContext context, TrackballArgs args) {
     var dataPointIndex = args.chartPointInfo.dataPointIndex;
-    var combinedStreams =
-        Provider.of<StreamsDataModel>(context, listen: false).combinedStreams;
-    var combinedStream = combinedStreams?.stream![dataPointIndex!];
-    Provider.of<SelectedStreamObjectModel>(context, listen: false)
-        .setSelectedCombinedStream(combinedStream);
+    // var combinedStreams =
+    //     Provider.of<StreamsDataModel>(context, listen: false).combinedStreams;
+    // var combinedStream = combinedStreams?.stream![dataPointIndex!];
+    // Provider.of<SelectedStreamObjectModel>(context, listen: false)
+    //     .setSelectedCombinedStream(combinedStream);
   }
 }
 
-class ProfileDataView extends StatelessWidget {
+class ProfileDataView extends ConsumerWidget {
   const ProfileDataView({super.key});
 
+  // const ProfileDataView({super.key});
+
   @override
-  Widget build(BuildContext context) {
-    return Consumer<SelectedStreamObjectModel>(
-        builder: (context, selectedCombinedStream, child) {
-      final selectedSeries = selectedCombinedStream.selectedCombinedStreams;
+  Widget build(BuildContext context, WidgetRef ref) {
+
+    var selectedSeries = ref.watch(combinedStreamsProvider.notifier).selectedStream;
+
+
+    // return Consumer<SelectedStreamObjectModel>(
+    //     builder: (context, selectedCombinedStream, child) {
+    //   final selectedSeries = selectedCombinedStream.selectedCombinedStreams;
       Map<String, String> units = Conversions.units(context);
       return Expanded(
           flex: 1,
@@ -215,7 +230,7 @@ class ProfileDataView extends StatelessWidget {
                           units: '%')
                     ]),
                   ])));
-    });
+    // });
   }
 }
 

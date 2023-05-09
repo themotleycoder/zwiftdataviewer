@@ -107,8 +107,8 @@ class ActivitySearch extends SearchDelegate<SummaryActivity> {
                           MaterialPageRoute(
                             builder: (_) {
                               return DetailScreen(
-                                id: summaryActivity.id ?? -1,
-                                strava: strava,
+                                // id: summaryActivity.id ?? -1,
+                                // strava: strava,
                                 // onRemove: () {
                                 //   Navigator.pop(context);
                                 //   onRemove(context, todo);

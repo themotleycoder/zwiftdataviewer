@@ -3,6 +3,7 @@ import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
 import 'package:zwiftdataviewer/models/ConfigDataModel.dart';
+import 'package:zwiftdataviewer/providers/activities_provider.dart';
 import 'package:zwiftdataviewer/stravalib/Models/activity.dart';
 import 'package:zwiftdataviewer/stravalib/globals.dart';
 import 'package:zwiftdataviewer/stravalib/globals.dart' as globals;
@@ -197,6 +198,7 @@ class ActivitiesDataModel extends ChangeNotifier {
   Strava? _strava;
   final FileRepository? fileRepository;
   final WebRepository? webRepository;
+  ActivitiesNotifier? activitiesNotifier;
 
   bool _isLoading = false;
   bool _isLoadingDetail = false;
@@ -208,21 +210,21 @@ class ActivitiesDataModel extends ChangeNotifier {
   List<SummaryActivity>? get activities => _activities;
 
   GuestWorldId _filter = GuestWorldId.all;
-  constants.DateFilter _dateFilter = constants.DateFilter.all;
+  //constants.DateFilter _dateFilter = constants.DateFilter.all;
 
   GuestWorldId get filter => _filter;
 
-  constants.DateFilter get dateFilter => _dateFilter;
+  // constants.DateFilter get dateFilter => _dateFilter;
 
   set filter(GuestWorldId filter) {
     _filter = filter;
     notifyListeners();
   }
 
-  set dateFilter(constants.DateFilter filter) {
-    _dateFilter = filter;
-    notifyListeners();
-  }
+  // set dateFilter(constants.DateFilter filter) {
+  //   _dateFilter = filter;
+  //   notifyListeners();
+  // }
 
   // final StreamController<List<SummaryActivity>> _activitiesController =
   //     StreamController<List<SummaryActivity>>.broadcast();
@@ -236,6 +238,7 @@ class ActivitiesDataModel extends ChangeNotifier {
     List<SummaryActivity>? activities,
     required BuildContext context,
     Strava? strava,
+    required this.activitiesNotifier
   }) {
     loadActivities(context);
   }
@@ -327,24 +330,25 @@ class ActivitiesDataModel extends ChangeNotifier {
     }).toList();
   }
 
-  List<SummaryActivity> get dateFilteredActivities {
-    DateTime startDate;
-    return _activities!.where((activity) {
-      switch (_dateFilter) {
-        case constants.DateFilter.year:
-          startDate = DateTime.now().subtract(new Duration(days: 365));
-          return activity.startDate!.isAfter(startDate);
-        case constants.DateFilter.month:
-          startDate = DateTime.now().subtract(new Duration(days: 30));
-          return activity.startDate!.isAfter(startDate);
-        case constants.DateFilter.week:
-          startDate = DateTime.now().subtract(new Duration(days: 7));
-          return activity.startDate!.isAfter(startDate);
-        default:
-          return true;
-      }
-    }).toList();
-  }
+  // List<SummaryActivity> get dateFilteredActivities {
+  //   DateTime startDate;
+  //   final dateFilters = ref.watch(dateFilterProvider);
+  //   return _activities!.where((activity) {
+  //     switch (_dateFilter) {
+  //       case constants.DateFilter.year:
+  //         startDate = DateTime.now().subtract(new Duration(days: 365));
+  //         return activity.startDate!.isAfter(startDate);
+  //       case constants.DateFilter.month:
+  //         startDate = DateTime.now().subtract(new Duration(days: 30));
+  //         return activity.startDate!.isAfter(startDate);
+  //       case constants.DateFilter.week:
+  //         startDate = DateTime.now().subtract(new Duration(days: 7));
+  //         return activity.startDate!.isAfter(startDate);
+  //       default:
+  //         return true;
+  //     }
+  //   }).toList();
+  // }
 
   SummaryActivity activityById(int id) {
     return _activities!

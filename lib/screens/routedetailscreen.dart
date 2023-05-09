@@ -1,5 +1,6 @@
 import 'package:carousel_slider/carousel_slider.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:provider/provider.dart';
 import 'package:zwiftdataviewer/appkeys.dart';
 import 'package:zwiftdataviewer/models/ActivityDetailDataModel.dart';
@@ -7,67 +8,85 @@ import 'package:zwiftdataviewer/models/ActivityPhotosDataModel.dart';
 import 'package:zwiftdataviewer/stravalib/Models/activity.dart';
 import 'package:zwiftdataviewer/utils/conversions.dart';
 
+import '../providers/activity_detail_provider.dart';
+import '../providers/activity_photos_provider.dart';
 import '../widgets/iconitemwidgets.dart';
 
-class RouteDetailScreen extends StatelessWidget {
+class RouteDetailScreen extends ConsumerWidget {
   const RouteDetailScreen({required Key key}) : super(key: key);
 
   @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context, WidgetRef ref) {
     // final Map<String, String> units = Conversions.units(context);
-    return Consumer<ActivityDetailDataModel>(
-        builder: (context, myModel, child) {
-      final DetailedActivity? activity = myModel.activityDetail;
 
-      if (myModel.isLoading) {
-        return const Center(
-          child: CircularProgressIndicator(
-            key: AppKeys.activitiesLoading,
-          ),
-        );
-      }
+    final activityDetail = ref.watch(activityDetailProvider.notifier).activityDetail;
+
+    // return Consumer<ActivityDetailDataModel>(
+    //     builder: (context, myModel, child) {
+    //   final DetailedActivity? activity = myModel.activityDetail;
+
+      // if (myModel.isLoading) {
+      //   return const Center(
+      //     child: CircularProgressIndicator(
+      //       key: AppKeys.activitiesLoading,
+      //     ),
+      //   );
+      // }
       return OrientationBuilder(builder: (context, orientation) {
         if (orientation == Orientation.portrait) {
           return Column(children: <Widget>[
-            PrefetchImageDemo(detailedActivity: activity!, key: key!),
-            RenderDetails(detailedActivity: activity!)
+            PrefetchImageDemo(key: key!),
+            RenderDetails(detailedActivity: activityDetail)
           ]);
         } else {
           return Row(children: <Widget>[
-            PrefetchImageDemo(detailedActivity: activity!, key: key!),
-            RenderDetails(detailedActivity: activity!)
+            PrefetchImageDemo(key: key!),
+            RenderDetails(detailedActivity: activityDetail)
           ]);
         }
         // });
       });
+    // });
+  }
+}
+
+// class PrefetchImageDemo extends StatefulWidget {
+//   final DetailedActivity detailedActivity;
+//
+//   const PrefetchImageDemo({required Key key, required this.detailedActivity})
+//       : super(key: key);
+//
+//   @override
+//   State<StatefulWidget> createState() {
+//     return _PrefetchImageDemoState(detailedActivity);
+//   }
+// }
+
+class PrefetchImageDemo extends ConsumerWidget {
+  // final DetailedActivity detailedActivity;
+
+  // _PrefetchImageDemoState(this.detailedActivity);
+
+  // int _current = 0;
+
+  const PrefetchImageDemo({super.key});
+
+  @override
+  Widget build(BuildContext context, WidgetRef ref) {
+    List<String> imagesUrls = [];
+    final DetailedActivity detailedActivity = ref.watch(activityDetailProvider.notifier).activityDetail;
+    ref.watch(activityPhotosProvider.notifier)
+        .loadActivityPhotos(detailedActivity.id!);
+    imagesUrls = ref.watch(activityPhotosProvider.notifier).createUrls(detailedActivity);
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      for (var imageUrl in imagesUrls) {
+        precacheImage(NetworkImage(imageUrl), context);
+      }
     });
-  }
-}
 
-class PrefetchImageDemo extends StatefulWidget {
-  final DetailedActivity detailedActivity;
-
-  const PrefetchImageDemo({required Key key, required this.detailedActivity})
-      : super(key: key);
-
-  @override
-  State<StatefulWidget> createState() {
-    return _PrefetchImageDemoState(detailedActivity);
-  }
-}
-
-class _PrefetchImageDemoState extends State<PrefetchImageDemo> {
-  final DetailedActivity detailedActivity;
-
-  _PrefetchImageDemoState(this.detailedActivity);
-
-  int _current = 0;
-
-  @override
-  Widget build(BuildContext context) {
-    final List<String> imagesUrls = createUrls(
-        Provider.of<ActivityPhotosDataModel>(context, listen: true)
-            .activityPhotos);
+    // final List<String> imagesUrls = createUrls(
+    //     Provider.of<ActivityPhotosDataModel>(context, listen: true)
+    //         .activityPhotos);
     return Container(
         color: Colors.white,
         margin: const EdgeInsets.fromLTRB(0, 0, 0, 5.0),
@@ -80,11 +99,11 @@ class _PrefetchImageDemoState extends State<PrefetchImageDemo> {
               // viewportFraction: 1.0,
               enlargeCenterPage: false,
               onPageChanged: (index, reason) {
-                if (!mounted) {
-                  setState(() {
-                    _current = index;
-                  });
-                }
+                // if (!mounted) {
+                //   setState(() {
+                //     _current = index;
+                //   });
+                // }
               }),
           itemBuilder: (context, index, index2) {
             return Center(
@@ -96,44 +115,44 @@ class _PrefetchImageDemoState extends State<PrefetchImageDemo> {
         ));
   }
 
-  List<String> createUrls(List<PhotoActivity>? activityPhotos) {
-    List<String> imagesUrls = [
-      detailedActivity.photos!.primary!.urls!.s600.toString()
-    ];
-
-    if (activityPhotos != null && activityPhotos.length > 1) {
-      imagesUrls = [];
-      for (PhotoActivity image in activityPhotos) {
-        String str = image.urls!["1800"] ??
-            image.urls!["1000"] ??
-            image.urls!["600"] ??
-            image.urls!["200"] ??
-            image.urls!["100"] ??
-            image.urls!["50"] ??
-            image.urls!["25"] ??
-            image.urls!["10"] ??
-            image.urls!["5"] ??
-            image.urls!["3"] ??
-            image.urls!["2"] ??
-            image.urls!["1"] ??
-            image.urls!["0"] ??
-            "";
-        imagesUrls
-            .add(str); //.substring(0, str.lastIndexOf('-')) + "-768x419.jpg");
-      }
-    }
-
-    WidgetsBinding.instance.addPostFrameCallback((_) {
-      for (var imageUrl in imagesUrls) {
-        precacheImage(NetworkImage(imageUrl), context);
-      }
-    });
-
-    if (mounted) {
-      setState(() {});
-    }
-    return imagesUrls;
-  }
+  // List<String> createUrls(List<PhotoActivity>? activityPhotos) {
+  //   List<String> imagesUrls = [
+  //     detailedActivity.photos!.primary!.urls!.s600.toString()
+  //   ];
+  //
+  //   if (activityPhotos != null && activityPhotos.length > 1) {
+  //     imagesUrls = [];
+  //     for (PhotoActivity image in activityPhotos) {
+  //       String str = image.urls!["1800"] ??
+  //           image.urls!["1000"] ??
+  //           image.urls!["600"] ??
+  //           image.urls!["200"] ??
+  //           image.urls!["100"] ??
+  //           image.urls!["50"] ??
+  //           image.urls!["25"] ??
+  //           image.urls!["10"] ??
+  //           image.urls!["5"] ??
+  //           image.urls!["3"] ??
+  //           image.urls!["2"] ??
+  //           image.urls!["1"] ??
+  //           image.urls!["0"] ??
+  //           "";
+  //       imagesUrls
+  //           .add(str); //.substring(0, str.lastIndexOf('-')) + "-768x419.jpg");
+  //     }
+  //   }
+  //
+  //   WidgetsBinding.instance.addPostFrameCallback((_) {
+  //     for (var imageUrl in imagesUrls) {
+  //       precacheImage(NetworkImage(imageUrl), context);
+  //     }
+  //   });
+  //
+  //   // if (mounted) {
+  //   //   setState(() {});
+  //   // }
+  //   return imagesUrls;
+  // }
 }
 
 class RenderDetails extends StatefulWidget {

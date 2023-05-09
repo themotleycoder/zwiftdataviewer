@@ -4,11 +4,11 @@ import 'package:zwiftdataviewer/utils/theme.dart';
 const int defaultDataDate =
     1420070400; //default is Thursday, January 1, 2015 12:00:00 AM
 
-enum HomeScreenTab { activities, stats, calendar, settings }
+//enum HomeScreenTab { activities, stats, calendar, settings }
 
-enum ActivityDetailScreenTab { details, analysis, sections }
+//enum ActivityDetailScreenTab { details, analysis, sections }
 
-enum DateFilter { all, month, week, year }
+// enum DateFilter { all, month, week, year }
 
 TextStyle appBarTextStyle =
     const TextStyle(inherit: true, color: Colors.white, fontSize: 16.0);

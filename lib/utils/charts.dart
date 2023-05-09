@@ -18,6 +18,7 @@ class ChartsData {
           BuildContext? context,
           Map<String, String> units,
           List<SummaryActivity> activities) {
+
     var chartData = generateChartData(context, units, activities);
     return <ChartSeries<YearlyTotals, String>>[
       ColumnSeries<YearlyTotals, String>(

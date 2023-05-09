@@ -1,37 +1,38 @@
 import 'package:flutter/material.dart';
-import 'package:provider/provider.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:zwiftdataviewer/screens/AllStatsScreenDistElev.dart';
 
-import '../models/ActivitiesDataModel.dart';
-import '../stravalib/Models/activity.dart';
 import '../utils/constants.dart';
 import '../utils/theme.dart';
 import 'allstatsscreenscatter.dart';
 
-class AllStatsRootScreen extends StatefulWidget {
+class AllStatsRootScreen extends ConsumerStatefulWidget {
   const AllStatsRootScreen({super.key});
 
   @override
-  _AllStatsRootScreenState createState() => _AllStatsRootScreenState();
+  ConsumerState<AllStatsRootScreen> createState() {
+    return _AllStatsRootScreenState();
+  }
 }
 
-class _AllStatsRootScreenState extends State<AllStatsRootScreen>
+class _AllStatsRootScreenState extends ConsumerState<AllStatsRootScreen>
     with TickerProviderStateMixin {
   @override
   Widget build(BuildContext context) {
     // Map<String, double> summaryData;
 
     final controller = TabController(length: 3, vsync: this);
+    // final activities = ref.watch(activitiesProvider);
 
-    return MultiProvider(
-        providers: [
-          ChangeNotifierProvider(
-              create: (context) => SummaryActivitySelectDataModel()),
-        ],
-        child: Selector<ActivitiesDataModel, List<SummaryActivity>>(
-            selector: (_, model) => model.dateFilteredActivities,
-            builder: (context, activities, _) {
-              //summaryData = stats.SummaryData.createSummaryData(activities);
+    // return MultiProvider(
+    //     providers: [
+    //       ChangeNotifierProvider(
+    //           create: (context) => SummaryActivitySelectDataModel()),
+    //     ],
+    //     child: Selector<ActivitiesDataModel, List<SummaryActivity>>(
+    //         selector: (_, model) => model.dateFilteredActivities,
+    //         builder: (context, activities, _) {
+    //           //summaryData = stats.SummaryData.createSummaryData(activities);
               return Column(children: <Widget>[
                 Container(
                     color: zdvMidBlue,
@@ -78,7 +79,7 @@ class _AllStatsRootScreenState extends State<AllStatsRootScreen>
                   ),
                 ))
               ]);
-            }));
+            // }));
     // });
   }
 }

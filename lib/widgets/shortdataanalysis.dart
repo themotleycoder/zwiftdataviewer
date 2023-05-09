@@ -1,32 +1,30 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:zwiftdataviewer/models/ActivityDetailDataModel.dart';
 import 'package:zwiftdataviewer/secrets.dart';
 import 'package:zwiftdataviewer/stravalib/globals.dart' as Globals;
 import 'package:zwiftdataviewer/stravalib/strava.dart';
 
+import '../screens/routeanalysispowerchartscreen.dart';
 import '../utils/conversions.dart';
 import 'iconitemwidgets.dart';
 
-class ShortDataAnalysis extends StatelessWidget {
-  final LapSummaryObject? _lapSummaryObject;
-
-  const ShortDataAnalysis(this._lapSummaryObject, {Key? key}) : super(key: key);
+class ShortDataAnalysis extends ConsumerWidget {
+  const ShortDataAnalysis({super.key});
 
   @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context, WidgetRef ref) {
+
+    final lapSummaryObject = ref.watch(selectedLapSummaryProvider.notifier).selectedLapSummaryObject;
+
     final Strava strava = Strava(Globals.isInDebug, secret);
     Map<String, String> units = Conversions.units(context);
-    final time = _lapSummaryObject?.time ?? 0;
-    final double watts =
-        (_lapSummaryObject?.watts ?? 0) / (_lapSummaryObject?.count ?? 0);
-    final double cadence =
-        (_lapSummaryObject?.cadence ?? 0) / (_lapSummaryObject?.count ?? 0);
-    final double speed =
-        (_lapSummaryObject?.speed ?? 0) / (_lapSummaryObject?.count ?? 0);
-    final double distance =
-        (_lapSummaryObject?.distance ?? 0) / (_lapSummaryObject?.count ?? 0);
-    final double elevation =
-        (_lapSummaryObject?.altitude ?? 0) / (_lapSummaryObject?.count ?? 0);
+    final time = lapSummaryObject?.time ?? 0;
+    final double watts = (lapSummaryObject?.watts ?? 0);
+    final double cadence = (lapSummaryObject?.cadence ?? 0);
+    final double speed = (lapSummaryObject?.speed ?? 0);
+    final double distance = (lapSummaryObject?.distance ?? 0);
+    final double elevation = (lapSummaryObject?.altitude ?? 0);
     return Expanded(
         flex: 1,
         child: ListView(
@@ -36,7 +34,7 @@ class ShortDataAnalysis extends StatelessWidget {
                 IconDataObject(
                     'Time', Conversions.secondsToTime(time), Icons.timer),
                 IconDataObject(
-                    'Avg', watts.toStringAsFixed(1), Icons.filter_hdr,
+                    'Avg', watts.toStringAsFixed(1), Icons.electric_bolt,
                     units: 'w')
               ]),
               IconHeaderDataRow([
@@ -57,34 +55,33 @@ class ShortDataAnalysis extends StatelessWidget {
                     'Gain',
                     Conversions.metersToHeight(context, elevation)
                         .toStringAsFixed(0),
-                    Icons.autorenew,
+                    Icons.filter_hdr,
                     units: units['height'])
               ]),
             ]));
   }
 }
 
-class ShortDataAnalysisForLapSummary extends StatelessWidget {
-  final LapSummaryObject? _lapSummaryObject;
-
-  const ShortDataAnalysisForLapSummary(this._lapSummaryObject, {Key? key})
-      : super(key: key);
+class ShortDataAnalysisForLapSummary extends ConsumerWidget {
+  const ShortDataAnalysisForLapSummary({super.key});
 
   @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context, WidgetRef ref) {
+
+    final lapSummaryObject = ref.watch(selectedLapSummaryProvider.notifier).selectedLapSummaryObject;
     final Strava strava = Strava(Globals.isInDebug, secret);
     final Map<String, String> units = Conversions.units(context);
-    final time = _lapSummaryObject?.time ?? 0;
+    final time = lapSummaryObject?.time ?? 0;
     final double watts =
-        (_lapSummaryObject?.watts ?? 0) / (_lapSummaryObject?.count ?? 0);
+        (lapSummaryObject?.watts ?? 0) / (lapSummaryObject?.count ?? 0);
     final double cadence =
-        (_lapSummaryObject?.cadence ?? 0) / (_lapSummaryObject?.count ?? 0);
+        (lapSummaryObject?.cadence ?? 0) / (lapSummaryObject?.count ?? 0);
     final double speed =
-        (_lapSummaryObject?.speed ?? 0) / (_lapSummaryObject?.count ?? 0);
+        (lapSummaryObject?.speed ?? 0);// / (lapSummaryObject?.count ?? 0);
     final double distance =
-        (_lapSummaryObject?.distance ?? 0) / (_lapSummaryObject?.count ?? 0);
+        (lapSummaryObject?.distance ?? 0);
     final double elevation =
-        (_lapSummaryObject?.altitude ?? 0) / (_lapSummaryObject?.count ?? 0);
+        (lapSummaryObject?.altitude ?? 0);
     return Expanded(
         flex: 1,
         child: ListView(
