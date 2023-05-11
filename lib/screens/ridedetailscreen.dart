@@ -1,25 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:intl/intl.dart';
 import 'package:zwiftdataviewer/appkeys.dart';
-import 'package:zwiftdataviewer/models/ActivityDetailDataModel.dart';
-import 'package:zwiftdataviewer/models/ActivityPhotosDataModel.dart';
-import 'package:zwiftdataviewer/models/StreamsDataModel.dart';
-import 'package:zwiftdataviewer/screens/routeanalysisscreen.dart';
-import 'package:zwiftdataviewer/screens/routedetailscreen.dart';
-import 'package:zwiftdataviewer/screens/routesectiondetailscreen.dart';
-import 'package:zwiftdataviewer/stravalib/API/streams.dart';
-import 'package:zwiftdataviewer/stravalib/strava.dart';
-import 'package:zwiftdataviewer/utils/constants.dart';
 import 'package:zwiftdataviewer/utils/constants.dart' as constants;
-import 'package:zwiftdataviewer/utils/repository/filerepository.dart';
-import 'package:zwiftdataviewer/utils/repository/webrepository.dart';
 import 'package:zwiftdataviewer/utils/theme.dart';
 
-import '../models/ActivitiesDataModel.dart';
 import '../providers/activity_detail_provider.dart';
 import '../providers/activity_select_provider.dart';
-import '../providers/streams_provider.dart';
 import '../providers/tabs_provider.dart';
 import '../stravalib/Models/activity.dart';
 
@@ -39,19 +25,27 @@ class DetailScreen extends ConsumerWidget {
 
   const DetailScreen({super.key});
 
-
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final detailPageTabs = ref.watch(detailTabsNotifier.notifier);
     final tabIndex = ref.watch(detailTabsNotifier);
-    final activityId = ref
-        .watch(activitySelectProvider.notifier)
-        .activitySelect;
-    final activityDetailP = ref.watch(activityDetailProvider.notifier);
-    activityDetailP.loadActivityDetail(activityId);
-    final activityDetail = activityDetailP.activityDetail;
-    var streamProvider = ref.watch(streamsProvider.notifier);
-    streamProvider.loadStreams(activityId);
+
+    // final asyncActivityDetail = ref.watch(activityDetailFromStreamProvider(
+    //     ref.read(selectedActivityProvider).id!));
+
+    AsyncValue<DetailedActivity> asyncActivityDetail = ref.watch(activityDetailFromStreamProvider(
+          ref.read(selectedActivityProvider).id!));
+
+    // return asyncActivityDetail.when(
+    //   data: (activityDetail) => Text('Activity detail loaded: $activityDetail'),
+    //   loading: () => CircularProgressIndicator(),
+    //   error: (error, stackTrace) => Text('Error: $error'),
+    // );
+
+    // var streamProvider = ref.watch(streamsProvider.notifier);
+    // streamProvider.loadStreams(activity.id!);
+    //
+    // AsyncValue<StreamsDetailCollection> asyncStreamsDetailCollection = ref.watch(streamsProvider);
 
     // return MultiProvider(
     // providers: [
@@ -79,24 +73,56 @@ class DetailScreen extends ConsumerWidget {
     child:
     // Consumer<ActivityDetailDataModel>(
     //     builder: (context, myModel, child) {
+
     return Scaffold(
-        appBar: AppBar(
-            title: activityDetail == null
-                ? Text("Zwift Data Viewer",
-                style: constants.appBarTextStyle) : Text(
-                "${activityDetail.name} (${DateFormat.yMd().format(
-                    DateTime.parse(activityDetail.startDate??''))})",
-                style: constants.appBarTextStyle),
-            backgroundColor: zdvMidBlue,
-            elevation: 0.0,
-            leading: IconButton(
-              icon: Icon(Icons.arrow_back, color: Colors.white),
-              onPressed: () {
-                Navigator.pop(context);
-              },
-            )
-          // actions: getActions()
-        ),
+        appBar:
+            asyncActivityDetail.when(
+                data: (DetailedActivity activityDetail) {
+          return AppBar(
+              title: Text("${activityDetail.name} ",
+                  // "(${DateFormat.yMd().format(
+                  // DateTime.parse(activityDetail.startDate))})",
+                  style: constants.appBarTextStyle),
+              backgroundColor: zdvMidBlue,
+              elevation: 0.0,
+              leading: IconButton(
+                  icon: const Icon(Icons.arrow_back, color: Colors.white),
+                  onPressed: () {
+                    Navigator.pop(context);
+                  }));
+        }, error: (Object error, StackTrace stackTrace) {
+          print(stackTrace);
+                  return null;
+        }, loading: () {
+          return AppBar(
+              title:
+                  Text("Zwift Data Viewer", style: constants.appBarTextStyle),
+              backgroundColor: zdvMidBlue,
+              elevation: 0.0,
+              leading: IconButton(
+                  icon: const Icon(Icons.arrow_back, color: Colors.white),
+                  onPressed: () {
+                    Navigator.pop(context);
+                  }));
+        }),
+
+        //     //     appBar: AppBar(
+        //     // title: activityDetail == null
+        //     // ? Text("Zwift Data Viewer",
+        //     //     style: constants.appBarTextStyle) : Text(
+        //     // "${activityDetail.name} (${DateFormat.yMd().format(
+        //     // DateTime.parse(activityDetail.startDate??''))})",
+        //     style: constants.appBarTextStyle),
+        // backgroundColor: zdvMidBlue,
+        // elevation: 0.0,
+        // leading: IconButton(
+        // icon: Icon(Icons.arrow_back, color: Colors.white),
+        // onPressed: () {
+        // Navigator.pop(context);
+        // },
+        // )
+        // // actions: getActions()
+        // ),
         body: Stack(children: [
           Container(
             child: detailPageTabs.getView(detailPageTabs.index),
@@ -130,13 +156,14 @@ class DetailScreen extends ConsumerWidget {
         // ),
         // }),
         bottomNavigationBar:
-        // ValueListenableBuilder<ActivityDetailScreenTab>(
-        //     valueListenable: _tab,
-        //     builder: (context, tab, _) {
-        BottomNavigationBar(
+            // ValueListenableBuilder<ActivityDetailScreenTab>(
+            //     valueListenable: _tab,
+            //     builder: (context, tab, _) {
+            BottomNavigationBar(
           key: AppKeys.tabs,
           currentIndex: tabIndex,
-          onTap: (index) => ref.read(detailTabsNotifier.notifier).setIndex(index),
+          onTap: (index) =>
+              ref.read(detailTabsNotifier.notifier).setIndex(index),
           type: BottomNavigationBarType.fixed,
           unselectedItemColor: zdvmMidBlue[100],
           fixedColor: zdvmOrange[100],
@@ -146,18 +173,15 @@ class DetailScreen extends ConsumerWidget {
               label: "Details",
             ),
             BottomNavigationBarItem(
-              icon:
-              Icon(Icons.insights, key: AppKeys.analysisTab),
+              icon: Icon(Icons.insights, key: AppKeys.analysisTab),
               label: "Analysis",
             ),
             BottomNavigationBarItem(
-              icon: Icon(Icons.calendar_today,
-                  key: AppKeys.sectionsTab),
+              icon: Icon(Icons.calendar_today, key: AppKeys.sectionsTab),
               label: "Sections",
             ),
           ],
-        )
-    );
+        ));
   }
 }
 // ));

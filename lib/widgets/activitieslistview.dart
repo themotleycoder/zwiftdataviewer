@@ -18,10 +18,9 @@ class ActivitiesListView extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final Strava strava = Strava(globals.isInDebug, secret);
-    List<SummaryActivity> activities = [];
+    //final Strava strava = Strava(globals.isInDebug, secret);
 
-    activities = ref.watch(activitiesProvider);
+    final List<SummaryActivity> activities = ref.watch(activitiesProvider);
 
     return Container(
         margin: const EdgeInsets.fromLTRB(0, 8, 0, 8),
@@ -48,7 +47,8 @@ class ActivitiesListView extends ConsumerWidget {
                         color: zdvMidBlue,
                       ),
                       onTap: () {
-                        ref.read(activitySelectProvider.notifier).setActivitySelect(activities[index].id!);
+                        ref.read(selectedActivityProvider.notifier).selectActivity(activities[index]);
+                        // ref.read(activitySelectProvider.notifier).setActivitySelect(activities[index]);
                         Navigator.push(
                           context,
                           MaterialPageRoute(

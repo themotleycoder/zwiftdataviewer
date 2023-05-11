@@ -10,65 +10,42 @@ import '../secrets.dart';
 import '../stravalib/globals.dart';
 import '../stravalib/strava.dart';
 
-// class ActivityDetailDataModel extends ChangeNotifier {
-
-
 class ActivityDetailNotifier extends StateNotifier<DetailedActivity> {
   ActivityDetailNotifier() : super(DetailedActivity());
 
-
   final FileRepository? fileRepository = FileRepository();
-  final WebRepository? webRepository = WebRepository(
-      strava: Strava(isInDebug, secret));
+  final WebRepository? webRepository =
+      WebRepository(strava: Strava(isInDebug, secret));
 
   DetailedActivity get activityDetail => state;
 
   void setActivityDetail(DetailedActivity activityDetail) {
     state = activityDetail;
   }
-
-  // ActivityDetailDataModel({
-  // required this.webRepository,
-  // required this.fileRepository,
-  // // VisibilityFilter filter,
-  // DetailedActivity? activityDetail,
-  // });
-
-  Future loadActivityDetail(int activityId) async {
-    // _isLoading = true;
-    // notifyListeners();
-    if (globals.isInDebug) {
-      fileRepository?.loadActivityDetail(activityId).then((loadedActivity) {
-        setActivityDetail(loadedActivity!);
-        // _isLoading = false;
-        // notifyListeners();
-      });
-    } else {
-      print('WOULD CALL WEB SVC NOW! - loadActivityDetail');
-      webRepository?.loadActivityDetail(activityId).then((loadedActivity) {
-        setActivityDetail(loadedActivity!);
-        //_isLoading = false;
-        //notifyListeners();
-      });
-    }
-  }
 }
 
 final activityDetailProvider =
-StateNotifierProvider<ActivityDetailNotifier, DetailedActivity>((ref) {
+    StateNotifierProvider<ActivityDetailNotifier, DetailedActivity>((ref) {
   return ActivityDetailNotifier();
 });
 
 
+final activityDetailFromStreamProvider =
+    FutureProvider.autoDispose.family<DetailedActivity, int>((ref, id) async {
+  final FileRepository fileRepository = FileRepository();
+  final WebRepository webRepository =
+      WebRepository(strava: Strava(isInDebug, secret));
+
+  if (globals.isInDebug) {
+    return fileRepository.loadActivityDetail(id);
+  } else {
+    print('CALL WEB SVC NOW! - loadActivityDetail');
+    return webRepository.loadActivityDetail(id);
+  }
+});
+
 class CombinedStreamsNotifier extends StateNotifier<CombinedStreams> {
   CombinedStreamsNotifier() : super(CombinedStreams(0, 0, 0, 0, 0, 0, 0));
-
-// class ActivitySelectDataModel extends ChangeNotifier {
-//   CombinedStreams? stream;
-//
-//   bool _isLoading = false;
-//
-//   bool get isLoading => _isLoading;
 
   CombinedStreams? get selectedStream => state;
 
@@ -78,7 +55,7 @@ class CombinedStreamsNotifier extends StateNotifier<CombinedStreams> {
 }
 
 final combinedStreamsProvider =
-StateNotifierProvider<CombinedStreamsNotifier, CombinedStreams>((ref) {
+    StateNotifierProvider<CombinedStreamsNotifier, CombinedStreams>((ref) {
   return CombinedStreamsNotifier();
 });
 

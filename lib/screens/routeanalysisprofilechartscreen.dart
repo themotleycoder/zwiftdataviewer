@@ -21,7 +21,7 @@ class RouteAnalysisProfileChartScreen extends ConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
 
     final DetailedActivity detailedActivity = ref.watch(activityDetailProvider.notifier).activityDetail;
-    ref.watch(streamsProvider.notifier);
+    ref.read(streamsProvider);
 
     // return Consumer<ActivityDetailDataModel>(
     //     builder: (context, myModel, child) {
@@ -57,7 +57,9 @@ class DisplayChart extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final Map<String, String> units = Conversions.units(context);
-    var streams = ref.watch(streamsProvider.notifier).streams;
+
+    AsyncValue asyncStreams = ref.watch(streamsProvider);
+
     // var combinedStreams = ref.watch(combinedStreamsProvider.notifier).selectedStream;
         // Provider.of<StreamsDataModel>(context).combinedStreams;
     return SfCartesianChart(
@@ -88,7 +90,7 @@ class DisplayChart extends ConsumerWidget {
         activationMode: ActivationMode.singleTap,
         shouldAlwaysShow: true,
       ),
-      series: _createDataSet(context, streams),
+      series: [],//_createDataSet(context, streams),
       onTrackballPositionChanging: (TrackballArgs args) =>
           onTBSelectionChanged(context, args),
     );

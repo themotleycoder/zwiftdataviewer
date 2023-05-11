@@ -68,7 +68,7 @@ class FileRepository
   }
 
   @override
-  Future<DetailedActivity?> loadActivityDetail(int activityId) async {
+  Future<DetailedActivity> loadActivityDetail(int activityId) async {
     try {
       final String jsonStr =
           await rootBundle.loadString('assets/testjson/activity_test.json');
@@ -78,7 +78,7 @@ class FileRepository
       return _activity;
     } catch (e) {
       print('file load error' + e.toString());
-      return null;
+      return DetailedActivity();
     }
   }
 

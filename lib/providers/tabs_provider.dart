@@ -65,7 +65,7 @@ class DetailTabsNotifier extends StateNotifier<int> {
         return RouteSectionDetailScreen();
       case 0:
       default:
-        return const RouteDetailScreen(key: Key('RouteDetailScreen'));
+        return const RouteDetailScreen();
     }
   }
 }

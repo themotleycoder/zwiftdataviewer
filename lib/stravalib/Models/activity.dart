@@ -16,10 +16,10 @@ class DetailedActivity {
   int? uploadId;
   Athlete? athlete;
   String? name;
-  double? distance;
-  int? movingTime;
-  int? elapsedTime;
-  double? totalElevationGain;
+  double? distance = 0.0;
+  int? movingTime = 0;
+  int? elapsedTime = 0;
+  double? totalElevationGain = 0.0;
   String? type;
   String? startDate;
   String? startDateLocal;

@@ -24,7 +24,7 @@ class _RouteAnalysisScreenState extends ConsumerState<RouteAnalysisScreen> with 
   Widget build(BuildContext context) {
     final controller = TabController(length: 3, vsync: this);
 
-    final DetailedActivity detailedActivity = ref.watch(activityDetailProvider.notifier).activityDetail;
+    //final DetailedActivity detailedActivity = ref.watch(activityDetailProvider.notifier).activityDetail;
 
     // return Consumer<ActivityDetailDataModel>(
     //     builder: (context, myModel, child) {

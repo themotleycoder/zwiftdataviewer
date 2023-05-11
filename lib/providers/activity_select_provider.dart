@@ -1,16 +1,15 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:zwiftdataviewer/stravalib/Models/activity.dart';
 
-class ActivitySelectNotifier extends StateNotifier<int> {
+class ActivitySelectNotifier extends StateNotifier<SummaryActivity> {
   ActivitySelectNotifier()
-      : super(0);
+      : super(SummaryActivity());
 
-  void setActivitySelect(int activitySelect) {
+  void selectActivity(SummaryActivity activitySelect) {
     state = activitySelect;
   }
 
-  int get activitySelect => state;
+  SummaryActivity get activitySelect => state;
 }
 
-final activitySelectProvider =
-    StateNotifierProvider<ActivitySelectNotifier, int>(
-        (ref) => ActivitySelectNotifier());
+final selectedActivityProvider = StateNotifierProvider<ActivitySelectNotifier, SummaryActivity>((ref) => ActivitySelectNotifier());
