@@ -37,15 +37,15 @@ class Gear {
   }
 
   Map<String, dynamic> toJson() {
-    final Map<String, dynamic> data = new Map<String, dynamic>();
-    data['id'] = this.id;
-    data['primary'] = this.primary;
-    data['resource_state'] = this.resourceState;
-    data['distance'] = this.distance;
-    data['brand_name'] = this.brandName;
-    data['model_name'] = this.modelName;
-    data['frame_type'] = this.frameType;
-    data['description'] = this.description;
+    final Map<String, dynamic> data = <String, dynamic>{};
+    data['id'] = id;
+    data['primary'] = primary;
+    data['resource_state'] = resourceState;
+    data['distance'] = distance;
+    data['brand_name'] = brandName;
+    data['model_name'] = modelName;
+    data['frame_type'] = frameType;
+    data['description'] = description;
     return data;
   }
 }

@@ -68,20 +68,20 @@ class Stats {
   }
 
   Map<String, dynamic> toJson() {
-    final Map<String, dynamic> data = new Map<String, dynamic>();
-    data['recent_run_totals'] = this.recentRunTotals;
-    data['all_run_totals'] = this.allRunTotals;
-    data['recent_swim_totals'] = this.recentSwimTotals;
-    data['biggest_ride_distance'] = this.biggestRideDistance;
-    data['ytd_swim_totals'] = this.ytdSwimTotals;
-    data['all_swim_totals'] = this.allSwimTotals;
-    if (this.recentRideTotals != null) {
-      data['recent_ride_totals'] = this.recentRideTotals?.toJson();
+    final Map<String, dynamic> data = <String, dynamic>{};
+    data['recent_run_totals'] = recentRunTotals;
+    data['all_run_totals'] = allRunTotals;
+    data['recent_swim_totals'] = recentSwimTotals;
+    data['biggest_ride_distance'] = biggestRideDistance;
+    data['ytd_swim_totals'] = ytdSwimTotals;
+    data['all_swim_totals'] = allSwimTotals;
+    if (recentRideTotals != null) {
+      data['recent_ride_totals'] = recentRideTotals?.toJson();
     }
-    data['biggest_climb_elevation_gain'] = this.biggestClimbElevationGain;
-    data['ytd_ride_totals'] = this.ytdRideTotals;
-    data['all_ride_totals'] = this.allRideTotals;
-    data['ytd_run_totals'] = this.ytdRunTotals;
+    data['biggest_climb_elevation_gain'] = biggestClimbElevationGain;
+    data['ytd_ride_totals'] = ytdRideTotals;
+    data['all_ride_totals'] = allRideTotals;
+    data['ytd_run_totals'] = ytdRunTotals;
     return data;
   }
 }
@@ -112,13 +112,13 @@ class StatsTotals {
   }
 
   Map<String, dynamic> toJson() {
-    final Map<String, dynamic> data = Map<String, dynamic>();
-    data['distance'] = this.distance;
-    data['achievement_count'] = this.achievementCount;
-    data['count'] = this.count;
-    data['elapsed_time'] = this.elapsedTime;
-    data['elevation_gain'] = this.elevationGain;
-    data['moving_time'] = this.movingTime;
+    final Map<String, dynamic> data = <String, dynamic>{};
+    data['distance'] = distance;
+    data['achievement_count'] = achievementCount;
+    data['count'] = count;
+    data['elapsed_time'] = elapsedTime;
+    data['elevation_gain'] = elevationGain;
+    data['moving_time'] = movingTime;
     return data;
   }
 }
@@ -149,13 +149,13 @@ class ActivityTotals {
   }
 
   Map<String, dynamic> toJson() {
-    final Map<String, dynamic> data = new Map<String, dynamic>();
-    data['distance'] = this.distance;
-    data['achievement_count'] = this.achievementCount;
-    data['count'] = this.count;
-    data['elapsed_time'] = this.elapsedTime;
-    data['elevation_gain'] = this.elevationGain;
-    data['moving_time'] = this.movingTime;
+    final Map<String, dynamic> data = <String, dynamic>{};
+    data['distance'] = distance;
+    data['achievement_count'] = achievementCount;
+    data['count'] = count;
+    data['elapsed_time'] = elapsedTime;
+    data['elevation_gain'] = elevationGain;
+    data['moving_time'] = movingTime;
     return data;
   }
 }

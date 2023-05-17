@@ -11,25 +11,25 @@ abstract class Streams {
   Future<StreamsDetailCollection> getStreamsByActivity(String id) async {
     StreamsDetailCollection returnStreams = StreamsDetailCollection();
 
-    var _header = globals.createHeader();
+    var header = globals.createHeader();
 
     globals.displayInfo('Entering getStreamsByActivity');
 
-    if (_header.containsKey('88') == false) {
+    if (header.containsKey('88') == false) {
       final String reqStreams =
           'https://www.strava.com/api/v3/activities/$id/streams?keys=time,watts_calc,altitude,heartrate,cadence,distance,grade_smooth&key_by_type=true';
-      var rep = await http.get(Uri.parse(reqStreams), headers: _header);
+      var rep = await http.get(Uri.parse(reqStreams), headers: header);
 
       if (rep.statusCode == 200) {
         globals.displayInfo(rep.statusCode.toString());
         globals.displayInfo('Activity info ${rep.body}');
         final Map<String, dynamic> jsonResponse = json.decode(rep.body);
         // final StreamsDetail _streams = StreamsDetail.fromJson(jsonResponse);
-        final StreamsDetailCollection _streams =
+        final StreamsDetailCollection streams =
             StreamsDetailCollection.fromJson(jsonResponse);
         // globals.displayInfo(_streams.name);
 
-        returnStreams = _streams;
+        returnStreams = streams;
       } else {
         globals.displayInfo('Activity not found');
       }
@@ -76,7 +76,7 @@ class StreamsDetail {
   }
 
   Map<String, dynamic> toJson() {
-    final Map<String, dynamic> data = new Map<String, dynamic>();
+    final Map<String, dynamic> data = <String, dynamic>{};
 
     // data['id'] = this.id;
 

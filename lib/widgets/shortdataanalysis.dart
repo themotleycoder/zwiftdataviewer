@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:zwiftdataviewer/models/ActivityDetailDataModel.dart';
 import 'package:zwiftdataviewer/secrets.dart';
 import 'package:zwiftdataviewer/stravalib/globals.dart' as Globals;
 import 'package:zwiftdataviewer/stravalib/strava.dart';

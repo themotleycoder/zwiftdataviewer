@@ -40,9 +40,9 @@ class FilterDateButton extends ConsumerWidget {
   List<PopupMenuItem<DateFilter>> _items(BuildContext context, WidgetRef ref) {
     final activeStyle = Theme.of(context)
         .textTheme
-        .bodyText2
+        .bodyMedium
         ?.copyWith(color: Theme.of(context).colorScheme.secondary);
-    final defaultStyle = Theme.of(context).textTheme.bodyText2;
+    final defaultStyle = Theme.of(context).textTheme.bodyMedium;
 
     final dateFilter = ref.watch(dateFiltersProvider.notifier);
 

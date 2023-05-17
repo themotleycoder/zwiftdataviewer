@@ -85,31 +85,31 @@ class Club {
   }
 
   Map<String, dynamic> toJson() {
-    final Map<String, dynamic> data = new Map<String, dynamic>();
-    data['id'] = this.id;
-    data['resource_state'] = this.resourceState;
-    data['name'] = this.name;
-    data['profile_medium'] = this.profileMedium;
-    data['profile'] = this.profile;
-    data['cover_photo'] = this.coverPhoto;
-    data['cover_photo_small'] = this.coverPhotoSmall;
-    data['sport_type'] = this.sportType;
-    data['city'] = this.city;
-    data['state'] = this.state;
-    data['country'] = this.country;
-    data['private'] = this.private;
-    data['member_count'] = this.memberCount;
-    data['featured'] = this.featured;
-    data['verified'] = this.verified;
-    data['url'] = this.url;
-    data['membership'] = this.membership;
-    data['admin'] = this.admin;
-    data['owner'] = this.owner;
-    data['description'] = this.description;
-    data['club_type'] = this.clubType;
-    data['post_count'] = this.postCount;
-    data['owner_id'] = this.ownerId;
-    data['following_count'] = this.followingCount;
+    final Map<String, dynamic> data = <String, dynamic>{};
+    data['id'] = id;
+    data['resource_state'] = resourceState;
+    data['name'] = name;
+    data['profile_medium'] = profileMedium;
+    data['profile'] = profile;
+    data['cover_photo'] = coverPhoto;
+    data['cover_photo_small'] = coverPhotoSmall;
+    data['sport_type'] = sportType;
+    data['city'] = city;
+    data['state'] = state;
+    data['country'] = country;
+    data['private'] = private;
+    data['member_count'] = memberCount;
+    data['featured'] = featured;
+    data['verified'] = verified;
+    data['url'] = url;
+    data['membership'] = membership;
+    data['admin'] = admin;
+    data['owner'] = owner;
+    data['description'] = description;
+    data['club_type'] = clubType;
+    data['post_count'] = postCount;
+    data['owner_id'] = ownerId;
+    data['following_count'] = followingCount;
     return data;
   }
 }

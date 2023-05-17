@@ -117,42 +117,42 @@ class DetailedAthlete {
   }
 
   Map<String, dynamic> toJson() {
-    final Map<String, dynamic> data = new Map<String, dynamic>();
-    data['id'] = this.id;
-    data['username'] = this.username;
-    data['resource_state'] = this.resourceState;
-    data['firstname'] = this.firstname;
-    data['lastname'] = this.lastname;
-    data['city'] = this.city;
-    data['state'] = this.state;
-    data['country'] = this.country;
-    data['sex'] = this.sex;
-    data['premium'] = this.premium;
-    data['created_at'] = this.createdAt;
-    data['updated_at'] = this.updatedAt;
-    data['badge_type_id'] = this.badgeTypeId;
-    data['profile_medium'] = this.profileMedium;
-    data['profile'] = this.profile;
-    data['friend'] = this.friend;
-    data['follower'] = this.follower;
-    data['follower_count'] = this.followerCount;
-    data['friend_count'] = this.friendCount;
-    data['mutual_friend_count'] = this.mutualFriendCount;
-    data['athlete_type'] = this.athleteType;
-    data['date_preference'] = this.datePreference;
-    data['measurement_preference'] = this.measurementPreference;
+    final Map<String, dynamic> data = <String, dynamic>{};
+    data['id'] = id;
+    data['username'] = username;
+    data['resource_state'] = resourceState;
+    data['firstname'] = firstname;
+    data['lastname'] = lastname;
+    data['city'] = city;
+    data['state'] = state;
+    data['country'] = country;
+    data['sex'] = sex;
+    data['premium'] = premium;
+    data['created_at'] = createdAt;
+    data['updated_at'] = updatedAt;
+    data['badge_type_id'] = badgeTypeId;
+    data['profile_medium'] = profileMedium;
+    data['profile'] = profile;
+    data['friend'] = friend;
+    data['follower'] = follower;
+    data['follower_count'] = followerCount;
+    data['friend_count'] = friendCount;
+    data['mutual_friend_count'] = mutualFriendCount;
+    data['athlete_type'] = athleteType;
+    data['date_preference'] = datePreference;
+    data['measurement_preference'] = measurementPreference;
     /***
         if (this.clubs != null) {
         data['clubs'] = this.clubs.map((v) => v.toJson()).toList();
         }
      ***/
-    data['ftp'] = this.ftp;
-    data['weight'] = this.weight;
-    if (this.bikes != null) {
-      data['bikes'] = this.bikes?.map((v) => v.toJson()).toList();
+    data['ftp'] = ftp;
+    data['weight'] = weight;
+    if (bikes != null) {
+      data['bikes'] = bikes?.map((v) => v.toJson()).toList();
     }
-    if (this.shoes != null) {
-      data['shoes'] = this.shoes?.map((v) => v.toJson()).toList();
+    if (shoes != null) {
+      data['shoes'] = shoes?.map((v) => v.toJson()).toList();
     }
     return data;
   }
@@ -176,12 +176,12 @@ class Bikes {
   }
 
   Map<String, dynamic> toJson() {
-    final Map<String, dynamic> data = new Map<String, dynamic>();
-    data['id'] = this.id;
-    data['primary'] = this.primary;
-    data['name'] = this.name;
-    data['resource_state'] = this.resourceState;
-    data['distance'] = this.distance;
+    final Map<String, dynamic> data = <String, dynamic>{};
+    data['id'] = id;
+    data['primary'] = primary;
+    data['name'] = name;
+    data['resource_state'] = resourceState;
+    data['distance'] = distance;
     return data;
   }
 }
@@ -204,12 +204,12 @@ class Shoes {
   }
 
   Map<String, dynamic> toJson() {
-    final Map<String, dynamic> data = new Map<String, dynamic>();
-    data['id'] = this.id;
-    data['primary'] = this.primary;
-    data['name'] = this.name;
-    data['resource_state'] = this.resourceState;
-    data['distance'] = this.distance;
+    final Map<String, dynamic> data = <String, dynamic>{};
+    data['id'] = id;
+    data['primary'] = primary;
+    data['name'] = name;
+    data['resource_state'] = resourceState;
+    data['distance'] = distance;
     return data;
   }
 }

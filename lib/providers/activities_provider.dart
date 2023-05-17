@@ -77,7 +77,7 @@ class ActivitiesNotifier extends StateNotifier<List<SummaryActivity>> {
         webRepository!
             .loadActivities(
                 (DateTime.now().millisecondsSinceEpoch / 1000).round(),
-                afterDate!)
+                afterDate)
             .then((webloadedActivities) {
           if (webloadedActivities != null && webloadedActivities.isNotEmpty) {
             if (activities!.isNotEmpty) {

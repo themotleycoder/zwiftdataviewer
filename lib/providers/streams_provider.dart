@@ -7,7 +7,6 @@ import '../stravalib/globals.dart';
 import '../stravalib/strava.dart';
 import '../utils/repository/filerepository.dart';
 import '../utils/repository/webrepository.dart';
-import 'activity_select_provider.dart';
 
 class StreamsNotifier extends StateNotifier<StreamsDetailCollection> {
   StreamsNotifier() : super(StreamsDetailCollection());

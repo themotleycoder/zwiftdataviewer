@@ -19,12 +19,12 @@ class UploadActivity {
   }
 
   Map<String, dynamic> toJson() {
-    final Map<String, dynamic> data = new Map<String, dynamic>();
-    data['activity_id'] = this.activityId;
-    data['external_id'] = this.externalId;
-    data['id'] = this.id;
-    data['error'] = this.error;
-    data['status'] = this.status;
+    final Map<String, dynamic> data = <String, dynamic>{};
+    data['activity_id'] = activityId;
+    data['external_id'] = externalId;
+    data['id'] = id;
+    data['error'] = error;
+    data['status'] = status;
     return data;
   }
 }

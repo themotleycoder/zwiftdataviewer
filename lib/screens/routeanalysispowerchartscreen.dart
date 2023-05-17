@@ -1,15 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
-// import 'package:provider/provider.dart';
 import 'package:syncfusion_flutter_charts/charts.dart';
 
-// import 'package:zwiftdataviewer/models/ActivityDetailDataModel.dart';
 import 'package:zwiftdataviewer/widgets/shortdataanalysis.dart';
 
 import '../appkeys.dart';
 import '../providers/activity_detail_provider.dart';
-import '../providers/activity_select_provider.dart';
 import '../providers/lap_summary_provider.dart';
 import '../stravalib/Models/activity.dart';
 import '../utils/theme.dart';
@@ -19,25 +16,8 @@ class WattsDataView extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    //     (Provider.of<ConfigDataModel>(context, listen: false).configData?.ftp ??
-    //             0)
-    //         .toDouble();
-    // return Consumer<ActivityDetailDataModel>(
-    //     builder: (context, myModel, child) {
-    //   return ChangeNotifierProxyProvider<ActivityDetailDataModel,
-    //           LapSummaryDataModel>(
-    //       create: (_) => LapSummaryDataModel(),
-    //       lazy: false,
-    //       update: (context, activityDetailDataModel, lapSummaryDataModel) {
-    //         final newActivityDetailDataModel =
-    //             Provider.of<ActivityDetailDataModel>(context, listen: false);
-    //         lapSummaryDataModel?.updateFrom(newActivityDetailDataModel, ftp);
-    //         return lapSummaryDataModel!;
-    //       },
-    //       child: ChangeNotifierProvider<SelectedLapSummaryObjectModel>(
-    //         create: (_) => SelectedLapSummaryObjectModel(),
-    return Column(
-      children: const [
+    return const Column(
+      children: [
         Expanded(child: DisplayChart()),
         WattsProfileDataView(),
       ],
@@ -53,7 +33,7 @@ class DisplayChart extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
 
-    final double ftp = 229;
+    const double ftp = 229;
 
     AsyncValue<List<LapSummaryObject>> lapsData =
         ref.watch(lapsProvider(ref.watch(activityDetailProvider)!));
@@ -84,10 +64,7 @@ class DisplayChart extends ConsumerWidget {
 
   List<ChartSeries<LapSummaryObject, int>> _createDataSet(
       BuildContext context, List<LapSummaryObject> lapSummaryObjData) {
-    final double ftp = 229;
-    //     (Provider.of<ConfigDataModel>(context, listen: false).configData?.ftp ??
-    //             0)
-    //         .toDouble();
+    const double ftp = 229;
 
     return [
       LineSeries<LapSummaryObject, int>(
@@ -149,17 +126,6 @@ class LapTotals {
 
 class LapSummaryProvider extends StateNotifier<List<LapSummaryObject>> {
   LapSummaryProvider() : super([]);
-
-  // List<LapSummaryObject> model = [];
-  // bool _isLoading = false;
-  //
-  // bool get isLoading => _isLoading;
-
-  // List<LapSummaryObject> get lapSummaryObjects => model;
-
-  // void setLapSummaryModel(List<LapSummaryObject> model) {
-  //   this.model = model;
-  // }
 
   get summaryData => state;
 

@@ -17,23 +17,23 @@ abstract class Clubs {
   /// No need to be member of the club
   Future<List<SummaryAthlete>> getClubMembersById(String id) async {
     List<SummaryAthlete> returnListMembers = <SummaryAthlete>[];
-    int _pageNumber = 1;
-    int _perPage = 30; // Number of activities retrieved per http request
+    int pageNumber = 1;
+    int perPage = 30; // Number of activities retrieved per http request
     bool isRetrieveDone = false;
-    List<SummaryAthlete> _listSummary = <SummaryAthlete>[];
+    List<SummaryAthlete> listSummary = <SummaryAthlete>[];
 
     globals.displayInfo('Entering getClubMembersById');
 
-    var _header = globals.createHeader();
+    var header = globals.createHeader();
 
-    if (_header.containsKey('88') == false) {
+    if (header.containsKey('88') == false) {
       do {
         String reqList = "https://www.strava.com/api/v3/clubs/" +
             id +
-            '/members?page=$_pageNumber&per_page=$_perPage';
+            '/members?page=$pageNumber&per_page=$perPage';
 
-        var rep = await http.get(Uri.parse(reqList), headers: _header);
-        int _nbMembers = 0;
+        var rep = await http.get(Uri.parse(reqList), headers: header);
+        int nbMembers = 0;
 
         if (rep.statusCode == 200) {
           globals.displayInfo(rep.statusCode.toString());
@@ -45,21 +45,21 @@ abstract class Clubs {
               var member = SummaryAthlete.fromJson(summ);
               globals.displayInfo(
                   '${member.lastname} ,  ${member.firstname},  admin:${member.admin}');
-              _listSummary.add(member);
-              _nbMembers++;
+              listSummary.add(member);
+              nbMembers++;
             });
 
             // Check if it is the last page
-            globals.displayInfo(_nbMembers.toString());
-            if (_nbMembers < _perPage) {
+            globals.displayInfo(nbMembers.toString());
+            if (nbMembers < perPage) {
               isRetrieveDone = true;
             } else {
               // Move to the next page
-              _pageNumber++;
+              pageNumber++;
             }
 
-            globals.displayInfo(_listSummary.toString());
-            returnListMembers = _listSummary;
+            globals.displayInfo(listSummary.toString());
+            returnListMembers = listSummary;
           }
         } else {
           globals.displayInfo('Problem in getClubMembersById request');
@@ -82,21 +82,21 @@ abstract class Clubs {
   Future<Club?> getClubById(String id) async {
     Club? returnClub;
 
-    var _header = globals.createHeader();
+    var header = globals.createHeader();
 
-    if (_header.containsKey('88') == false) {
-      final reqClub = 'https://www.strava.com/api/v3/clubs/' + id;
-      var rep = await http.get(Uri.parse(reqClub), headers: _header);
+    if (header.containsKey('88') == false) {
+      final reqClub = 'https://www.strava.com/api/v3/clubs/$id';
+      var rep = await http.get(Uri.parse(reqClub), headers: header);
 
       if (rep.statusCode == 200) {
         globals.displayInfo(rep.statusCode.toString());
         globals.displayInfo('Club info ${rep.body}');
         final Map<String, dynamic> jsonResponse = json.decode(rep.body);
 
-        Club _club = Club.fromJson(jsonResponse);
-        globals.displayInfo(_club.name!);
+        Club club = Club.fromJson(jsonResponse);
+        globals.displayInfo(club.name!);
 
-        returnClub = _club;
+        returnClub = club;
       } else {
         globals.displayInfo('problem in getClubById request');
         // Todo add an error code
@@ -116,19 +116,17 @@ abstract class Clubs {
   Future<List<SummaryActivity>> getClubActivitiesById(String id) async {
     List<SummaryActivity> returnSummary = <SummaryActivity>[];
 
-    var _header = globals.createHeader();
-    int _pageNumber = 1;
-    int _perPage = 20; // Number of activities retrieved per http request
+    var header = globals.createHeader();
+    int pageNumber = 1;
+    int perPage = 20; // Number of activities retrieved per http request
     bool isRetrieveDone = false;
-    List<SummaryActivity> _listSummary = <SummaryActivity>[];
+    List<SummaryActivity> listSummary = <SummaryActivity>[];
 
-    if (_header.containsKey('88') == false) {
+    if (header.containsKey('88') == false) {
       do {
-        String reqClub = 'https://www.strava.com/api/v3/clubs/' +
-            id +
-            '/activities?page=$_pageNumber&per_page=$_perPage';
-        var rep = await http.get(Uri.parse(reqClub), headers: _header);
-        int _nbActvity = 0;
+        String reqClub = 'https://www.strava.com/api/v3/clubs/$id/activities?page=$pageNumber&per_page=$perPage';
+        var rep = await http.get(Uri.parse(reqClub), headers: header);
+        int nbActvity = 0;
 
         if (rep.statusCode == 200) {
           globals.displayInfo(rep.statusCode.toString());
@@ -140,21 +138,21 @@ abstract class Clubs {
               var activity = SummaryActivity.fromJson(summ);
               globals.displayInfo(
                   '------ ${activity.name} ,  ${activity.distance},  ${activity.id}');
-              _listSummary.add(activity);
-              _nbActvity++;
+              listSummary.add(activity);
+              nbActvity++;
             });
 
             // Check if it is the last page
-            globals.displayInfo(_nbActvity.toString());
-            if (_nbActvity < _perPage) {
+            globals.displayInfo(nbActvity.toString());
+            if (nbActvity < perPage) {
               isRetrieveDone = true;
             } else {
               // Move to the next page
-              _pageNumber++;
+              pageNumber++;
             }
 
-            globals.displayInfo(_listSummary.toString());
-            returnSummary = _listSummary;
+            globals.displayInfo(listSummary.toString());
+            returnSummary = listSummary;
           }
         } else {
           globals.displayInfo('problem in getClubActivitiesById request');

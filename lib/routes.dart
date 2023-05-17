@@ -1,5 +1,5 @@
 class AppRoutes {
-  static final home = '/';
-  static final allStats = '/allStatistics';
-  static final settings = '/settings';
+  static const home = '/';
+  static const allStats = '/allStatistics';
+  static const settings = '/settings';
 }

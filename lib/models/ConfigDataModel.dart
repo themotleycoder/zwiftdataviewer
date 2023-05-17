@@ -34,7 +34,7 @@ class ConfigDataModel extends ChangeNotifier {
     }
   }
 
-  Future<Future<Null>> saveConfig(ConfigData config) async {
+  Future<Future<void>> saveConfig(ConfigData config) async {
     _isLoading = true;
     notifyListeners();
 

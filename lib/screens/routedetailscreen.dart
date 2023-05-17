@@ -79,7 +79,7 @@ class PrefetchImageDemo extends ConsumerWidget {
             return const Center(
                 child: FadeInImage(
               placeholder: AssetImage('assets/zwiftdatalogo.png'),
-              image: AssetImage('path/to/local/image.png'),
+              image: AssetImage('assets/zwiftdatalogo.png'),
             ));
           },
         ));

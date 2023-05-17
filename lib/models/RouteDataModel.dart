@@ -26,10 +26,10 @@ class RouteDataModel extends ChangeNotifier {
 
   set routeData(Map<int, List<RouteData>> routeData) {
     _routeData = routeData;
-    saveRouteData(_routeData!);
+    saveRouteData(_routeData);
   }
 
-  Future<Future<Null>> loadRouteData() async {
+  Future<Future<void>> loadRouteData() async {
     _isLoading = true;
     notifyListeners();
 
@@ -60,7 +60,7 @@ class RouteDataModel extends ChangeNotifier {
     _isLoading = true;
     notifyListeners();
 
-    return repository.saveRouteData(_routeData!).then((temp) {
+    return repository.saveRouteData(_routeData).then((temp) {
       _isLoading = false;
       notifyListeners();
     }).catchError((err) {
@@ -72,7 +72,7 @@ class RouteDataModel extends ChangeNotifier {
   RouteDataModel({required this.repository});
 
   List<RouteData> get filteredRoutes {
-    return _routeData![_worldFilter]!.where((route) {
+    return _routeData[_worldFilter]!.where((route) {
       switch (_routeFilter) {
         // case routeType.eventonly:
         //   return route.eventOnly?.toLowerCase() == "event only";
@@ -112,16 +112,16 @@ class RouteData {
   }
 
   Map<String, dynamic> toJson() {
-    final Map<String, dynamic> data = new Map<String, dynamic>();
-    data['url'] = this.url;
-    data['world'] = this.world;
-    data['distance'] = this.distance;
-    data['altitude'] = this.altitude;
-    data['eventOnly'] = this.eventOnly;
-    data['routeName'] = this.routeName;
-    data['completed'] = this.completed;
-    data['id'] = this.id;
-    data['imageId'] = this.imageId;
+    final Map<String, dynamic> data = <String, dynamic>{};
+    data['url'] = url;
+    data['world'] = world;
+    data['distance'] = distance;
+    data['altitude'] = altitude;
+    data['eventOnly'] = eventOnly;
+    data['routeName'] = routeName;
+    data['completed'] = completed;
+    data['id'] = id;
+    data['imageId'] = imageId;
     return data;
   }
 }

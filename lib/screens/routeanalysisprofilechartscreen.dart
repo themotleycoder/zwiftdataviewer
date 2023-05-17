@@ -6,11 +6,9 @@ import 'package:zwiftdataviewer/utils/conversions.dart';
 import 'package:zwiftdataviewer/utils/theme.dart';
 
 import '../appkeys.dart';
-import '../providers/activity_detail_provider.dart';
 import '../providers/activity_select_provider.dart';
 import '../providers/combinedstream_select_provider.dart';
 import '../providers/streams_provider.dart';
-import '../stravalib/Models/activity.dart';
 import '../widgets/iconitemwidgets.dart';
 
 class RouteAnalysisProfileChartScreen extends ConsumerWidget {
@@ -18,37 +16,13 @@ class RouteAnalysisProfileChartScreen extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    AsyncValue<DetailedActivity> asyncActivityDetail = ref.watch(
-        activityDetailFromStreamProvider(
-            ref.read(selectedActivityProvider).id!));
 
-    //ref.read(streamsProvider);
-
-    // return Consumer<ActivityDetailDataModel>(
-    //     builder: (context, myModel, child) {
-    //   return Consumer<StreamsDataModel>(builder: (context, myModel, child) {
-    //     return ChangeNotifierProvider<SelectedStreamObjectModel>(
-    //         create: (_) => SelectedStreamObjectModel(),
-    //         child: Selector<StreamsDataModel, bool>(
-    //             selector: (context, model) => model.isLoading,
-    //             builder: (context, isLoading, _) {
-    //               if (isLoading) {
-    //                 return const Center(
-    //                   child: CircularProgressIndicator(
-    //                     key: AppKeys.activitiesLoading,
-    //                   ),
-    //                 );
-    //               }
     return const Column(children: [
       Expanded(
         child: DisplayChart(),
       ),
       ProfileDataView(),
     ]);
-    // ]);
-    //           }));
-    // });
-    // });
   }
 }
 
@@ -62,48 +36,43 @@ class DisplayChart extends ConsumerWidget {
     AsyncValue<StreamsDetailCollection> streamsData =
         ref.watch(streamsProvider(ref.watch(selectedActivityProvider).id!));
 
-    print('Rebuilding widget with new streamsData: $streamsData');
-
     return streamsData.when(data: (streams) {
-      print('streamsData.when: $streams.streams.length');
       return SfCartesianChart(
-        tooltipBehavior: null,
-        plotAreaBorderWidth: 0,
-        legend: Legend(
-            isVisible: true,
-            overflowMode: LegendItemOverflowMode.wrap,
-            position: LegendPosition.top),
-        primaryXAxis: NumericAxis(
-            title: AxisTitle(text: 'Distance (${units['distance']!})'),
-            majorGridLines: const MajorGridLines(width: 0),
-            minimum: 0),
-        primaryYAxis: NumericAxis(
-            labelFormat: ' ',
-            axisLine: const AxisLine(width: 0),
-            majorTickLines: const MajorTickLines(color: Colors.transparent)),
-        trackballBehavior: TrackballBehavior(
-          enable: true,
-          tooltipSettings: const InteractiveTooltip(enable: false),
-          markerSettings: const TrackballMarkerSettings(
-            markerVisibility: TrackballVisibilityMode.visible,
-            height: 10,
-            width: 10,
-            borderWidth: 1,
+          tooltipBehavior: null,
+          plotAreaBorderWidth: 0,
+          legend: Legend(
+              isVisible: true,
+              overflowMode: LegendItemOverflowMode.wrap,
+              position: LegendPosition.top),
+          primaryXAxis: NumericAxis(
+              title: AxisTitle(text: 'Distance (${units['distance']!})'),
+              majorGridLines: const MajorGridLines(width: 0),
+              minimum: 0),
+          primaryYAxis: NumericAxis(
+              labelFormat: ' ',
+              axisLine: const AxisLine(width: 0),
+              majorTickLines: const MajorTickLines(color: Colors.transparent)),
+          trackballBehavior: TrackballBehavior(
+            enable: true,
+            tooltipSettings: const InteractiveTooltip(enable: false),
+            markerSettings: const TrackballMarkerSettings(
+              markerVisibility: TrackballVisibilityMode.visible,
+              height: 10,
+              width: 10,
+              borderWidth: 1,
+            ),
+            hideDelay: 3000,
+            activationMode: ActivationMode.singleTap,
+            shouldAlwaysShow: true,
           ),
-          hideDelay: 3000,
-          activationMode: ActivationMode.singleTap,
-          shouldAlwaysShow: true,
-        ),
-        series: _createDataSet(context, streams.streams ?? []),
-        onTrackballPositionChanging: (TrackballArgs args) {
-          final dataPointIndex = args.chartPointInfo.dataPointIndex??0;
-          var combinedStreams = streams.streams![dataPointIndex];
-          ref.read(combinedStreamSelectNotifier.notifier).selectStream(combinedStreams);
-        }
-
-            // (TrackballArgs args) =>
-            // onTBSelectionChanged(context, args),
-      );
+          series: _createDataSet(context, streams.streams ?? []),
+          onTrackballPositionChanging: (TrackballArgs args) {
+            final dataPointIndex = args.chartPointInfo.dataPointIndex ?? 0;
+            var combinedStreams = streams.streams![dataPointIndex];
+            ref
+                .read(combinedStreamSelectNotifier.notifier)
+                .selectStream(combinedStreams);
+          });
     }, error: (Object error, StackTrace stackTrace) {
       return const Text("error");
     }, loading: () {
@@ -125,10 +94,10 @@ class DisplayChart extends ConsumerWidget {
     // SegmentEffort segment;
     double distance = 0.0;
     CombinedStreams? col;
-    final int length = streams.length ?? 0;
+    final int length = streams.length;
     for (int x = 0; x < length; x++) {
       col = streams[x];
-      distance = Conversions.metersToDistance(context, col!.distance);
+      distance = Conversions.metersToDistance(context, col.distance);
       var h = Conversions.metersToHeight(context, col.altitude);
       elevationData.add(DistanceValue(distance, h.toDouble()));
       heartrateData.add(DistanceValue(distance, col.heartrate.toDouble()));
@@ -141,7 +110,7 @@ class DisplayChart extends ConsumerWidget {
     return <XyDataSeries<DistanceValue, num>>[
       SplineAreaSeries<DistanceValue, num>(
           animationDuration: 1500,
-          dataSource: elevationData!,
+          dataSource: elevationData,
           color: zdvMidGreen,
           opacity: 1,
           name: 'Elevation',
@@ -152,7 +121,7 @@ class DisplayChart extends ConsumerWidget {
           markerSettings: const MarkerSettings(isVisible: false)),
       SplineSeries<DistanceValue, num>(
           animationDuration: 1500,
-          dataSource: wattsData!,
+          dataSource: wattsData,
           xValueMapper: (DistanceValue watts, _) => watts.distance,
           yValueMapper: (DistanceValue watts, _) => watts.value / 10,
           width: 1,
@@ -164,7 +133,7 @@ class DisplayChart extends ConsumerWidget {
           markerSettings: const MarkerSettings(isVisible: false)),
       SplineSeries<DistanceValue, num>(
           animationDuration: 1500,
-          dataSource: heartrateData!,
+          dataSource: heartrateData,
           width: 1,
           opacity: 0.8,
           color: zdvRed,
@@ -176,15 +145,6 @@ class DisplayChart extends ConsumerWidget {
           markerSettings: const MarkerSettings(isVisible: false)),
     ];
   }
-
-  // onTBSelectionChanged(BuildContext context, CombinedStreams combinedStream) {
-  //   //var dataPointIndex = args.chartPointInfo.dataPointIndex;
-  //   // var combinedStreams =
-  //   //     Provider.of<StreamsDataModel>(context, listen: false).combinedStreams;
-  //   // var combinedStream = combinedStreams?.stream![dataPointIndex!];
-  //   // Provider.of<SelectedStreamObjectModel>(context, listen: false)
-  //   //     .setSelectedCombinedStream(combinedStream);
-  // }
 }
 
 class ProfileDataView extends ConsumerWidget {
@@ -194,12 +154,8 @@ class ProfileDataView extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    var selectedSeries =
-        ref.watch(combinedStreamSelectNotifier);
+    var selectedSeries = ref.watch(combinedStreamSelectNotifier);
 
-    // return Consumer<SelectedStreamObjectModel>(
-    //     builder: (context, selectedCombinedStream, child) {
-    //   final selectedSeries = selectedCombinedStream.selectedCombinedStreams;
     Map<String, String> units = Conversions.units(context);
     return Expanded(
         flex: 1,
@@ -213,14 +169,14 @@ class ProfileDataView extends ConsumerWidget {
                     IconDataObject(
                         'Distance',
                         Conversions.metersToDistance(
-                                context, selectedSeries?.distance ?? 0)
+                                context, selectedSeries.distance)
                             .toStringAsFixed(1),
                         Icons.route,
                         units: units['distance']),
                     IconDataObject(
                         'Elevation',
                         Conversions.metersToHeight(
-                                context, selectedSeries?.altitude ?? 0)
+                                context, selectedSeries.altitude)
                             .toStringAsFixed(0),
                         Icons.filter_hdr,
                         units: units['height'])
@@ -228,40 +184,29 @@ class ProfileDataView extends ConsumerWidget {
                   IconHeaderDataRow([
                     IconDataObject(
                         'Heartrate',
-                        (selectedSeries?.heartrate ?? 0).toString(),
+                        (selectedSeries.heartrate).toString(),
                         Icons.favorite,
                         units: 'bpm'),
                     IconDataObject(
                         'Power',
-                        (selectedSeries?.watts ?? 0).toString(),
+                        (selectedSeries.watts).toString(),
                         Icons.electric_bolt,
                         units: 'w')
                   ]),
                   IconHeaderDataRow([
                     IconDataObject(
                         'Cadence',
-                        (selectedSeries?.cadence ?? 0).toString(),
+                        (selectedSeries.cadence).toString(),
                         Icons.autorenew,
                         units: 'rpm'),
                     IconDataObject(
                         'Grade',
-                        (selectedSeries?.gradeSmooth ?? 0).toString(),
+                        (selectedSeries.gradeSmooth).toString(),
                         Icons.network_cell,
                         units: '%')
                   ]),
                 ])));
     // });
-  }
-}
-
-class SelectedStreamObjectModel extends ChangeNotifier {
-  CombinedStreams? _combinedStreamsObject;
-
-  CombinedStreams? get selectedCombinedStreams => _combinedStreamsObject;
-
-  void setSelectedCombinedStream(CombinedStreams? combinedStreamsObject) {
-    _combinedStreamsObject = combinedStreamsObject;
-    notifyListeners();
   }
 }
 

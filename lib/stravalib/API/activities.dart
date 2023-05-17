@@ -16,24 +16,24 @@ abstract class Activities {
   Future<DetailedActivity> getActivityById(String id) async {
     DetailedActivity returnActivity = DetailedActivity();
 
-    var _header = globals.createHeader();
+    var header = globals.createHeader();
 
     globals.displayInfo('Entering getActivityById');
 
-    if (_header.containsKey('88') == false) {
+    if (header.containsKey('88') == false) {
       final String reqActivity =
           'https://www.strava.com/api/v3/activities/$id?include_all_efforts=true';
-      var rep = await http.get(Uri.parse(reqActivity), headers: _header);
+      var rep = await http.get(Uri.parse(reqActivity), headers: header);
 
       if (rep.statusCode == 200) {
         globals.displayInfo(rep.statusCode.toString());
         globals.displayInfo('Activity info ${rep.body}');
         final Map<String, dynamic> jsonResponse = json.decode(rep.body);
-        final DetailedActivity _activity =
+        final DetailedActivity activity =
             DetailedActivity.fromJson(jsonResponse);
-        globals.displayInfo(_activity.name!);
+        globals.displayInfo(activity.name!);
 
-        returnActivity = _activity;
+        returnActivity = activity;
       } else {
         globals.displayInfo('Activity not found');
       }
@@ -67,11 +67,11 @@ abstract class Activities {
       int? isCommute}) async {
     DetailedActivity returnActivity = DetailedActivity();
 
-    var _header = globals.createHeader();
+    var header = globals.createHeader();
 
     globals.displayInfo('Entering createActivity');
 
-    var _queryParams = {
+    var queryParams = {
       'name': name,
       'type': type,
       'start_date_local': startDate,
@@ -82,21 +82,21 @@ abstract class Activities {
       'commute': (isCommute != null) ? isCommute.toString() : '0',
     };
 
-    if (_header.containsKey('88') == false) {
-      var uri = Uri.https('www.strava.com', '/api/v3/activities', _queryParams);
+    if (header.containsKey('88') == false) {
+      var uri = Uri.https('www.strava.com', '/api/v3/activities', queryParams);
 
-      var resp = await http.post(uri, headers: _header);
+      var resp = await http.post(uri, headers: header);
 
       if (resp.statusCode == 201) {
         globals.displayInfo(resp.statusCode.toString());
         globals.displayInfo('Activity info ${resp.body}');
         final Map<String, dynamic> jsonResponse = json.decode(resp.body);
 
-        final DetailedActivity _activity =
+        final DetailedActivity activity =
             DetailedActivity.fromJson(jsonResponse);
-        globals.displayInfo(_activity.name!);
+        globals.displayInfo(activity.name!);
 
-        returnActivity = _activity;
+        returnActivity = activity;
       } else {
         globals.displayInfo('Activity not found');
       }

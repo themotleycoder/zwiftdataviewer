@@ -21,12 +21,12 @@ abstract class Races {
 
     globals.displayInfo('Entering getRunningRaceById');
 
-    var _header = globals.createHeader();
+    var header = globals.createHeader();
 
-    if (_header.containsKey('88') == false) {
-      final reqRace = 'https://www.strava.com/api/v3/running_races/' + id;
+    if (header.containsKey('88') == false) {
+      final reqRace = 'https://www.strava.com/api/v3/running_races/$id';
 
-      var rep = await http.get(Uri.parse(reqRace), headers: _header);
+      var rep = await http.get(Uri.parse(reqRace), headers: header);
       if (rep.statusCode == 200) {
         globals.displayInfo('Race info ${rep.body}');
         final Map<String, dynamic> jsonResponse = json.decode(rep.body);
@@ -54,28 +54,28 @@ abstract class Races {
 
     globals.displayInfo('Entering getRunningRaces');
 
-    var _header = globals.createHeader();
+    var header = globals.createHeader();
 
-    if (_header.containsKey('88') == false) {
+    if (header.containsKey('88') == false) {
       final reqList =
-          'https://www.strava.com/api/v3/running_races?year=' + year;
+          'https://www.strava.com/api/v3/running_races?year=$year';
 
-      var rep = await http.get(Uri.parse(reqList), headers: _header);
+      var rep = await http.get(Uri.parse(reqList), headers: header);
       if (rep.statusCode == 200) {
         // globals.displayInfo('List races info ${rep.body}');
         var jsonResponse = json.decode(rep.body);
 
         if (jsonResponse != null) {
-          List<RunningRace> _listRaces = <RunningRace>[];
+          List<RunningRace> listRaces = <RunningRace>[];
 
           jsonResponse.forEach((element) {
-            var _race = RunningRace.fromJson(element);
+            var race = RunningRace.fromJson(element);
             globals.displayInfo(
-                '${_race.name} ,  ${_race.startDateLocal}    ${_race.id}');
-            _listRaces.add(_race);
+                '${race.name} ,  ${race.startDateLocal}    ${race.id}');
+            listRaces.add(race);
           });
 
-          returnListRaces = _listRaces;
+          returnListRaces = listRaces;
         } else {
           globals.displayInfo('problem in getRunningRaces request');
         }

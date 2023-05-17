@@ -75,15 +75,10 @@ abstract class Auth {
     if (localToken.expiresAt != null) {
       var dateExpired =
           DateTime.fromMillisecondsSinceEpoch(localToken.expiresAt!);
-      var _disp = dateExpired.day.toString() +
-          '/' +
-          dateExpired.month.toString() +
-          ' ' +
-          dateExpired.hour.toString() +
-          ' hours';
+      var disp = '${dateExpired.day}/${dateExpired.month} ${dateExpired.hour} hours';
 
       globals.displayInfo(
-          'stored token ${localToken.accessToken} ${localToken.expiresAt} expires: $_disp ');
+          'stored token ${localToken.accessToken} ${localToken.expiresAt} expires: $disp ');
     }
 
     return (localToken);
@@ -104,21 +99,11 @@ abstract class Auth {
       redirectUrl = redirectUrlMobile;
     }
 
-    var params = '?' +
-        'client_id=' +
-        clientID! +
-        '&redirect_uri=' +
-        redirectUrl +
-        '&response_type=' +
-        'code' +
-        '&approval_prompt=' +
-        prompt! +
-        '&scope=' +
-        scope!;
+    var params = '?client_id=${clientID!}&redirect_uri=$redirectUrl&response_type=code&approval_prompt=${prompt!}&scope=${scope!}';
 
     var reqAuth = authorizationEndpoint + params;
-    globals.displayInfo('$reqAuth');
-    StreamSubscription? _sub;
+    globals.displayInfo(reqAuth);
+    StreamSubscription? sub;
 
     // closeWebView();
     launch(reqAuth,
@@ -144,7 +129,7 @@ abstract class Auth {
       globals.displayInfo('Running on iOS or Android');
 
       // Attach a listener to the stream
-      _sub = getUriLinksStream().listen((Uri? uri) {
+      sub = getUriLinksStream().listen((Uri? uri) {
         // Parse the link and warn the user, if it is not correct
         globals.displayInfo('Get a link!! $uri');
         if (uri?.scheme.compareTo('stravaflutter') != 0) {
@@ -160,11 +145,11 @@ abstract class Auth {
 
         globals.displayInfo('Got the new code: $code');
 
-        _sub?.cancel();
+        sub?.cancel();
       }, onError: (err) {
         // Handle exception by warning the user their action did not succeed
         globals.displayInfo('Found an error $err');
-        _sub?.cancel();
+        sub?.cancel();
       });
     }
 
@@ -212,26 +197,26 @@ abstract class Auth {
     bool isExpired;
 
     final Token tokenStored = await getStoredToken();
-    final String? _token = tokenStored.accessToken;
+    final String? token = tokenStored.accessToken;
 
     isExpired = _isTokenExpired(tokenStored);
     globals.displayInfo('is token expired? $isExpired');
 
     // Check if the token is not expired
     // if (_token != null) {
-    if ((_token != null) || (_token == "null")) {
+    if ((token != null) || (token == "null")) {
       globals.displayInfo(
           'token has been stored before! ${tokenStored.accessToken}  exp. ${tokenStored.expiresAt}');
     }
 
     // Use the refresh token to get a new access token
-    if (isExpired && ((_token != "null") || (_token != null))) {
-      RefreshAnswer _refreshAnswer =
+    if (isExpired && ((token != "null") || (token != null))) {
+      RefreshAnswer refreshAnswer =
           await _getNewAccessToken(clientID, secret, tokenStored.refreshToken!);
       // Update with new values
-      if (_refreshAnswer.fault?.statusCode == 200) {
-        await _saveToken(_refreshAnswer.accessToken!, _refreshAnswer.expiresAt!,
-            scope, _refreshAnswer.refreshToken!);
+      if (refreshAnswer.fault?.statusCode == 200) {
+        await _saveToken(refreshAnswer.accessToken!, refreshAnswer.expiresAt!,
+            scope, refreshAnswer.refreshToken!);
       } else {
         globals.displayInfo('Problem doing the refresh process');
         isAuthOk = false;
@@ -240,8 +225,8 @@ abstract class Auth {
 
     // Check if the scope has changed
     if ((tokenStored.scope != scope) ||
-        (_token == "null") ||
-        (_token == null)) {
+        (token == "null") ||
+        (token == null)) {
       // Ask for a new authorization
       globals.displayInfo('Doing a new authorization');
       isAuthOk = await _newAuthorization(clientID, secret, scope, prompt);
@@ -315,18 +300,10 @@ abstract class Auth {
 
   Future<Token> _getStravaToken(
       String clientID, String secret, String code) async {
-    Token _answer = Token();
+    Token answer = Token();
 
     globals.displayInfo('Entering getStravaToken!!');
-    var urlToken = tokenEndpoint +
-        '?client_id=' +
-        clientID +
-        '&client_secret=' +
-        secret + // Put your own secret in secret.dart
-        '&code=' +
-        code +
-        '&grant_type=' +
-        'authorization_code';
+    var urlToken = '$tokenEndpoint?client_id=$clientID&client_secret=$secret&code=$code&grant_type=authorization_code';
 
     globals.displayInfo('urlToken $urlToken');
 
@@ -340,18 +317,18 @@ abstract class Auth {
       // will return _answer null
     } else {
       final Map<String, dynamic> tokenBody = json.decode(value.body);
-      final Token _body = Token.fromJson(tokenBody);
-      var accessToken = _body.accessToken;
-      var refreshToken = _body.refreshToken;
+      final Token body = Token.fromJson(tokenBody);
+      var accessToken = body.accessToken;
+      var refreshToken = body.refreshToken;
       // var expiresAt = _body.expiresAt * 1000; // To get the exp. date in ms
-      var expiresAt = _body.expiresAt; // To get the exp. date in ms
+      var expiresAt = body.expiresAt; // To get the exp. date in ms
 
-      _answer.accessToken = accessToken;
-      _answer.refreshToken = refreshToken;
-      _answer.expiresAt = expiresAt;
+      answer.accessToken = accessToken;
+      answer.refreshToken = refreshToken;
+      answer.expiresAt = expiresAt;
     }
 
-    return (_answer);
+    return (answer);
   }
 
   /// Return true the expiry date is passed
@@ -390,13 +367,13 @@ abstract class Auth {
       await getStoredToken();
     }
 
-    var _header = globals.createHeader();
+    var header = globals.createHeader();
 
     // If header is not "empty"
-    if (_header.containsKey('88') == false) {
-      final reqDeAuthorize = "https://www.strava.com/oauth/deauthorize";
+    if (header.containsKey('88') == false) {
+      const reqDeAuthorize = "https://www.strava.com/oauth/deauthorize";
       globals.displayInfo('request $reqDeAuthorize');
-      var rep = await http.post(Uri.parse(reqDeAuthorize), headers: _header);
+      var rep = await http.post(Uri.parse(reqDeAuthorize), headers: header);
       if (rep.statusCode == 200) {
         globals.displayInfo('DeAuthorize done');
         globals.displayInfo('response ${rep.body}');

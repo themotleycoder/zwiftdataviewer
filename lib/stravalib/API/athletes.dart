@@ -17,23 +17,23 @@ abstract class Athletes {
   Future<DetailedAthlete> updateLoggedInAthlete(double weight) async {
     DetailedAthlete returnAthlete = DetailedAthlete();
 
-    var _header = globals.createHeader();
+    var header = globals.createHeader();
 
-    if (_header.containsKey('88') == false) {
+    if (header.containsKey('88') == false) {
       final reqAthlete =
-          "https://www.strava.com/api/v3/athlete?weight=" + weight.toString();
+          "https://www.strava.com/api/v3/athlete?weight=$weight";
       globals.displayInfo('update $reqAthlete');
-      var rep = await http.put(Uri.parse(reqAthlete), headers: _header);
+      var rep = await http.put(Uri.parse(reqAthlete), headers: header);
 
       if (rep.statusCode == 200) {
         globals.displayInfo('Athlete info ${rep.body}');
         final Map<String, dynamic> jsonResponse = json.decode(rep.body);
 
-        DetailedAthlete _athlete = DetailedAthlete.fromJson(jsonResponse);
+        DetailedAthlete athlete = DetailedAthlete.fromJson(jsonResponse);
         globals
-            .displayInfo(' athlete ${_athlete.firstname}, ${_athlete.weight}');
+            .displayInfo(' athlete ${athlete.firstname}, ${athlete.weight}');
 
-        returnAthlete = _athlete;
+        returnAthlete = athlete;
       } else {
         globals.displayInfo(
             'problem in updateLoggedInAthlete request , ${returnAthlete.fault?.statusCode}  ${rep.body}');
@@ -52,18 +52,15 @@ abstract class Athletes {
   ///
   Future<Stats> getStats(int id) async {
     Stats returnStats = Stats();
-    int _pageNumber = 1;
-    int _perPage = 50;
+    int pageNumber = 1;
+    int perPage = 50;
 
-    var _header = globals.createHeader();
+    var header = globals.createHeader();
 
-    if (_header.containsKey('88') == false) {
-      final String reqStats = 'https://www.strava.com/api/v3/athletes/' +
-          id.toString() +
-          // "/stats?page=1&per_page=50;";
-          '/stats?page=$_pageNumber&per_page=$_perPage;';
+    if (header.containsKey('88') == false) {
+      final String reqStats = 'https://www.strava.com/api/v3/athletes/$id/stats?page=$pageNumber&per_page=$perPage;';
 
-      var rep = await http.get(Uri.parse(reqStats), headers: _header);
+      var rep = await http.get(Uri.parse(reqStats), headers: header);
 
       if (rep.statusCode == 200) {
         // globals.displayInfo('getStats ${rep.body}');
@@ -101,21 +98,19 @@ abstract class Athletes {
 
     globals.displayInfo('Entering getLoggedInAthleteZones');
 
-    var _header = globals.createHeader();
+    var header = globals.createHeader();
 
-    if (_header.containsKey('88') == false) {
+    if (header.containsKey('88') == false) {
       const String reqAthlete = 'https://www.strava.com/api/v3/athlete/zones';
-      var rep = await http.get(Uri.parse(reqAthlete), headers: _header);
+      var rep = await http.get(Uri.parse(reqAthlete), headers: header);
 
       if (rep.statusCode == 200) {
         globals.displayInfo('Zone info ${rep.body}');
         final Map<String, dynamic> jsonResponse = json.decode(rep.body);
 
-        if (jsonResponse != null) {
-          Zone _zone = Zone();
-          _zone = Zone.fromJson(jsonResponse);
-          returnZone = _zone;
-        }
+        Zone zone = Zone();
+        zone = Zone.fromJson(jsonResponse);
+        returnZone = zone;
       } else {
         globals.displayInfo(
             'problem in getLoggedInAthlete request ,   ${rep.body}');
@@ -134,22 +129,22 @@ abstract class Athletes {
     DetailedAthlete returnAthlete = DetailedAthlete();
     returnAthlete.fault = Fault(88, '');
 
-    var _header = globals.createHeader();
+    var header = globals.createHeader();
 
-    if (_header.containsKey('88') == false) {
+    if (header.containsKey('88') == false) {
       const String reqAthlete = 'https://www.strava.com/api/v3/athlete';
-      var rep = await http.get(Uri.parse(reqAthlete), headers: _header);
+      var rep = await http.get(Uri.parse(reqAthlete), headers: header);
 
       if (rep.statusCode == 200) {
         globals.displayInfo(rep.statusCode.toString());
         globals.displayInfo('Athlete info ${rep.body}');
         final Map<String, dynamic> jsonResponse = json.decode(rep.body);
 
-        final DetailedAthlete _athlete = DetailedAthlete.fromJson(jsonResponse);
+        final DetailedAthlete athlete = DetailedAthlete.fromJson(jsonResponse);
         globals.displayInfo(
-            ' athlete ${_athlete.firstname}, ${_athlete.lastname}');
+            ' athlete ${athlete.firstname}, ${athlete.lastname}');
 
-        returnAthlete = _athlete;
+        returnAthlete = athlete;
       } else {
         globals.displayInfo(
             'problem in getLoggedInAthlete request , ${returnAthlete.fault?.statusCode}  ${rep.body}');
@@ -179,22 +174,21 @@ abstract class Athletes {
       int before, int after, String? filterByActivityType) async {
     List<SummaryActivity> returnActivities = <SummaryActivity>[];
 
-    var _header = globals.createHeader();
-    int _pageNumber = 1;
-    int _perPage = 20; // Number of activities retrieved per http request
+    var header = globals.createHeader();
+    int pageNumber = 1;
+    int perPage = 20; // Number of activities retrieved per http request
     bool isRetrieveDone = false;
-    List<SummaryActivity> _listSummary = <SummaryActivity>[];
+    List<SummaryActivity> listSummary = <SummaryActivity>[];
 
     globals.displayInfo('Entering getLoggedInAthleteActivities');
 
-    if (_header.containsKey('88') == false) {
+    if (header.containsKey('88') == false) {
       do {
         final String reqActivities =
-            'https://www.strava.com/api/v3/athlete/activities' +
-                '?before=$before&after=$after&page=$_pageNumber&per_page=$_perPage';
+            'https://www.strava.com/api/v3/athlete/activities' '?before=$before&after=$after&page=$pageNumber&per_page=$perPage';
 
-        var rep = await http.get(Uri.parse(reqActivities), headers: _header);
-        int _nbActvity = 0;
+        var rep = await http.get(Uri.parse(reqActivities), headers: header);
+        int nbActvity = 0;
 
         if (rep.statusCode == 200) {
           globals.displayInfo(rep.statusCode.toString());
@@ -211,24 +205,24 @@ abstract class Athletes {
                     '${activity.name} ,  ${activity.distance},  ${activity.id}');
 
                 if (activity.type == ActivityType.VirtualRide) {
-                  _listSummary.add(activity);
+                  listSummary.add(activity);
                 }
 
-                _nbActvity++;
+                nbActvity++;
               }
             });
 
             // Check if it is the last page
-            globals.displayInfo(_nbActvity.toString());
-            if (_nbActvity < _perPage) {
+            globals.displayInfo(nbActvity.toString());
+            if (nbActvity < perPage) {
               isRetrieveDone = true;
             } else {
               // Move to the next page
-              _pageNumber++;
+              pageNumber++;
             }
 
-            globals.displayInfo(_listSummary.toString());
-            returnActivities = _listSummary;
+            globals.displayInfo(listSummary.toString());
+            returnActivities = listSummary;
           } else {
             globals.displayInfo(
                 // 'problem in getLoggedInAthleteActivities , ${returnActivities[Ø].fault.statusCode}  ${rep.body}');

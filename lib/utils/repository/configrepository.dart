@@ -1,4 +1,3 @@
-import 'package:zwiftdataviewer/models/ConfigDataModel.dart';
 
 import '../../providers/config_provider.dart';
 

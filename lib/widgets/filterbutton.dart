@@ -1,8 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:provider/provider.dart';
 import 'package:zwiftdataviewer/appkeys.dart';
-import 'package:zwiftdataviewer/providers/activities_provider.dart';
 import 'package:zwiftdataviewer/providers/filters_provider.dart';
 // import 'package:zwiftdataviewer/models/ActivitiesDataModel.dart';
 import 'package:zwiftdataviewer/utils/worlddata.dart';
@@ -47,9 +45,9 @@ class FilterButton extends ConsumerWidget {
 
     final activeStyle = Theme.of(context)
         .textTheme
-        .bodyText2
+        .bodyMedium
         ?.copyWith(color: Theme.of(context).colorScheme.secondary);
-    final defaultStyle = Theme.of(context).textTheme.bodyText2;
+    final defaultStyle = Theme.of(context).textTheme.bodyMedium;
 
     return [
       PopupMenuItem<GuestWorldId>(

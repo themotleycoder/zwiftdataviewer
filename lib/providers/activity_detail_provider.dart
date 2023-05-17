@@ -50,7 +50,7 @@ final activityDetailFromStreamProvider =
 class LapSelectDataModel extends ChangeNotifier {
   Laps? lap;
 
-  bool _isLoading = false;
+  final bool _isLoading = false;
 
   bool get isLoading => _isLoading;
 

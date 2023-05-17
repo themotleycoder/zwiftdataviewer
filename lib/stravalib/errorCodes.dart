@@ -2,13 +2,13 @@
 
 /// List of statuscode used by Fault
 /// set in  Strava API
-final statusOk = 0;
-final statusInvalidToken = 1;
-final statusUnknownError = 2;
-final statusTokenNotKnownYet = 3;
-final statusNotFound = 4;
-final statusNoAuthenticationYet = 5;
-final statusJsonIsEmpty = 6;
-final statusAuthError = 7;
-final statusDeAuthorizeError = 8;
-final statusSegmentNotRidden = 9;
+const statusOk = 0;
+const statusInvalidToken = 1;
+const statusUnknownError = 2;
+const statusTokenNotKnownYet = 3;
+const statusNotFound = 4;
+const statusNoAuthenticationYet = 5;
+const statusJsonIsEmpty = 6;
+const statusAuthError = 7;
+const statusDeAuthorizeError = 8;
+const statusSegmentNotRidden = 9;

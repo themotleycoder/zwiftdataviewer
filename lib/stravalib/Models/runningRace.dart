@@ -51,19 +51,19 @@ class RunningRace {
   }
 
   Map<String, dynamic> toJson() {
-    final Map<String, dynamic> data = Map<String, dynamic>();
-    data['country'] = this.country;
+    final Map<String, dynamic> data = <String, dynamic>{};
+    data['country'] = country;
     // data['route_ids'] = this.routeIds;
-    data['running_race_type'] = this.runningRaceType;
-    data['distance'] = this.distance;
-    data['website_url'] = this.websiteUrl;
-    data['city'] = this.city;
-    data['start_date_local'] = this.startDateLocal;
-    data['name'] = this.name;
-    data['measurement_preference'] = this.measurementPreference;
-    data['id'] = this.id;
-    data['state'] = this.state;
-    data['url'] = this.url;
+    data['running_race_type'] = runningRaceType;
+    data['distance'] = distance;
+    data['website_url'] = websiteUrl;
+    data['city'] = city;
+    data['start_date_local'] = startDateLocal;
+    data['name'] = name;
+    data['measurement_preference'] = measurementPreference;
+    data['id'] = id;
+    data['state'] = state;
+    data['url'] = url;
     return data;
   }
 }

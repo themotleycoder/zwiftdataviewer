@@ -17,6 +17,8 @@ import '../utils/constants.dart';
 // }
 
 class SettingsScreen extends ConsumerWidget {
+  const SettingsScreen({super.key});
+
   // ConfigData? _configData;
   // late String val;
 
@@ -90,7 +92,7 @@ class SettingsScreen extends ConsumerWidget {
               IconButton(
                   key: AppKeys.refreshButton,
                   tooltip: 'refresh',
-                  icon: Icon(Icons.refresh),
+                  icon: const Icon(Icons.refresh),
                   color: zdvmMidBlue[100],
                   onPressed: () => refreshRouteData())),
           createCard(
@@ -98,7 +100,7 @@ class SettingsScreen extends ConsumerWidget {
               IconButton(
                   key: AppKeys.refreshButton,
                   tooltip: 'refresh',
-                  icon: Icon(Icons.refresh),
+                  icon: const Icon(Icons.refresh),
                   color: zdvmMidBlue[100],
                   onPressed: () => refreshCalendarData())),
         ]));

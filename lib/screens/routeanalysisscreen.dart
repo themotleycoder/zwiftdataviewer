@@ -1,15 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:provider/provider.dart';
-import 'package:zwiftdataviewer/models/ActivityDetailDataModel.dart';
 import 'package:zwiftdataviewer/screens/routeanalysispowerchartscreen.dart';
 import 'package:zwiftdataviewer/screens/routeanalysispowertimechartscreen.dart';
 import 'package:zwiftdataviewer/screens/routeanalysisprofilechartscreen.dart';
 
-import '../appkeys.dart';
-import '../providers/activity_detail_provider.dart';
-import '../providers/activity_select_provider.dart';
-import '../stravalib/Models/activity.dart';
 import '../utils/constants.dart';
 import '../utils/theme.dart';
 
@@ -65,7 +59,7 @@ class _RouteAnalysisScreenState extends ConsumerState<RouteAnalysisScreen> with 
               ),
               Expanded(
                   child: Padding(
-                padding: EdgeInsets.fromLTRB(4, 0, 4, 4),
+                padding: const EdgeInsets.fromLTRB(4, 0, 4, 4),
                 child: TabBarView(
                   controller: controller,
                   children: const <Widget>[

@@ -13,7 +13,7 @@ import 'package:zwiftdataviewer/utils/theme.dart';
 class ZwiftViewerApp extends StatelessWidget {
   final FileRepository configRepository;
 
-  ZwiftViewerApp({
+  const ZwiftViewerApp({super.key, 
     required this.configRepository,
   });
 
@@ -38,10 +38,10 @@ class ZwiftViewerApp extends StatelessWidget {
           // onGenerateTitle: (context) =>
           //     ProviderLocalizations.of(context).appTitle,
           routes: {
-            AppRoutes.home: (context) => HomeScreen(),
-            AppRoutes.allStats: (context) => AllStatsRootScreen(),
-            AppRoutes.allStats: (context) => CalendarScreen(),
-            AppRoutes.settings: (context) => SettingsScreen(),
+            AppRoutes.home: (context) => const HomeScreen(),
+            AppRoutes.allStats: (context) => const AllStatsRootScreen(),
+            AppRoutes.allStats: (context) => const CalendarScreen(),
+            AppRoutes.settings: (context) => const SettingsScreen(),
           },
         ));
   }

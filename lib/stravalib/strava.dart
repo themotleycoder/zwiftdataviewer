@@ -53,23 +53,23 @@ class Strava
 
     globals.displayInfo('Entering getGearById');
 
-    var _header = globals.createHeader();
+    var header = globals.createHeader();
 
-    if (_header.containsKey('88') == false) {
+    if (header.containsKey('88') == false) {
       // final reqGear = 'https://www.strava.com/api/v3/gear/' + id;
-      final Uri reqGear = Uri.parse('https://www.strava.com/api/v3/gear/' + id);
-      var rep = await http.get(reqGear, headers: _header);
+      final Uri reqGear = Uri.parse('https://www.strava.com/api/v3/gear/$id');
+      var rep = await http.get(reqGear, headers: header);
 
       if (rep.statusCode == 200) {
         globals.displayInfo(rep.statusCode.toString());
         globals.displayInfo(' ${rep.body}');
         final Map<String, dynamic> jsonResponse = json.decode(rep.body);
 
-        Gear _gear = Gear.fromJson(jsonResponse);
-        _gear.fault = Fault(88, '');
-        globals.displayInfo(_gear.description!);
-        _gear.fault?.statusCode = error.statusOk;
-        returnGear = _gear;
+        Gear gear = Gear.fromJson(jsonResponse);
+        gear.fault = Fault(88, '');
+        globals.displayInfo(gear.description!);
+        gear.fault?.statusCode = error.statusOk;
+        returnGear = gear;
       } else {
         globals.displayInfo('Problem in getGearById');
       }

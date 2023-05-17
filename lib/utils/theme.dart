@@ -122,30 +122,22 @@ const MaterialColor zdvmMidGreen = MaterialColor(
 
 final ThemeData myTheme = ThemeData(
   brightness: Brightness.light,
-  primaryColor: Color(0xfff8f8f8),
+  primaryColor: const Color(0xfff8f8f8),
   primaryColorLight: zdvmOrange,
   primaryColorDark: zdvmOrange,
-  canvasColor: Color(0xfffafafa),
-  scaffoldBackgroundColor: Color(0xfffafafa),
-  bottomAppBarColor: Color(0x00ffffff),
-  cardColor: Color(0xffffffff),
-  dividerColor: Color(0x1f000000),
-  highlightColor: Color(0x66bcbcbc),
-  splashColor: Color(0x66c8c8c8),
-  selectedRowColor: Color(0xfff5f5f5),
-  unselectedWidgetColor: Color(0x8a000000),
-  disabledColor: Color(0x61000000),
-  toggleableActiveColor: Color(0xff666666),
-  secondaryHeaderColor: Color(0xfff2f2f2),
-  // textSelectionColor: Color(0xffcccccc),
-  // cursorColor: Color(0xff4285f4),
-  // textSelectionHandleColor: Color(0xffb3b3aa),
-  backgroundColor: Color(0xffeeeef0),
-  dialogBackgroundColor: Color(0xffffffff),
-  indicatorColor: Color(0xff808080),
-  hintColor: Color(0x8a000000),
-  errorColor: Color(0xffd32f2f),
-  buttonTheme: ButtonThemeData(
+  canvasColor: const Color(0xfffafafa),
+  scaffoldBackgroundColor: const Color(0xfffafafa),
+  cardColor: const Color(0xffffffff),
+  dividerColor: const Color(0x1f000000),
+  highlightColor: const Color(0x66bcbcbc),
+  splashColor: const Color(0x66c8c8c8),
+  unselectedWidgetColor: const Color(0x8a000000),
+  disabledColor: const Color(0x61000000),
+  secondaryHeaderColor: const Color(0xfff2f2f2),
+  dialogBackgroundColor: const Color(0xffffffff),
+  indicatorColor: const Color(0xff808080),
+  hintColor: const Color(0x8a000000),
+  buttonTheme: const ButtonThemeData(
     textTheme: ButtonTextTheme.normal,
     minWidth: 88,
     height: 36,
@@ -261,80 +253,80 @@ final ThemeData myTheme = ThemeData(
   //     fontStyle: FontStyle.normal,
   //   ),
   // ),
-  primaryTextTheme: TextTheme(
-    headline1: TextStyle(
+  primaryTextTheme: const TextTheme(
+    displayLarge: TextStyle(
       color: Color(0x8a000000),
       fontSize: null,
       fontWeight: FontWeight.w400,
       fontStyle: FontStyle.normal,
     ),
-    headline2: TextStyle(
+    displayMedium: TextStyle(
       color: Color(0x8a000000),
       fontSize: null,
       fontWeight: FontWeight.w400,
       fontStyle: FontStyle.normal,
     ),
-    headline3: TextStyle(
+    displaySmall: TextStyle(
       color: Color(0x8a000000),
       fontSize: null,
       fontWeight: FontWeight.w400,
       fontStyle: FontStyle.normal,
     ),
-    headline4: TextStyle(
+    headlineMedium: TextStyle(
       color: Color(0x8a000000),
       fontSize: null,
       fontWeight: FontWeight.w400,
       fontStyle: FontStyle.normal,
     ),
-    headline5: TextStyle(
+    headlineSmall: TextStyle(
       color: Color(0xdd000000),
       fontSize: null,
       fontWeight: FontWeight.w400,
       fontStyle: FontStyle.normal,
     ),
-    headline6: TextStyle(
+    titleLarge: TextStyle(
       color: Color(0xdd000000),
       fontSize: null,
       fontWeight: FontWeight.w400,
       fontStyle: FontStyle.normal,
     ),
-    subtitle1: TextStyle(
+    titleMedium: TextStyle(
       color: Color(0xdd000000),
       fontSize: null,
       fontWeight: FontWeight.w400,
       fontStyle: FontStyle.normal,
     ),
-    bodyText1: TextStyle(
+    bodyLarge: TextStyle(
       color: Color(0xdd000000),
       fontSize: null,
       fontWeight: FontWeight.w400,
       fontStyle: FontStyle.normal,
     ),
-    bodyText2: TextStyle(
+    bodyMedium: TextStyle(
       color: Color(0xdd000000),
       fontSize: null,
       fontWeight: FontWeight.w400,
       fontStyle: FontStyle.normal,
     ),
-    caption: TextStyle(
+    bodySmall: TextStyle(
       color: Color(0x8a000000),
       fontSize: null,
       fontWeight: FontWeight.w400,
       fontStyle: FontStyle.normal,
     ),
-    button: TextStyle(
+    labelLarge: TextStyle(
       color: Color(0xdd000000),
       fontSize: null,
       fontWeight: FontWeight.w400,
       fontStyle: FontStyle.normal,
     ),
-    subtitle2: TextStyle(
+    titleSmall: TextStyle(
       color: Color(0xff000000),
       fontSize: null,
       fontWeight: FontWeight.w400,
       fontStyle: FontStyle.normal,
     ),
-    overline: TextStyle(
+    labelSmall: TextStyle(
       color: Color(0xff000000),
       fontSize: null,
       fontWeight: FontWeight.w400,
@@ -520,12 +512,12 @@ final ThemeData myTheme = ThemeData(
   //     borderRadius: BorderRadius.all(Radius.circular(4.0)),
   //   ),
   // ),
-  iconTheme: IconThemeData(
+  iconTheme: const IconThemeData(
     color: Color(0xFF219EBC),
     opacity: 1,
     size: 24,
   ),
-  primaryIconTheme: IconThemeData(
+  primaryIconTheme: const IconThemeData(
     color: Color(0xFF219EBC),
     opacity: 1,
     size: 24,
@@ -553,12 +545,12 @@ final ThemeData myTheme = ThemeData(
   //     fontStyle: FontStyle.normal,
   //   ),
   // ),
-  tabBarTheme: TabBarTheme(
+  tabBarTheme: const TabBarTheme(
     indicatorSize: TabBarIndicatorSize.tab,
     labelColor: Color(0xdd000000),
     unselectedLabelColor: Color(0xb2000000),
   ),
-  chipTheme: ChipThemeData(
+  chipTheme: const ChipThemeData(
     backgroundColor: Color(0x1f000000),
     brightness: Brightness.light,
     deleteIconColor: Color(0xde000000),
@@ -586,7 +578,7 @@ final ThemeData myTheme = ThemeData(
       style: BorderStyle.none,
     )),
   ),
-  dialogTheme: DialogTheme(
+  dialogTheme: const DialogTheme(
       shape: RoundedRectangleBorder(
     side: BorderSide(
       color: Color(0xff000000),
@@ -594,7 +586,29 @@ final ThemeData myTheme = ThemeData(
       style: BorderStyle.none,
     ),
     borderRadius: BorderRadius.all(Radius.circular(0.0)),
-  )),
-  colorScheme: ColorScheme.fromSwatch(primarySwatch: zdvmOrange)
-      .copyWith(secondary: zdvmOrange),
+  )), checkboxTheme: CheckboxThemeData(
+ fillColor: MaterialStateProperty.resolveWith<Color?>((Set<MaterialState> states) {
+ if (states.contains(MaterialState.disabled)) { return null; }
+ if (states.contains(MaterialState.selected)) { return const Color(0xff666666); }
+ return null;
+ }),
+ ), radioTheme: RadioThemeData(
+ fillColor: MaterialStateProperty.resolveWith<Color?>((Set<MaterialState> states) {
+ if (states.contains(MaterialState.disabled)) { return null; }
+ if (states.contains(MaterialState.selected)) { return const Color(0xff666666); }
+ return null;
+ }),
+ ), switchTheme: SwitchThemeData(
+ thumbColor: MaterialStateProperty.resolveWith<Color?>((Set<MaterialState> states) {
+ if (states.contains(MaterialState.disabled)) { return null; }
+ if (states.contains(MaterialState.selected)) { return const Color(0xff666666); }
+ return null;
+ }),
+ trackColor: MaterialStateProperty.resolveWith<Color?>((Set<MaterialState> states) {
+ if (states.contains(MaterialState.disabled)) { return null; }
+ if (states.contains(MaterialState.selected)) { return const Color(0xff666666); }
+ return null;
+ }),
+ ), bottomAppBarTheme: const BottomAppBarTheme(color: Color(0x00ffffff)), colorScheme: ColorScheme.fromSwatch(primarySwatch: zdvmOrange)
+      .copyWith(secondary: zdvmOrange).copyWith(background: const Color(0xffeeeef0)).copyWith(error: const Color(0xffd32f2f)),
 );

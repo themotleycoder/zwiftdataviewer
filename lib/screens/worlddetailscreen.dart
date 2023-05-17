@@ -18,7 +18,7 @@ class WorldDetailScreen extends StatelessWidget {
   final WorldData worldData;
   final int worldId;
 
-  WorldDetailScreen({required this.worldId, required this.worldData})
+  const WorldDetailScreen({required this.worldId, required this.worldData})
       : super(key: AppKeys.todoDetailsScreen);
 
   @override
@@ -38,7 +38,7 @@ class WorldDetailScreen extends StatelessWidget {
 
       return Selector<RouteDataModel, List<RouteData>>(
           selector: (_, model) => model.filteredRoutes,
-          builder: (context, _routes, _) {
+          builder: (context, routes, _) {
             return Scaffold(
               appBar: AppBar(
                 title: Text(worldData.name ?? ""),
@@ -50,9 +50,9 @@ class WorldDetailScreen extends StatelessWidget {
                 ),
                 child: ListView.builder(
                     physics: const BouncingScrollPhysics(),
-                    itemCount: _routes.length,
+                    itemCount: routes.length,
                     itemBuilder: (BuildContext ctxt, int index) {
-                      return ExpandingCard(_routes[index]);
+                      return ExpandingCard(routes[index]);
                     }),
               ),
             );
@@ -64,7 +64,7 @@ class WorldDetailScreen extends StatelessWidget {
 class ExpandingCard extends StatefulWidget {
   final RouteData _routeData;
 
-  const ExpandingCard(this._routeData);
+  const ExpandingCard(this._routeData, {super.key});
 
   @override
   _ExpandingCardState createState() => _ExpandingCardState();
@@ -146,7 +146,7 @@ class _ExpandingCardState extends State<ExpandingCard> {
   routeProfile() {}
 
   List<Widget> loadMapImage(int worldId, int routeId) {
-    final List<Widget> _painters = <Widget>[];
+    final List<Widget> painters = <Widget>[];
 
     String url =
         'https://zwifthacks.com/app/routes/svg/route/?world=$worldId&route=$routeId&showprofile=1&showlegend=1';
@@ -154,7 +154,7 @@ class _ExpandingCardState extends State<ExpandingCard> {
     List<String> uriNames = <String>[url];
 
     for (String uriName in uriNames) {
-      _painters.add(
+      painters.add(
         SvgPicture.network(
           uriName,
           placeholderBuilder: (BuildContext context) => Container(
@@ -164,11 +164,11 @@ class _ExpandingCardState extends State<ExpandingCard> {
       );
     }
 
-    return _painters;
+    return painters;
   }
 
   Widget routeLineItem(String title, String value) {
-    return Container(
+    return SizedBox(
         height: rowHeight,
         child: Padding(
           padding: const EdgeInsets.only(left: 0, right: 0, bottom: 16),
@@ -193,7 +193,7 @@ class _ExpandingCardState extends State<ExpandingCard> {
   }
 
   Widget eventLineItem(String title, RouteData routeData) {
-    return Container(
+    return SizedBox(
         height: rowHeight,
         child: Padding(
           padding: const EdgeInsets.only(left: 0, right: 0, bottom: 16),
@@ -225,7 +225,7 @@ class _ExpandingCardState extends State<ExpandingCard> {
   }
 
   Widget iconLineItem(String title, Icon value, String url) {
-    return Container(
+    return SizedBox(
         height: rowHeight,
         child: Padding(
           padding: const EdgeInsets.only(left: 0, right: 0, bottom: 16),

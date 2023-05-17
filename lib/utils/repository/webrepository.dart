@@ -50,28 +50,26 @@ class WebRepository implements ActivitiesRepository, StreamsRepository {
 
   @override
   Future saveActivities(List<SummaryActivity> activities) async {
-    if (null != activities) {
-      final directory = await getApplicationDocumentsDirectory();
-      final path = directory.path;
-      final File localActivityFile = File('$path/activities.json');
-      String content = '[';
-      for (int x = 0; x < activities.length; x++) {
-        Map<String, dynamic> item = activities[x].toJson();
-        if (x > 0) {
-          content += ',';
-        }
-        content += jsonEncode(item);
+    final directory = await getApplicationDocumentsDirectory();
+    final path = directory.path;
+    final File localActivityFile = File('$path/activities.json');
+    String content = '[';
+    for (int x = 0; x < activities.length; x++) {
+      Map<String, dynamic> item = activities[x].toJson();
+      if (x > 0) {
+        content += ',';
       }
-      content += ']';
-      localActivityFile.writeAsStringSync(content);
+      content += jsonEncode(item);
     }
+    content += ']';
+    localActivityFile.writeAsStringSync(content);
   }
 
   Future<Token?> getClient() async {
     bool isAuthOk = false;
 
     // strava = Strava(globals.isInDebug, secret);
-    final prompt = 'auto';
+    const prompt = 'auto';
 
     isAuthOk = await strava.oauth(
         clientId,

@@ -35,7 +35,7 @@ class WorldDataModel extends ChangeNotifier {
     // saveRouteData(_worldData);
   }
 
-  Future<Future<Null>> loadWorldCalendarData() async {
+  Future<Future<void>> loadWorldCalendarData() async {
     _isLoading = true;
     notifyListeners();
 
@@ -81,11 +81,11 @@ class WorldData {
   }
 
   Map<String, dynamic> toJson() {
-    final Map<String, dynamic> data = new Map<String, dynamic>();
-    data['id'] = this.id;
-    data['guestWorldId'] = this.guestWorldId.toString();
-    data['name'] = this.name;
-    data['url'] = this.url;
+    final Map<String, dynamic> data = <String, dynamic>{};
+    data['id'] = id;
+    data['guestWorldId'] = guestWorldId.toString();
+    data['name'] = name;
+    data['url'] = url;
     return data;
   }
 }

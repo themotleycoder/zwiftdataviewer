@@ -10,22 +10,22 @@ class Zone {
   factory Zone.fromJson(Map<String, dynamic> firstJson) {
     if (firstJson['heart_rate'] != null) {
       var parsedJson = firstJson['heart_rate'];
-      var _customZones = parsedJson['custom_zones'];
-      var _infoZones = InfoZones();
+      var customZones = parsedJson['custom_zones'];
+      var infoZones = InfoZones();
       var list = parsedJson['zones'] as List;
       var fault = Fault(99, '');
-      List<DistributionBucket> _distributionBucket =
+      List<DistributionBucket> distributionBucket =
           list.map((i) => DistributionBucket.fromJson(i)).toList();
-      _infoZones.customZones = _customZones;
-      _infoZones.zones = _distributionBucket;
+      infoZones.customZones = customZones;
+      infoZones.zones = distributionBucket;
 
       return Zone(
         fault: fault,
-        infoZones: _infoZones,
+        infoZones: infoZones,
       );
     } else {
-      Fault _fault = Fault(99, '');
-      return Zone(fault: _fault, infoZones: null);
+      Fault fault = Fault(99, '');
+      return Zone(fault: fault, infoZones: null);
     }
   }
 }
@@ -47,9 +47,9 @@ class DistributionBucket {
   }
 
   Map<String, dynamic> toJson() {
-    final Map<String, dynamic> data = Map<String, dynamic>();
-    data['max'] = this.max;
-    data['min'] = this.min;
+    final Map<String, dynamic> data = <String, dynamic>{};
+    data['max'] = max;
+    data['min'] = min;
     return data;
   }
 }

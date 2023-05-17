@@ -45,15 +45,15 @@ abstract class Upload {
     request.fields['external_id'] = 'strava_flutter';
     request.fields['description'] = description;
 
-    var _header = globals.createHeader();
+    var header = globals.createHeader();
 
-    if (_header.containsKey('88') == true) {
+    if (header.containsKey('88') == true) {
       globals.displayInfo('Token not yet known');
       fault = Fault(error.statusTokenNotKnownYet, 'Token not yet known');
       return fault;
     }
 
-    request.headers.addAll(_header);
+    request.headers.addAll(header);
 
     request.files.add(await http.MultipartFile.fromPath('file', fileUrl));
     globals.displayInfo(request.toString());
@@ -80,19 +80,19 @@ abstract class Upload {
       globals.displayInfo('Activity successfully created');
       response.stream.transform(utf8.decoder).listen((value) {
         print(value);
-        final Map<String, dynamic> _body = json.decode(value);
-        ResponseUploadActivity _response =
-            ResponseUploadActivity.fromJson(_body);
+        final Map<String, dynamic> body = json.decode(value);
+        ResponseUploadActivity response0 =
+            ResponseUploadActivity.fromJson(body);
 
-        print('id ${_response.id}');
-        idUpload = _response.id!;
+        print('id ${response0.id}');
+        idUpload = response0.id!;
         onUploadPending.add(idUpload);
       });
 
       String reqCheckUpgrade = 'https://www.strava.com/api/v3/uploads/';
       onUploadPending.stream.listen((id) async {
         reqCheckUpgrade = reqCheckUpgrade + id.toString();
-        var resp = await http.get(Uri.parse(reqCheckUpgrade), headers: _header);
+        var resp = await http.get(Uri.parse(reqCheckUpgrade), headers: header);
         print('check status ${resp.reasonPhrase}  ${resp.statusCode}');
 
         // Everything is fine the file has been loaded

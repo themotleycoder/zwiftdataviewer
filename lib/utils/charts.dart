@@ -1,6 +1,5 @@
 import 'package:flutter/widgets.dart';
 import 'package:flutter_palette/flutter_palette.dart';
-import 'package:provider/provider.dart';
 import 'package:syncfusion_flutter_charts/charts.dart';
 import 'package:zwiftdataviewer/utils/theme.dart';
 import 'package:zwiftdataviewer/utils/yearlytotals.dart';
@@ -22,14 +21,14 @@ class ChartsData {
     var chartData = generateChartData(context, units, activities);
     return <ChartSeries<YearlyTotals, String>>[
       ColumnSeries<YearlyTotals, String>(
-          dataSource: chartData!,
+          dataSource: chartData,
           xValueMapper: (YearlyTotals stats, _) => stats.year as String,
           yValueMapper: (YearlyTotals stats, _) =>
               (stats.distance ?? 0 / 1000).roundToDouble(),
           name: 'Distance',
           color: zdvMidBlue),
       ColumnSeries<YearlyTotals, String>(
-          dataSource: chartData!,
+          dataSource: chartData,
           yAxisName: 'yAxis1',
           xValueMapper: (YearlyTotals stats, _) => stats.year as String,
           yValueMapper: (YearlyTotals stats, _) =>
