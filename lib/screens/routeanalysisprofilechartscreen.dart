@@ -1,15 +1,14 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:provider/provider.dart';
 import 'package:syncfusion_flutter_charts/charts.dart';
-import 'package:zwiftdataviewer/models/ActivityDetailDataModel.dart';
-import 'package:zwiftdataviewer/models/StreamsDataModel.dart';
 import 'package:zwiftdataviewer/stravalib/API/streams.dart';
 import 'package:zwiftdataviewer/utils/conversions.dart';
 import 'package:zwiftdataviewer/utils/theme.dart';
 
 import '../appkeys.dart';
 import '../providers/activity_detail_provider.dart';
+import '../providers/activity_select_provider.dart';
+import '../providers/combinedstream_select_provider.dart';
 import '../providers/streams_provider.dart';
 import '../stravalib/Models/activity.dart';
 import '../widgets/iconitemwidgets.dart';
@@ -19,9 +18,11 @@ class RouteAnalysisProfileChartScreen extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
+    AsyncValue<DetailedActivity> asyncActivityDetail = ref.watch(
+        activityDetailFromStreamProvider(
+            ref.read(selectedActivityProvider).id!));
 
-    final DetailedActivity detailedActivity = ref.watch(activityDetailProvider.notifier).activityDetail;
-    ref.read(streamsProvider);
+    //ref.read(streamsProvider);
 
     // return Consumer<ActivityDetailDataModel>(
     //     builder: (context, myModel, child) {
@@ -38,15 +39,15 @@ class RouteAnalysisProfileChartScreen extends ConsumerWidget {
     //                   ),
     //                 );
     //               }
-                  return Column(children: const [
-                    Expanded(
-                      child: DisplayChart(),
-                    ),
-                    ProfileDataView(),
-                  ]);
-                  // ]);
-      //           }));
-      // });
+    return const Column(children: [
+      Expanded(
+        child: DisplayChart(),
+      ),
+      ProfileDataView(),
+    ]);
+    // ]);
+    //           }));
+    // });
     // });
   }
 }
@@ -58,46 +59,64 @@ class DisplayChart extends ConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     final Map<String, String> units = Conversions.units(context);
 
-    AsyncValue asyncStreams = ref.watch(streamsProvider);
+    AsyncValue<StreamsDetailCollection> streamsData =
+        ref.watch(streamsProvider(ref.watch(selectedActivityProvider).id!));
 
-    // var combinedStreams = ref.watch(combinedStreamsProvider.notifier).selectedStream;
-        // Provider.of<StreamsDataModel>(context).combinedStreams;
-    return SfCartesianChart(
-      tooltipBehavior: null,
-      plotAreaBorderWidth: 0,
-      legend: Legend(
-          isVisible: true,
-          overflowMode: LegendItemOverflowMode.wrap,
-          position: LegendPosition.top),
-      primaryXAxis: NumericAxis(
-          title: AxisTitle(text: 'Distance (${units['distance']!})'),
-          majorGridLines: const MajorGridLines(width: 0),
-          minimum: 0),
-      primaryYAxis: NumericAxis(
-          labelFormat: ' ',
-          axisLine: const AxisLine(width: 0),
-          majorTickLines: const MajorTickLines(color: Colors.transparent)),
-      trackballBehavior: TrackballBehavior(
-        enable: true,
-        tooltipSettings: const InteractiveTooltip(enable: false),
-        markerSettings: const TrackballMarkerSettings(
-          markerVisibility: TrackballVisibilityMode.visible,
-          height: 10,
-          width: 10,
-          borderWidth: 1,
+    print('Rebuilding widget with new streamsData: $streamsData');
+
+    return streamsData.when(data: (streams) {
+      print('streamsData.when: $streams.streams.length');
+      return SfCartesianChart(
+        tooltipBehavior: null,
+        plotAreaBorderWidth: 0,
+        legend: Legend(
+            isVisible: true,
+            overflowMode: LegendItemOverflowMode.wrap,
+            position: LegendPosition.top),
+        primaryXAxis: NumericAxis(
+            title: AxisTitle(text: 'Distance (${units['distance']!})'),
+            majorGridLines: const MajorGridLines(width: 0),
+            minimum: 0),
+        primaryYAxis: NumericAxis(
+            labelFormat: ' ',
+            axisLine: const AxisLine(width: 0),
+            majorTickLines: const MajorTickLines(color: Colors.transparent)),
+        trackballBehavior: TrackballBehavior(
+          enable: true,
+          tooltipSettings: const InteractiveTooltip(enable: false),
+          markerSettings: const TrackballMarkerSettings(
+            markerVisibility: TrackballVisibilityMode.visible,
+            height: 10,
+            width: 10,
+            borderWidth: 1,
+          ),
+          hideDelay: 3000,
+          activationMode: ActivationMode.singleTap,
+          shouldAlwaysShow: true,
         ),
-        hideDelay: 3000,
-        activationMode: ActivationMode.singleTap,
-        shouldAlwaysShow: true,
-      ),
-      series: [],//_createDataSet(context, streams),
-      onTrackballPositionChanging: (TrackballArgs args) =>
-          onTBSelectionChanged(context, args),
-    );
+        series: _createDataSet(context, streams.streams ?? []),
+        onTrackballPositionChanging: (TrackballArgs args) {
+          final dataPointIndex = args.chartPointInfo.dataPointIndex??0;
+          var combinedStreams = streams.streams![dataPointIndex];
+          ref.read(combinedStreamSelectNotifier.notifier).selectStream(combinedStreams);
+        }
+
+            // (TrackballArgs args) =>
+            // onTBSelectionChanged(context, args),
+      );
+    }, error: (Object error, StackTrace stackTrace) {
+      return const Text("error");
+    }, loading: () {
+      return const Center(
+        child: CircularProgressIndicator(
+          key: AppKeys.activitiesLoading,
+        ),
+      );
+    });
   }
 
   List<XyDataSeries<DistanceValue, num>> _createDataSet(
-      BuildContext context, StreamsDetailCollection? combinedStreams) {
+      BuildContext context, List<CombinedStreams> streams) {
     final List<DistanceValue> elevationData = [];
     final List<DistanceValue> heartrateData = [];
     final List<DistanceValue> wattsData = [];
@@ -106,9 +125,9 @@ class DisplayChart extends ConsumerWidget {
     // SegmentEffort segment;
     double distance = 0.0;
     CombinedStreams? col;
-    final int length = combinedStreams?.stream!.length ?? 0;
+    final int length = streams.length ?? 0;
     for (int x = 0; x < length; x++) {
-      col = combinedStreams?.stream![x];
+      col = streams[x];
       distance = Conversions.metersToDistance(context, col!.distance);
       var h = Conversions.metersToHeight(context, col.altitude);
       elevationData.add(DistanceValue(distance, h.toDouble()));
@@ -158,14 +177,14 @@ class DisplayChart extends ConsumerWidget {
     ];
   }
 
-  onTBSelectionChanged(BuildContext context, TrackballArgs args) {
-    var dataPointIndex = args.chartPointInfo.dataPointIndex;
-    // var combinedStreams =
-    //     Provider.of<StreamsDataModel>(context, listen: false).combinedStreams;
-    // var combinedStream = combinedStreams?.stream![dataPointIndex!];
-    // Provider.of<SelectedStreamObjectModel>(context, listen: false)
-    //     .setSelectedCombinedStream(combinedStream);
-  }
+  // onTBSelectionChanged(BuildContext context, CombinedStreams combinedStream) {
+  //   //var dataPointIndex = args.chartPointInfo.dataPointIndex;
+  //   // var combinedStreams =
+  //   //     Provider.of<StreamsDataModel>(context, listen: false).combinedStreams;
+  //   // var combinedStream = combinedStreams?.stream![dataPointIndex!];
+  //   // Provider.of<SelectedStreamObjectModel>(context, listen: false)
+  //   //     .setSelectedCombinedStream(combinedStream);
+  // }
 }
 
 class ProfileDataView extends ConsumerWidget {
@@ -175,63 +194,62 @@ class ProfileDataView extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-
-    var selectedSeries = ref.watch(combinedStreamsProvider.notifier).selectedStream;
-
+    var selectedSeries =
+        ref.watch(combinedStreamSelectNotifier);
 
     // return Consumer<SelectedStreamObjectModel>(
     //     builder: (context, selectedCombinedStream, child) {
     //   final selectedSeries = selectedCombinedStream.selectedCombinedStreams;
-      Map<String, String> units = Conversions.units(context);
-      return Expanded(
-          flex: 1,
-          child: Container(
-              // top: 100,
-              margin: const EdgeInsets.fromLTRB(0, 16, 0, 0),
-              child: ListView(
-                  // padding: const EdgeInsets.all(8.0),
-                  children: <Widget>[
-                    IconHeaderDataRow([
-                      IconDataObject(
-                          'Distance',
-                          Conversions.metersToDistance(
-                                  context, selectedSeries?.distance ?? 0)
-                              .toStringAsFixed(1),
-                          Icons.route,
-                          units: units['distance']),
-                      IconDataObject(
-                          'Elevation',
-                          Conversions.metersToHeight(
-                                  context, selectedSeries?.altitude ?? 0)
-                              .toStringAsFixed(0),
-                          Icons.filter_hdr,
-                          units: units['height'])
-                    ]),
-                    IconHeaderDataRow([
-                      IconDataObject(
-                          'Heartrate',
-                          (selectedSeries?.heartrate ?? 0).toString(),
-                          Icons.favorite,
-                          units: 'bpm'),
-                      IconDataObject(
-                          'Power',
-                          (selectedSeries?.watts ?? 0).toString(),
-                          Icons.electric_bolt,
-                          units: 'w')
-                    ]),
-                    IconHeaderDataRow([
-                      IconDataObject(
-                          'Cadence',
-                          (selectedSeries?.cadence ?? 0).toString(),
-                          Icons.autorenew,
-                          units: 'rpm'),
-                      IconDataObject(
-                          'Grade',
-                          (selectedSeries?.gradeSmooth ?? 0).toString(),
-                          Icons.network_cell,
-                          units: '%')
-                    ]),
-                  ])));
+    Map<String, String> units = Conversions.units(context);
+    return Expanded(
+        flex: 1,
+        child: Container(
+            // top: 100,
+            margin: const EdgeInsets.fromLTRB(0, 16, 0, 0),
+            child: ListView(
+                // padding: const EdgeInsets.all(8.0),
+                children: <Widget>[
+                  IconHeaderDataRow([
+                    IconDataObject(
+                        'Distance',
+                        Conversions.metersToDistance(
+                                context, selectedSeries?.distance ?? 0)
+                            .toStringAsFixed(1),
+                        Icons.route,
+                        units: units['distance']),
+                    IconDataObject(
+                        'Elevation',
+                        Conversions.metersToHeight(
+                                context, selectedSeries?.altitude ?? 0)
+                            .toStringAsFixed(0),
+                        Icons.filter_hdr,
+                        units: units['height'])
+                  ]),
+                  IconHeaderDataRow([
+                    IconDataObject(
+                        'Heartrate',
+                        (selectedSeries?.heartrate ?? 0).toString(),
+                        Icons.favorite,
+                        units: 'bpm'),
+                    IconDataObject(
+                        'Power',
+                        (selectedSeries?.watts ?? 0).toString(),
+                        Icons.electric_bolt,
+                        units: 'w')
+                  ]),
+                  IconHeaderDataRow([
+                    IconDataObject(
+                        'Cadence',
+                        (selectedSeries?.cadence ?? 0).toString(),
+                        Icons.autorenew,
+                        units: 'rpm'),
+                    IconDataObject(
+                        'Grade',
+                        (selectedSeries?.gradeSmooth ?? 0).toString(),
+                        Icons.network_cell,
+                        units: '%')
+                  ]),
+                ])));
     // });
   }
 }

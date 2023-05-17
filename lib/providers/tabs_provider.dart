@@ -31,7 +31,7 @@ class HomeTabsNotifier extends StateNotifier<int> {
       case 2:
         return const CalendarScreen();
       case 3:
-        return const SettingsScreen();
+        return SettingsScreen();
       case 0:
       default:
         return const ActivitiesListView();
@@ -60,9 +60,9 @@ class DetailTabsNotifier extends StateNotifier<int> {
   Widget getView(int index) {
     switch (index) {
       case 1:
-        return RouteAnalysisScreen();
+        return const RouteAnalysisScreen();
       case 2:
-        return RouteSectionDetailScreen();
+        return const RouteSectionDetailScreen();
       case 0:
       default:
         return const RouteDetailScreen();

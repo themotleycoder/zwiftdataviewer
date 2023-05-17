@@ -18,6 +18,8 @@ import 'package:zwiftdataviewer/utils/repository/streamsrepository.dart';
 import 'package:zwiftdataviewer/utils/repository/worldcalendarrepository.dart';
 import 'package:zwiftdataviewer/utils/worlddata.dart';
 
+import '../../providers/config_provider.dart';
+
 class FileRepository
     implements
         ActivitiesRepository,

@@ -40,41 +40,19 @@ class StreamsNotifier extends StateNotifier<StreamsDetailCollection> {
   }
 }
 
-final streamsProvider = FutureProvider(<StreamsDetailCollection>(ref) async {
+final streamsProvider = FutureProvider.autoDispose.family<StreamsDetailCollection, int>((ref, id) async {
   final FileRepository fileRepository = FileRepository();
   final WebRepository webRepository =
       WebRepository(strava: Strava(isInDebug, secret));
 
-  var selectedActivity = ref.watch(selectedActivityProvider);
-
-  StreamsDetailCollection? streamsDetailCollection;
-
-  // Future loadStreams(int activityId) async {
-  // _isLoading = true;
-  // notifyListeners();
+  StreamsDetailCollection retvalue = StreamsDetailCollection();
   if (globals.isInDebug) {
-    fileRepository?.loadStreams(selectedActivity.id).then((streams) {
-      streamsDetailCollection = streams as StreamsDetailCollection;
-      // _streamsDetailCollection = streams;
-      // _isLoading = false;
-      // notifyListeners();
-    });
-
-    // _streamsDetailCollection = StreamsDetailCollection.fromJson(
-    //     await fileUtils.fetchLocalJsonData("streams_test.json"));
-    // _isLoading = false;
-    // notifyListeners();
+    retvalue = (await fileRepository.loadStreams(id))!;
   } else {
     print('WOULD CALL WEB SVC NOW! - loadStreams');
-    webRepository?.loadStreams(selectedActivity.id).then((streams) {
-      streamsDetailCollection = streams as StreamsDetailCollection;
-      // _isLoading = false;
-      // notifyListeners();
-    });
+    retvalue = await webRepository.loadStreams(id);
   }
-
-  return streamsDetailCollection;
-  // }
+  return retvalue;
 });
 
 // final streamsProvider =

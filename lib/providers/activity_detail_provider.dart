@@ -1,6 +1,6 @@
+import 'package:flutter/foundation.dart';
 import 'package:flutter/widgets.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:zwiftdataviewer/stravalib/API/streams.dart';
 import 'package:zwiftdataviewer/stravalib/Models/activity.dart';
 import 'package:zwiftdataviewer/stravalib/globals.dart' as globals;
 import 'package:zwiftdataviewer/utils/repository/filerepository.dart';
@@ -12,10 +12,6 @@ import '../stravalib/strava.dart';
 
 class ActivityDetailNotifier extends StateNotifier<DetailedActivity> {
   ActivityDetailNotifier() : super(DetailedActivity());
-
-  final FileRepository? fileRepository = FileRepository();
-  final WebRepository? webRepository =
-      WebRepository(strava: Strava(isInDebug, secret));
 
   DetailedActivity get activityDetail => state;
 
@@ -36,27 +32,19 @@ final activityDetailFromStreamProvider =
   final WebRepository webRepository =
       WebRepository(strava: Strava(isInDebug, secret));
 
+  var retVal = DetailedActivity();
+
   if (globals.isInDebug) {
-    return fileRepository.loadActivityDetail(id);
+    retVal = await fileRepository.loadActivityDetail(id);
   } else {
-    print('CALL WEB SVC NOW! - loadActivityDetail');
-    return webRepository.loadActivityDetail(id);
+    if (kDebugMode) {
+      print('CALL WEB SVC NOW! - loadActivityDetail');
+    }
+    retVal = await webRepository.loadActivityDetail(id);
+    ref.read(activityDetailProvider.notifier).setActivityDetail(retVal);
   }
-});
 
-class CombinedStreamsNotifier extends StateNotifier<CombinedStreams> {
-  CombinedStreamsNotifier() : super(CombinedStreams(0, 0, 0, 0, 0, 0, 0));
-
-  CombinedStreams? get selectedStream => state;
-
-  setSelectedStream(CombinedStreams selectedStream) {
-    state = selectedStream;
-  }
-}
-
-final combinedStreamsProvider =
-    StateNotifierProvider<CombinedStreamsNotifier, CombinedStreams>((ref) {
-  return CombinedStreamsNotifier();
+  return retVal;
 });
 
 class LapSelectDataModel extends ChangeNotifier {

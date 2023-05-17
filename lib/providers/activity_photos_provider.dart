@@ -14,7 +14,7 @@ class ActivityPhotosNotifier extends StateNotifier<List<PhotoActivity>> {
 
   final FileRepository? fileRepository = FileRepository();
   final WebRepository? webRepository =
-  WebRepository(strava: Strava(isInDebug, secret));
+      WebRepository(strava: Strava(isInDebug, secret));
 
   List<PhotoActivity> get activityPhotos => state;
 
@@ -23,13 +23,12 @@ class ActivityPhotosNotifier extends StateNotifier<List<PhotoActivity>> {
   }
 }
 
-final photoActivitiesProvider = FutureProvider.autoDispose<List<PhotoActivity>>((ref) async {
+final photoActivitiesProvider =
+    FutureProvider.autoDispose<List<PhotoActivity>>((ref) async {
   final FileRepository fileRepository = FileRepository();
   final WebRepository webRepository =
-  WebRepository(strava: Strava(isInDebug, secret));
-  final activityId = ref
-      .read(selectedActivityProvider)
-      .id;
+      WebRepository(strava: Strava(isInDebug, secret));
+  final activityId = ref.read(selectedActivityProvider).id;
 
   if (globals.isInDebug) {
     return fileRepository.loadActivityPhotos(activityId!);
@@ -39,8 +38,8 @@ final photoActivitiesProvider = FutureProvider.autoDispose<List<PhotoActivity>>(
   }
 });
 
-
-final activityPhotoUrlsProvider = FutureProvider.autoDispose.family<List<String>, List<PhotoActivity>>((ref, photos) async {
+final activityPhotoUrlsProvider = FutureProvider.autoDispose
+    .family<List<String>, List<PhotoActivity>>((ref, photos) async {
   final List<String> imagesUrls = [];
 
   for (PhotoActivity image in photos) {

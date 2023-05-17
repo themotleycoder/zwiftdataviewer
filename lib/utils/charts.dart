@@ -5,7 +5,7 @@ import 'package:syncfusion_flutter_charts/charts.dart';
 import 'package:zwiftdataviewer/utils/theme.dart';
 import 'package:zwiftdataviewer/utils/yearlytotals.dart';
 
-import '../models/ActivitiesDataModel.dart';
+// import '../models/ActivitiesDataModel.dart';
 import '../stravalib/Models/activity.dart';
 import 'conversions.dart';
 
@@ -115,8 +115,8 @@ class ChartsData {
 
   static _onSelectionChanged(
       BuildContext context, SummaryActivity selectedRide) {
-    Provider.of<SummaryActivitySelectDataModel>(context, listen: false)
-        .setSelectedActivity(selectedRide);
+    // Provider.of<SummaryActivitySelectDataModel>(context, listen: false)
+    //     .setSelectedActivity(selectedRide);
   }
 
   static Map<int, Color> generateColor(List<int> years) {

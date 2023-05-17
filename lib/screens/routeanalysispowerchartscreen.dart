@@ -1,12 +1,16 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+
 // import 'package:provider/provider.dart';
 import 'package:syncfusion_flutter_charts/charts.dart';
+
 // import 'package:zwiftdataviewer/models/ActivityDetailDataModel.dart';
 import 'package:zwiftdataviewer/widgets/shortdataanalysis.dart';
 
-import '../models/ConfigDataModel.dart';
+import '../appkeys.dart';
 import '../providers/activity_detail_provider.dart';
+import '../providers/activity_select_provider.dart';
+import '../providers/lap_summary_provider.dart';
 import '../stravalib/Models/activity.dart';
 import '../utils/theme.dart';
 
@@ -15,11 +19,6 @@ class WattsDataView extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-
-
-
-
-
     //     (Provider.of<ConfigDataModel>(context, listen: false).configData?.ftp ??
     //             0)
     //         .toDouble();
@@ -37,12 +36,12 @@ class WattsDataView extends ConsumerWidget {
     //       },
     //       child: ChangeNotifierProvider<SelectedLapSummaryObjectModel>(
     //         create: (_) => SelectedLapSummaryObjectModel(),
-            return Column(
-              children: const [
-                Expanded(child: DisplayChart()),
-                WattsProfileDataView(),
-              ],
-            );
+    return Column(
+      children: const [
+        Expanded(child: DisplayChart()),
+        WattsProfileDataView(),
+      ],
+    );
     //       ));
     // });
   }
@@ -53,27 +52,38 @@ class DisplayChart extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    //final lapSummaryData = Provider.of<LapSummaryDataModel>(context);
-    final activityDetail = ref.watch(activityDetailProvider.notifier).activityDetail;
-    final lapSummaryData = ref.watch(lapSummaryDataProvider.notifier);
+
     final double ftp = 229;
-    lapSummaryData.loadData(activityDetail, ftp);
-    return SfCartesianChart(
-      primaryXAxis: NumericAxis(),
-      primaryYAxis: NumericAxis(
-        minimum: 0,
-        //maximum: lapSummaryData.maxWatts.toDouble(),
-        // interval: 50,
-        // numberFormat: NumberFormat.compact()
-      ),
-      series: _createDataSet(context, lapSummaryData),
-      onSelectionChanged: (SelectionArgs args) =>
-          onSelectionChanged(context, args),
-    );
+
+    AsyncValue<List<LapSummaryObject>> lapsData =
+        ref.watch(lapsProvider(ref.watch(activityDetailProvider)!));
+
+    return lapsData.when(data: (laps) {
+      return SfCartesianChart(
+        primaryXAxis: NumericAxis(),
+        primaryYAxis: NumericAxis(
+          minimum: 0,
+          //maximum: lapSummaryData.maxWatts.toDouble(),
+          // interval: 50,
+          // numberFormat: NumberFormat.compact()
+        ),
+        series: _createDataSet(context, laps),
+        onSelectionChanged: (SelectionArgs args) =>
+            onSelectionChanged(context, args),
+      );
+    }, error: (Object error, StackTrace stackTrace) {
+      return const Text("error");
+    }, loading: () {
+      return const Center(
+        child: CircularProgressIndicator(
+          key: AppKeys.lapsLoading,
+        ),
+      );
+    });
   }
 
   List<ChartSeries<LapSummaryObject, int>> _createDataSet(
-      BuildContext context, LapSummaryProvider lapSummaryData) {
+      BuildContext context, List<LapSummaryObject> lapSummaryObjData) {
     final double ftp = 229;
     //     (Provider.of<ConfigDataModel>(context, listen: false).configData?.ftp ??
     //             0)
@@ -81,17 +91,16 @@ class DisplayChart extends ConsumerWidget {
 
     return [
       LineSeries<LapSummaryObject, int>(
-          dataSource: lapSummaryData.summaryData,
+          dataSource: lapSummaryObjData,
           xValueMapper: (LapSummaryObject totals, _) => totals.count,
           yValueMapper: (LapSummaryObject totals, _) => ftp,
           selectionBehavior: SelectionBehavior(
             enable: false,
           ),
           enableTooltip: false,
-          name: 'FTP'
-      ),
+          name: 'FTP'),
       ColumnSeries<LapSummaryObject, int>(
-        dataSource: lapSummaryData.summaryData,
+        dataSource: lapSummaryObjData,
         // yAxisName: 'yAxis1',
         xValueMapper: (LapSummaryObject totals, _) => totals.count,
         yValueMapper: (LapSummaryObject totals, _) =>
@@ -103,7 +112,6 @@ class DisplayChart extends ConsumerWidget {
           unselectedOpacity: 0.5,
         ),
       ),
-
     ];
   }
 
@@ -127,8 +135,8 @@ class WattsProfileDataView extends ConsumerWidget {
     //     builder: (context, selectedLapSummaryObjectModel, child) {
     //   final lapSummaryObject =
     //       selectedLapSummaryObjectModel.selectedLapSummaryObject;
-      return const ShortDataAnalysis();
-    }
+    return const ShortDataAnalysis();
+  }
 }
 
 class LapTotals {
@@ -148,8 +156,6 @@ class LapSummaryProvider extends StateNotifier<List<LapSummaryObject>> {
   // bool get isLoading => _isLoading;
 
   // List<LapSummaryObject> get lapSummaryObjects => model;
-
-
 
   // void setLapSummaryModel(List<LapSummaryObject> model) {
   //   this.model = model;
@@ -184,30 +190,31 @@ class LapSummaryProvider extends StateNotifier<List<LapSummaryObject>> {
   }
 
   void loadData(DetailedActivity detailedActivity, double currentFtp) {
-
     for (var lap in detailedActivity.laps ?? []) {
       add(LapSummaryObject(
-          0,
-          lap.lapIndex,
-          lap.distance,
-          lap.movingTime,
-          lap.totalElevationGain,
-          lap.averageCadence,
-          lap.averageWatts,
-          lap.averageSpeed,
-          getColorForWatts(lap.averageWatts, currentFtp),
+        0,
+        lap.lapIndex,
+        lap.distance,
+        lap.movingTime,
+        lap.totalElevationGain,
+        lap.averageCadence,
+        lap.averageWatts,
+        lap.averageSpeed,
+        getColorForWatts(lap.averageWatts, currentFtp),
       ));
     }
     // notifyListeners();
   }
 }
 
-final lapSummaryDataProvider = StateNotifierProvider<LapSummaryProvider, List<LapSummaryObject>>((ref) {
+final lapSummaryDataProvider =
+    StateNotifierProvider<LapSummaryProvider, List<LapSummaryObject>>((ref) {
   return LapSummaryProvider();
 });
 
 class SelectedLapSummaryProvider extends StateNotifier<LapSummaryObject> {
-  SelectedLapSummaryProvider() : super(LapSummaryObject(0, 0, 0, 0, 0, 0, 0, 0, Colors.grey));
+  SelectedLapSummaryProvider()
+      : super(LapSummaryObject(0, 0, 0, 0, 0, 0, 0, 0, Colors.grey));
 
   LapSummaryObject? get selectedLapSummaryObject => state;
 
@@ -217,7 +224,6 @@ class SelectedLapSummaryProvider extends StateNotifier<LapSummaryObject> {
 }
 
 final selectedLapSummaryProvider =
-StateNotifierProvider<SelectedLapSummaryProvider, LapSummaryObject>((ref) {
+    StateNotifierProvider<SelectedLapSummaryProvider, LapSummaryObject>((ref) {
   return SelectedLapSummaryProvider();
 });
-

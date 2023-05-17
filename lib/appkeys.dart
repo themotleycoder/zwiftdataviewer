@@ -12,6 +12,7 @@ class AppKeys {
 
 //activities
   static const activitiesLoading = Key('__activitiesLoading__');
+  static const lapsLoading = Key('__lapsLoading__');
 
 // Filters
   static const refreshButton = Key('__refreshButton__');

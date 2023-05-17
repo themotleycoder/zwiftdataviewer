@@ -102,11 +102,11 @@ class Stream {
 
 class StreamsDetailCollection {
   Fault? fault;
-  List<CombinedStreams>? stream;
+  List<CombinedStreams>? streams;
 
   StreamsDetailCollection({
     Fault? fault,
-    this.stream,
+    this.streams,
   });
 
   StreamsDetailCollection.fromJson(Map<String, dynamic> json) {
@@ -117,12 +117,12 @@ class StreamsDetailCollection {
     Stream cadence = Stream.fromJson(json["cadence"]);
     Stream watts = Stream.fromJson(json["watts_calc"]);
     Stream gradeSmooth = Stream.fromJson(json["grade_smooth"]);
-    stream = <CombinedStreams>[];
+    streams = <CombinedStreams>[];
     if (distance.data != null) {
       final int size = distance.data!.length ?? 0;
       for (int x = 0; x < size; x += 10) {
         // distance.data?.forEach((x) {
-        stream?.add(CombinedStreams(
+        streams?.add(CombinedStreams(
             distance.data![x],
             time.data![x],
             altitude.data![x],

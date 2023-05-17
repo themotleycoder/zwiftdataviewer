@@ -73,17 +73,17 @@ class LapSelectDataModel extends ChangeNotifier {
   }
 }
 
-class LapSummaryObject with ChangeNotifier {
-  final int lap;
-  int count = 0;
-  double distance;
-  int time;
-  double altitude;
-  double cadence;
-  double watts;
-  double speed;
-  final Color color;
-
-  LapSummaryObject(this.lap, this.count, this.distance, this.time,
-      this.altitude, this.cadence, this.watts, this.speed, this.color);
-}
+// class LapSummaryObject with ChangeNotifier {
+//   final int lap;
+//   int count = 0;
+//   double distance;
+//   int time;
+//   double altitude;
+//   double cadence;
+//   double watts;
+//   double speed;
+//   final Color color;
+//
+//   LapSummaryObject(this.lap, this.count, this.distance, this.time,
+//       this.altitude, this.cadence, this.watts, this.speed, this.color);
+// }

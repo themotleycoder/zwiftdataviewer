@@ -9,7 +9,7 @@ import 'package:zwiftdataviewer/stravalib/globals.dart';
 import 'package:zwiftdataviewer/stravalib/globals.dart' as globals;
 import 'package:zwiftdataviewer/stravalib/strava.dart';
 import 'package:zwiftdataviewer/utils/constants.dart' as constants;
-import 'package:zwiftdataviewer/utils/files.dart' as fileUtils;
+import 'package:zwiftdataviewer/utils/files.dart' as file_utils;
 import 'package:zwiftdataviewer/utils/repository/filerepository.dart';
 import 'package:zwiftdataviewer/utils/repository/webrepository.dart';
 import 'package:zwiftdataviewer/utils/worlddata.dart';
@@ -360,7 +360,7 @@ class ActivitiesDataModel extends ChangeNotifier {
     DetailedActivity activity;
     if (globals.isInDebug) {
       activity = DetailedActivity.fromJson(
-          await fileUtils.fetchLocalJsonData("activity_test.json"));
+          await file_utils.fetchLocalJsonData("activity_test.json"));
     } else {
       print('WOULD CALL WEB SVC NOW! - loadActivityDetail');
       activity = await _strava!.getActivityById(activityId.toString());

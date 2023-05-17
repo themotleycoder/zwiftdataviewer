@@ -33,7 +33,7 @@ Widget IconHeaderData(String title, String data, IconData icon,
       //     width: 1,
       //   ),
       // ),
-      padding: const EdgeInsets.fromLTRB(8, 8, 8, 8),
+      padding: const EdgeInsets.fromLTRB(8, 4, 8, 4),
       margin: const EdgeInsets.fromLTRB(8, 0, 8, 8),
       child: Row(
         mainAxisAlignment: MainAxisAlignment.start,

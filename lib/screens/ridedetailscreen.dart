@@ -36,6 +36,8 @@ class DetailScreen extends ConsumerWidget {
     AsyncValue<DetailedActivity> asyncActivityDetail = ref.watch(activityDetailFromStreamProvider(
           ref.read(selectedActivityProvider).id!));
 
+    //ref.read(activityDetailProvider.notifier).setActivityDetail(asyncActivityDetail.data!.value);
+
     // return asyncActivityDetail.when(
     //   data: (activityDetail) => Text('Activity detail loaded: $activityDetail'),
     //   loading: () => CircularProgressIndicator(),
@@ -184,13 +186,4 @@ class DetailScreen extends ConsumerWidget {
         ));
   }
 }
-// ));
-// }
 
-// void onTabTapped(int index) {
-//   // setState(() {
-//   //   _bottomNavIndex = index;
-//   // });
-//   // _tab.value = ActivityDetailScreenTab.values[index];
-//   // setState(() {});
-// }

@@ -5,6 +5,7 @@ import 'package:zwiftdataviewer/secrets.dart';
 import 'package:zwiftdataviewer/stravalib/globals.dart' as Globals;
 import 'package:zwiftdataviewer/stravalib/strava.dart';
 
+import '../providers/activity_detail_provider.dart';
 import '../screens/routeanalysispowerchartscreen.dart';
 import '../utils/conversions.dart';
 import 'iconitemwidgets.dart';

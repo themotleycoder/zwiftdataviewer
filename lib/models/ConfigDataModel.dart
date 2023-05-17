@@ -2,6 +2,8 @@ import 'package:flutter/widgets.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:zwiftdataviewer/utils/repository/configrepository.dart';
 
+import '../providers/config_provider.dart';
+
 class ConfigDataModel extends ChangeNotifier {
   final ConfigRepository repository;
   ConfigData? _configData;
@@ -49,30 +51,30 @@ class ConfigDataModel extends ChangeNotifier {
   ConfigDataModel({required this.repository});
 }
 
-class ConfigData {
-  int? lastSyncDate;
-  bool? isMetric = false;
-  int? ftp;
-  bool? dataLoaded = false;
-
-  ConfigData();
-
-  ConfigData.fromJson(Map<String, dynamic> json) {
-    lastSyncDate = json['lastSyncDate'];
-    isMetric = json['isMetric'] ?? false;
-    ftp = json['ftp'] ?? 100;
-    dataLoaded = json['dataLoaded'] ?? false;
-  }
-
-  Map<String, dynamic> toJson() {
-    final Map<String, dynamic> data = <String, dynamic>{};
-    data['lastSyncDate'] = lastSyncDate;
-    data['isMetric'] = isMetric;
-    data['ftp'] = ftp;
-    data['dataLoaded'] = dataLoaded;
-    return data;
-  }
-}
+// class ConfigData {
+//   int? lastSyncDate;
+//   bool? isMetric = false;
+//   int? ftp;
+//   bool? dataLoaded = false;
+//
+//   ConfigData();
+//
+//   ConfigData.fromJson(Map<String, dynamic> json) {
+//     lastSyncDate = json['lastSyncDate'];
+//     isMetric = json['isMetric'] ?? false;
+//     ftp = json['ftp'] ?? 100;
+//     dataLoaded = json['dataLoaded'] ?? false;
+//   }
+//
+//   Map<String, dynamic> toJson() {
+//     final Map<String, dynamic> data = <String, dynamic>{};
+//     data['lastSyncDate'] = lastSyncDate;
+//     data['isMetric'] = isMetric;
+//     data['ftp'] = ftp;
+//     data['dataLoaded'] = dataLoaded;
+//     return data;
+//   }
+// }
 
 Future<void> storeAfterParameter(int lastRequestTime) async {
   final prefs = await SharedPreferences.getInstance();

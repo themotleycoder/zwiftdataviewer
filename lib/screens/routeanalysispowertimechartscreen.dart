@@ -4,6 +4,7 @@ import 'package:syncfusion_flutter_charts/charts.dart';
 
 import '../models/ActivityDetailDataModel.dart';
 import '../models/ConfigDataModel.dart';
+import '../providers/activity_detail_provider.dart';
 import '../utils/theme.dart';
 import '../widgets/shortdataanalysis.dart';
 

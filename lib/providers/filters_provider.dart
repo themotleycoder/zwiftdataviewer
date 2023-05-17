@@ -1,6 +1,8 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:zwiftdataviewer/providers/activities_provider.dart';
 
+import '../utils/worlddata.dart';
+
 enum DateFilter { all, month, week, year }
 
 class DateFiltersNotifier extends StateNotifier<DateFilter> {
@@ -37,3 +39,17 @@ final dateActivityFiltersProvider = Provider((ref) {
     }
   }).toList();
 });
+
+class GuestWorldFiltersNotifier extends StateNotifier<GuestWorldId> {
+  GuestWorldFiltersNotifier() : super(GuestWorldId.all);
+
+  void setFilter(GuestWorldId guestWorldId) {
+    state = guestWorldId;
+  }
+
+  GuestWorldId get filter => state;
+}
+
+final guestWorldFiltersNotifier =
+StateNotifierProvider<GuestWorldFiltersNotifier, GuestWorldId>(
+        (ref) => GuestWorldFiltersNotifier());

@@ -16,12 +16,12 @@ class RouteDetailScreen extends ConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     return OrientationBuilder(builder: (context, orientation) {
       if (orientation == Orientation.portrait) {
-        return Column(children: const <Widget>[
+        return const Column(children: <Widget>[
           Expanded(child: PrefetchImageDemo()),
           RenderRouteDetails()
         ]);
       } else {
-        return Row(children: const <Widget>[
+        return const Row(children: <Widget>[
           PrefetchImageDemo(),
           RenderRouteDetails()
         ]);
@@ -36,7 +36,7 @@ class PrefetchImageDemo extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     AsyncValue<List<String>> imagesUrls = ref.watch(
-        activityPhotoUrlsProvider(ref.watch(photoActivitiesProvider).value!));
+        activityPhotoUrlsProvider(ref.watch(photoActivitiesProvider).value??[]));
 
     return Container(
         color: Colors.white,
@@ -171,7 +171,9 @@ class RenderRouteDetails extends ConsumerWidget {
         return const Text("error");
       },
       loading: () {
-        return const Text("loading");
+        return const Center(child:
+          CircularProgressIndicator()
+        );
       },
     )); //);
   }

@@ -8,6 +8,7 @@ import 'package:zwiftdataviewer/screens/routeanalysisprofilechartscreen.dart';
 
 import '../appkeys.dart';
 import '../providers/activity_detail_provider.dart';
+import '../providers/activity_select_provider.dart';
 import '../stravalib/Models/activity.dart';
 import '../utils/constants.dart';
 import '../utils/theme.dart';
@@ -23,6 +24,8 @@ class _RouteAnalysisScreenState extends ConsumerState<RouteAnalysisScreen> with 
   @override
   Widget build(BuildContext context) {
     final controller = TabController(length: 3, vsync: this);
+
+
 
     //final DetailedActivity detailedActivity = ref.watch(activityDetailProvider.notifier).activityDetail;
 
