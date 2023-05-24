@@ -1,12 +1,9 @@
-import 'package:flutter/widgets.dart';
-import 'package:provider/provider.dart';
-import 'package:zwiftdataviewer/models/ConfigDataModel.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:zwiftdataviewer/providers/config_provider.dart';
 
 class Conversions {
-  static double metersToDistance(BuildContext context, double meters) {
-    final bool? isMetric = Provider.of<ConfigDataModel>(context, listen: false)
-        .configData
-        ?.isMetric;
+  static double metersToDistance(WidgetRef ref, double meters) {
+    final bool isMetric = ref.watch(configProvider).isMetric ?? false;
     if (isMetric != null && isMetric) {
       return (meters * 0.001);
     } else {
@@ -14,10 +11,8 @@ class Conversions {
     }
   }
 
-  static double metersToHeight(BuildContext context, double meters) {
-    final bool? isMetric = Provider.of<ConfigDataModel>(context, listen: false)
-        .configData
-        ?.isMetric;
+  static double metersToHeight(WidgetRef ref, double meters) {
+    final bool isMetric = ref.watch(configProvider).isMetric ?? false;
     if (isMetric != null && isMetric) {
       return meters;
     } else {
@@ -41,10 +36,8 @@ class Conversions {
     return (mps * 2.237);
   }
 
-  static Map<String, String> units(BuildContext context) {
-    final bool? isMetric = Provider.of<ConfigDataModel>(context, listen: false)
-        .configData
-        ?.isMetric;
+  static Map<String, String> units(WidgetRef ref) {
+    final bool isMetric = ref.watch(configProvider).isMetric ?? false;
 
     if (isMetric != null && isMetric) {
       return {'distance': 'km', 'height': 'm', 'speed': 'kph'};

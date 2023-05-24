@@ -12,35 +12,34 @@ class FilterButton extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-
     var guestWorldFilter = ref.watch(guestWorldFiltersNotifier.notifier);
 
     return IgnorePointer(
       ignoring: !isActive,
       child: AnimatedOpacity(
-        opacity: isActive ? 1.0 : 0.0,
-        duration: const Duration(milliseconds: 150),
-        child:
-        // Consumer<ActivitiesDataModel>(
-        //   builder: (context, model, _) {
-            PopupMenuButton<GuestWorldId>(
-              key: AppKeys.filterButton,
-              tooltip: 'filter',
-              //ArchSampleLocalizations.of(context).filterTodos,
-              initialValue: GuestWorldId.all,
-              onSelected: (filter) => ref.read(guestWorldFiltersNotifier.notifier).setFilter(filter),
-              itemBuilder: (BuildContext context) => _items(context, ref),
-              icon: const Icon(Icons.filter_list, color: Colors.white),
-            )
-        //   },
-        // ),
-      ),
+          opacity: isActive ? 1.0 : 0.0,
+          duration: const Duration(milliseconds: 150),
+          child:
+              // Consumer<ActivitiesDataModel>(
+              //   builder: (context, model, _) {
+              PopupMenuButton<GuestWorldId>(
+            key: AppKeys.filterButton,
+            tooltip: 'filter',
+            //ArchSampleLocalizations.of(context).filterTodos,
+            initialValue: GuestWorldId.all,
+            onSelected: (filter) =>
+                ref.read(guestWorldFiltersNotifier.notifier).setFilter(filter),
+            itemBuilder: (BuildContext context) => _items(context, ref),
+            icon: const Icon(Icons.filter_list, color: Colors.white),
+          )
+          //   },
+          // ),
+          ),
     );
   }
 
   List<PopupMenuItem<GuestWorldId>> _items(
       BuildContext context, WidgetRef ref) {
-
     var guestWorldFilter = ref.watch(guestWorldFiltersNotifier.notifier);
 
     final activeStyle = Theme.of(context)
@@ -55,7 +54,9 @@ class FilterButton extends ConsumerWidget {
         value: GuestWorldId.all,
         child: Text(
           'Show All', //ArchSampleLocalizations.of(context).showActive,
-          style: guestWorldFilter.filter == GuestWorldId.all ? activeStyle : defaultStyle,
+          style: guestWorldFilter.filter == GuestWorldId.all
+              ? activeStyle
+              : defaultStyle,
         ),
       ),
       PopupMenuItem<GuestWorldId>(
@@ -63,7 +64,9 @@ class FilterButton extends ConsumerWidget {
         value: GuestWorldId.france,
         child: Text(
           'France', //ArchSampleLocalizations.of(context).showAll,
-          style: guestWorldFilter.filter == GuestWorldId.all ? activeStyle : defaultStyle,
+          style: guestWorldFilter.filter == GuestWorldId.all
+              ? activeStyle
+              : defaultStyle,
         ),
       ),
       PopupMenuItem<GuestWorldId>(
@@ -81,8 +84,9 @@ class FilterButton extends ConsumerWidget {
         value: GuestWorldId.london,
         child: Text(
           'London', //ArchSampleLocalizations.of(context).showCompleted,
-          style:
-            guestWorldFilter.filter == GuestWorldId.london ? activeStyle : defaultStyle,
+          style: guestWorldFilter.filter == GuestWorldId.london
+              ? activeStyle
+              : defaultStyle,
         ),
       ),
       PopupMenuItem<GuestWorldId>(
@@ -90,8 +94,9 @@ class FilterButton extends ConsumerWidget {
         value: GuestWorldId.newyork,
         child: Text(
           'New York', //ArchSampleLocalizations.of(context).showCompleted,
-          style:
-          guestWorldFilter.filter == GuestWorldId.newyork ? activeStyle : defaultStyle,
+          style: guestWorldFilter.filter == GuestWorldId.newyork
+              ? activeStyle
+              : defaultStyle,
         ),
       ),
       PopupMenuItem<GuestWorldId>(
@@ -99,8 +104,9 @@ class FilterButton extends ConsumerWidget {
         value: GuestWorldId.paris,
         child: Text(
           'Paris', //ArchSampleLocalizations.of(context).showCompleted,
-          style:
-          guestWorldFilter.filter == GuestWorldId.paris ? activeStyle : defaultStyle,
+          style: guestWorldFilter.filter == GuestWorldId.paris
+              ? activeStyle
+              : defaultStyle,
         ),
       ),
       PopupMenuItem<GuestWorldId>(
@@ -118,8 +124,9 @@ class FilterButton extends ConsumerWidget {
         value: GuestWorldId.watopia,
         child: Text(
           'Watopia', //ArchSampleLocalizations.of(context).showCompleted,
-          style:
-          guestWorldFilter.filter == GuestWorldId.watopia ? activeStyle : defaultStyle,
+          style: guestWorldFilter.filter == GuestWorldId.watopia
+              ? activeStyle
+              : defaultStyle,
         ),
       ),
       PopupMenuItem<GuestWorldId>(
@@ -127,8 +134,9 @@ class FilterButton extends ConsumerWidget {
         value: GuestWorldId.watopia,
         child: Text(
           'Others', //ArchSampleLocalizations.of(context).showCompleted,
-          style:
-          guestWorldFilter.filter.toString() == 'others' ? activeStyle : defaultStyle,
+          style: guestWorldFilter.filter.toString() == 'others'
+              ? activeStyle
+              : defaultStyle,
         ),
       ),
     ];

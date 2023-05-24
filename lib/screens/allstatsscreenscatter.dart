@@ -17,7 +17,7 @@ class AllStatsScreenScatter extends ConsumerWidget {
     final filteredActivities = ref.read(dateActivityFiltersProvider);
     final SummaryActivity summaryActivity = ref.watch(summaryActivityProvider);
 
-    Map<String, String> units = Conversions.units(context);
+    Map<String, String> units = Conversions.units(ref);
     return Column(
         mainAxisSize: MainAxisSize.max,
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -26,7 +26,7 @@ class AllStatsScreenScatter extends ConsumerWidget {
           Expanded(
               child: Padding(
             padding: const EdgeInsets.fromLTRB(0, 4, 0, 4),
-            child: buildScatterChart(context, units, filteredActivities),
+            child: buildScatterChart(ref, units, filteredActivities),
           )),
           Container(
             padding: const EdgeInsets.all(0),
@@ -42,10 +42,10 @@ class AllStatsScreenScatter extends ConsumerWidget {
                   ],
                   [
                     Conversions.metersToDistance(
-                            context, summaryActivity.distance ?? 0)
+                            ref, summaryActivity.distance ?? 0)
                         .toStringAsFixed(1),
                     Conversions.metersToHeight(
-                            context, summaryActivity.totalElevationGain ?? 0)
+                            ref, summaryActivity.totalElevationGain ?? 0)
                         .toStringAsFixed(1),
                     Conversions.secondsToTime(summaryActivity.elapsedTime ?? 0),
                   ],
@@ -57,11 +57,11 @@ class AllStatsScreenScatter extends ConsumerWidget {
   }
 
   SfCartesianChart buildScatterChart(
-      BuildContext context, units, List<SummaryActivity> activities) {
+      WidgetRef ref, units, List<SummaryActivity> activities) {
     final Map<int, List<SummaryActivity>> result =
         groupActivitiesByYear(activities);
 
-    final chartSeries = ChartsData.getScatterSeries(context, units, result);
+    final chartSeries = ChartsData.getScatterSeries(ref, units, result);
 
     return SfCartesianChart(
       primaryXAxis: NumericAxis(

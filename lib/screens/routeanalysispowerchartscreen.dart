@@ -1,8 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-
 import 'package:syncfusion_flutter_charts/charts.dart';
-
+import 'package:zwiftdataviewer/providers/lap_select_provider.dart';
 import 'package:zwiftdataviewer/widgets/shortdataanalysis.dart';
 
 import '../appkeys.dart';
@@ -19,11 +18,9 @@ class WattsDataView extends ConsumerWidget {
     return const Column(
       children: [
         Expanded(child: DisplayChart()),
-        WattsProfileDataView(),
+        ShortDataAnalysis(),
       ],
     );
-    //       ));
-    // });
   }
 }
 
@@ -32,7 +29,6 @@ class DisplayChart extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-
     const double ftp = 229;
 
     AsyncValue<List<LapSummaryObject>> lapsData =
@@ -40,17 +36,18 @@ class DisplayChart extends ConsumerWidget {
 
     return lapsData.when(data: (laps) {
       return SfCartesianChart(
-        primaryXAxis: NumericAxis(),
-        primaryYAxis: NumericAxis(
-          minimum: 0,
-          //maximum: lapSummaryData.maxWatts.toDouble(),
-          // interval: 50,
-          // numberFormat: NumberFormat.compact()
-        ),
-        series: _createDataSet(context, laps),
-        onSelectionChanged: (SelectionArgs args) =>
-            onSelectionChanged(context, args),
-      );
+          primaryXAxis: NumericAxis(isVisible: false),
+          primaryYAxis: NumericAxis(
+            minimum: 0,
+            interval: 50,
+          ),
+          series: _createDataSet(context, laps),
+          onSelectionChanged: (SelectionArgs args) {
+            var lapSummaryObject = laps[args.pointIndex];
+            ref
+                .read(lapSummaryObjectProvider.notifier)
+                .selectSummary(lapSummaryObject);
+          });
     }, error: (Object error, StackTrace stackTrace) {
       return const Text("error");
     }, loading: () {
@@ -67,15 +64,15 @@ class DisplayChart extends ConsumerWidget {
     const double ftp = 229;
 
     return [
-      LineSeries<LapSummaryObject, int>(
-          dataSource: lapSummaryObjData,
-          xValueMapper: (LapSummaryObject totals, _) => totals.count,
-          yValueMapper: (LapSummaryObject totals, _) => ftp,
-          selectionBehavior: SelectionBehavior(
-            enable: false,
-          ),
-          enableTooltip: false,
-          name: 'FTP'),
+      // LineSeries<LapSummaryObject, int>(
+      //     dataSource: lapSummaryObjData,
+      //     xValueMapper: (LapSummaryObject totals, _) => totals.count,
+      //     yValueMapper: (LapSummaryObject totals, _) => ftp,
+      //     selectionBehavior: SelectionBehavior(
+      //       enable: false,
+      //     ),
+      //     enableTooltip: false,
+      //     name: 'FTP'),
       ColumnSeries<LapSummaryObject, int>(
         dataSource: lapSummaryObjData,
         // yAxisName: 'yAxis1',
@@ -83,36 +80,13 @@ class DisplayChart extends ConsumerWidget {
         yValueMapper: (LapSummaryObject totals, _) =>
             (totals.watts).roundToDouble(),
         pointColorMapper: (LapSummaryObject totals, _) => totals.color,
-        name: 'Elevation',
+        name: 'Power',
         selectionBehavior: SelectionBehavior(
           enable: true,
           unselectedOpacity: 0.5,
         ),
       ),
     ];
-  }
-
-  onSelectionChanged(BuildContext context, SelectionArgs args) {
-    var dataPointIndex = args.pointIndex;
-    // final lapSummaryModel =
-    //     Provider.of<LapSummaryDataModel>(context, listen: false);
-    // var lapSummaryObject = lapSummaryModel.model[dataPointIndex];
-    // Provider.of<SelectedLapSummaryObjectModel>(context, listen: false)
-    //     .setSelectedLapSummaryObject(lapSummaryObject);
-  }
-}
-
-class WattsProfileDataView extends ConsumerWidget {
-  const WattsProfileDataView({super.key});
-
-  @override
-  Widget build(BuildContext context, WidgetRef ref) {
-    //final lapSummaryObject = ref.watch(selectedLapSummaryProvider.notifier).selectedLapSummaryObject;
-    // return Consumer<SelectedLapSummaryProvider>(
-    //     builder: (context, selectedLapSummaryObjectModel, child) {
-    //   final lapSummaryObject =
-    //       selectedLapSummaryObjectModel.selectedLapSummaryObject;
-    return const ShortDataAnalysis();
   }
 }
 
@@ -172,24 +146,3 @@ class LapSummaryProvider extends StateNotifier<List<LapSummaryObject>> {
     // notifyListeners();
   }
 }
-
-final lapSummaryDataProvider =
-    StateNotifierProvider<LapSummaryProvider, List<LapSummaryObject>>((ref) {
-  return LapSummaryProvider();
-});
-
-class SelectedLapSummaryProvider extends StateNotifier<LapSummaryObject> {
-  SelectedLapSummaryProvider()
-      : super(LapSummaryObject(0, 0, 0, 0, 0, 0, 0, 0, Colors.grey));
-
-  LapSummaryObject? get selectedLapSummaryObject => state;
-
-  void setSelectedLapSummaryObject(LapSummaryObject lapSummaryObject) {
-    state = lapSummaryObject;
-  }
-}
-
-final selectedLapSummaryProvider =
-    StateNotifierProvider<SelectedLapSummaryProvider, LapSummaryObject>((ref) {
-  return SelectedLapSummaryProvider();
-});

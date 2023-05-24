@@ -21,10 +21,8 @@ class RouteDetailScreen extends ConsumerWidget {
           RenderRouteDetails()
         ]);
       } else {
-        return const Row(children: <Widget>[
-          PrefetchImageDemo(),
-          RenderRouteDetails()
-        ]);
+        return const Row(
+            children: <Widget>[PrefetchImageDemo(), RenderRouteDetails()]);
       }
     });
   }
@@ -35,8 +33,8 @@ class PrefetchImageDemo extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    AsyncValue<List<String>> imagesUrls = ref.watch(
-        activityPhotoUrlsProvider(ref.watch(photoActivitiesProvider).value??[]));
+    AsyncValue<List<String>> imagesUrls = ref.watch(activityPhotoUrlsProvider(
+        ref.watch(photoActivitiesProvider).value ?? []));
 
     return Container(
         color: Colors.white,
@@ -49,19 +47,19 @@ class PrefetchImageDemo extends ConsumerWidget {
               return CarouselSlider.builder(
                 itemCount: data.length,
                 options: CarouselOptions(
-                    height: constraints.maxHeight,
-                    autoPlay: data.length > 1 ? true : false,
-                    viewportFraction: 2,
-                    clipBehavior: Clip.antiAlias,
-                    enlargeCenterPage: false,
-                    // onPageChanged: (index, reason) {
-                    //   // if (!mounted) {
-                    //   //   setState(() {
-                    //   //     _current = index;
-                    //   //   });
-                    //   // }
-                    // }
-                    ),
+                  height: constraints.maxHeight,
+                  autoPlay: data.length > 1 ? true : false,
+                  viewportFraction: 2,
+                  clipBehavior: Clip.antiAlias,
+                  enlargeCenterPage: false,
+                  // onPageChanged: (index, reason) {
+                  //   // if (!mounted) {
+                  //   //   setState(() {
+                  //   //     _current = index;
+                  //   //   });
+                  //   // }
+                  // }
+                ),
                 itemBuilder: (context, index, index2) {
                   return Center(
                     child: FadeInImage.assetNetwork(
@@ -91,7 +89,7 @@ class RenderRouteDetails extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final Map<String, String> units = Conversions.units(context);
+    final Map<String, String> units = Conversions.units(ref);
     final asyncActivityDetail = ref.watch(activityDetailFromStreamProvider(
         ref.watch(selectedActivityProvider).id!));
 
@@ -105,15 +103,14 @@ class RenderRouteDetails extends ConsumerWidget {
                 IconHeaderDataRow([
                   IconDataObject(
                       'Distance',
-                      Conversions.metersToDistance(
-                              context, activity.distance ?? 0)
+                      Conversions.metersToDistance(ref, activity.distance ?? 0)
                           .toStringAsFixed(1),
                       Icons.route,
                       units: units['distance']),
                   IconDataObject(
                       'Elevation',
                       Conversions.metersToHeight(
-                              context, activity.totalElevationGain ?? 0)
+                              ref, activity.totalElevationGain ?? 0)
                           .toStringAsFixed(0),
                       Icons.filter_hdr,
                       units: units['height'])
@@ -171,9 +168,7 @@ class RenderRouteDetails extends ConsumerWidget {
         return const Text("error");
       },
       loading: () {
-        return const Center(child:
-          CircularProgressIndicator()
-        );
+        return const Center(child: CircularProgressIndicator());
       },
     )); //);
   }

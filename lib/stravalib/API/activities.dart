@@ -34,6 +34,8 @@ abstract class Activities {
         globals.displayInfo(activity.name!);
 
         returnActivity = activity;
+      } else if (rep.statusCode == 429) {
+        globals.displayInfo(rep.toString());
       } else {
         globals.displayInfo('Activity not found');
       }

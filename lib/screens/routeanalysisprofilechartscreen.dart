@@ -16,7 +16,6 @@ class RouteAnalysisProfileChartScreen extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-
     return const Column(children: [
       Expanded(
         child: DisplayChart(),
@@ -31,7 +30,7 @@ class DisplayChart extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final Map<String, String> units = Conversions.units(context);
+    final Map<String, String> units = Conversions.units(ref);
 
     AsyncValue<StreamsDetailCollection> streamsData =
         ref.watch(streamsProvider(ref.watch(selectedActivityProvider).id!));
@@ -65,7 +64,7 @@ class DisplayChart extends ConsumerWidget {
             activationMode: ActivationMode.singleTap,
             shouldAlwaysShow: true,
           ),
-          series: _createDataSet(context, streams.streams ?? []),
+          series: _createDataSet(ref, streams.streams ?? []),
           onTrackballPositionChanging: (TrackballArgs args) {
             final dataPointIndex = args.chartPointInfo.dataPointIndex ?? 0;
             var combinedStreams = streams.streams![dataPointIndex];
@@ -85,7 +84,7 @@ class DisplayChart extends ConsumerWidget {
   }
 
   List<XyDataSeries<DistanceValue, num>> _createDataSet(
-      BuildContext context, List<CombinedStreams> streams) {
+      WidgetRef ref, List<CombinedStreams> streams) {
     final List<DistanceValue> elevationData = [];
     final List<DistanceValue> heartrateData = [];
     final List<DistanceValue> wattsData = [];
@@ -97,8 +96,8 @@ class DisplayChart extends ConsumerWidget {
     final int length = streams.length;
     for (int x = 0; x < length; x++) {
       col = streams[x];
-      distance = Conversions.metersToDistance(context, col.distance);
-      var h = Conversions.metersToHeight(context, col.altitude);
+      distance = Conversions.metersToDistance(ref, col.distance);
+      var h = Conversions.metersToHeight(ref, col.altitude);
       elevationData.add(DistanceValue(distance, h.toDouble()));
       heartrateData.add(DistanceValue(distance, col.heartrate.toDouble()));
       wattsData.add(DistanceValue(distance, col.watts.toDouble()));
@@ -156,7 +155,7 @@ class ProfileDataView extends ConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     var selectedSeries = ref.watch(combinedStreamSelectNotifier);
 
-    Map<String, String> units = Conversions.units(context);
+    Map<String, String> units = Conversions.units(ref);
     return Expanded(
         flex: 1,
         child: Container(
@@ -169,35 +168,28 @@ class ProfileDataView extends ConsumerWidget {
                     IconDataObject(
                         'Distance',
                         Conversions.metersToDistance(
-                                context, selectedSeries.distance)
+                                ref, selectedSeries.distance)
                             .toStringAsFixed(1),
                         Icons.route,
                         units: units['distance']),
                     IconDataObject(
                         'Elevation',
-                        Conversions.metersToHeight(
-                                context, selectedSeries.altitude)
+                        Conversions.metersToHeight(ref, selectedSeries.altitude)
                             .toStringAsFixed(0),
                         Icons.filter_hdr,
                         units: units['height'])
                   ]),
                   IconHeaderDataRow([
-                    IconDataObject(
-                        'Heartrate',
-                        (selectedSeries.heartrate).toString(),
-                        Icons.favorite,
+                    IconDataObject('Heartrate',
+                        (selectedSeries.heartrate).toString(), Icons.favorite,
                         units: 'bpm'),
-                    IconDataObject(
-                        'Power',
-                        (selectedSeries.watts).toString(),
+                    IconDataObject('Power', (selectedSeries.watts).toString(),
                         Icons.electric_bolt,
                         units: 'w')
                   ]),
                   IconHeaderDataRow([
-                    IconDataObject(
-                        'Cadence',
-                        (selectedSeries.cadence).toString(),
-                        Icons.autorenew,
+                    IconDataObject('Cadence',
+                        (selectedSeries.cadence).toString(), Icons.autorenew,
                         units: 'rpm'),
                     IconDataObject(
                         'Grade',

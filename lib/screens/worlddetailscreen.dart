@@ -1,64 +1,52 @@
 import 'package:expandable/expandable.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_svg/flutter_svg.dart';
-import 'package:provider/provider.dart';
 import 'package:url_launcher/url_launcher.dart';
 import 'package:zwiftdataviewer/appkeys.dart';
-import 'package:zwiftdataviewer/models/RouteDataModel.dart';
-import 'package:zwiftdataviewer/models/WorldDataModel.dart';
-import 'package:zwiftdataviewer/utils/constants.dart' as Constants;
+import 'package:zwiftdataviewer/utils/constants.dart' as constants;
 import 'package:zwiftdataviewer/utils/theme.dart';
-import 'package:zwiftdataviewer/utils/worlddata.dart';
 
+import '../providers/filtered_routes_provider.dart';
+import '../providers/route_provider.dart';
+import '../providers/world_select_provider.dart';
 import '../utils/constants.dart';
 
 double rowHeight = 40;
 
-class WorldDetailScreen extends StatelessWidget {
-  final WorldData worldData;
-  final int worldId;
-
-  const WorldDetailScreen({required this.worldId, required this.worldData})
-      : super(key: AppKeys.todoDetailsScreen);
+class WorldDetailScreen extends ConsumerWidget {
+  const WorldDetailScreen() : super(key: AppKeys.worldDetailsScreen);
 
   @override
-  Widget build(BuildContext context) {
-    // final Map<String, String> units = Conversions.units(context);
-    return Consumer<RouteDataModel>(builder: (context, routeDataModel, child) {
-      // final List<RouteData> routeData = routeDataModel.routeData[worldId];
-      routeDataModel.filter = routeType.basiconly;
-      routeDataModel.filterWorldId = worldId;
-      if (routeDataModel.isLoading) {
-        return const Center(
-          child: CircularProgressIndicator(
-            key: AppKeys.activitiesLoading,
-          ),
-        );
-      }
+  Widget build(BuildContext context, WidgetRef ref) {
+    final WorldData worldData = ref.watch(selectedWorldProvider);
+    final List<RouteData> routeDataModel = ref.watch(filteredRoutesProvider);
 
-      return Selector<RouteDataModel, List<RouteData>>(
-          selector: (_, model) => model.filteredRoutes,
-          builder: (context, routes, _) {
-            return Scaffold(
-              appBar: AppBar(
-                title: Text(worldData.name ?? ""),
-              ),
-              body: ExpandableTheme(
-                data: const ExpandableThemeData(
-                  iconColor: zdvMidBlue,
-                  useInkWell: true,
-                ),
-                child: ListView.builder(
-                    physics: const BouncingScrollPhysics(),
-                    itemCount: routes.length,
-                    itemBuilder: (BuildContext ctxt, int index) {
-                      return ExpandingCard(routes[index]);
-                    }),
-              ),
-            );
-          });
-    });
-  }
+    return Scaffold(
+      appBar: AppBar(
+          title: Text(worldData.name ?? "", style: constants.appBarTextStyle),
+          backgroundColor: zdvMidBlue,
+          elevation: 0.0,
+          leading: IconButton(
+              icon: const Icon(Icons.arrow_back, color: Colors.white),
+              onPressed: () {
+                Navigator.pop(context);
+              })),
+      body: ExpandableTheme(
+        data: const ExpandableThemeData(
+          iconColor: zdvMidBlue,
+          useInkWell: true,
+        ),
+        child: ListView.builder(
+            physics: const BouncingScrollPhysics(),
+            itemCount: routeDataModel.length,
+            itemBuilder: (BuildContext ctxt, int index) {
+              return ExpandingCard(routeDataModel[index]);
+            }),
+      ),
+    );
+  } //);
+// });
 }
 
 class ExpandingCard extends StatefulWidget {
@@ -177,13 +165,13 @@ class _ExpandingCardState extends State<ExpandingCard> {
             children: [
               Text(
                 title,
-                style: Constants.headerTextStyle,
+                style: constants.headerTextStyle,
                 softWrap: true,
                 overflow: TextOverflow.fade,
               ),
               Text(
                 value,
-                style: Constants.bodyTextStyle,
+                style: constants.bodyTextStyle,
                 softWrap: true,
                 overflow: TextOverflow.fade,
               ),
@@ -202,7 +190,7 @@ class _ExpandingCardState extends State<ExpandingCard> {
             children: [
               Text(
                 title,
-                style: Constants.headerTextStyle,
+                style: constants.headerTextStyle,
                 softWrap: true,
                 overflow: TextOverflow.fade,
               ),
@@ -213,8 +201,8 @@ class _ExpandingCardState extends State<ExpandingCard> {
                 onChanged: (value) {
                   routeData.completed = value;
                   setState(() {});
-                  Provider.of<RouteDataModel>(context, listen: false)
-                      .updateRouteData();
+                  // Provider.of<RouteDataModel>(context, listen: false)
+                  //     .updateRouteData();
                 },
                 activeTrackColor: zdvmLgtBlue,
                 activeColor: zdvmMidBlue[100],
@@ -234,7 +222,7 @@ class _ExpandingCardState extends State<ExpandingCard> {
             children: [
               Text(
                 title,
-                style: Constants.headerTextStyle,
+                style: constants.headerTextStyle,
                 softWrap: true,
                 overflow: TextOverflow.fade,
               ),

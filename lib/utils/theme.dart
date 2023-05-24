@@ -586,29 +586,56 @@ final ThemeData myTheme = ThemeData(
       style: BorderStyle.none,
     ),
     borderRadius: BorderRadius.all(Radius.circular(0.0)),
-  )), checkboxTheme: CheckboxThemeData(
- fillColor: MaterialStateProperty.resolveWith<Color?>((Set<MaterialState> states) {
- if (states.contains(MaterialState.disabled)) { return null; }
- if (states.contains(MaterialState.selected)) { return const Color(0xff666666); }
- return null;
- }),
- ), radioTheme: RadioThemeData(
- fillColor: MaterialStateProperty.resolveWith<Color?>((Set<MaterialState> states) {
- if (states.contains(MaterialState.disabled)) { return null; }
- if (states.contains(MaterialState.selected)) { return const Color(0xff666666); }
- return null;
- }),
- ), switchTheme: SwitchThemeData(
- thumbColor: MaterialStateProperty.resolveWith<Color?>((Set<MaterialState> states) {
- if (states.contains(MaterialState.disabled)) { return null; }
- if (states.contains(MaterialState.selected)) { return const Color(0xff666666); }
- return null;
- }),
- trackColor: MaterialStateProperty.resolveWith<Color?>((Set<MaterialState> states) {
- if (states.contains(MaterialState.disabled)) { return null; }
- if (states.contains(MaterialState.selected)) { return const Color(0xff666666); }
- return null;
- }),
- ), bottomAppBarTheme: const BottomAppBarTheme(color: Color(0x00ffffff)), colorScheme: ColorScheme.fromSwatch(primarySwatch: zdvmOrange)
-      .copyWith(secondary: zdvmOrange).copyWith(background: const Color(0xffeeeef0)).copyWith(error: const Color(0xffd32f2f)),
+  )),
+  checkboxTheme: CheckboxThemeData(
+    fillColor:
+        MaterialStateProperty.resolveWith<Color?>((Set<MaterialState> states) {
+      if (states.contains(MaterialState.disabled)) {
+        return null;
+      }
+      if (states.contains(MaterialState.selected)) {
+        return const Color(0xff666666);
+      }
+      return null;
+    }),
+  ),
+  radioTheme: RadioThemeData(
+    fillColor:
+        MaterialStateProperty.resolveWith<Color?>((Set<MaterialState> states) {
+      if (states.contains(MaterialState.disabled)) {
+        return null;
+      }
+      if (states.contains(MaterialState.selected)) {
+        return const Color(0xff666666);
+      }
+      return null;
+    }),
+  ),
+  switchTheme: SwitchThemeData(
+    thumbColor:
+        MaterialStateProperty.resolveWith<Color?>((Set<MaterialState> states) {
+      if (states.contains(MaterialState.disabled)) {
+        return null;
+      }
+      if (states.contains(MaterialState.selected)) {
+        return const Color(0xff666666);
+      }
+      return null;
+    }),
+    trackColor:
+        MaterialStateProperty.resolveWith<Color?>((Set<MaterialState> states) {
+      if (states.contains(MaterialState.disabled)) {
+        return null;
+      }
+      if (states.contains(MaterialState.selected)) {
+        return const Color(0xff666666);
+      }
+      return null;
+    }),
+  ),
+  bottomAppBarTheme: const BottomAppBarTheme(color: Color(0x00ffffff)),
+  colorScheme: ColorScheme.fromSwatch(primarySwatch: zdvmOrange)
+      .copyWith(secondary: zdvmOrange)
+      .copyWith(background: const Color(0xffeeeef0))
+      .copyWith(error: const Color(0xffd32f2f)),
 );

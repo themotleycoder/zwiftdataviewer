@@ -29,7 +29,7 @@ class HomeTabsNotifier extends StateNotifier<int> {
       case 1:
         return const AllStatsRootScreen();
       case 2:
-        return const CalendarScreen();
+        return CalendarScreen();
       case 3:
         return const SettingsScreen();
       case 0:

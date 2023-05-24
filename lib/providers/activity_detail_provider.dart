@@ -25,7 +25,6 @@ final activityDetailProvider =
   return ActivityDetailNotifier();
 });
 
-
 final activityDetailFromStreamProvider =
     FutureProvider.autoDispose.family<DetailedActivity, int>((ref, id) async {
   final FileRepository fileRepository = FileRepository();

@@ -39,7 +39,8 @@ class StreamsNotifier extends StateNotifier<StreamsDetailCollection> {
   }
 }
 
-final streamsProvider = FutureProvider.autoDispose.family<StreamsDetailCollection, int>((ref, id) async {
+final streamsProvider = FutureProvider.autoDispose
+    .family<StreamsDetailCollection, int>((ref, id) async {
   final FileRepository fileRepository = FileRepository();
   final WebRepository webRepository =
       WebRepository(strava: Strava(isInDebug, secret));

@@ -1,5 +1,6 @@
 import 'package:flutter/widgets.dart';
 import 'package:flutter_palette/flutter_palette.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:syncfusion_flutter_charts/charts.dart';
 import 'package:zwiftdataviewer/utils/theme.dart';
 import 'package:zwiftdataviewer/utils/yearlytotals.dart';
@@ -14,11 +15,10 @@ class ChartsData {
       /// Returns the list of chart series which need to
       /// render on the multiple axes chart.
       List<ChartSeries<YearlyTotals, String>> getMultipleAxisLineSeries(
-          BuildContext? context,
+          WidgetRef ref,
           Map<String, String> units,
           List<SummaryActivity> activities) {
-
-    var chartData = generateChartData(context, units, activities);
+    var chartData = generateChartData(ref, units, activities);
     return <ChartSeries<YearlyTotals, String>>[
       ColumnSeries<YearlyTotals, String>(
           dataSource: chartData,
@@ -38,7 +38,7 @@ class ChartsData {
     ];
   }
 
-  static List<YearlyTotals> generateChartData(BuildContext? context,
+  static List<YearlyTotals> generateChartData(WidgetRef ref,
       Map<String, String> units, List<SummaryActivity> activities) {
     /// Create series list with multiple series
     final Map<String, double> distances = {};
@@ -46,10 +46,9 @@ class ChartsData {
     const String totalName = "Total";
 
     for (var activity in activities) {
-      double distance =
-          Conversions.metersToDistance(context!, activity.distance!);
+      double distance = Conversions.metersToDistance(ref, activity.distance!);
       double elevation =
-          Conversions.metersToHeight(context, activity.totalElevationGain!);
+          Conversions.metersToHeight(ref, activity.totalElevationGain!);
 
       double d = distances[totalName] ?? 0;
       double e = elevations[totalName] ?? 0;
@@ -79,7 +78,7 @@ class ChartsData {
   }
 
   static List<ChartSeries<dynamic, dynamic>> getScatterSeries(
-      BuildContext context, units, Map<int, List<SummaryActivity>> activities) {
+      WidgetRef ref, units, Map<int, List<SummaryActivity>> activities) {
     final List<int> years = activities.keys.toList();
     final List<ChartSeries<dynamic, dynamic>> chartSeries = [];
 
@@ -95,9 +94,9 @@ class ChartsData {
         },
         xValueMapper: (SummaryActivity stats, _) =>
             Conversions.metersToDistance(
-                context, (stats.distance ?? 0).roundToDouble()),
+                ref, (stats.distance ?? 0).roundToDouble()),
         yValueMapper: (SummaryActivity stats, _) => Conversions.metersToHeight(
-            context, (stats.totalElevationGain ?? 0).roundToDouble()),
+            ref, (stats.totalElevationGain ?? 0).roundToDouble()),
         dataSource: activities[key]!,
         selectionBehavior: SelectionBehavior(enable: true),
         initialSelectedDataIndexes: const [0],
@@ -105,15 +104,14 @@ class ChartsData {
           // Get the index of the tapped data point
           final int pointIndex = details.pointIndex!;
           // Get the corresponding SummaryActivity object and do something with it
-          _onSelectionChanged(context, activities[key]![pointIndex]);
+          _onSelectionChanged(activities[key]![pointIndex]);
         },
       ));
     }
     return chartSeries;
   }
 
-  static _onSelectionChanged(
-      BuildContext context, SummaryActivity selectedRide) {
+  static _onSelectionChanged(SummaryActivity selectedRide) {
     // Provider.of<SummaryActivitySelectDataModel>(context, listen: false)
     //     .setSelectedActivity(selectedRide);
   }

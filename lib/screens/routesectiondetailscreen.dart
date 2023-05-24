@@ -10,13 +10,7 @@ import '../providers/activity_select_provider.dart';
 import '../stravalib/Models/activity.dart';
 import '../utils/constants.dart';
 
-final Map<int, String> climbingCAT = {
-  1: '4',
-  2: '3',
-  3: '2',
-  4: '1',
-  5: 'HC'
-};
+final Map<int, String> climbingCAT = {1: '4', 2: '3', 3: '2', 4: '1', 5: 'HC'};
 
 class RouteSectionDetailScreen extends ConsumerWidget {
   const RouteSectionDetailScreen({super.key});
@@ -52,18 +46,18 @@ class RouteSectionDetailScreen extends ConsumerWidget {
     ]);
   }
 
-  Row createSubTitle(BuildContext context, SegmentEffort segmentEffort, Map<String, String> units) {
+  Row createSubTitle(
+      WidgetRef ref, SegmentEffort segmentEffort, Map<String, String> units) {
     var distance =
-        Conversions.metersToDistance(context, segmentEffort.distance ?? 0)
+        Conversions.metersToDistance(ref, segmentEffort.distance ?? 0)
             .toStringAsFixed(1);
     var elevation = Conversions.metersToHeight(
-            context, segmentEffort.segment?.elevationHigh ?? 0)
+            ref, segmentEffort.segment?.elevationHigh ?? 0)
         .toStringAsFixed(0);
-    var grade =
-        (segmentEffort.segment?.averageGrade ?? 0).toStringAsFixed(0);
+    var grade = (segmentEffort.segment?.averageGrade ?? 0).toStringAsFixed(0);
 
-    String category = climbingCAT[(segmentEffort.segment?.climbCategory ?? 0)]
-        .toString();
+    String category =
+        climbingCAT[(segmentEffort.segment?.climbCategory ?? 0)].toString();
     if (category != 'null') {
       category = 'cat $category';
     } else {
@@ -89,26 +83,24 @@ class RouteSectionDetailScreen extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    Map<String, String> units = Conversions.units(context);
+    Map<String, String> units = Conversions.units(ref);
     List<SegmentEffort>? segmentEfforts = [];
     // CombinedStreams? selectionModel;
 
-    AsyncValue<DetailedActivity> asyncActivityDetail = ref.watch(activityDetailFromStreamProvider(
-        ref.read(selectedActivityProvider).id!));
+    AsyncValue<DetailedActivity> asyncActivityDetail = ref.watch(
+        activityDetailFromStreamProvider(
+            ref.read(selectedActivityProvider).id!));
 
-    return asyncActivityDetail.when(
-        data: (DetailedActivity activityDetail)
-    {
+    return asyncActivityDetail.when(data: (DetailedActivity activityDetail) {
       segmentEfforts = activityDetail.segmentEfforts;
 
       return ListView.separated(
         itemCount: segmentEfforts == null ? 0 : segmentEfforts!.length,
-        separatorBuilder: (BuildContext context, int index) =>
-            Container(
-              // padding: EdgeInsets.all(5.0),
-              // child: Center(),
-              // color: Colors.white,
-              // margin: EdgeInsets.all(1.0),
+        separatorBuilder: (BuildContext context, int index) => Container(
+            // padding: EdgeInsets.all(5.0),
+            // child: Center(),
+            // color: Colors.white,
+            // margin: EdgeInsets.all(1.0),
             ),
         itemBuilder: (BuildContext context, int index) {
           final SegmentEffort effort = segmentEfforts![index];
@@ -116,49 +108,46 @@ class RouteSectionDetailScreen extends ConsumerWidget {
             padding: const EdgeInsets.fromLTRB(8.0, 0, 8.0, 0),
             child: Center(
                 child: InkWell(
-                  child: Card(
-                      color: Colors.white,
-                      elevation: defaultCardElevation,
-                      child: ListTile(
-                        leading: createIcon(effort.prRank ?? 0),
-                        title: Text(
-                            segmentEfforts![index].segment!.name ?? "",
-                            style: constants.headerFontStyle),
-                        subtitle: createSubTitle(context,
-                            segmentEfforts![index], units),
-                        // trailing: Icon(
-                        //   Icons.arrow_forward_ios,
-                        //   color: Constants.zdvMidBlue[100],
-                        // ),
-                        // onTap: () {
-                        //   Navigator.push(
-                        //     context,
-                        //     MaterialPageRoute(
-                        //       builder: (_) {
-                        //         return DetailScreen(
-                        //           id: _activities[index].id,
-                        //           // onRemove: () {
-                        //           //   Navigator.pop(context);
-                        //           //   onRemove(context, todo);
-                        //           // },
-                        //         );
-                        //       },
-                        //     ),
-                        //   );
-                        // },
-                        // onItemClick(_activities[index], context);
-                      )),
-                )),
+              child: Card(
+                  color: Colors.white,
+                  elevation: defaultCardElevation,
+                  child: ListTile(
+                    leading: createIcon(effort.prRank ?? 0),
+                    title: Text(segmentEfforts![index].segment!.name ?? "",
+                        style: constants.headerFontStyle),
+                    subtitle:
+                        createSubTitle(ref, segmentEfforts![index], units),
+                    // trailing: Icon(
+                    //   Icons.arrow_forward_ios,
+                    //   color: Constants.zdvMidBlue[100],
+                    // ),
+                    // onTap: () {
+                    //   Navigator.push(
+                    //     context,
+                    //     MaterialPageRoute(
+                    //       builder: (_) {
+                    //         return DetailScreen(
+                    //           id: _activities[index].id,
+                    //           // onRemove: () {
+                    //           //   Navigator.pop(context);
+                    //           //   onRemove(context, todo);
+                    //           // },
+                    //         );
+                    //       },
+                    //     ),
+                    //   );
+                    // },
+                    // onItemClick(_activities[index], context);
+                  )),
+            )),
             // margin: EdgeInsets.all(1.0),
           );
         },
       );
-    },
-    error: (Object error, StackTrace stackTrace) {
-    return const Text("error");
-    },
-    loading: () {
-    return const Text("loading");
+    }, error: (Object error, StackTrace stackTrace) {
+      return const Text("error");
+    }, loading: () {
+      return const Text("loading");
     });
   }
 }

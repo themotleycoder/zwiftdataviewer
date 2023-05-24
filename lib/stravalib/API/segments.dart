@@ -138,7 +138,8 @@ abstract class Segments {
 
     if (header.containsKey('88') == false) {
       do {
-        String reqLeaderboard = 'https://www.strava.com/api/v3/segments/$id/leaderboard?=gender$gender&age_group=$ageGroup&weight_class=$weightclass&following=$following&club_id=$clubIdStr&date_range=$dateRange&context_entries=&page=$pageNumber&per_page=$perPage';
+        String reqLeaderboard =
+            'https://www.strava.com/api/v3/segments/$id/leaderboard?=gender$gender&age_group=$ageGroup&weight_class=$weightclass&following=$following&club_id=$clubIdStr&date_range=$dateRange&context_entries=&page=$pageNumber&per_page=$perPage';
 
         var rep = await http.get(Uri.parse(reqLeaderboard), headers: header);
 
@@ -203,7 +204,8 @@ abstract class Segments {
     globals.displayInfo('Entering starSegment');
 
     if (header.containsKey('88') == false) {
-      final reqStar = 'https://www.strava.com/api/v3/segments/$id/starred?starred=$star';
+      final reqStar =
+          'https://www.strava.com/api/v3/segments/$id/starred?starred=$star';
       var rep = await http.put(Uri.parse(reqStar), headers: header);
 
       // var uri = Uri.https('www.strava.com', path);

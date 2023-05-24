@@ -1,20 +1,20 @@
-
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
-import '../models/ConfigDataModel.dart';
 import '../secrets.dart';
 import '../stravalib/Models/activity.dart';
 import '../stravalib/globals.dart';
 import '../stravalib/strava.dart';
 import '../utils/repository/filerepository.dart';
 import '../utils/repository/webrepository.dart';
+import 'config_data_date_provider.dart';
 
 class ActivitiesNotifier extends StateNotifier<List<SummaryActivity>> {
   ActivitiesNotifier() : super([]);
 
   // final Strava strava = Strava(isInDebug, secret);
   final FileRepository? fileRepository = FileRepository();
-  final WebRepository? webRepository = WebRepository(strava: Strava(isInDebug, secret));
+  final WebRepository? webRepository =
+      WebRepository(strava: Strava(isInDebug, secret));
 
   get activities => state;
 
@@ -48,16 +48,16 @@ class ActivitiesNotifier extends StateNotifier<List<SummaryActivity>> {
     return state.firstWhere((activity) => activity.id == id);
   }
 
-  Future<void> loadActivities() async {
-    var afterDate =
-        await getAfterParameter(); //   configData.getAfterParameter();
+  Future<void> loadActivities(WidgetRef ref) async {
+    var afterDate = ref.read(configDateProvider);
+    // await getAfterParameter(); //   configData.getAfterParameter();
     //afterDate = 1680307200; //test date Saturday, April 1, 2023 12:00:00 AM
     //now
     final beforeDate = (DateTime.now().millisecondsSinceEpoch / 1000).round();
 
     //notifyListeners();
     return fileRepository!
-        .loadActivities(beforeDate, afterDate!)
+        .loadActivities(beforeDate, afterDate)
         .then((loadedActivities) {
       setActivities(loadedActivities);
       // _activitiesController.add(_activities!);
@@ -83,7 +83,8 @@ class ActivitiesNotifier extends StateNotifier<List<SummaryActivity>> {
             if (activities!.isNotEmpty) {
               webloadedActivities
                   .addAll(activities as Iterable<SummaryActivity>);
-              storeAfterParameter(beforeDate);
+              //storeAfterParameter(beforeDate);
+              ref.read(configDateProvider.notifier).setDate(beforeDate);
             }
 
             setActivities(webloadedActivities.cast<SummaryActivity>().toList());

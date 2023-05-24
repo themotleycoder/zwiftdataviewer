@@ -57,8 +57,7 @@ abstract class Races {
     var header = globals.createHeader();
 
     if (header.containsKey('88') == false) {
-      final reqList =
-          'https://www.strava.com/api/v3/running_races?year=$year';
+      final reqList = 'https://www.strava.com/api/v3/running_races?year=$year';
 
       var rep = await http.get(Uri.parse(reqList), headers: header);
       if (rep.statusCode == 200) {

@@ -1,4 +1,4 @@
-import 'package:zwiftdataviewer/models/WorldDataModel.dart';
+import '../../providers/world_select_provider.dart';
 
 abstract class WorldCalendarRepository {
   Future<Map<DateTime, List<WorldData>>> loadWorldCalendarData();

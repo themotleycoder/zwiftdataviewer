@@ -33,8 +33,9 @@ class DetailScreen extends ConsumerWidget {
     // final asyncActivityDetail = ref.watch(activityDetailFromStreamProvider(
     //     ref.read(selectedActivityProvider).id!));
 
-    AsyncValue<DetailedActivity> asyncActivityDetail = ref.watch(activityDetailFromStreamProvider(
-          ref.read(selectedActivityProvider).id!));
+    AsyncValue<DetailedActivity> asyncActivityDetail = ref.watch(
+        activityDetailFromStreamProvider(
+            ref.read(selectedActivityProvider).id!));
 
     //ref.read(activityDetailProvider.notifier).setActivityDetail(asyncActivityDetail.data!.value);
 
@@ -78,8 +79,7 @@ class DetailScreen extends ConsumerWidget {
 
     return Scaffold(
         appBar:
-            asyncActivityDetail.when(
-                data: (DetailedActivity activityDetail) {
+            asyncActivityDetail.when(data: (DetailedActivity activityDetail) {
           return AppBar(
               title: Text("${activityDetail.name} ",
                   // "(${DateFormat.yMd().format(
@@ -94,7 +94,7 @@ class DetailScreen extends ConsumerWidget {
                   }));
         }, error: (Object error, StackTrace stackTrace) {
           print(stackTrace);
-                  return null;
+          return null;
         }, loading: () {
           return AppBar(
               title:
@@ -186,4 +186,3 @@ class DetailScreen extends ConsumerWidget {
         ));
   }
 }
-

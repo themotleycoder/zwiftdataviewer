@@ -5,6 +5,7 @@ import 'package:syncfusion_flutter_charts/charts.dart';
 import '../appkeys.dart';
 import '../providers/activity_detail_provider.dart';
 import '../providers/config_provider.dart';
+import '../providers/lap_select_provider.dart';
 import '../stravalib/Models/activity.dart';
 import '../utils/theme.dart';
 import '../widgets/shortdataanalysis.dart';
@@ -17,7 +18,7 @@ class TimeDataView extends StatelessWidget {
     return const Column(
       children: [
         Expanded(child: DisplayChart()),
-        PowerTimeProfileDataView(),
+        ShortDataAnalysisForPieLapSummary(),
       ],
     );
   }
@@ -37,7 +38,7 @@ class DisplayChart extends ConsumerWidget {
           onSelectionChanged: (SelectionArgs args) {
             var lapSummaryObject = laps[args.pointIndex];
             ref
-                .read(lapSummaryObjectProvider.notifier)
+                .read(lapSummaryObjectPieProvider.notifier)
                 .selectSummary(lapSummaryObject);
           });
     }, error: (Object error, StackTrace stackTrace) {
@@ -69,17 +70,6 @@ class DisplayChart extends ConsumerWidget {
         endAngle: 0,
       )
     ];
-  }
-}
-
-class PowerTimeProfileDataView extends ConsumerWidget {
-  const PowerTimeProfileDataView({super.key});
-
-  @override
-  Widget build(BuildContext context, WidgetRef ref) {
-    var lapSummaryObject = ref.watch(lapSummaryObjectProvider);
-
-    return ShortDataAnalysisForLapSummary2(lapSummaryObject);
   }
 }
 
@@ -143,18 +133,3 @@ Color _onColorSelect(idx) {
     return Colors.grey;
   }
 }
-
-class LapSummaryObjectNotifier extends StateNotifier<LapSummaryObject> {
-  LapSummaryObjectNotifier()
-      : super(LapSummaryObject(0, 0, 0, 0, 0, 0, 0, 0, Colors.grey));
-
-  void selectSummary(LapSummaryObject streams) {
-    state = streams;
-  }
-
-  LapSummaryObject get summaryObject => state;
-}
-
-final lapSummaryObjectProvider =
-    StateNotifierProvider<LapSummaryObjectNotifier, LapSummaryObject>(
-        (ref) => LapSummaryObjectNotifier());

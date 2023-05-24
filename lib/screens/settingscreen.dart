@@ -31,7 +31,6 @@ class SettingsScreen extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-
     ConfigData configData = ConfigData();
 
     configData = ref.watch(configProvider);

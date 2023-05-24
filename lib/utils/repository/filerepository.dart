@@ -5,8 +5,6 @@ import 'package:flutter/services.dart';
 import 'package:html/parser.dart' as Parser;
 import 'package:http/http.dart';
 import 'package:path_provider/path_provider.dart';
-import 'package:zwiftdataviewer/models/RouteDataModel.dart';
-import 'package:zwiftdataviewer/models/WorldDataModel.dart';
 import 'package:zwiftdataviewer/stravalib/API/streams.dart';
 import 'package:zwiftdataviewer/stravalib/Models/activity.dart';
 import 'package:zwiftdataviewer/utils/constants.dart' as constants;
@@ -18,6 +16,8 @@ import 'package:zwiftdataviewer/utils/repository/worldcalendarrepository.dart';
 import 'package:zwiftdataviewer/utils/worlddata.dart';
 
 import '../../providers/config_provider.dart';
+import '../../providers/route_provider.dart';
+import '../../providers/world_select_provider.dart';
 
 class FileRepository
     implements
@@ -74,8 +74,7 @@ class FileRepository
       final String jsonStr =
           await rootBundle.loadString('assets/testjson/activity_test.json');
       final Map<String, dynamic> jsonResponse = json.decode(jsonStr);
-      final DetailedActivity activity =
-          DetailedActivity.fromJson(jsonResponse);
+      final DetailedActivity activity = DetailedActivity.fromJson(jsonResponse);
       return activity;
     } catch (e) {
       print('file load error$e');

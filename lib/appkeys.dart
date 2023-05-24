@@ -38,4 +38,5 @@ class AppKeys {
 
 //detail screen
   static const todoDetailsScreen = Key('__todoDetailsScreen__');
+  static const worldDetailsScreen = Key('__worldDetailsScreen__');
 }

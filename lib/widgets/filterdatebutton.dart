@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:zwiftdataviewer/appkeys.dart';
 
-import '../providers/activities_provider.dart';
 import '../providers/filters_provider.dart';
 
 class FilterDateButton extends ConsumerWidget {
@@ -11,29 +10,29 @@ class FilterDateButton extends ConsumerWidget {
   const FilterDateButton({required this.isActive, Key? key}) : super(key: key);
 
   @override
-  Widget build(BuildContext context, WidgetRef ref){
-    var activities = ref.watch(activitiesProvider.notifier);
+  Widget build(BuildContext context, WidgetRef ref) {
+    // var activities = ref.watch(activitiesProvider.notifier);
     final dateFilterProv = ref.read(dateFiltersProvider.notifier);
     return IgnorePointer(
       ignoring: !isActive,
       child: AnimatedOpacity(
-        opacity: isActive ? 1.0 : 0.0,
-        duration: const Duration(milliseconds: 150),
-        child:
-        // Consumer<ActivitiesDataModel>(
-        //   builder: (context, model, _) {
-            PopupMenuButton<DateFilter>(
-              key: AppKeys.filterDateButton,
-              tooltip: 'filter',
-              //ArchSampleLocalizations.of(context).filterTodos,
-              // initialValue: model.dateFilter,
-              onSelected: (dateFilter) => dateFilterProv.setFilter(dateFilter),
-              itemBuilder: (BuildContext context) => _items(context, ref),
-              icon: const Icon(Icons.filter_list, color: Colors.white),
-            )
+          opacity: isActive ? 1.0 : 0.0,
+          duration: const Duration(milliseconds: 150),
+          child:
+              // Consumer<ActivitiesDataModel>(
+              //   builder: (context, model, _) {
+              PopupMenuButton<DateFilter>(
+            key: AppKeys.filterDateButton,
+            tooltip: 'filter',
+            //ArchSampleLocalizations.of(context).filterTodos,
+            // initialValue: model.dateFilter,
+            onSelected: (dateFilter) => dateFilterProv.setFilter(dateFilter),
+            itemBuilder: (BuildContext context) => _items(context, ref),
+            icon: const Icon(Icons.filter_list, color: Colors.white),
+          )
           // },
-        // ),
-      ),
+          // ),
+          ),
     );
   }
 
@@ -52,7 +51,8 @@ class FilterDateButton extends ConsumerWidget {
         value: DateFilter.all,
         child: Text(
           'All Time', //ArchSampleLocalizations.of(context).showActive,
-          style: dateFilter.filter == DateFilter.all ? activeStyle : defaultStyle,
+          style:
+              dateFilter.filter == DateFilter.all ? activeStyle : defaultStyle,
         ),
       ),
       PopupMenuItem<DateFilter>(
@@ -60,7 +60,8 @@ class FilterDateButton extends ConsumerWidget {
         value: DateFilter.year,
         child: Text(
           '365 Days', //ArchSampleLocalizations.of(context).showAll,
-          style: dateFilter.filter == DateFilter.year ? activeStyle : defaultStyle,
+          style:
+              dateFilter.filter == DateFilter.year ? activeStyle : defaultStyle,
         ),
       ),
       PopupMenuItem<DateFilter>(
@@ -68,7 +69,9 @@ class FilterDateButton extends ConsumerWidget {
         value: DateFilter.month,
         child: Text(
           '30 Days', //ArchSampleLocalizations.of(context).showAll,
-          style: dateFilter.filter == DateFilter.month ? activeStyle : defaultStyle,
+          style: dateFilter.filter == DateFilter.month
+              ? activeStyle
+              : defaultStyle,
         ),
       ),
       PopupMenuItem<DateFilter>(
@@ -76,7 +79,8 @@ class FilterDateButton extends ConsumerWidget {
         value: DateFilter.week,
         child: Text(
           '7 Days', //ArchSampleLocalizations.of(context).showActive,
-          style: dateFilter.filter == DateFilter.week ? activeStyle : defaultStyle,
+          style:
+              dateFilter.filter == DateFilter.week ? activeStyle : defaultStyle,
         ),
       ),
     ];

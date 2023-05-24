@@ -1,4 +1,3 @@
-
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
@@ -7,11 +6,11 @@ import '../utils/theme.dart';
 import 'activity_detail_provider.dart';
 import 'config_provider.dart';
 
-
 //final activityPhotoUrlsProvider = FutureProvider.autoDispose.family<List<String>, List<PhotoActivity>>((ref, photos) async {
 
-final lapsProvider = FutureProvider.autoDispose.family<List<LapSummaryObject>, DetailedActivity>((ref, activity) async {
-  final ftp = ref.watch(configProvider).ftp??0.0;
+final lapsProvider = FutureProvider.autoDispose
+    .family<List<LapSummaryObject>, DetailedActivity>((ref, activity) async {
+  final ftp = ref.watch(configProvider).ftp ?? 0.0;
   List<LapSummaryObject> retValue = [];
   for (var lap in activity.laps ?? []) {
     retValue.add(LapSummaryObject(

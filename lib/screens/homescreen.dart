@@ -10,7 +10,6 @@ import '../providers/activities_provider.dart';
 import '../providers/tabs_provider.dart';
 
 class HomeScreen extends ConsumerWidget {
-
   const HomeScreen({super.key});
 
   @override
@@ -19,7 +18,7 @@ class HomeScreen extends ConsumerWidget {
     final homePageTabs = ref.watch(homeTabsNotifier.notifier);
     final tabIndex = ref.watch(homeTabsNotifier);
 
-    activities.loadActivities();
+    activities.loadActivities(ref);
 
     return Scaffold(
         appBar: AppBar(
@@ -61,7 +60,6 @@ class HomeScreen extends ConsumerWidget {
             ),
           ],
         ));
-
   }
 
   void refreshList() {}
@@ -83,9 +81,9 @@ class HomeScreen extends ConsumerWidget {
       );
     }
     if (tabIndex == HomeScreenTab.stats.index) {
-      actions.add(const FilterDateButton(
-          isActive: true//tab == HomeScreenTab.stats,
-        ),
+      actions.add(
+        const FilterDateButton(isActive: true //tab == HomeScreenTab.stats,
+            ),
       );
     }
     return actions;

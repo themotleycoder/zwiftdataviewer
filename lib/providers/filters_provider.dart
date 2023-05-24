@@ -51,5 +51,18 @@ class GuestWorldFiltersNotifier extends StateNotifier<GuestWorldId> {
 }
 
 final guestWorldFiltersNotifier =
-StateNotifierProvider<GuestWorldFiltersNotifier, GuestWorldId>(
+    StateNotifierProvider<GuestWorldFiltersNotifier, GuestWorldId>(
         (ref) => GuestWorldFiltersNotifier());
+
+final filteredRoutesProvider = Provider((ref) {
+  var routes = []; //ref.watch(worldRouteProvider).entries;
+  var guestWorldFilters = ref.watch(guestWorldFiltersNotifier);
+  return routes.where((route) {
+    switch (guestWorldFilters) {
+      case GuestWorldId.all:
+        return true;
+      default:
+        return true;
+    }
+  }).toList();
+});

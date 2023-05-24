@@ -20,8 +20,7 @@ abstract class Athletes {
     var header = globals.createHeader();
 
     if (header.containsKey('88') == false) {
-      final reqAthlete =
-          "https://www.strava.com/api/v3/athlete?weight=$weight";
+      final reqAthlete = "https://www.strava.com/api/v3/athlete?weight=$weight";
       globals.displayInfo('update $reqAthlete');
       var rep = await http.put(Uri.parse(reqAthlete), headers: header);
 
@@ -30,8 +29,7 @@ abstract class Athletes {
         final Map<String, dynamic> jsonResponse = json.decode(rep.body);
 
         DetailedAthlete athlete = DetailedAthlete.fromJson(jsonResponse);
-        globals
-            .displayInfo(' athlete ${athlete.firstname}, ${athlete.weight}');
+        globals.displayInfo(' athlete ${athlete.firstname}, ${athlete.weight}');
 
         returnAthlete = athlete;
       } else {
@@ -58,7 +56,8 @@ abstract class Athletes {
     var header = globals.createHeader();
 
     if (header.containsKey('88') == false) {
-      final String reqStats = 'https://www.strava.com/api/v3/athletes/$id/stats?page=$pageNumber&per_page=$perPage;';
+      final String reqStats =
+          'https://www.strava.com/api/v3/athletes/$id/stats?page=$pageNumber&per_page=$perPage;';
 
       var rep = await http.get(Uri.parse(reqStats), headers: header);
 
@@ -141,8 +140,8 @@ abstract class Athletes {
         final Map<String, dynamic> jsonResponse = json.decode(rep.body);
 
         final DetailedAthlete athlete = DetailedAthlete.fromJson(jsonResponse);
-        globals.displayInfo(
-            ' athlete ${athlete.firstname}, ${athlete.lastname}');
+        globals
+            .displayInfo(' athlete ${athlete.firstname}, ${athlete.lastname}');
 
         returnAthlete = athlete;
       } else {
@@ -185,7 +184,8 @@ abstract class Athletes {
     if (header.containsKey('88') == false) {
       do {
         final String reqActivities =
-            'https://www.strava.com/api/v3/athlete/activities' '?before=$before&after=$after&page=$pageNumber&per_page=$perPage';
+            'https://www.strava.com/api/v3/athlete/activities'
+            '?before=$before&after=$after&page=$pageNumber&per_page=$perPage';
 
         var rep = await http.get(Uri.parse(reqActivities), headers: header);
         int nbActvity = 0;

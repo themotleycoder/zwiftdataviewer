@@ -9,6 +9,7 @@ final configProvider = StateNotifierProvider<ConfigNotifier, ConfigData>((ref) {
 
 class ConfigNotifier extends StateNotifier<ConfigData> {
   final FileRepository repository = FileRepository();
+
   ConfigNotifier(ConfigData state) : super(state);
 
   void setConfig(ConfigData configData) {

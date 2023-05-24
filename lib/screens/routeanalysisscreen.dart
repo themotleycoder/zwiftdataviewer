@@ -14,12 +14,11 @@ class RouteAnalysisScreen extends ConsumerStatefulWidget {
   _RouteAnalysisScreenState createState() => _RouteAnalysisScreenState();
 }
 
-class _RouteAnalysisScreenState extends ConsumerState<RouteAnalysisScreen> with TickerProviderStateMixin {
+class _RouteAnalysisScreenState extends ConsumerState<RouteAnalysisScreen>
+    with TickerProviderStateMixin {
   @override
   Widget build(BuildContext context) {
     final controller = TabController(length: 3, vsync: this);
-
-
 
     //final DetailedActivity detailedActivity = ref.watch(activityDetailProvider.notifier).activityDetail;
 
@@ -35,51 +34,51 @@ class _RouteAnalysisScreenState extends ConsumerState<RouteAnalysisScreen> with 
     //             ),
     //           );
     //         }
-            return Column(children: <Widget>[
-              TabBar(
-                indicatorColor: Colors.transparent,
-                unselectedLabelColor: zdvmMidBlue[100],
-                labelColor: zdvmOrange[100],
-                indicatorSize: TabBarIndicatorSize.tab,
-                controller: controller,
-                tabs: const [
-                  Tab(
-                    icon: Icon(Icons.terrain),
-                    // text: 'Profile',
-                  ),
-                  Tab(
-                    icon: Icon(Icons.bolt),
-                    // text: 'Power',
-                  ),
-                  Tab(
-                    icon: Icon(Icons.schedule),
-                    // text: 'Time',
-                  ),
-                ],
-              ),
-              Expanded(
-                  child: Padding(
-                padding: const EdgeInsets.fromLTRB(4, 0, 4, 4),
-                child: TabBarView(
-                  controller: controller,
-                  children: const <Widget>[
-                    Card(
-                      elevation: defaultCardElevation,
-                      child: RouteAnalysisProfileChartScreen(),
-                    ),
-                    Card(
-                      elevation: defaultCardElevation,
-                      child: WattsDataView(),
-                    ),
-                    Card(
-                      elevation: defaultCardElevation,
-                      child: TimeDataView(),
-                    ),
-                  ],
-                ),
-              ))
-            ]);
-          // });
+    return Column(children: <Widget>[
+      TabBar(
+        indicatorColor: Colors.transparent,
+        unselectedLabelColor: zdvmMidBlue[100],
+        labelColor: zdvmOrange[100],
+        indicatorSize: TabBarIndicatorSize.tab,
+        controller: controller,
+        tabs: const [
+          Tab(
+            icon: Icon(Icons.terrain),
+            // text: 'Profile',
+          ),
+          Tab(
+            icon: Icon(Icons.bolt),
+            // text: 'Power',
+          ),
+          Tab(
+            icon: Icon(Icons.schedule),
+            // text: 'Time',
+          ),
+        ],
+      ),
+      Expanded(
+          child: Padding(
+        padding: const EdgeInsets.fromLTRB(4, 0, 4, 4),
+        child: TabBarView(
+          controller: controller,
+          children: const <Widget>[
+            Card(
+              elevation: defaultCardElevation,
+              child: RouteAnalysisProfileChartScreen(),
+            ),
+            Card(
+              elevation: defaultCardElevation,
+              child: WattsDataView(),
+            ),
+            Card(
+              elevation: defaultCardElevation,
+              child: TimeDataView(),
+            ),
+          ],
+        ),
+      ))
+    ]);
+    // });
     // });
   }
 }

@@ -107,13 +107,13 @@ class ActivitySearch extends SearchDelegate<SummaryActivity> {
                           MaterialPageRoute(
                             builder: (_) {
                               return const DetailScreen(
-                                // id: summaryActivity.id ?? -1,
-                                // strava: strava,
-                                // onRemove: () {
-                                //   Navigator.pop(context);
-                                //   onRemove(context, todo);
-                                // },
-                              );
+                                  // id: summaryActivity.id ?? -1,
+                                  // strava: strava,
+                                  // onRemove: () {
+                                  //   Navigator.pop(context);
+                                  //   onRemove(context, todo);
+                                  // },
+                                  );
                             },
                           ),
                         );

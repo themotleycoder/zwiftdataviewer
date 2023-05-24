@@ -1,4 +1,3 @@
-
 import '../../providers/config_provider.dart';
 
 abstract class ConfigRepository {

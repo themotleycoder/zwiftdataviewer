@@ -44,20 +44,22 @@ class ActivitiesListView extends ConsumerWidget {
                         color: zdvMidBlue,
                       ),
                       onTap: () {
-                        ref.read(selectedActivityProvider.notifier).selectActivity(activities[index]);
+                        ref
+                            .read(selectedActivityProvider.notifier)
+                            .selectActivity(activities[index]);
                         // ref.read(activitySelectProvider.notifier).setActivitySelect(activities[index]);
                         Navigator.push(
                           context,
                           MaterialPageRoute(
                             builder: (_) {
                               return const DetailScreen(
-                                // id: activities[index].id ?? -1,
-                                // strava: strava,
-                                // onRemove: () {
-                                //   Navigator.pop(context);
-                                //   onRemove(context, todo);
-                                // },
-                              );
+                                  // id: activities[index].id ?? -1,
+                                  // strava: strava,
+                                  // onRemove: () {
+                                  //   Navigator.pop(context);
+                                  //   onRemove(context, todo);
+                                  // },
+                                  );
                             },
                           ),
                         );

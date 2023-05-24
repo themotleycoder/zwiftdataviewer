@@ -18,7 +18,7 @@ class AllStatsScreenDistElev extends ConsumerWidget {
     final filteredActivities = ref.read(dateActivityFiltersProvider);
     final Map<String, double> summaryData =
         stats.SummaryData.createSummaryData(filteredActivities);
-    final Map<String, String> units = Conversions.units(context);
+    final Map<String, String> units = Conversions.units(ref);
     return Column(
         mainAxisSize: MainAxisSize.max,
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -39,13 +39,13 @@ class AllStatsScreenDistElev extends ConsumerWidget {
                     Icons.explore,
                     ["Total", "Avg", "Longest"],
                     [
-                      Conversions.metersToDistance(context,
-                              summaryData[stats.StatsType.TotalDistance]!)
+                      Conversions.metersToDistance(
+                              ref, summaryData[stats.StatsType.TotalDistance]!)
                           .toStringAsFixed(1),
-                      Conversions.metersToDistance(context,
-                              summaryData[stats.StatsType.AvgDistance]!)
+                      Conversions.metersToDistance(
+                              ref, summaryData[stats.StatsType.AvgDistance]!)
                           .toStringAsFixed(1),
-                      Conversions.metersToDistance(context,
+                      Conversions.metersToDistance(ref,
                               summaryData[stats.StatsType.LongestDistance]!)
                           .toStringAsFixed(1)
                     ],
@@ -55,14 +55,14 @@ class AllStatsScreenDistElev extends ConsumerWidget {
                   Icons.explore,
                   ["Total", "Avg", "Highest"],
                   [
-                    Conversions.metersToHeight(context,
-                            summaryData[stats.StatsType.TotalElevation]!)
+                    Conversions.metersToHeight(
+                            ref, summaryData[stats.StatsType.TotalElevation]!)
                         .toStringAsFixed(1),
                     Conversions.metersToHeight(
-                            context, summaryData[stats.StatsType.AvgElevation]!)
+                            ref, summaryData[stats.StatsType.AvgElevation]!)
                         .toStringAsFixed(1),
-                    Conversions.metersToHeight(context,
-                            summaryData[stats.StatsType.HighestElevation]!)
+                    Conversions.metersToHeight(
+                            ref, summaryData[stats.StatsType.HighestElevation]!)
                         .toStringAsFixed(1)
                   ],
                   units['height']!,
@@ -76,7 +76,7 @@ class AllStatsScreenDistElev extends ConsumerWidget {
 
   /// Returns the chart with multiple axes.
   SfCartesianChart _buildMultipleAxisLineChart(BuildContext context, ref) {
-    final Map<String, String> units = Conversions.units(context);
+    final Map<String, String> units = Conversions.units(ref);
     late bool isCardView = true;
     return SfCartesianChart(
       legend: Legend(isVisible: !isCardView),
@@ -102,7 +102,8 @@ class AllStatsScreenDistElev extends ConsumerWidget {
         minimum: 0,
         title: AxisTitle(text: 'Distance (${units['distance']!})'),
       ),
-      series: ChartsData.getMultipleAxisLineSeries(context, units, ref.watch(dateActivityFiltersProvider)),
+      series: ChartsData.getMultipleAxisLineSeries(
+          ref, units, ref.watch(dateActivityFiltersProvider)),
       tooltipBehavior: TooltipBehavior(enable: true),
     );
   }

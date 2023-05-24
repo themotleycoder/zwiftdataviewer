@@ -75,7 +75,8 @@ abstract class Auth {
     if (localToken.expiresAt != null) {
       var dateExpired =
           DateTime.fromMillisecondsSinceEpoch(localToken.expiresAt!);
-      var disp = '${dateExpired.day}/${dateExpired.month} ${dateExpired.hour} hours';
+      var disp =
+          '${dateExpired.day}/${dateExpired.month} ${dateExpired.hour} hours';
 
       globals.displayInfo(
           'stored token ${localToken.accessToken} ${localToken.expiresAt} expires: $disp ');
@@ -99,7 +100,8 @@ abstract class Auth {
       redirectUrl = redirectUrlMobile;
     }
 
-    var params = '?client_id=${clientID!}&redirect_uri=$redirectUrl&response_type=code&approval_prompt=${prompt!}&scope=${scope!}';
+    var params =
+        '?client_id=${clientID!}&redirect_uri=$redirectUrl&response_type=code&approval_prompt=${prompt!}&scope=${scope!}';
 
     var reqAuth = authorizationEndpoint + params;
     globals.displayInfo(reqAuth);
@@ -224,9 +226,7 @@ abstract class Auth {
     }
 
     // Check if the scope has changed
-    if ((tokenStored.scope != scope) ||
-        (token == "null") ||
-        (token == null)) {
+    if ((tokenStored.scope != scope) || (token == "null") || (token == null)) {
       // Ask for a new authorization
       globals.displayInfo('Doing a new authorization');
       isAuthOk = await _newAuthorization(clientID, secret, scope, prompt);
@@ -303,7 +303,8 @@ abstract class Auth {
     Token answer = Token();
 
     globals.displayInfo('Entering getStravaToken!!');
-    var urlToken = '$tokenEndpoint?client_id=$clientID&client_secret=$secret&code=$code&grant_type=authorization_code';
+    var urlToken =
+        '$tokenEndpoint?client_id=$clientID&client_secret=$secret&code=$code&grant_type=authorization_code';
 
     globals.displayInfo('urlToken $urlToken');
 

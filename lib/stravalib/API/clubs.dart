@@ -124,7 +124,8 @@ abstract class Clubs {
 
     if (header.containsKey('88') == false) {
       do {
-        String reqClub = 'https://www.strava.com/api/v3/clubs/$id/activities?page=$pageNumber&per_page=$perPage';
+        String reqClub =
+            'https://www.strava.com/api/v3/clubs/$id/activities?page=$pageNumber&per_page=$perPage';
         var rep = await http.get(Uri.parse(reqClub), headers: header);
         int nbActvity = 0;
 

@@ -15,8 +15,7 @@ abstract class SegmentEfforts {
     globals.displayInfo('Entering getSegmentEffortById');
 
     if (header.containsKey('88') == false) {
-      final reqSeg =
-          'https://www.strava.com/api/v3/segment_efforts/$segId';
+      final reqSeg = 'https://www.strava.com/api/v3/segment_efforts/$segId';
 
       var rep = await http.get(Uri.parse(reqSeg), headers: header);
 
@@ -76,8 +75,7 @@ abstract class SegmentEfforts {
 
             if (jsonResponse != null) {
               jsonResponse.forEach((seg) {
-                var detailedSegmentEffort =
-                    DetailedSegmentEffort.fromJson(seg);
+                var detailedSegmentEffort = DetailedSegmentEffort.fromJson(seg);
                 globals.displayInfo('${detailedSegmentEffort.name}');
                 // _listSummary.add(member);
                 nbSegments++;
