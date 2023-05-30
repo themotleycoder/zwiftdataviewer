@@ -18,6 +18,7 @@ import 'package:zwiftdataviewer/utils/worlddata.dart';
 import '../../providers/config_provider.dart';
 import '../../providers/route_provider.dart';
 import '../../providers/world_select_provider.dart';
+import '../../stravalib/Models/summary_activity.dart';
 
 class FileRepository
     implements
@@ -32,7 +33,7 @@ class FileRepository
   }
 
   Future<File> get _localActivityFile async {
-    final path = await _localPath;
+    final path = await 'assets/testjson/';
     return File('$path/activities.json');
   }
 
@@ -57,13 +58,21 @@ class FileRepository
     List<SummaryActivity> activities = <SummaryActivity>[];
     final file = await _localActivityFile;
     try {
-      final string = await file.readAsString();
-      final json = const JsonDecoder().convert(string);
-      for (var obj in json) {
+      // final string = await file.readAsString();
+      // final json = const JsonDecoder().convert(string);
+      // for (var obj in json) {
+      //   activities.add(SummaryActivity.fromJson(obj));
+      // }
+      final String jsonStr =
+      await rootBundle.loadString('assets/testjson/activities_test.json');
+      final jsonResponse = json.decode(jsonStr);
+      for (var obj in jsonResponse) {
         activities.add(SummaryActivity.fromJson(obj));
       }
+      // final DetailedActivity activity = DetailedActivity.fromJson(jsonResponse);
+      // return activity;
     } catch (e) {
-      print('file load error$e');
+      print('file load error$e.toString()');
     }
     return activities;
   }

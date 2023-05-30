@@ -10,6 +10,8 @@ import 'package:zwiftdataviewer/stravalib/strava.dart';
 import 'package:zwiftdataviewer/utils/repository/activitesrepository.dart';
 import 'package:zwiftdataviewer/utils/repository/streamsrepository.dart';
 
+import '../../stravalib/Models/summary_activity.dart';
+
 class WebRepository implements ActivitiesRepository, StreamsRepository {
   final Strava strava;
 

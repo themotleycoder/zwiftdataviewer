@@ -827,93 +827,93 @@ class HighlightedKudosers {
   }
 }
 
-class SummaryActivity {
-  Fault? fault;
-  int? id;
-  int? resourceState;
-  AthleteEffort? athlete;
-  String? name;
-  double? distance;
-  int? movingTime;
-  int? elapsedTime;
-  double? totalElevationGain;
-  String? type;
-  int? workoutType;
-  DateTime? startDate;
-  DateTime? startDateLocal;
+// class SummaryActivity {
+//   Fault? fault;
+//   int? id;
+//   int? resourceState;
+//   AthleteEffort? athlete;
+//   String? name;
+//   double? distance;
+//   int? movingTime;
+//   int? elapsedTime;
+//   double? totalElevationGain;
+//   String? type;
+//   int? workoutType;
+//   DateTime? startDate;
+//   DateTime? startDateLocal;
+//
+//   SummaryActivity({
+//     this.id,
+//     this.resourceState,
+//     this.athlete,
+//     this.name,
+//     this.distance,
+//     this.movingTime,
+//     this.elapsedTime,
+//     this.totalElevationGain,
+//     this.type,
+//     this.workoutType,
+//     // this.startDate,
+//     // this.startDateLocal
+//   });
+//
+//   SummaryActivity.fromJson(Map<String, dynamic> json) {
+//     id = json['id'];
+//     resourceState = json['resource_state'];
+//     athlete = json['athlete'] != null
+//         ? AthleteEffort.fromJson(json['athlete'])
+//         : null;
+//     name = json['name'];
+//     distance = json['distance'];
+//     movingTime = json['moving_time'];
+//     elapsedTime = json['elapsed_time'];
+//     var _elevationGain = json['total_elevation_gain'];
+//     // To convert the dynamic var in double when it is an int
+//     if ((_elevationGain % 1) == 0) {
+//       _elevationGain = _elevationGain + 0.0;
+//     }
+//     // if (_elevationGain == 0) _elevationGain = 0.0;
+//     totalElevationGain = _elevationGain;
+//     type = json['type'];
+//     workoutType = json['workout_type'];
+//     startDate =
+//         json['start_date'] != null ? _parseDate(json['start_date']) : null;
+//     startDateLocal = json['start_date_local'] != null
+//         ? _parseDate(json['start_date_local'])
+//         : null;
+//   }
+//
+//   Map<String, dynamic> toJson() {
+//     final Map<String, dynamic> data = <String, dynamic>{};
+//     data['id'] = id;
+//     data['resource_state'] = resourceState;
+//     if (athlete != null) {
+//       data['athlete'] = athlete!.toJson();
+//     }
+//     data['name'] = name;
+//     data['distance'] = distance;
+//     data['moving_time'] = movingTime;
+//     data['elapsed_time'] = elapsedTime;
+//     data['total_elevation_gain'] = totalElevationGain;
+//     data['type'] = type;
+//     data['workout_type'] = workoutType;
+//     data['start_date'] = toJsonDate(startDate!);
+//     data['start_date_local'] = toJsonDate(startDateLocal!);
+//     return data;
+//   }
+// }
 
-  SummaryActivity({
-    this.id,
-    this.resourceState,
-    this.athlete,
-    this.name,
-    this.distance,
-    this.movingTime,
-    this.elapsedTime,
-    this.totalElevationGain,
-    this.type,
-    this.workoutType,
-    // this.startDate,
-    // this.startDateLocal
-  });
-
-  SummaryActivity.fromJson(Map<String, dynamic> json) {
-    id = json['id'];
-    resourceState = json['resource_state'];
-    athlete = json['athlete'] != null
-        ? AthleteEffort.fromJson(json['athlete'])
-        : null;
-    name = json['name'];
-    distance = json['distance'];
-    movingTime = json['moving_time'];
-    elapsedTime = json['elapsed_time'];
-    var _elevationGain = json['total_elevation_gain'];
-    // To convert the dynamic var in double when it is an int
-    if ((_elevationGain % 1) == 0) {
-      _elevationGain = _elevationGain + 0.0;
-    }
-    // if (_elevationGain == 0) _elevationGain = 0.0;
-    totalElevationGain = _elevationGain;
-    type = json['type'];
-    workoutType = json['workout_type'];
-    startDate =
-        json['start_date'] != null ? _parseDate(json['start_date']) : null;
-    startDateLocal = json['start_date_local'] != null
-        ? _parseDate(json['start_date_local'])
-        : null;
-  }
-
-  Map<String, dynamic> toJson() {
-    final Map<String, dynamic> data = <String, dynamic>{};
-    data['id'] = id;
-    data['resource_state'] = resourceState;
-    if (athlete != null) {
-      data['athlete'] = athlete!.toJson();
-    }
-    data['name'] = name;
-    data['distance'] = distance;
-    data['moving_time'] = movingTime;
-    data['elapsed_time'] = elapsedTime;
-    data['total_elevation_gain'] = totalElevationGain;
-    data['type'] = type;
-    data['workout_type'] = workoutType;
-    data['start_date'] = toJsonDate(startDate!);
-    data['start_date_local'] = toJsonDate(startDateLocal!);
-    return data;
-  }
-}
-
-DateTime _parseDate(String dateTimeToParse) {
-  DateFormat dateFormat = DateFormat("yyyy-MM-dd");
-  DateFormat timeFormat = DateFormat.Hms();
-
-  List<String> dateTimeSplit = dateTimeToParse.split("T");
-  List<String> timeSplit = dateTimeSplit[1].split("Z");
-  DateTime date = dateFormat.parse(dateTimeSplit[0]);
-  DateTime time = timeFormat.parse(timeSplit[0]);
-  return DateTime(
-      date.year, date.month, date.day, time.hour, time.minute, time.second);
-}
+// DateTime _parseDate(String dateTimeToParse) {
+//   DateFormat dateFormat = DateFormat("yyyy-MM-dd");
+//   DateFormat timeFormat = DateFormat.Hms();
+//
+//   List<String> dateTimeSplit = dateTimeToParse.split("T");
+//   List<String> timeSplit = dateTimeSplit[1].split("Z");
+//   DateTime date = dateFormat.parse(dateTimeSplit[0]);
+//   DateTime time = timeFormat.parse(timeSplit[0]);
+//   return DateTime(
+//       date.year, date.month, date.day, time.hour, time.minute, time.second);
+// }
 
 String toJsonDate(DateTime date) {
 //2020-07-19T15:44:53Z

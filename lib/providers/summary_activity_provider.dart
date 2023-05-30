@@ -1,9 +1,8 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-
-import '../stravalib/Models/activity.dart';
+import 'package:zwiftdataviewer/stravalib/Models/summary_activity.dart';
 
 class SummaryActivityNotifier extends StateNotifier<SummaryActivity> {
-  SummaryActivityNotifier() : super(SummaryActivity());
+  SummaryActivityNotifier() : super(emptyActivity);
 
   SummaryActivity activity() {
     return state;

@@ -18,7 +18,7 @@ Future<void> main() async {
   runApp(ProviderScope(
       child: MaterialApp(
     title: 'Zwift Data Viewer',
-    theme: myTheme,
+    theme: ThemeData(useMaterial3: true, colorScheme: lightColorScheme),
     // localizationsDelegates: [
     //   ArchSampleLocalizationsDelegate(),
     //   ProviderLocalizationsDelegate(),

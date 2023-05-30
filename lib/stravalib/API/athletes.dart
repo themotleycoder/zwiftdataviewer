@@ -4,6 +4,7 @@ import 'dart:async';
 import 'dart:convert';
 
 import 'package:http/http.dart' as http;
+import 'package:zwiftdataviewer/stravalib/Models/summary_activity.dart';
 
 import '../Models/activity.dart';
 import '../Models/detailedAthlete.dart';

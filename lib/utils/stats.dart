@@ -1,4 +1,4 @@
-import '../stravalib/Models/activity.dart';
+import 'package:zwiftdataviewer/stravalib/Models/summary_activity.dart';
 
 class StatsType {
   static const String TotalDistance = "TotalDistance";

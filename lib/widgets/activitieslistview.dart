@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:intl/intl.dart';
 import 'package:zwiftdataviewer/screens/ridedetailscreen.dart';
-import 'package:zwiftdataviewer/stravalib/Models/activity.dart';
+import 'package:zwiftdataviewer/stravalib/Models/summary_activity.dart';
 import 'package:zwiftdataviewer/utils/constants.dart' as constants;
 import 'package:zwiftdataviewer/utils/theme.dart';
 

@@ -1,7 +1,7 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:zwiftdataviewer/stravalib/Models/summary_activity.dart';
 
 import '../secrets.dart';
-import '../stravalib/Models/activity.dart';
 import '../stravalib/globals.dart';
 import '../stravalib/strava.dart';
 import '../utils/repository/filerepository.dart';

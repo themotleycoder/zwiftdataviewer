@@ -27,7 +27,7 @@ class ZwiftViewerApp extends StatelessWidget {
     //     ],
     return MaterialApp(
       title: 'Zwift Data Viewer',
-      theme: myTheme,
+      theme: ThemeData(useMaterial3: true, colorScheme: lightColorScheme),
       // localizationsDelegates: [
       //   ArchSampleLocalizationsDelegate(),
       //   ProviderLocalizationsDelegate(),

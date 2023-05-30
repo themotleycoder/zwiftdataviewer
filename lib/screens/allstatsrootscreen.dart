@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:zwiftdataviewer/screens/AllStatsScreenDistElev.dart';
+import 'package:zwiftdataviewer/screens/allstatsscreensummary.dart';
 
 import '../utils/constants.dart';
 import '../utils/theme.dart';
@@ -61,7 +62,7 @@ class _AllStatsRootScreenState extends ConsumerState<AllStatsRootScreen>
             ),
             Card(
               elevation: defaultCardElevation,
-              // child: AllStatsScreenDistElev(),
+              child: AllStatsScreenSummary(),
             ),
           ],
         ),

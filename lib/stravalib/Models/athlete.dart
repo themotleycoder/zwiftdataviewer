@@ -1,12 +1,14 @@
 class Athlete {
-  int? id;
-  int? resourceState;
+  int id;
+  int resourceState;
 
-  Athlete({this.id, this.resourceState});
+  Athlete({required this.id, required this.resourceState});
 
-  Athlete.fromJson(Map<String, dynamic> json) {
-    id = json['id'];
-    resourceState = json['resource_state'];
+  factory Athlete.fromJson(Map<String, dynamic> json) {
+    return Athlete(
+      id: json['id'],
+      resourceState: json['resource_state'],
+    );
   }
 
   Map<String, dynamic> toJson() {
