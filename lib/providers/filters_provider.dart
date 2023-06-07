@@ -21,19 +21,19 @@ final dateFiltersProvider =
 
 final dateActivityFiltersProvider = Provider((ref) {
   DateTime startDate;
-  var activities = ref.watch(activitiesProvider);
+  var activities = ref.read(stravaActivitiesProvider);
   var dateFilters = ref.watch(dateFiltersProvider);
   return activities.where((activity) {
     switch (dateFilters) {
       case DateFilter.year:
         startDate = DateTime.now().subtract(const Duration(days: 365));
-        return activity.startDate!.isAfter(startDate);
+        return activity.startDate.isAfter(startDate);
       case DateFilter.month:
         startDate = DateTime.now().subtract(const Duration(days: 30));
-        return activity.startDate!.isAfter(startDate);
+        return activity.startDate.isAfter(startDate);
       case DateFilter.week:
         startDate = DateTime.now().subtract(const Duration(days: 7));
-        return activity.startDate!.isAfter(startDate);
+        return activity.startDate.isAfter(startDate);
       default:
         return true;
     }

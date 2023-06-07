@@ -756,7 +756,7 @@ class Photos {
 }
 
 class Primary {
-  Null? id;
+  Null id;
   String? uniqueId;
   Urls? urls;
   int? source;

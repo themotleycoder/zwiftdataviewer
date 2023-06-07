@@ -58,19 +58,12 @@ class FileRepository
     List<SummaryActivity> activities = <SummaryActivity>[];
     final file = await _localActivityFile;
     try {
-      // final string = await file.readAsString();
-      // final json = const JsonDecoder().convert(string);
-      // for (var obj in json) {
-      //   activities.add(SummaryActivity.fromJson(obj));
-      // }
       final String jsonStr =
       await rootBundle.loadString('assets/testjson/activities_test.json');
       final jsonResponse = json.decode(jsonStr);
       for (var obj in jsonResponse) {
         activities.add(SummaryActivity.fromJson(obj));
       }
-      // final DetailedActivity activity = DetailedActivity.fromJson(jsonResponse);
-      // return activity;
     } catch (e) {
       print('file load error$e.toString()');
     }

@@ -2,17 +2,23 @@
 
 import 'dart:async';
 import 'dart:convert';
+import 'dart:io';
 
+import 'package:flutter/services.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:http/http.dart' as http;
 import 'package:zwiftdataviewer/stravalib/Models/summary_activity.dart';
 
+import '../../secrets.dart';
 import '../Models/activity.dart';
 import '../Models/detailedAthlete.dart';
 import '../Models/fault.dart';
 import '../Models/stats.dart';
+import '../Models/token.dart';
 import '../Models/zone.dart';
 import '../errorCodes.dart' as error;
 import '../globals.dart' as globals;
+import '../strava.dart';
 
 abstract class Athletes {
   Future<DetailedAthlete> updateLoggedInAthlete(double weight) async {
@@ -170,13 +176,13 @@ abstract class Athletes {
   /// return: a list of activities related to the logged athlete
   ///  null if the authentication has not been done before
   ///
-  Future<List<SummaryActivity?>?> getLoggedInAthleteActivities(
+  Future<List<SummaryActivity>> getLoggedInAthleteActivities(
       int before, int after, String? filterByActivityType) async {
     List<SummaryActivity> returnActivities = <SummaryActivity>[];
 
     var header = globals.createHeader();
     int pageNumber = 1;
-    int perPage = 20; // Number of activities retrieved per http request
+    int perPage = 50; // Number of activities retrieved per http request
     bool isRetrieveDone = false;
     List<SummaryActivity> listSummary = <SummaryActivity>[];
 
@@ -235,14 +241,96 @@ abstract class Athletes {
           // Answer is not correct
           globals.displayInfo('return code is NOT 200');
           globals.displayInfo(rep.statusCode.toString());
-          return null;
+          return [];
         }
       } while (!isRetrieveDone);
     } else {
       globals.displayInfo('Token not yet known');
-      return null;
+      return [];
     }
 
     return returnActivities;
   }
+}
+
+Future<File> get _localActivityFile async {
+  final path = await 'assets/testjson/';
+  return File('$path/activities.json');
+}
+
+final activitiesFileProvider =
+    FutureProvider.autoDispose<List<SummaryActivity>>((ref) async {
+  List<SummaryActivity> activities = <SummaryActivity>[];
+  final file = await _localActivityFile;
+  try {
+    final String jsonStr =
+        await rootBundle.loadString('assets/testjson/activities_test.json');
+    final jsonResponse = json.decode(jsonStr);
+    for (var obj in jsonResponse) {
+      activities.add(SummaryActivity.fromJson(obj));
+    }
+  } catch (e) {
+    print('file load error$e.toString()');
+  }
+  return activities;
+});
+
+final activitiesWebProvider = FutureProvider.autoDispose
+    .family<List<SummaryActivity>, DateTuple>((ref, dateRange) async {
+// final activitiesProvider = FutureProvider.autoDispose<List<SummaryActivity>, DateTuple<DateTime?, DateTime?>>((ref, dateRange) async {
+//   final accessToken = 'YOUR_ACCESS_TOKEN';
+  // final perPage = 10;
+  // final page = ref.watch(pageProvider);
+  final before = dateRange.before;
+  final after = dateRange.after;
+  await getClient();
+  var header = globals.createHeader();
+  String url =
+      'https://www.strava.com/api/v3/athlete/activities'; //?per_page=$perPage&page=$page';
+  if (before != null) {
+    url += '&before=${before}';
+  }
+  if (after != null) {
+    url += '&after=${after}';
+  }
+  final response = await http.get(
+    Uri.parse(url),
+    headers: header,
+  );
+  if (response.statusCode == 200) {
+    final List<dynamic> jsonList = jsonDecode(response.body);
+    return jsonList.map((json) => SummaryActivity.fromJson(json)).toList();
+  } else {
+    throw Exception('Failed to load activities: ${response.statusCode}');
+  }
+});
+
+final pageProvider = StateProvider<int>((ref) => 1);
+
+class DateTuple {
+  final int before;
+  final int after;
+
+  DateTuple(this.before, this.after);
+}
+
+Future<Token?> getClient() async {
+  bool isAuthOk = false;
+  final Strava strava = Strava(globals.isInDebug, secret);
+
+  // strava = Strava(globals.isInDebug, secret);
+  const prompt = 'auto';
+
+  isAuthOk = await strava.oauth(
+      clientId,
+      'activity:write,activity:read_all,profile:read_all,profile:write',
+      secret,
+      prompt);
+
+  if (isAuthOk) {
+    Token storedToken = await strava.getStoredToken();
+    return storedToken;
+  }
+
+  return null;
 }

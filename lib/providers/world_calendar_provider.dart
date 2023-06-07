@@ -7,8 +7,7 @@ final loadWorldCalendarProvider =
     FutureProvider.autoDispose<Map<DateTime, List<WorldData>>>((ref) async {
   final FileRepository repository = FileRepository();
 
-  return await repository.loadWorldCalendarData()
-      as Map<DateTime, List<WorldData>>;
+  return await repository.loadWorldCalendarData();
 });
 
 class DaySelectNotifier extends StateNotifier<DateTime> {

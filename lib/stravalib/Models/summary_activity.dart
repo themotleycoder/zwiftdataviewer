@@ -155,8 +155,9 @@ class SummaryActivity {
       visibility: json['visibility'],
       flagged: json['flagged'],
       gearId: json['gear_id'],
-      startLatlng: LatLng.fromJson(json['start_latlng']),
-      endLatlng: LatLng.fromJson(json['end_latlng']),
+      startLatlng: LatLng.fromJson(json['start_latlng'] ??
+          {'lat':0, 'lng':0}),
+      endLatlng: LatLng.fromJson(json['end_latlng'] ?? {'lat':0, 'lng':0}),
       averageSpeed: (json['average_speed'] ?? 0).toDouble(),
       maxSpeed: (json['max_speed'] ?? 0).toDouble(),
       averageCadence: (json['average_cadence'] ?? 0).toDouble(),
@@ -172,9 +173,9 @@ class SummaryActivity {
       displayHideHeartrateOption: json['display_hide_heartrate_option'],
       elevHigh: (json['elev_high'] ?? 0).toDouble(),
       elevLow: (json['elev_low'] ?? 0).toDouble(),
-      uploadId: json['upload_id'],
-      uploadIdStr: json['upload_id_str'],
-      externalId: json['external_id'],
+      uploadId: json['upload_id'] ?? 0,
+      uploadIdStr: json['upload_id_str'] ?? '',
+      externalId: json['external_id'] ?? '',
       fromAcceptedTag: json['from_accepted_tag'],
       prCount: json['pr_count'],
       totalPhotoCount: json['total_photo_count'],
@@ -318,11 +319,24 @@ class LatLng {
 
   LatLng({required this.lat, required this.lng});
 
-  factory LatLng.fromJson(List<dynamic> json) {
-    return LatLng(
-      lat: json[0],
-      lng: json[1],
-    );
+  factory LatLng.fromJson(json) {
+    if (json!=null && json.length==2) {
+      if (json is List){
+        return LatLng(
+          lat: json[0] ?? 0,
+          lng: json[1] ?? 0,
+        );
+      }
+      return LatLng(
+        lat: json["lat"] ?? 0,
+        lng: json["lng"] ?? 0,
+      );
+    } else {
+      return LatLng(
+        lat: 0,
+        lng: 0,
+      );
+    }
   }
 
   Map<String, dynamic> toJson() => {

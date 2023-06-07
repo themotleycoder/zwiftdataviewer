@@ -14,7 +14,7 @@ class AllStatsScreenScatter extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final filteredActivities = ref.read(dateActivityFiltersProvider);
+    final List<SummaryActivity> filteredActivities = ref.read(dateActivityFiltersProvider as ProviderListenable<List<SummaryActivity>>);
     final SummaryActivity summaryActivity = ref.watch(summaryActivityProvider);
 
     Map<String, String> units = Conversions.units(ref);
@@ -89,7 +89,7 @@ class AllStatsScreenScatter extends ConsumerWidget {
     Map<int, List<SummaryActivity>> groupedActivities = {};
 
     for (SummaryActivity activity in activities) {
-      int year = activity.startDateLocal!.year;
+      int year = activity.startDateLocal.year;
       if (!groupedActivities.containsKey(year)) {
         groupedActivities[year] = [];
       }

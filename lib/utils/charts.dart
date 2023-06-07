@@ -45,9 +45,9 @@ class ChartsData {
     const String totalName = "Total";
 
     for (var activity in activities) {
-      double distance = Conversions.metersToDistance(ref, activity.distance!);
+      double distance = Conversions.metersToDistance(ref, activity.distance);
       double elevation =
-          Conversions.metersToHeight(ref, activity.totalElevationGain!);
+          Conversions.metersToHeight(ref, activity.totalElevationGain);
 
       double d = distances[totalName] ?? 0;
       double e = elevations[totalName] ?? 0;
@@ -58,12 +58,12 @@ class ChartsData {
       elevations[totalName] = elevations[totalName] == null
           ? elevation
           : elevations[totalName] = e + elevation;
-      if (distances.containsKey(activity.startDateLocal?.year.toString())) {
-        distance += distances[activity.startDateLocal?.year.toString()]!;
-        elevation += elevations[activity.startDateLocal?.year.toString()]!;
+      if (distances.containsKey(activity.startDateLocal.year.toString())) {
+        distance += distances[activity.startDateLocal.year.toString()]!;
+        elevation += elevations[activity.startDateLocal.year.toString()]!;
       }
 
-      int? year = activity.startDateLocal?.year;
+      int? year = activity.startDateLocal.year;
       distances[year.toString()] = distance;
       elevations[year.toString()] = elevation;
     }
@@ -89,7 +89,7 @@ class ChartsData {
         color: colors[key],
         // Set the color property for the series
         pointColorMapper: (SummaryActivity stats, _) {
-          return colors[stats.startDateLocal!.year]!;
+          return colors[stats.startDateLocal.year]!;
         },
         xValueMapper: (SummaryActivity stats, _) =>
             Conversions.metersToDistance(

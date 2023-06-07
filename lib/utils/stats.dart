@@ -18,13 +18,13 @@ class SummaryData {
     double longestDistance = 0.0;
     double highestElevation = 0.0;
     for (var activity in activities) {
-      distance += activity.distance!;
-      elevation += activity.totalElevationGain!;
-      if (activity.distance! > longestDistance) {
-        longestDistance = activity.distance!;
+      distance += activity.distance;
+      elevation += activity.totalElevationGain;
+      if (activity.distance> longestDistance) {
+        longestDistance = activity.distance;
       }
-      if (activity.totalElevationGain! > highestElevation) {
-        highestElevation = activity.totalElevationGain!;
+      if (activity.totalElevationGain> highestElevation) {
+        highestElevation = activity.totalElevationGain;
       }
     }
     data[StatsType.TotalDistance] = distance;

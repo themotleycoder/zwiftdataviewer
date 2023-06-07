@@ -31,10 +31,10 @@ final photoActivitiesProvider =
   final activityId = ref.read(selectedActivityProvider).id;
 
   if (globals.isInDebug) {
-    return fileRepository.loadActivityPhotos(activityId!);
+    return fileRepository.loadActivityPhotos(activityId);
   } else {
     print('WOULD CALL WEB SVC NOW! - loadActivityPhotos');
-    return webRepository.loadActivityPhotos(activityId!);
+    return webRepository.loadActivityPhotos(activityId);
   }
 });
 

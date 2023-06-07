@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:syncfusion_flutter_charts/charts.dart';
+import 'package:zwiftdataviewer/stravalib/Models/summary_activity.dart';
 import 'package:zwiftdataviewer/utils/conversions.dart';
 import 'package:zwiftdataviewer/widgets/listitemviews.dart' as list_item_views;
 
@@ -15,7 +16,7 @@ class AllStatsScreenDistElev extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final filteredActivities = ref.read(dateActivityFiltersProvider);
+    final List<SummaryActivity> filteredActivities = ref.read(dateActivityFiltersProvider as ProviderListenable<List<SummaryActivity>>);
     final Map<String, double> summaryData =
         stats.SummaryData.createSummaryData(filteredActivities);
     final Map<String, String> units = Conversions.units(ref);

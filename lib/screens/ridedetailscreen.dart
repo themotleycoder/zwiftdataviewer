@@ -35,7 +35,7 @@ class DetailScreen extends ConsumerWidget {
 
     AsyncValue<DetailedActivity> asyncActivityDetail = ref.watch(
         activityDetailFromStreamProvider(
-            ref.read(selectedActivityProvider).id!));
+            ref.read(selectedActivityProvider).id));
 
     //ref.read(activityDetailProvider.notifier).setActivityDetail(asyncActivityDetail.data!.value);
 

@@ -2,12 +2,12 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:intl/intl.dart';
 import 'package:zwiftdataviewer/screens/ridedetailscreen.dart';
-import 'package:zwiftdataviewer/stravalib/Models/summary_activity.dart';
 import 'package:zwiftdataviewer/utils/constants.dart' as constants;
 import 'package:zwiftdataviewer/utils/theme.dart';
 
 import '../providers/activities_provider.dart';
 import '../providers/activity_select_provider.dart';
+import '../stravalib/Models/summary_activity.dart';
 import '../utils/constants.dart';
 
 class ActivitiesListView extends ConsumerWidget {
@@ -15,62 +15,67 @@ class ActivitiesListView extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    //final Strava strava = Strava(globals.isInDebug, secret);
 
-    final List<SummaryActivity> activities = ref.watch(activitiesProvider);
+    final List<SummaryActivity> activities = ref.watch(stravaActivitiesProvider).reversed.toList();
 
-    return Container(
-        margin: const EdgeInsets.fromLTRB(0, 8, 0, 8),
-        child: ListView.builder(
-          itemCount: activities.length,
-          itemBuilder: (context, index) {
-            return Container(
-              padding: const EdgeInsets.fromLTRB(8.0, 0, 8.0, 0),
-              child: Center(
-                  child: InkWell(
-                child: Card(
-                    color: white,
-                    elevation: defaultCardElevation,
-                    child: ListTile(
-                      leading: const Icon(Icons.directions_bike,
-                          size: 32.0, color: zdvOrange),
-                      title: Text(activities[index].name ?? "",
-                          style: constants.headerFontStyle),
-                      subtitle: Text(DateFormat.yMd()
-                          .add_jm()
-                          .format(activities[index].startDateLocal!)),
-                      trailing: const Icon(
-                        Icons.arrow_forward_ios,
-                        color: zdvMidBlue,
-                      ),
-                      onTap: () {
-                        ref
-                            .read(selectedActivityProvider.notifier)
-                            .selectActivity(activities[index]);
-                        // ref.read(activitySelectProvider.notifier).setActivitySelect(activities[index]);
-                        Navigator.push(
-                          context,
-                          MaterialPageRoute(
-                            builder: (_) {
-                              return const DetailScreen(
-                                  // id: activities[index].id ?? -1,
-                                  // strava: strava,
-                                  // onRemove: () {
-                                  //   Navigator.pop(context);
-                                  //   onRemove(context, todo);
-                                  // },
-                                  );
+    if (activities.isEmpty) {
+      ref.read(stravaActivitiesProvider.notifier).loadActivities();
+      return const Center(child: CircularProgressIndicator());
+    } else {
+      return Container(
+          margin: const EdgeInsets.fromLTRB(0, 8, 0, 8),
+          child: ListView.builder(
+            itemCount: activities.length,
+            itemBuilder: (context, index) {
+              final activity = activities[index];
+              return Container(
+                padding: const EdgeInsets.fromLTRB(8.0, 0, 8.0, 0),
+                child: Center(
+                    child: InkWell(
+                      child: Card(
+                          color: white,
+                          elevation: defaultCardElevation,
+                          child: ListTile(
+                            leading: const Icon(Icons.directions_bike,
+                                size: 32.0, color: zdvOrange),
+                            title: Text(activity.name,
+                                style: constants.headerFontStyle),
+                            subtitle: Text(DateFormat.yMd()
+                                .add_jm()
+                                .format(activity.startDateLocal)),
+                            trailing: const Icon(
+                              Icons.arrow_forward_ios,
+                              color: zdvMidBlue,
+                            ),
+                            onTap: () {
+                              ref
+                                  .read(selectedActivityProvider.notifier)
+                                  .selectActivity(activity);
+                              // ref.read(activitySelectProvider.notifier).setActivitySelect(activities[index]);
+                              Navigator.push(
+                                context,
+                                MaterialPageRoute(
+                                  builder: (_) {
+                                    return const DetailScreen(
+                                      // id: activities[index].id ?? -1,
+                                      // strava: strava,
+                                      // onRemove: () {
+                                      //   Navigator.pop(context);
+                                      //   onRemove(context, todo);
+                                      // },
+                                    );
+                                  },
+                                ),
+                              );
                             },
-                          ),
-                        );
-                      },
-                      // onItemClick(_activities[index], context);
+                            // onItemClick(_activities[index], context);
+                          )),
                     )),
-              )),
-              // margin: EdgeInsets.all(1.0),
-            );
-          },
-        ));
+                // margin: EdgeInsets.all(1.0),
+              );
+            },
+          ));
+    }
   }
 // }));
 }

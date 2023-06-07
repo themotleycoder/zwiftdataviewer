@@ -6,7 +6,13 @@ import 'package:zwiftdataviewer/screens/allstatsrootscreen.dart';
 import 'package:zwiftdataviewer/screens/calendarscreen.dart';
 import 'package:zwiftdataviewer/screens/homescreen.dart';
 import 'package:zwiftdataviewer/screens/settingscreen.dart';
+import 'package:zwiftdataviewer/stravalib/API/athletes.dart';
+import 'package:zwiftdataviewer/stravalib/globals.dart' as globals;
+import 'package:zwiftdataviewer/stravalib/strava.dart';
 import 'package:zwiftdataviewer/utils/theme.dart';
+import 'package:zwiftdataviewer/stravalib/Models/token.dart';
+
+import 'secrets.dart';
 
 Future<void> main() async {
   FlutterError.demangleStackTrace = (StackTrace stack) {
@@ -15,6 +21,29 @@ Future<void> main() async {
     return stack;
   };
   WidgetsFlutterBinding.ensureInitialized();
+
+  Future<Token?> getClient() async {
+    bool isAuthOk = false;
+
+    final Strava strava = Strava(globals.isInDebug, secret);
+    const prompt = 'auto';
+
+    isAuthOk = await strava.oauth(
+        clientId,
+        'activity:write,activity:read_all,profile:read_all,profile:write',
+        secret,
+        prompt);
+
+    if (isAuthOk) {
+      Token storedToken = await strava.getStoredToken();
+      return storedToken;
+    }
+
+    return null;
+  }
+
+  await getClient();
+
   runApp(ProviderScope(
       child: MaterialApp(
     title: 'Zwift Data Viewer',
@@ -32,4 +61,6 @@ Future<void> main() async {
       AppRoutes.settings: (context) => const SettingsScreen(),
     },
   )));
+
+
 }

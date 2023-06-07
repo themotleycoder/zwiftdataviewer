@@ -89,7 +89,7 @@ class RouteSectionDetailScreen extends ConsumerWidget {
 
     AsyncValue<DetailedActivity> asyncActivityDetail = ref.watch(
         activityDetailFromStreamProvider(
-            ref.read(selectedActivityProvider).id!));
+            ref.read(selectedActivityProvider).id));
 
     return asyncActivityDetail.when(data: (DetailedActivity activityDetail) {
       segmentEfforts = activityDetail.segmentEfforts;

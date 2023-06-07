@@ -33,7 +33,7 @@ class DisplayChart extends ConsumerWidget {
     final Map<String, String> units = Conversions.units(ref);
 
     AsyncValue<StreamsDetailCollection> streamsData =
-        ref.watch(streamsProvider(ref.watch(selectedActivityProvider).id!));
+        ref.watch(streamsProvider(ref.watch(selectedActivityProvider).id));
 
     return streamsData.when(data: (streams) {
       return SfCartesianChart(

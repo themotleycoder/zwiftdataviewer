@@ -4,7 +4,7 @@ import 'package:flutter/foundation.dart';
 import 'package:zwiftdataviewer/stravalib/Models/fault.dart';
 import 'package:zwiftdataviewer/stravalib/Models/token.dart';
 
-bool isInDebug = true; // set to true to see debug message in API
+bool isInDebug = false; // set to true to see debug message in API
 
 Token token = Token(); // Where the token info is stored when executing APIs
 
@@ -17,7 +17,7 @@ const defaultEndlatlng = 0.0;
 /// To display debug info in Strava API
 void displayInfo(String message) {
   if (isInDebug) {
-    var msgToDisplay = '--> Strava_flutter: ' + message;
+    var msgToDisplay = '--> Strava_flutter: $message';
     debugPrint(msgToDisplay);
   }
 }

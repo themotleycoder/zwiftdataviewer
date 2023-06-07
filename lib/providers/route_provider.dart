@@ -22,7 +22,7 @@ class RouteNotifier extends StateNotifier<Map<int, List<RouteData>>> {
   // notifyListeners();
 
   load() async {
-    state = await repository.loadRouteData() as Map<int, List<RouteData>>;
+    state = await repository.loadRouteData();
   }
 
   save() async {

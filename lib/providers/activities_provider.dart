@@ -1,117 +1,106 @@
-import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:zwiftdataviewer/stravalib/Models/summary_activity.dart';
+import 'dart:convert';
+import 'dart:io';
 
-import '../secrets.dart';
-import '../stravalib/globals.dart';
-import '../stravalib/strava.dart';
-import '../utils/repository/filerepository.dart';
-import '../utils/repository/webrepository.dart';
-import 'config_data_date_provider.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:http/http.dart' as http;
+import 'package:path_provider/path_provider.dart';
+import 'package:zwiftdataviewer/stravalib/Models/summary_activity.dart';
+import 'package:zwiftdataviewer/stravalib/globals.dart' as globals;
+
+import '../stravalib/Models/activity.dart';
 
 class ActivitiesNotifier extends StateNotifier<List<SummaryActivity>> {
-  ActivitiesNotifier() : super([]);
+  final String _baseUrl = 'https://www.strava.com/api/v3';
+  final String _accessToken;
 
-  // final Strava strava = Strava(isInDebug, secret);
-  final FileRepository? fileRepository = FileRepository();
-  final WebRepository? webRepository =
-      WebRepository(strava: Strava(isInDebug, secret));
+  ActivitiesNotifier(this._accessToken) : super([]);
 
-  get activities => state;
+  Future<void> loadActivities({int perPage = 30}) async {
+    final cacheFile = await _getCacheFile();
+    if (cacheFile.existsSync()) {
+      final cacheData = await cacheFile.readAsString();
+      final List<SummaryActivity> cachedActivities =
+          List.from(jsonDecode(cacheData))
+              .map((activity) => SummaryActivity.fromJson(activity))
+              .toList();
+      state = cachedActivities;
+    }
 
-  void addActivity(SummaryActivity activity) {
-    state = [...state, activity];
-  }
+    List<SummaryActivity> allActivities = [];
+    int page = 1;
+    bool hasMorePages = true;
 
-  void addActivities(List<SummaryActivity> activities) {
-    state = [...state, ...activities];
-  }
+    final lastActivityEpoch = await _getLastActivityEpoch();
 
-  void removeActivity(SummaryActivity activity) {
-    state = state.where((element) => element.id != activity.id).toList();
-  }
+    while (hasMorePages) {
+      final url = Uri.parse(
+          '$_baseUrl/athlete/activities?page=$page&per_page=$perPage${lastActivityEpoch != null ? '&after=$lastActivityEpoch' : ''}');
+      final response = await http.get(
+        url,
+        headers: {'Authorization': 'Bearer $_accessToken'},
+      );
 
-  void updateActivity(SummaryActivity activity) {
-    state = state
-        .map((element) => element.id == activity.id ? activity : element)
-        .toList();
-  }
+      if (response.statusCode == 200) {
+        final List<SummaryActivity> activities =
+            List.from(jsonDecode(response.body))
+                .map((activity) => SummaryActivity.fromJson(activity))
+                .toList();
+        final List<SummaryActivity> filteredActivities = activities
+            .where((activity) => activity.type == ActivityType.VirtualRide)
+            .toList();
+        allActivities.addAll(filteredActivities);
 
-  void clearActivities() {
-    state = [];
-  }
-
-  void setActivities(List<SummaryActivity> activities) {
-    state = activities;
-  }
-
-  SummaryActivity activityById(int id) {
-    return state.firstWhere((activity) => activity.id == id);
-  }
-
-  Future<void> loadActivities(WidgetRef ref) async {
-    var afterDate = ref.read(configDateProvider);
-    // await getAfterParameter(); //   configData.getAfterParameter();
-    //afterDate = 1680307200; //test date Saturday, April 1, 2023 12:00:00 AM
-    //now
-    final beforeDate = (DateTime.now().millisecondsSinceEpoch / 1000).round();
-
-    //notifyListeners();
-    return fileRepository!
-        .loadActivities(beforeDate, afterDate)
-        .then((loadedActivities) {
-      setActivities(loadedActivities);
-      // _activitiesController.add(_activities!);
-      //_isLoading = false;
-      //notifyListeners();
-    }).then((loadedActivities) {
-      if (activities!.isEmpty) {
-        //_isLoading = true;
-        //notifyListeners();
-      }
-
-      //final int beforeDate = (DateTime.now().millisecondsSinceEpoch);
-      // final int afterDate = constants.defaultDataDate;
-      //configData.lastSyncDate;
-
-      if (!isInDebug) {
-        webRepository!
-            .loadActivities(
-                (DateTime.now().millisecondsSinceEpoch / 1000).round(),
-                afterDate)
-            .then((webloadedActivities) {
-          if (webloadedActivities != null && webloadedActivities.isNotEmpty) {
-            if (activities!.isNotEmpty) {
-              webloadedActivities
-                  .addAll(activities as Iterable<SummaryActivity>);
-              //storeAfterParameter(beforeDate);
-              ref.read(configDateProvider.notifier).setDate(beforeDate);
-            }
-
-            setActivities(webloadedActivities.cast<SummaryActivity>().toList());
-            // _activities = webloadedActivities.cast<SummaryActivity>();
-
-            fileRepository!.saveActivities(activities!);
-            // configData.lastSyncDate = beforeDate;
-            // configDataModel.configData = configData;
-            //notifyListeners();
-            //isLoading = false;
-            // if (_activities!=null) {
-
-            // }
-          }
-        });
+        if (activities.length < perPage) {
+          hasMorePages = false;
+        } else {
+          page++;
+        }
       } else {
-        print('WOULD CALL WEB SVC NOW! - loadActivities');
+        throw Exception('Failed to load athlete activities');
       }
-    }).catchError((err) {
-      err.toString();
-      //_isLoading = false;
-      //notifyListeners();
-    });
+    }
+
+    final newActivities =
+        allActivities.where((activity) => !state.contains(activity)).toList();
+    state = [...state, ...newActivities];
+
+    if (newActivities.isNotEmpty) {
+      final lastActivity = newActivities.last;
+      final lastActivityDate =
+          DateTime.parse(lastActivity.startDate.toString());
+      final lastActivityEpoch = lastActivityDate.millisecondsSinceEpoch ~/ 1000;
+      await _storeLastActivityEpoch(lastActivityEpoch);
+    }
+
+    await cacheFile.writeAsString(jsonEncode(state));
+  }
+
+  Future<File> _getCacheFile() async {
+    final directory = await getApplicationDocumentsDirectory();
+    return File('${directory.path}/strava_activities_cache.json');
+  }
+
+  Future<int> _getLastActivityEpoch() async {
+    final directory = await getApplicationDocumentsDirectory();
+    final file = File('${directory.path}/last_activity_epoch.txt');
+
+    if (file.existsSync()) {
+      final contents = await file.readAsString();
+      return int.parse(contents);
+    } else {
+      return 1420070400; //default is Thursday, January 1, 2015 12:00:00 AM
+    }
+  }
+
+  Future<void> _storeLastActivityEpoch(int lastActivityEpoch) async {
+    final directory = await getApplicationDocumentsDirectory();
+    final file = File('${directory.path}/last_activity_epoch.txt');
+    await file.writeAsString('$lastActivityEpoch');
   }
 }
 
-final activitiesProvider =
+final stravaActivitiesProvider =
     StateNotifierProvider<ActivitiesNotifier, List<SummaryActivity>>((ref) {
-  return ActivitiesNotifier();
+  final accessToken = globals.token.accessToken;
+  return ActivitiesNotifier(accessToken!);
 });

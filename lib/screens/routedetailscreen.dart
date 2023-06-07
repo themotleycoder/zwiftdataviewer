@@ -91,7 +91,7 @@ class RenderRouteDetails extends ConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     final Map<String, String> units = Conversions.units(ref);
     final asyncActivityDetail = ref.watch(activityDetailFromStreamProvider(
-        ref.watch(selectedActivityProvider).id!));
+        ref.watch(selectedActivityProvider).id));
 
     return Expanded(
         child: asyncActivityDetail.when(

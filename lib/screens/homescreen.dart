@@ -9,16 +9,17 @@ import '../delegates/activitysearchdelegate.dart';
 import '../providers/activities_provider.dart';
 import '../providers/tabs_provider.dart';
 
+
 class HomeScreen extends ConsumerWidget {
   const HomeScreen({super.key});
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final activities = ref.watch(activitiesProvider.notifier);
+    // final activities = ref.watch(activitiesProvider.notifier);
     final homePageTabs = ref.watch(homeTabsNotifier.notifier);
     final tabIndex = ref.watch(homeTabsNotifier);
 
-    activities.loadActivities(ref);
+    // activities.loadActivities(ref);
 
     return Scaffold(
         appBar: AppBar(
@@ -66,7 +67,7 @@ class HomeScreen extends ConsumerWidget {
 
   List<Widget> getActions(context, ref) {
     List<Widget> actions = [];
-    final activities = ref.watch(activitiesProvider.notifier);
+    final activities = ref.read(stravaActivitiesProvider.notifier);
     final tabIndex = ref.watch(homeTabsNotifier);
     if (tabIndex == HomeScreenTab.activities.index) {
       actions.add(

@@ -48,7 +48,7 @@ class ActivitySearch extends SearchDelegate<SummaryActivity> {
         ? suggestionList = activities //In the true case
         : suggestionList.addAll(activities.where(
             // In the false case
-            (element) => element.name!.toLowerCase().contains(query),
+            (element) => element.name.toLowerCase().contains(query),
           ));
     final Strava strava = Strava(globals.isInDebug, secret);
 
@@ -66,7 +66,7 @@ class ActivitySearch extends SearchDelegate<SummaryActivity> {
         ? activities
         : activities
             .where(
-                (element) => element.name!.contains(selectedResult?.name ?? ""))
+                (element) => element.name.contains(selectedResult?.name ?? ""))
             .toList();
 
     final Strava strava = Strava(globals.isInDebug, secret);

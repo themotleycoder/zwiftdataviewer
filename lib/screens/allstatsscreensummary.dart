@@ -21,7 +21,7 @@ class AllStatsScreenSummary extends ConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     final Map<String, String> units = Conversions.units(ref);
 
-    final filteredActivities = ref.watch(dateActivityFiltersProvider);
+    final List<SummaryActivity> filteredActivities = ref.watch(dateActivityFiltersProvider as ProviderListenable<List<SummaryActivity>>);
 
     // return streamsData.when(data: (streams) {
       return SfCartesianChart(
@@ -55,7 +55,7 @@ class AllStatsScreenSummary extends ConsumerWidget {
           series: _createDataSet(ref, filteredActivities ?? []),
           onTrackballPositionChanging: (TrackballArgs args) {
             final dataPointIndex = args.chartPointInfo.dataPointIndex ?? 0;
-            var combinedStreams = filteredActivities![dataPointIndex];
+            var combinedStreams = filteredActivities[dataPointIndex];
             // ref
             //     .read(combinedStreamSelectNotifier.notifier)
             //     .selectStream(combinedStreams);
