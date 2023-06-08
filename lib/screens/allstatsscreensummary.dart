@@ -1,17 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:syncfusion_flutter_charts/charts.dart';
-import 'package:zwiftdataviewer/stravalib/API/streams.dart';
-import 'package:zwiftdataviewer/stravalib/Models/activity.dart';
 import 'package:zwiftdataviewer/stravalib/Models/summary_activity.dart';
 import 'package:zwiftdataviewer/utils/conversions.dart';
 import 'package:zwiftdataviewer/utils/theme.dart';
 
-import '../appkeys.dart';
-import '../providers/activity_select_provider.dart';
 import '../providers/combinedstream_select_provider.dart';
 import '../providers/filters_provider.dart';
-import '../providers/streams_provider.dart';
 import '../widgets/iconitemwidgets.dart';
 
 class AllStatsScreenSummary extends ConsumerWidget {
@@ -21,45 +16,47 @@ class AllStatsScreenSummary extends ConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     final Map<String, String> units = Conversions.units(ref);
 
-    final List<SummaryActivity> filteredActivities = ref.watch(dateActivityFiltersProvider as ProviderListenable<List<SummaryActivity>>);
+    final List<SummaryActivity> filteredActivities = ref.watch(
+        dateActivityFiltersProvider
+            as ProviderListenable<List<SummaryActivity>>);
 
     // return streamsData.when(data: (streams) {
-      return SfCartesianChart(
-          tooltipBehavior: null,
-          plotAreaBorderWidth: 0,
-          legend: Legend(
-              isVisible: true,
-              overflowMode: LegendItemOverflowMode.wrap,
-              position: LegendPosition.top),
-          primaryXAxis: NumericAxis(
-              title: AxisTitle(text: 'Distance (${units['distance']!})'),
-              majorGridLines: const MajorGridLines(width: 0),
-              minimum: 0),
-          primaryYAxis: NumericAxis(
-              labelFormat: ' ',
-              axisLine: const AxisLine(width: 0),
-              majorTickLines: const MajorTickLines(color: Colors.transparent)),
-          trackballBehavior: TrackballBehavior(
-            enable: true,
-            tooltipSettings: const InteractiveTooltip(enable: false),
-            markerSettings: const TrackballMarkerSettings(
-              markerVisibility: TrackballVisibilityMode.visible,
-              height: 10,
-              width: 10,
-              borderWidth: 1,
-            ),
-            hideDelay: 3000,
-            activationMode: ActivationMode.singleTap,
-            shouldAlwaysShow: true,
+    return SfCartesianChart(
+        tooltipBehavior: null,
+        plotAreaBorderWidth: 0,
+        legend: Legend(
+            isVisible: true,
+            overflowMode: LegendItemOverflowMode.wrap,
+            position: LegendPosition.top),
+        primaryXAxis: NumericAxis(
+            title: AxisTitle(text: 'Distance (${units['distance']!})'),
+            majorGridLines: const MajorGridLines(width: 0),
+            minimum: 0),
+        primaryYAxis: NumericAxis(
+            labelFormat: ' ',
+            axisLine: const AxisLine(width: 0),
+            majorTickLines: const MajorTickLines(color: Colors.transparent)),
+        trackballBehavior: TrackballBehavior(
+          enable: true,
+          tooltipSettings: const InteractiveTooltip(enable: false),
+          markerSettings: const TrackballMarkerSettings(
+            markerVisibility: TrackballVisibilityMode.visible,
+            height: 10,
+            width: 10,
+            borderWidth: 1,
           ),
-          series: _createDataSet(ref, filteredActivities ?? []),
-          onTrackballPositionChanging: (TrackballArgs args) {
-            final dataPointIndex = args.chartPointInfo.dataPointIndex ?? 0;
-            var combinedStreams = filteredActivities[dataPointIndex];
-            // ref
-            //     .read(combinedStreamSelectNotifier.notifier)
-            //     .selectStream(combinedStreams);
-          });
+          hideDelay: 3000,
+          activationMode: ActivationMode.singleTap,
+          shouldAlwaysShow: true,
+        ),
+        series: _createDataSet(ref, filteredActivities ?? []),
+        onTrackballPositionChanging: (TrackballArgs args) {
+          final dataPointIndex = args.chartPointInfo.dataPointIndex ?? 0;
+          var combinedStreams = filteredActivities[dataPointIndex];
+          // ref
+          //     .read(combinedStreamSelectNotifier.notifier)
+          //     .selectStream(combinedStreams);
+        });
     // }, error: (Object error, StackTrace stackTrace) {
     //   return const Text("error");
     // }, loading: () {

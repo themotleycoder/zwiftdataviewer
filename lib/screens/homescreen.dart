@@ -9,7 +9,6 @@ import '../delegates/activitysearchdelegate.dart';
 import '../providers/activities_provider.dart';
 import '../providers/tabs_provider.dart';
 
-
 class HomeScreen extends ConsumerWidget {
   const HomeScreen({super.key});
 

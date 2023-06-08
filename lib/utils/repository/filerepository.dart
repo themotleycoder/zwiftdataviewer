@@ -59,7 +59,7 @@ class FileRepository
     final file = await _localActivityFile;
     try {
       final String jsonStr =
-      await rootBundle.loadString('assets/testjson/activities_test.json');
+          await rootBundle.loadString('assets/testjson/activities_test.json');
       final jsonResponse = json.decode(jsonStr);
       for (var obj in jsonResponse) {
         activities.add(SummaryActivity.fromJson(obj));

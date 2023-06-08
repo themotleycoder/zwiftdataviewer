@@ -23,8 +23,8 @@ class WebRepository implements ActivitiesRepository, StreamsRepository {
     await getClient();
     // beforeDate = (beforeDate / 1000).round();
     // afterDate = (afterDate / 1000).round();
-    var list = await strava.getLoggedInAthleteActivities(
-            beforeDate, afterDate, null)
+    var list =
+        await strava.getLoggedInAthleteActivities(beforeDate, afterDate, null)
         //   .then((activities) {
         // if (activities != null && activities.length > 0) {
         //   saveActivities(activities);

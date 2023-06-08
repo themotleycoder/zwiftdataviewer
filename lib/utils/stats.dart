@@ -20,10 +20,10 @@ class SummaryData {
     for (var activity in activities) {
       distance += activity.distance;
       elevation += activity.totalElevationGain;
-      if (activity.distance> longestDistance) {
+      if (activity.distance > longestDistance) {
         longestDistance = activity.distance;
       }
-      if (activity.totalElevationGain> highestElevation) {
+      if (activity.totalElevationGain > highestElevation) {
         highestElevation = activity.totalElevationGain;
       }
     }

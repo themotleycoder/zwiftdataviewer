@@ -16,7 +16,9 @@ class AllStatsScreenDistElev extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final List<SummaryActivity> filteredActivities = ref.read(dateActivityFiltersProvider as ProviderListenable<List<SummaryActivity>>);
+    final List<SummaryActivity> filteredActivities = ref.read(
+        dateActivityFiltersProvider
+            as ProviderListenable<List<SummaryActivity>>);
     final Map<String, double> summaryData =
         stats.SummaryData.createSummaryData(filteredActivities);
     final Map<String, String> units = Conversions.units(ref);

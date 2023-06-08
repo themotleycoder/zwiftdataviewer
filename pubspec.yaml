@@ -60,12 +60,12 @@ flutter:
 
   # To add assets to your application, add an assets section, like this:
   assets:
-     - assets/testjson/activities_test.json
-     - assets/testjson/activity_test.json
-     - assets/testjson/streams_test.json
-     - assets/testjson/photos_test.json
-     - assets/zwiftdatalogo.png
-#     - assets/worldcalendar.html
+    - assets/testjson/activities_test.json
+    - assets/testjson/activity_test.json
+    - assets/testjson/streams_test.json
+    - assets/testjson/photos_test.json
+    - assets/zwiftdatalogo.png
+  #     - assets/worldcalendar.html
 
   # An image asset can refer to one or more resolution-specific "variants", see
   # https://flutter.dev/assets-and-images/#resolution-aware.

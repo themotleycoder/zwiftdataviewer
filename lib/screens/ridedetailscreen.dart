@@ -5,9 +5,7 @@ import 'package:zwiftdataviewer/utils/constants.dart' as constants;
 import 'package:zwiftdataviewer/utils/theme.dart';
 
 import '../providers/activity_detail_provider.dart';
-import '../providers/activity_select_provider.dart';
 import '../providers/tabs_provider.dart';
-import '../stravalib/Models/activity.dart';
 
 // class DetailScreen extends StatefulWidget {
 //   final int id;
@@ -33,9 +31,11 @@ class DetailScreen extends ConsumerWidget {
     // final asyncActivityDetail = ref.watch(activityDetailFromStreamProvider(
     //     ref.read(selectedActivityProvider).id!));
 
-    AsyncValue<DetailedActivity> asyncActivityDetail = ref.watch(
-        activityDetailFromStreamProvider(
-            ref.read(selectedActivityProvider).id));
+    // AsyncValue<DetailedActivity> asyncActivityDetail = ref.watch(
+    //     activityDetailFromStreamProvider(
+    //         ref.read(selectedActivityProvider).id));
+
+    final activityDetail = ref.watch(stravaActivityDetailsProvider);
 
     //ref.read(activityDetailProvider.notifier).setActivityDetail(asyncActivityDetail.data!.value);
 
@@ -79,34 +79,34 @@ class DetailScreen extends ConsumerWidget {
 
     return Scaffold(
         appBar:
-            asyncActivityDetail.when(data: (DetailedActivity activityDetail) {
-          return AppBar(
-              title: Text("${activityDetail.name} ",
-                  // "(${DateFormat.yMd().format(
-                  // DateTime.parse(activityDetail.startDate))})",
-                  style: constants.appBarTextStyle),
-              backgroundColor: zdvMidBlue,
-              elevation: 0.0,
-              leading: IconButton(
-                  icon: const Icon(Icons.arrow_back, color: Colors.white),
-                  onPressed: () {
-                    Navigator.pop(context);
-                  }));
-        }, error: (Object error, StackTrace stackTrace) {
-          print(stackTrace);
-          return null;
-        }, loading: () {
-          return AppBar(
-              title:
-                  Text("Zwift Data Viewer", style: constants.appBarTextStyle),
-              backgroundColor: zdvMidBlue,
-              elevation: 0.0,
-              leading: IconButton(
-                  icon: const Icon(Icons.arrow_back, color: Colors.white),
-                  onPressed: () {
-                    Navigator.pop(context);
-                  }));
-        }),
+            // asyncActivityDetail.when(data: (DetailedActivity activityDetail) {
+            AppBar(
+                title: Text("${activityDetail.name} ",
+                    // "(${DateFormat.yMd().format(
+                    // DateTime.parse(activityDetail.startDate))})",
+                    style: constants.appBarTextStyle),
+                backgroundColor: zdvMidBlue,
+                elevation: 0.0,
+                leading: IconButton(
+                    icon: const Icon(Icons.arrow_back, color: Colors.white),
+                    onPressed: () {
+                      Navigator.pop(context);
+                    })),
+        // }, error: (Object error, StackTrace stackTrace) {
+        //   print(stackTrace);
+        //   return null;
+        // }, loading: () {
+        //   return AppBar(
+        //       title:
+        //           Text("Zwift Data Viewer", style: constants.appBarTextStyle),
+        //       backgroundColor: zdvMidBlue,
+        //       elevation: 0.0,
+        //       leading: IconButton(
+        //           icon: const Icon(Icons.arrow_back, color: Colors.white),
+        //           onPressed: () {
+        //             Navigator.pop(context);
+        //           }));
+        // }),
 
         //     //     appBar: AppBar(
         //     // title: activityDetail == null

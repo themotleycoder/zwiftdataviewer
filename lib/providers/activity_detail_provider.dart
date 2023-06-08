@@ -1,6 +1,11 @@
+import 'dart:convert';
+import 'dart:io';
+
 import 'package:flutter/foundation.dart';
 import 'package:flutter/widgets.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:http/http.dart' as http;
+import 'package:path_provider/path_provider.dart';
 import 'package:zwiftdataviewer/stravalib/Models/activity.dart';
 import 'package:zwiftdataviewer/stravalib/globals.dart' as globals;
 import 'package:zwiftdataviewer/utils/repository/filerepository.dart';
@@ -9,6 +14,79 @@ import 'package:zwiftdataviewer/utils/repository/webrepository.dart';
 import '../secrets.dart';
 import '../stravalib/globals.dart';
 import '../stravalib/strava.dart';
+import 'activity_select_provider.dart';
+
+class StravaActivityDetailsNotifier extends StateNotifier<DetailedActivity> {
+  final String _baseUrl = 'https://www.strava.com/api/v3';
+  final String _accessToken;
+
+  StravaActivityDetailsNotifier(this._accessToken, int activityId)
+      : super(DetailedActivity());
+
+  Future<void> loadActivityDetails(int activityId) async {
+    final cacheFile = await _getCacheFile();
+    if (cacheFile.existsSync()) {
+      final cachedData = await cacheFile.readAsString();
+      final List activityDetails = jsonDecode(cachedData);
+      for (var activityDetail in activityDetails) {
+        if (activityDetail['id'].toString() == activityId.toString()) {
+          state = DetailedActivity.fromJson(activityDetail);
+          return;
+        }
+      }
+      // final DetailedActivity activityDetail = activityDetails.firstWhere(
+      //   (element) => element['id'].toString() == activityId.toString(),
+      //   // orElse: () => DetailedActivity(),
+      // );
+      if (state.id != null) {
+        // state = activityDetail;
+        return;
+      }
+    }
+
+    final url = Uri.parse('$_baseUrl/activities/$activityId');
+    final response = await http.get(
+      url,
+      headers: {'Authorization': 'Bearer $_accessToken'},
+    );
+
+    if (response.statusCode == 200) {
+      // final activityDetail = jsonDecode(response.body);
+      final DetailedActivity activityDetail =
+          DetailedActivity.fromJson(json.decode(response.body));
+      state = activityDetail;
+      await _saveActivityDetailToCache(json.decode(response.body));
+    } else {
+      throw Exception('Failed to load activity details');
+    }
+  }
+
+  Future<File> _getCacheFile() async {
+    final directory = await getApplicationDocumentsDirectory();
+    return File('${directory.path}/strava_activity_details_cache.json');
+  }
+
+  Future<void> _saveActivityDetailToCache(
+      Map<String, dynamic> activityDetail) async {
+    final cacheFile = await _getCacheFile();
+    if (cacheFile.existsSync()) {
+      final cachedData = await cacheFile.readAsString();
+      final activityDetails = jsonDecode(cachedData);
+      activityDetails.add(activityDetail);
+      await cacheFile.writeAsString(jsonEncode(activityDetails));
+    } else {
+      await cacheFile.writeAsString(jsonEncode([activityDetail]));
+    }
+  }
+}
+
+final stravaActivityDetailsProvider =
+    StateNotifierProvider<StravaActivityDetailsNotifier, DetailedActivity>(
+        (ref) {
+  var activityId = ref.watch(selectedActivityProvider).id;
+  final accessToken = globals.token.accessToken;
+  return StravaActivityDetailsNotifier(accessToken!, activityId);
+});
 
 class ActivityDetailNotifier extends StateNotifier<DetailedActivity> {
   ActivityDetailNotifier() : super(DetailedActivity());

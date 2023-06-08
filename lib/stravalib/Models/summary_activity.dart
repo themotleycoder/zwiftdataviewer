@@ -155,9 +155,9 @@ class SummaryActivity {
       visibility: json['visibility'],
       flagged: json['flagged'],
       gearId: json['gear_id'],
-      startLatlng: LatLng.fromJson(json['start_latlng'] ??
-          {'lat':0, 'lng':0}),
-      endLatlng: LatLng.fromJson(json['end_latlng'] ?? {'lat':0, 'lng':0}),
+      startLatlng:
+          LatLng.fromJson(json['start_latlng'] ?? {'lat': 0, 'lng': 0}),
+      endLatlng: LatLng.fromJson(json['end_latlng'] ?? {'lat': 0, 'lng': 0}),
       averageSpeed: (json['average_speed'] ?? 0).toDouble(),
       maxSpeed: (json['max_speed'] ?? 0).toDouble(),
       averageCadence: (json['average_cadence'] ?? 0).toDouble(),
@@ -320,8 +320,8 @@ class LatLng {
   LatLng({required this.lat, required this.lng});
 
   factory LatLng.fromJson(json) {
-    if (json!=null && json.length==2) {
-      if (json is List){
+    if (json != null && json.length == 2) {
+      if (json is List) {
         return LatLng(
           lat: json[0] ?? 0,
           lng: json[1] ?? 0,

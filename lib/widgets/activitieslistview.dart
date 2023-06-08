@@ -15,8 +15,8 @@ class ActivitiesListView extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-
-    final List<SummaryActivity> activities = ref.watch(stravaActivitiesProvider).reversed.toList();
+    final List<SummaryActivity> activities =
+        ref.watch(stravaActivitiesProvider).reversed.toList();
 
     if (activities.isEmpty) {
       ref.read(stravaActivitiesProvider.notifier).loadActivities();
@@ -32,45 +32,45 @@ class ActivitiesListView extends ConsumerWidget {
                 padding: const EdgeInsets.fromLTRB(8.0, 0, 8.0, 0),
                 child: Center(
                     child: InkWell(
-                      child: Card(
-                          color: white,
-                          elevation: defaultCardElevation,
-                          child: ListTile(
-                            leading: const Icon(Icons.directions_bike,
-                                size: 32.0, color: zdvOrange),
-                            title: Text(activity.name,
-                                style: constants.headerFontStyle),
-                            subtitle: Text(DateFormat.yMd()
-                                .add_jm()
-                                .format(activity.startDateLocal)),
-                            trailing: const Icon(
-                              Icons.arrow_forward_ios,
-                              color: zdvMidBlue,
-                            ),
-                            onTap: () {
-                              ref
-                                  .read(selectedActivityProvider.notifier)
-                                  .selectActivity(activity);
-                              // ref.read(activitySelectProvider.notifier).setActivitySelect(activities[index]);
-                              Navigator.push(
-                                context,
-                                MaterialPageRoute(
-                                  builder: (_) {
-                                    return const DetailScreen(
-                                      // id: activities[index].id ?? -1,
-                                      // strava: strava,
-                                      // onRemove: () {
-                                      //   Navigator.pop(context);
-                                      //   onRemove(context, todo);
-                                      // },
+                  child: Card(
+                      color: white,
+                      elevation: defaultCardElevation,
+                      child: ListTile(
+                        leading: const Icon(Icons.directions_bike,
+                            size: 32.0, color: zdvOrange),
+                        title: Text(activity.name,
+                            style: constants.headerFontStyle),
+                        subtitle: Text(DateFormat.yMd()
+                            .add_jm()
+                            .format(activity.startDateLocal)),
+                        trailing: const Icon(
+                          Icons.arrow_forward_ios,
+                          color: zdvMidBlue,
+                        ),
+                        onTap: () {
+                          ref
+                              .read(selectedActivityProvider.notifier)
+                              .selectActivity(activity);
+                          // ref.read(activitySelectProvider.notifier).setActivitySelect(activities[index]);
+                          Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                              builder: (_) {
+                                return const DetailScreen(
+                                    // id: activities[index].id ?? -1,
+                                    // strava: strava,
+                                    // onRemove: () {
+                                    //   Navigator.pop(context);
+                                    //   onRemove(context, todo);
+                                    // },
                                     );
-                                  },
-                                ),
-                              );
-                            },
-                            // onItemClick(_activities[index], context);
-                          )),
-                    )),
+                              },
+                            ),
+                          );
+                        },
+                        // onItemClick(_activities[index], context);
+                      )),
+                )),
                 // margin: EdgeInsets.all(1.0),
               );
             },
