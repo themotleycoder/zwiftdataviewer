@@ -87,12 +87,14 @@ class RouteSectionDetailScreen extends ConsumerWidget {
     List<SegmentEffort>? segmentEfforts = [];
     // CombinedStreams? selectionModel;
 
-    AsyncValue<DetailedActivity> asyncActivityDetail = ref.watch(
-        activityDetailFromStreamProvider(
-            ref.read(selectedActivityProvider).id));
+    final activityDetail = ref.watch(stravaActivityDetailsProvider);
 
-    return asyncActivityDetail.when(data: (DetailedActivity activityDetail) {
-      segmentEfforts = activityDetail.segmentEfforts;
+    // AsyncValue<DetailedActivity> asyncActivityDetail = ref.watch(
+    //     activityDetailFromStreamProvider(
+    //         ref.read(selectedActivityProvider).id));
+
+    // return asyncActivityDetail.when(data: (DetailedActivity activityDetail) {
+      segmentEfforts = activityDetail.segmentEfforts??[];
 
       return ListView.separated(
         itemCount: segmentEfforts == null ? 0 : segmentEfforts!.length,
@@ -144,10 +146,10 @@ class RouteSectionDetailScreen extends ConsumerWidget {
           );
         },
       );
-    }, error: (Object error, StackTrace stackTrace) {
-      return const Text("error");
-    }, loading: () {
-      return const Text("loading");
-    });
+    // }, error: (Object error, StackTrace stackTrace) {
+    //   return const Text("error");
+    // }, loading: () {
+    //   return const Text("loading");
+    // });
   }
 }

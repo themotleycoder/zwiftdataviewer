@@ -32,7 +32,7 @@ class DisplayChart extends ConsumerWidget {
     const double ftp = 229;
 
     AsyncValue<List<LapSummaryObject>> lapsData =
-        ref.watch(lapsProvider(ref.watch(activityDetailProvider)!));
+        ref.watch(lapsProvider(ref.watch(stravaActivityDetailsProvider)!));
 
     return lapsData.when(data: (laps) {
       return SfCartesianChart(

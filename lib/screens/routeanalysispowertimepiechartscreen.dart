@@ -30,7 +30,7 @@ class DisplayChart extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     AsyncValue<List<LapSummaryObject>> lapSummaryData =
-        ref.watch(lapSummaryDataProvider(ref.watch(activityDetailProvider)));
+        ref.watch(lapSummaryDataProvider(ref.watch(stravaActivityDetailsProvider)));
 
     return lapSummaryData.when(data: (laps) {
       return SfCircularChart(

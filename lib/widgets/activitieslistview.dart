@@ -7,14 +7,18 @@ import 'package:zwiftdataviewer/utils/theme.dart';
 
 import '../providers/activities_provider.dart';
 import '../providers/activity_select_provider.dart';
+import '../providers/tabs_provider.dart';
 import '../stravalib/Models/summary_activity.dart';
 import '../utils/constants.dart';
+import '../utils/conversions.dart';
 
 class ActivitiesListView extends ConsumerWidget {
   const ActivitiesListView({super.key});
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
+    final Map<String, String> units = Conversions.units(ref);
+
     final List<SummaryActivity> activities =
         ref.watch(stravaActivitiesProvider).reversed.toList();
 
@@ -39,15 +43,18 @@ class ActivitiesListView extends ConsumerWidget {
                         leading: const Icon(Icons.directions_bike,
                             size: 32.0, color: zdvOrange),
                         title: Text(activity.name,
+                            overflow: TextOverflow.ellipsis,
+                            maxLines: 2,
                             style: constants.headerFontStyle),
-                        subtitle: Text(DateFormat.yMd()
-                            .add_jm()
-                            .format(activity.startDateLocal)),
+                        subtitle: Text(
+                            "${Conversions.metersToDistance(ref, activity.distance).toStringAsFixed(1)} ${units['distance']} ${DateFormat.yMd()
+                                .format(activity.startDateLocal)}"),
                         trailing: const Icon(
                           Icons.arrow_forward_ios,
                           color: zdvMidBlue,
                         ),
                         onTap: () {
+                          ref.read(detailTabsNotifier.notifier).setIndex(0);
                           ref
                               .read(selectedActivityProvider.notifier)
                               .selectActivity(activity);

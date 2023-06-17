@@ -11,8 +11,7 @@ class ShortDataAnalysis extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final LapSummaryObject lapSummaryObject =
-        ref.watch(lapSummaryObjectProvider);
+    final LapSummaryObject lapSummaryObject = ref.watch(lapSummaryObjectProvider);
 
     Map<String, String> units = Conversions.units(ref);
     final time = lapSummaryObject.time ?? 0;
@@ -37,7 +36,7 @@ class ShortDataAnalysis extends ConsumerWidget {
                 IconDataObject(
                     'Avg', cadence.toStringAsFixed(0), Icons.autorenew,
                     units: 'rpm'),
-                IconDataObject('Avg', speed.toStringAsFixed(1), Icons.speed,
+                IconDataObject('Avg', Conversions.mpsToMph(speed).toStringAsFixed(1), Icons.speed,
                     units: units['speed'])
               ]),
               IconHeaderDataRow([
@@ -66,17 +65,15 @@ class ShortDataAnalysisForPieLapSummary extends ConsumerWidget {
     LapSummaryObject lapSummaryObject = ref.watch(lapSummaryObjectPieProvider);
 
     final Map<String, String> units = Conversions.units(ref);
-    final time = lapSummaryObject.time ?? 0;
+    final time = lapSummaryObject.time;
     final double watts =
-        (lapSummaryObject.watts ?? 0) / (lapSummaryObject.count ?? 0);
+        (lapSummaryObject.watts) / (lapSummaryObject.count);
     final double cadence =
-        (lapSummaryObject.cadence ?? 0) / (lapSummaryObject.count ?? 0);
+        (lapSummaryObject.cadence) / (lapSummaryObject.count);
     final double speed =
-        (lapSummaryObject.speed ?? 0) / (lapSummaryObject.count ?? 0);
-    final double distance =
-        (lapSummaryObject.distance ?? 0) / (lapSummaryObject.count ?? 0);
-    final double elevation =
-        (lapSummaryObject.altitude ?? 0) / (lapSummaryObject.count ?? 0);
+        (lapSummaryObject.speed) / (lapSummaryObject.count);
+    final double distance = lapSummaryObject.distance;
+    final double elevation = lapSummaryObject.altitude;
     return Expanded(
         flex: 1,
         child: ListView(children: <Widget>[
@@ -89,7 +86,7 @@ class ShortDataAnalysisForPieLapSummary extends ConsumerWidget {
           IconHeaderDataRow([
             IconDataObject('Avg', cadence.toStringAsFixed(0), Icons.autorenew,
                 units: 'rpm'),
-            IconDataObject('Avg', speed.toStringAsFixed(1), Icons.speed,
+            IconDataObject('Avg', Conversions.mpsToMph(speed).toStringAsFixed(1), Icons.speed,
                 units: units['speed'])
           ]),
           IconHeaderDataRow([

@@ -1,6 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:zwiftdataviewer/appkeys.dart';
+import 'package:zwiftdataviewer/screens/routeanalysisscreen.dart';
+import 'package:zwiftdataviewer/screens/routedetailscreen.dart';
+import 'package:zwiftdataviewer/screens/routesectiondetailscreen.dart';
 import 'package:zwiftdataviewer/utils/constants.dart' as constants;
 import 'package:zwiftdataviewer/utils/theme.dart';
 
@@ -127,7 +130,7 @@ class DetailScreen extends ConsumerWidget {
         // ),
         body: Stack(children: [
           Container(
-            child: detailPageTabs.getView(detailPageTabs.index),
+            child: getView(tabIndex),
           )
         ]),
         // Selector<ActivityDetailDataModel, ActivityDetailDataModel>(
@@ -184,5 +187,17 @@ class DetailScreen extends ConsumerWidget {
             ),
           ],
         ));
+  }
+
+  Widget getView(int index) {
+    switch (index) {
+      case 1:
+        return const RouteAnalysisScreen();
+      case 2:
+        return const RouteSectionDetailScreen();
+      case 0:
+      default:
+        return const RouteDetailScreen();
+    }
   }
 }

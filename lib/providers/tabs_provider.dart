@@ -56,18 +56,6 @@ class DetailTabsNotifier extends StateNotifier<int> {
   }
 
   get index => state;
-
-  Widget getView(int index) {
-    switch (index) {
-      case 1:
-        return const RouteAnalysisScreen();
-      case 2:
-        return const RouteSectionDetailScreen();
-      case 0:
-      default:
-        return const RouteDetailScreen();
-    }
-  }
 }
 
 final detailTabsNotifier = StateNotifierProvider<DetailTabsNotifier, int>(

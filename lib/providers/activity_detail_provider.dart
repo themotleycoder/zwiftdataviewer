@@ -1,19 +1,13 @@
 import 'dart:convert';
 import 'dart:io';
 
-import 'package:flutter/foundation.dart';
 import 'package:flutter/widgets.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:http/http.dart' as http;
 import 'package:path_provider/path_provider.dart';
 import 'package:zwiftdataviewer/stravalib/Models/activity.dart';
 import 'package:zwiftdataviewer/stravalib/globals.dart' as globals;
-import 'package:zwiftdataviewer/utils/repository/filerepository.dart';
-import 'package:zwiftdataviewer/utils/repository/webrepository.dart';
 
-import '../secrets.dart';
-import '../stravalib/globals.dart';
-import '../stravalib/strava.dart';
 import 'activity_select_provider.dart';
 
 class StravaActivityDetailsNotifier extends StateNotifier<DetailedActivity> {
@@ -103,26 +97,26 @@ final activityDetailProvider =
   return ActivityDetailNotifier();
 });
 
-final activityDetailFromStreamProvider =
-    FutureProvider.autoDispose.family<DetailedActivity, int>((ref, id) async {
-  final FileRepository fileRepository = FileRepository();
-  final WebRepository webRepository =
-      WebRepository(strava: Strava(isInDebug, secret));
-
-  var retVal = DetailedActivity();
-
-  if (globals.isInDebug) {
-    retVal = await fileRepository.loadActivityDetail(id);
-  } else {
-    if (kDebugMode) {
-      print('CALL WEB SVC NOW! - loadActivityDetail');
-    }
-    retVal = await webRepository.loadActivityDetail(id);
-    ref.read(activityDetailProvider.notifier).setActivityDetail(retVal);
-  }
-
-  return retVal;
-});
+// final activityDetailFromStreamProvider =
+//     FutureProvider.autoDispose.family<DetailedActivity, int>((ref, id) async {
+//   final FileRepository fileRepository = FileRepository();
+//   final WebRepository webRepository =
+//       WebRepository(strava: Strava(isInDebug, secret));
+//
+//   var retVal = DetailedActivity();
+//
+//   if (globals.isInDebug) {
+//     retVal = await fileRepository.loadActivityDetail(id);
+//   } else {
+//     if (kDebugMode) {
+//       print('CALL WEB SVC NOW! - loadActivityDetail');
+//     }
+//     retVal = await webRepository.loadActivityDetail(id);
+//     ref.read(activityDetailProvider.notifier).setActivityDetail(retVal);
+//   }
+//
+//   return retVal;
+// });
 
 class LapSelectDataModel extends ChangeNotifier {
   Laps? lap;

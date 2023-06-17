@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:zwiftdataviewer/screens/routeanalysispowerchartscreen.dart';
-import 'package:zwiftdataviewer/screens/routeanalysispowertimechartscreen.dart';
+import 'package:zwiftdataviewer/screens/routeanalysispowercolumnchartscreen.dart';
+import 'package:zwiftdataviewer/screens/routeanalysispowertimepiechartscreen.dart';
 import 'package:zwiftdataviewer/screens/routeanalysisprofilechartscreen.dart';
 
 import '../utils/constants.dart';
