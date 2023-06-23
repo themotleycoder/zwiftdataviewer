@@ -7,7 +7,7 @@ import 'dart:io';
 import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:http/http.dart' as http;
-import 'package:zwiftdataviewer/stravalib/Models/summary_activity.dart';
+import 'package:zwiftdataviewer/strava_lib/Models/summary_activity.dart';
 
 import '../../secrets.dart';
 import '../Models/activity.dart';

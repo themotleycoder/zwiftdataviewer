@@ -1,4 +1,4 @@
-import 'package:zwiftdataviewer/stravalib/Models/athlete.dart';
+import 'package:zwiftdataviewer/strava_lib/Models/athlete.dart';
 
 import 'fault.dart';
 

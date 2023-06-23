@@ -1,13 +1,13 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:zwiftdataviewer/stravalib/Models/segmentEffort.dart';
+import 'package:zwiftdataviewer/strava_lib/Models/segmentEffort.dart';
 import 'package:zwiftdataviewer/utils/constants.dart' as constants;
 import 'package:zwiftdataviewer/utils/conversions.dart';
 import 'package:zwiftdataviewer/utils/theme.dart';
 
 import '../providers/activity_detail_provider.dart';
 import '../providers/activity_select_provider.dart';
-import '../stravalib/Models/activity.dart';
+import '../strava_lib/Models/activity.dart';
 import '../utils/constants.dart';
 
 final Map<int, String> climbingCAT = {1: '4', 2: '3', 3: '2', 4: '1', 5: 'HC'};

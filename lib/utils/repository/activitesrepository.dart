@@ -1,6 +1,6 @@
-import 'package:zwiftdataviewer/stravalib/Models/activity.dart';
+import 'package:zwiftdataviewer/strava_lib/Models/activity.dart';
 
-import '../../stravalib/Models/summary_activity.dart';
+import '../../strava_lib/Models/summary_activity.dart';
 
 abstract class ActivitiesRepository {
   Future<List<SummaryActivity?>?> loadActivities(int beforeDate, int afterDate);

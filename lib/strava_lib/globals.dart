@@ -1,8 +1,8 @@
 // globals.dart
 
 import 'package:flutter/foundation.dart';
-import 'package:zwiftdataviewer/stravalib/Models/fault.dart';
-import 'package:zwiftdataviewer/stravalib/Models/token.dart';
+import 'package:zwiftdataviewer/strava_lib/Models/fault.dart';
+import 'package:zwiftdataviewer/strava_lib/Models/token.dart';
 
 bool isInDebug = false; // set to true to see debug message in API
 

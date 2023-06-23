@@ -1,8 +1,8 @@
 // Activity
 
 import 'package:intl/intl.dart';
-import 'package:zwiftdataviewer/stravalib/Models/athlete.dart';
-import 'package:zwiftdataviewer/stravalib/Models/segmentEffort.dart';
+import 'package:zwiftdataviewer/strava_lib/Models/athlete.dart';
+import 'package:zwiftdataviewer/strava_lib/Models/segmentEffort.dart';
 
 import '../globals.dart' as globals;
 import 'fault.dart';

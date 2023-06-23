@@ -11,13 +11,13 @@ import 'package:shared_preferences/shared_preferences.dart';
 import 'package:uni_links/uni_links.dart';
 import 'package:url_launcher/url_launcher.dart';
 // import 'constants.dart';
-import 'package:zwiftdataviewer/stravalib/API/constants.dart';
+import 'package:zwiftdataviewer/strava_lib/API/constants.dart';
 // import '../Models/fault.dart';
-import 'package:zwiftdataviewer/stravalib/Models/fault.dart';
+import 'package:zwiftdataviewer/strava_lib/Models/fault.dart';
 // import '../Models/token.dart';
-import 'package:zwiftdataviewer/stravalib/Models/token.dart';
-import 'package:zwiftdataviewer/stravalib/errorCodes.dart' as error;
-import 'package:zwiftdataviewer/stravalib/globals.dart' as globals;
+import 'package:zwiftdataviewer/strava_lib/Models/token.dart';
+import 'package:zwiftdataviewer/strava_lib/errorCodes.dart' as error;
+import 'package:zwiftdataviewer/strava_lib/globals.dart' as globals;
 
 ///===========================================
 /// Class related to Authorization processs

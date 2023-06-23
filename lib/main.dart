@@ -6,9 +6,9 @@ import 'package:zwiftdataviewer/screens/allstatsrootscreen.dart';
 import 'package:zwiftdataviewer/screens/calendarscreen.dart';
 import 'package:zwiftdataviewer/screens/homescreen.dart';
 import 'package:zwiftdataviewer/screens/settingscreen.dart';
-import 'package:zwiftdataviewer/stravalib/Models/token.dart';
-import 'package:zwiftdataviewer/stravalib/globals.dart' as globals;
-import 'package:zwiftdataviewer/stravalib/strava.dart';
+import 'package:zwiftdataviewer/strava_lib/Models/token.dart';
+import 'package:zwiftdataviewer/strava_lib/globals.dart' as globals;
+import 'package:zwiftdataviewer/strava_lib/strava.dart';
 import 'package:zwiftdataviewer/utils/theme.dart';
 
 import 'secrets.dart';

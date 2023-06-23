@@ -8,7 +8,7 @@ import 'package:zwiftdataviewer/utils/theme.dart';
 import '../providers/activities_provider.dart';
 import '../providers/activity_select_provider.dart';
 import '../providers/tabs_provider.dart';
-import '../stravalib/Models/summary_activity.dart';
+import '../strava_lib/Models/summary_activity.dart';
 import '../utils/constants.dart';
 import '../utils/conversions.dart';
 

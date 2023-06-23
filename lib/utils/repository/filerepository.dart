@@ -5,8 +5,8 @@ import 'package:flutter/services.dart';
 import 'package:html/parser.dart' as Parser;
 import 'package:http/http.dart';
 import 'package:path_provider/path_provider.dart';
-import 'package:zwiftdataviewer/stravalib/API/streams.dart';
-import 'package:zwiftdataviewer/stravalib/Models/activity.dart';
+import 'package:zwiftdataviewer/strava_lib/API/streams.dart';
+import 'package:zwiftdataviewer/strava_lib/Models/activity.dart';
 import 'package:zwiftdataviewer/utils/constants.dart' as constants;
 import 'package:zwiftdataviewer/utils/repository/activitesrepository.dart';
 import 'package:zwiftdataviewer/utils/repository/configrepository.dart';
@@ -18,7 +18,8 @@ import 'package:zwiftdataviewer/utils/worlddata.dart';
 import '../../providers/config_provider.dart';
 import '../../providers/route_provider.dart';
 import '../../providers/world_select_provider.dart';
-import '../../stravalib/Models/summary_activity.dart';
+import '../../strava_lib/Models/summary_activity.dart';
+import '../../strava_lib/globals.dart';
 
 class FileRepository
     implements
@@ -221,7 +222,9 @@ class FileRepository
           routeName =
               url.substring(url.indexOf('>') + 1, url.indexOf('</a>')) ?? "";
         } catch (e) {
-          print('html parse error - scraping route data');
+          if (isInDebug) {
+            print('html parse error - scraping route data');
+          }
           index -= 1;
           url = val.children[index].innerHtml ?? "";
           routeName =

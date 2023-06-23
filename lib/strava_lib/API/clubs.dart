@@ -3,7 +3,7 @@ import 'dart:async';
 import 'dart:convert';
 
 import 'package:http/http.dart' as http;
-import 'package:zwiftdataviewer/stravalib/Models/summary_activity.dart';
+import 'package:zwiftdataviewer/strava_lib/Models/summary_activity.dart';
 
 import '../Models/club.dart';
 import '../Models/fault.dart';

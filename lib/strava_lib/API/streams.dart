@@ -2,7 +2,7 @@ import 'dart:async';
 import 'dart:convert';
 
 import 'package:http/http.dart' as http;
-import 'package:zwiftdataviewer/stravalib/Models/fault.dart';
+import 'package:zwiftdataviewer/strava_lib/Models/fault.dart';
 
 import '../errorCodes.dart' as error;
 import '../globals.dart' as globals;

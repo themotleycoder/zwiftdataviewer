@@ -4,10 +4,10 @@ import 'dart:io';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:http/http.dart' as http;
 import 'package:path_provider/path_provider.dart';
-import 'package:zwiftdataviewer/stravalib/Models/summary_activity.dart';
-import 'package:zwiftdataviewer/stravalib/globals.dart' as globals;
+import 'package:zwiftdataviewer/strava_lib/Models/summary_activity.dart';
+import 'package:zwiftdataviewer/strava_lib/globals.dart' as globals;
 
-import '../stravalib/Models/activity.dart';
+import '../strava_lib/Models/activity.dart';
 
 class ActivitiesNotifier extends StateNotifier<List<SummaryActivity>> {
   final String _baseUrl = 'https://www.strava.com/api/v3';

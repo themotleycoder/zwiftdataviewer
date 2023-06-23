@@ -7,7 +7,7 @@ import 'package:zwiftdataviewer/widgets/shortdataanalysis.dart';
 import '../appkeys.dart';
 import '../providers/activity_detail_provider.dart';
 import '../providers/lap_summary_provider.dart';
-import '../stravalib/Models/activity.dart';
+import '../strava_lib/Models/activity.dart';
 import '../utils/theme.dart';
 
 class WattsDataView extends ConsumerWidget {
