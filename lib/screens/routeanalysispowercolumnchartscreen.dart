@@ -38,6 +38,11 @@ class DisplayChart extends ConsumerWidget {
       return SfCartesianChart(
           primaryXAxis: NumericAxis(isVisible: false),
           primaryYAxis: NumericAxis(
+            plotBands: <PlotBand>[
+              PlotBand(
+                  start: ftp, end: ftp, borderColor: Colors.red, text: 'FTP', isVisible: true, borderWidth: 1,
+              )
+            ],
             minimum: 0,
             interval: 50,
           ),

@@ -39,7 +39,7 @@ class DisplayChart extends ConsumerWidget {
       return SfCartesianChart(
           tooltipBehavior: null,
           plotAreaBorderWidth: 0,
-          legend: Legend(
+          legend: const Legend(
               isVisible: true,
               overflowMode: LegendItemOverflowMode.wrap,
               position: LegendPosition.top),

@@ -13,7 +13,7 @@ class ChartsData {
 
       /// Returns the list of chart series which need to
       /// render on the multiple axes chart.
-      List<ChartSeries<YearlyTotals, String>> getMultipleAxisLineSeries(
+      List<ChartSeries<YearlyTotals, String>> getMultipleAxisColumnSeries(
           WidgetRef ref,
           Map<String, String> units,
           List<SummaryActivity> activities) {
@@ -42,22 +42,22 @@ class ChartsData {
     /// Create series list with multiple series
     final Map<String, double> distances = {};
     final Map<String, double> elevations = {};
-    const String totalName = "Total";
+    // const String totalName = "Total";
 
     for (var activity in activities) {
       double distance = Conversions.metersToDistance(ref, activity.distance);
       double elevation =
           Conversions.metersToHeight(ref, activity.totalElevationGain);
 
-      double d = distances[totalName] ?? 0;
-      double e = elevations[totalName] ?? 0;
-
-      distances[totalName] = distances[totalName] == null
-          ? distance
-          : distances[totalName] = d + distance;
-      elevations[totalName] = elevations[totalName] == null
-          ? elevation
-          : elevations[totalName] = e + elevation;
+      // double d = distances[totalName] ?? 0;
+      // double e = elevations[totalName] ?? 0;
+      //
+      // distances[totalName] = distances[totalName] == null
+      //     ? distance
+      //     : distances[totalName] = d + distance;
+      // elevations[totalName] = elevations[totalName] == null
+      //     ? elevation
+      //     : elevations[totalName] = e + elevation;
       if (distances.containsKey(activity.startDateLocal.year.toString())) {
         distance += distances[activity.startDateLocal.year.toString()]!;
         elevation += elevations[activity.startDateLocal.year.toString()]!;

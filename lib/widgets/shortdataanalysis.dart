@@ -14,12 +14,12 @@ class ShortDataAnalysis extends ConsumerWidget {
     final LapSummaryObject lapSummaryObject = ref.watch(lapSummaryObjectProvider);
 
     Map<String, String> units = Conversions.units(ref);
-    final time = lapSummaryObject.time ?? 0;
-    final double watts = (lapSummaryObject.watts ?? 0);
-    final double cadence = (lapSummaryObject.cadence ?? 0);
-    final double speed = (lapSummaryObject.speed ?? 0);
-    final double distance = (lapSummaryObject.distance ?? 0);
-    final double elevation = (lapSummaryObject.altitude ?? 0);
+    final time = lapSummaryObject.time;
+    final double watts = (lapSummaryObject.watts);
+    final double cadence = (lapSummaryObject.cadence);
+    final double speed = (lapSummaryObject.speed);
+    final double distance = (lapSummaryObject.distance);
+    final double elevation = (lapSummaryObject.altitude);
     return Expanded(
         flex: 1,
         child: ListView(

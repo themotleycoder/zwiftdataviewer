@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:syncfusion_flutter_charts/charts.dart';
+import 'package:zwiftdataviewer/screens/ridedetailscreen.dart';
 import 'package:zwiftdataviewer/strava_lib/Models/summary_activity.dart';
 import 'package:zwiftdataviewer/utils/conversions.dart';
 import 'package:zwiftdataviewer/widgets/listitemviews.dart';
@@ -8,16 +9,18 @@ import 'package:zwiftdataviewer/widgets/listitemviews.dart';
 import '../providers/activity_select_provider.dart';
 import '../providers/filters_provider.dart';
 import '../utils/charts.dart';
+import '../utils/theme.dart';
 
 class AllStatsScreenScatter extends ConsumerWidget {
   const AllStatsScreenScatter({super.key});
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final List<SummaryActivity> filteredActivities = ref.read(
-        dateActivityFiltersProvider);
+    final List<SummaryActivity> filteredActivities =
+        ref.read(dateActivityFiltersProvider);
 
-    final SummaryActivity selectedActivity = ref.watch(selectedActivityProvider);
+    final SummaryActivity selectedActivity =
+        ref.watch(selectedActivityProvider);
 
     Map<String, String> units = Conversions.units(ref);
     return Column(
@@ -33,9 +36,28 @@ class AllStatsScreenScatter extends ConsumerWidget {
           Container(
             padding: const EdgeInsets.all(0),
             child: Column(
+              mainAxisAlignment: MainAxisAlignment.center,
               children: <Widget>[
-                singleDataHeaderLineItem(
-                    selectedActivity.name ?? "No ride selected"),
+                InkWell(
+                    onTap: () {
+                      selectedActivity.name!=""?
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                          builder: (_) {
+                            return const DetailScreen();
+                          },
+                        ),
+                      ):null;
+                    },
+                    child: //Row(children: [
+                        ListTile(
+                            title:
+                                singleDataHeaderLineItem(selectedActivity.name),
+                            trailing: selectedActivity.name!=""?const Icon(
+                              Icons.arrow_forward_ios,
+                              color: zdvMidBlue,
+                            ):null)),
                 tripleDataSingleHeaderLineItem(
                   [
                     'Distance (${units['distance']!})',
@@ -44,12 +66,13 @@ class AllStatsScreenScatter extends ConsumerWidget {
                   ],
                   [
                     Conversions.metersToDistance(
-                            ref, selectedActivity.distance ?? 0)
+                            ref, selectedActivity.distance)
                         .toStringAsFixed(1),
                     Conversions.metersToHeight(
-                            ref, selectedActivity.totalElevationGain ?? 0)
+                            ref, selectedActivity.totalElevationGain)
                         .toStringAsFixed(1),
-                    Conversions.secondsToTime(selectedActivity.elapsedTime ?? 0),
+                    Conversions.secondsToTime(
+                        selectedActivity.elapsedTime),
                   ],
                 ),
               ],
@@ -71,7 +94,7 @@ class AllStatsScreenScatter extends ConsumerWidget {
         title: AxisTitle(text: 'Distance (${units['distance']!})'),
       ),
       primaryYAxis: NumericAxis(
-        majorGridLines: const MajorGridLines(width: 0),
+        majorGridLines: const MajorGridLines(width: 0.5),
         opposedPosition: false,
         labelFormat: '{value}',
         minimum: 0,
@@ -79,12 +102,15 @@ class AllStatsScreenScatter extends ConsumerWidget {
       ),
       series: chartSeries,
       onSelectionChanged: (SelectionArgs args) {
-        var selectedActivity = result.values.toList()[args.seriesIndex][args.pointIndex];
+        var selectedActivity =
+            result.values.toList()[args.seriesIndex][args.pointIndex];
         if (selectedActivity != null) {
-          ref.read(selectedActivityProvider.notifier).selectActivity(selectedActivity);
+          ref
+              .read(selectedActivityProvider.notifier)
+              .selectActivity(selectedActivity);
         }
       },
-      legend: Legend(
+      legend: const Legend(
         isVisible: true,
         position: LegendPosition.top,
         borderWidth: 1,

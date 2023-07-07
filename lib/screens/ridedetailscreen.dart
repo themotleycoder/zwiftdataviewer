@@ -76,10 +76,6 @@ class DetailScreen extends ConsumerWidget {
     //   ChangeNotifierProvider(
     //       create: (context) => SummaryActivitySelectDataModel())
     // ],
-    child:
-    // Consumer<ActivityDetailDataModel>(
-    //     builder: (context, myModel, child) {
-
     return Scaffold(
         appBar:
             // asyncActivityDetail.when(data: (DetailedActivity activityDetail) {
@@ -171,7 +167,7 @@ class DetailScreen extends ConsumerWidget {
               ref.read(detailTabsNotifier.notifier).setIndex(index),
           type: BottomNavigationBarType.fixed,
           unselectedItemColor: zdvmMidBlue[100],
-          fixedColor: zdvmOrange[100],
+          fixedColor: zdvmMidGreen[100],
           items: const [
             BottomNavigationBarItem(
               icon: Icon(Icons.list, key: AppKeys.activitiesTab),

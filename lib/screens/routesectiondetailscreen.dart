@@ -107,7 +107,7 @@ class RouteSectionDetailScreen extends ConsumerWidget {
         itemBuilder: (BuildContext context, int index) {
           final SegmentEffort effort = segmentEfforts![index];
           return Container(
-            padding: const EdgeInsets.fromLTRB(8.0, 0, 8.0, 0),
+            padding: const EdgeInsets.fromLTRB(0, 0, 0, 0),
             child: Center(
                 child: InkWell(
               child: Card(

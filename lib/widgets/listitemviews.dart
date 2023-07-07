@@ -31,20 +31,22 @@ Widget singleDataLineItem(
 }
 
 Widget singleDataHeaderLineItem(String dataPoint) {
-  return Card(
-      color: Colors.white,
-      elevation: defaultCardElevation,
-      margin: const EdgeInsets.fromLTRB(8.0, 4, 8.0, 4),
-      child: Container(
+  // return Card(
+  //     color: Colors.white,
+  //     elevation: defaultCardElevation,
+  //     margin: const EdgeInsets.fromLTRB(8.0, 4, 8.0, 4),
+      return Container(
           alignment: Alignment.center,
           padding: const EdgeInsets.fromLTRB(16.0, 8.0, 16.0, 8.0),
+          // color: Colors.red,
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             mainAxisAlignment: MainAxisAlignment.start,
             children: <Widget>[
-              Text(dataPoint, style: constants.bodyTextStyle),
+              Text(dataPoint, style: constants.bodyTextStyle, overflow: TextOverflow.ellipsis, maxLines: 1, textAlign: TextAlign.center),
             ],
-          )));
+          ));
+      // ));
 }
 
 Widget ColumnStackedDataHeaderLineItem(
@@ -101,11 +103,12 @@ Widget doubleDataHeaderLineItem(List<String> labels, List<String> dataPoints) {
 
 Widget doubleDataSingleHeaderLineItem(String title, IconData? icon,
     List<String> labels, List<String> dataPoints, String units) {
-  return Card(
-      elevation: defaultCardElevation,
-      color: Colors.white,
-      margin: const EdgeInsets.fromLTRB(8.0, 4, 8.0, 4),
-      child: Container(
+  // return Card(
+  //     elevation: defaultCardElevation,
+  //     color: Colors.white,
+  //     margin: const EdgeInsets.fromLTRB(8.0, 4, 8.0, 4),
+  //     child:
+      return Container(
           height: 100,
           padding: const EdgeInsets.fromLTRB(16.0, 8.0, 16.0, 8.0),
           // decoration: BoxDecoration(
@@ -130,16 +133,18 @@ Widget doubleDataSingleHeaderLineItem(String title, IconData? icon,
                     );
                   }))
             ],
-          )));
+          ));
+  // );
 }
 
 Widget tripleDataSingleHeaderLineItem(
     List<String> labels, List<String> dataPoints) {
-  return Card(
-      elevation: defaultCardElevation,
-      color: Colors.white,
-      margin: const EdgeInsets.fromLTRB(8.0, 4, 8.0, 4),
-      child: Container(
+  // return Card(
+  //     elevation: defaultCardElevation,
+  //     color: Colors.white,
+  //     margin: const EdgeInsets.fromLTRB(8.0, 4, 8.0, 4),
+  //     child:
+      return Container(
           height: 100,
           padding: const EdgeInsets.fromLTRB(16.0, 8.0, 16.0, 8.0),
           // decoration: BoxDecoration(
@@ -163,16 +168,18 @@ Widget tripleDataSingleHeaderLineItem(
                     );
                   }))
             ],
-          )));
+          ));
+  // );
 }
 
 Widget tripleDataLineItem(String title, IconData? icon, List<String> labels,
     List<String> dataPoints, String units) {
-  return Card(
-      color: Colors.white,
-      elevation: defaultCardElevation,
-      margin: const EdgeInsets.fromLTRB(8.0, 4, 8.0, 4),
-      child: Container(
+  // return Card(
+  //     color: Colors.white,
+  //     elevation: defaultCardElevation,
+  //     margin: const EdgeInsets.fromLTRB(8.0, 4, 8.0, 4),
+  //     child:
+      return Container(
           height: 100,
           padding: const EdgeInsets.fromLTRB(16.0, 8.0, 16.0, 8.0),
           // decoration: BoxDecoration(
@@ -197,7 +204,8 @@ Widget tripleDataLineItem(String title, IconData? icon, List<String> labels,
                     );
                   }))
             ],
-          )));
+          ));
+  // );
 }
 
 Widget gridViewItem(

@@ -15,7 +15,7 @@ class ActivitiesNotifier extends StateNotifier<List<SummaryActivity>> {
 
   ActivitiesNotifier(this._accessToken) : super([]);
 
-  Future<void> loadActivities({int perPage = 30}) async {
+  Future<void> loadActivities({int perPage = 50}) async {
     final cacheFile = await _getCacheFile();
     if (cacheFile.existsSync()) {
       final cacheData = await cacheFile.readAsString();
@@ -34,7 +34,7 @@ class ActivitiesNotifier extends StateNotifier<List<SummaryActivity>> {
 
     while (hasMorePages) {
       final url = Uri.parse(
-          '$_baseUrl/athlete/activities?page=$page&per_page=$perPage${lastActivityEpoch != null ? '&after=$lastActivityEpoch' : ''}');
+          '$_baseUrl/athlete/activities?page=$page&per_page=$perPage&after=$lastActivityEpoch');
       final response = await http.get(
         url,
         headers: {'Authorization': 'Bearer $_accessToken'},
@@ -66,10 +66,11 @@ class ActivitiesNotifier extends StateNotifier<List<SummaryActivity>> {
 
     if (newActivities.isNotEmpty) {
       final lastActivity = newActivities.last;
-      final lastActivityDate =
-          DateTime.parse(lastActivity.startDate.toString());
-      final lastActivityEpoch = lastActivityDate.millisecondsSinceEpoch ~/ 1000;
-      await _storeLastActivityEpoch(lastActivityEpoch);
+      final lastActivityDate = DateTime.parse(lastActivity.startDate.toString());
+      final newLastActivityEpoch = lastActivityDate.millisecondsSinceEpoch ~/ 1000;
+      await _storeLastActivityEpoch(newLastActivityEpoch);
+    } else {
+      await _storeLastActivityEpoch(DateTime.now().millisecondsSinceEpoch ~/ 1000);
     }
 
     await cacheFile.writeAsString(jsonEncode(state));

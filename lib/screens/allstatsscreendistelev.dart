@@ -29,7 +29,7 @@ class AllStatsScreenDistElev extends ConsumerWidget {
           Expanded(
               child: Padding(
             padding: const EdgeInsets.fromLTRB(0, 4, 0, 4),
-            child: _buildMultipleAxisLineChart(
+            child: _buildMultipleAxisColumnChart(
                 context, ref), //charts.BarChart(seriesList),
           )),
           Container(
@@ -77,9 +77,39 @@ class AllStatsScreenDistElev extends ConsumerWidget {
   }
 
   /// Returns the chart with multiple axes.
-  SfCartesianChart _buildMultipleAxisLineChart(BuildContext context, ref) {
+  SfCartesianChart _buildMultipleAxisColumnChart(BuildContext context, ref) {
     final Map<String, String> units = Conversions.units(ref);
     late bool isCardView = true;
+
+    // late TooltipBehavior _tooltipBehavior = TooltipBehavior(
+    //     enable: true,
+    //     // color: Colors.grey[400],
+    //     builder: (dynamic data, dynamic point, dynamic series, int pointIndex,
+    //         int seriesIndex) {
+    //       return Container(
+    //           alignment: Alignment.center,
+    //           height: 40,
+    //           width: 70,
+    //           decoration: BoxDecoration(
+    //             //color: Colors.grey[400],
+    //             borderRadius: const BorderRadius.all(Radius.circular(6.0)),
+    //           ),
+    //           child: Padding(
+    //               padding: const EdgeInsets.fromLTRB(4, 0, 0, 0),
+    //               child: Row(children: <Widget>[
+    //                 // SizedBox(
+    //                 //   height: 30,
+    //                 //   width: 35,
+    //                 //   child: Image.asset(_getImageTemplate(pointIndex)),
+    //                 // ),
+    //                 Text(
+    //                   data.year.toString(),
+    //                   style: const TextStyle(fontSize: 12, color: Colors.white),
+    //                   textScaleFactor: 1.0,
+    //                 ),
+    //               ])));
+    //     });
+
     return SfCartesianChart(
       legend: Legend(isVisible: !isCardView),
 
@@ -104,9 +134,9 @@ class AllStatsScreenDistElev extends ConsumerWidget {
         minimum: 0,
         title: AxisTitle(text: 'Distance (${units['distance']!})'),
       ),
-      series: ChartsData.getMultipleAxisLineSeries(
+      series: ChartsData.getMultipleAxisColumnSeries(
           ref, units, ref.watch(dateActivityFiltersProvider)),
-      tooltipBehavior: TooltipBehavior(enable: true),
+      tooltipBehavior: TooltipBehavior(enable: true), //_tooltipBehavior,//
     );
   }
 }

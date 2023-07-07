@@ -106,7 +106,7 @@ class RenderRouteDetails extends ConsumerWidget {
           // final activityDetail = activityDetails;
           return Expanded(
               child: Container(
-                  padding: const EdgeInsets.all(8.0),
+                  padding: const EdgeInsets.fromLTRB(0, 8, 0 ,0),
                   child: ListView(
                     children: <Widget>[
                       IconHeaderDataRow([
@@ -140,7 +140,7 @@ class RenderRouteDetails extends ConsumerWidget {
                         IconDataObject(
                             'Avg',
                             (activityDetails.averageHeartrate ?? 0).toString(),
-                            Icons.favorite,
+                            Icons.favorite_border,
                             units: 'bpm'),
                         IconDataObject(
                             'Max',
@@ -153,7 +153,7 @@ class RenderRouteDetails extends ConsumerWidget {
                             'Avg',
                             (activityDetails.averageWatts ?? 0)
                                 .toStringAsFixed(0),
-                            Icons.electric_bolt,
+                            Icons.electric_bolt_outlined,
                             units: 'w'),
                         IconDataObject(
                             'Max',
@@ -167,7 +167,7 @@ class RenderRouteDetails extends ConsumerWidget {
                             Conversions.mpsToMph(
                                     activityDetails.averageSpeed ?? 0.0)
                                 .toStringAsFixed(1),
-                            Icons.speed,
+                            Icons.speed_outlined,
                             units: units['speed']),
                         IconDataObject(
                             'Max',

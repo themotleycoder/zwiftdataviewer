@@ -37,9 +37,10 @@ class _RouteAnalysisScreenState extends ConsumerState<RouteAnalysisScreen>
     return Column(children: <Widget>[
       TabBar(
         indicatorColor: Colors.transparent,
-        unselectedLabelColor: zdvmMidBlue[100],
-        labelColor: zdvmOrange[100],
+        unselectedLabelColor: zdvMidBlue,//Colors.white,
+        labelColor: zdvmMidGreen[100],
         indicatorSize: TabBarIndicatorSize.tab,
+        dividerColor: Colors.transparent,
         controller: controller,
         tabs: const [
           Tab(
@@ -58,7 +59,7 @@ class _RouteAnalysisScreenState extends ConsumerState<RouteAnalysisScreen>
       ),
       Expanded(
           child: Padding(
-        padding: const EdgeInsets.fromLTRB(4, 0, 4, 4),
+        padding: const EdgeInsets.fromLTRB(0, 0, 0, 4),
         child: TabBarView(
           controller: controller,
           children: const <Widget>[
