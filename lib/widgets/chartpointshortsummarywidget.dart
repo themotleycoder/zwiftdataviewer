@@ -18,7 +18,7 @@ class ChartPointShortSummaryWidget extends ConsumerWidget {
     final Map<String, String> units = Conversions.units(ref);
 
     return Container(
-      padding: const EdgeInsets.fromLTRB(0, 0, 0, 16),
+      padding: const EdgeInsets.fromLTRB(0,0,0,16),
       child: Column(
         mainAxisAlignment: MainAxisAlignment.center,
         children: <Widget>[
@@ -59,18 +59,18 @@ class ChartPointShortSummaryWidget extends ConsumerWidget {
           IconHeaderDataRow([
             IconDataObject(
                 'Distance',
-                Conversions.metersToDistance(ref, selectedActivity.distance)
+                Conversions.metersToDistance(
+                    ref, selectedActivity.distance)
                     .toStringAsFixed(1),
                 Icons.route,
                 units: units['distance']),
             IconDataObject(
                 'Elevation',
-                Conversions.metersToHeight(
-                        ref, selectedActivity.totalElevationGain)
+                Conversions.metersToHeight(ref, selectedActivity.totalElevationGain)
                     .toStringAsFixed(1),
                 Icons.filter_hdr,
                 units: units['height']),
-          ]),
+            ]),
           IconHeaderDataRow([
             IconDataObject(
                 'Time',

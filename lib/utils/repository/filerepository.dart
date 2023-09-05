@@ -219,14 +219,16 @@ class FileRepository
         String routeName = "NA";
         String url = val.children[index].innerHtml ?? "";
         try {
-          routeName = url.substring(url.indexOf('>') + 1, url.indexOf('</a>'));
+          routeName =
+              url.substring(url.indexOf('>') + 1, url.indexOf('</a>'));
         } catch (e) {
           if (isInDebug) {
             print('html parse error - scraping route data');
           }
           index -= 1;
           url = val.children[index].innerHtml ?? "";
-          routeName = url.substring(url.indexOf('>') + 1, url.indexOf('</a>'));
+          routeName =
+              url.substring(url.indexOf('>') + 1, url.indexOf('</a>'));
         }
         url = url.substring(url.indexOf('https'), url.indexOf('/">'));
         final String world = val.children[index + 1].innerHtml ?? "";
@@ -342,8 +344,8 @@ class FileRepository
   @override
   Future<Map<DateTime, List<ClimbData>>> scrapeClimbPortalData() async {
     Map<DateTime, List<ClimbData>> climbs = {};
-    final response = await Client()
-        .get(Uri.parse('https://zwiftinsider.com/climb-portal-schedule/'));
+    final response =
+    await Client().get(Uri.parse('https://zwiftinsider.com/climb-portal-schedule/'));
     if (response.statusCode == 200) {
       // final String htmlStr =
       //     await rootBundle.loadString('assets/testjson/worldcalendar.html');
@@ -352,13 +354,13 @@ class FileRepository
       var vals = doc.getElementsByClassName("day-with-date");
       for (dynamic val in vals) {
         int dayNumber =
-            int.parse(val.getElementsByClassName("day-number")[0].innerHtml);
+        int.parse(val.getElementsByClassName("day-number")[0].innerHtml);
         DateTime key =
-            DateTime(DateTime.now().year, DateTime.now().month, dayNumber);
+        DateTime(DateTime.now().year, DateTime.now().month, dayNumber);
         List<dynamic> locations = val.getElementsByClassName("spiffy-title");
         List<ClimbData> climbData = [];
         for (dynamic location in locations) {
-          climbData.add(null!); //worldLookupByName[location.innerHtml]]!);
+          climbData.add(null!);//worldLookupByName[location.innerHtml]]!);
         }
 
         climbs[key] = climbData;
@@ -369,4 +371,5 @@ class FileRepository
     }
     return climbs;
   }
+
 }

@@ -21,80 +21,82 @@ class ActivitiesListView extends ConsumerWidget {
     // final List<SummaryActivity> activities =
     //     ref.watch(stravaActivitiesProvider).reversed.toList();
 
-    final AsyncValue<List<SummaryActivity>> activitiesList =
-        ref.watch(stravaActivitiesProvider);
+    final AsyncValue<List<SummaryActivity>> activitiesList = ref.watch(stravaActivitiesProvider);
 
     return Container(
-      child: activitiesList.when(data: (activities) {
-        return Container(
-            margin: const EdgeInsets.fromLTRB(0, 8, 0, 8),
-            child: ListView.separated(
-              itemCount: activities.length,
-              itemBuilder: (context, index) {
-                final activity = activities[index];
-                return Container(
-                  padding: const EdgeInsets.fromLTRB(8.0, 0, 8.0, 0),
-                  child: Center(
-                    child: InkWell(
-                        // child: Card(
-                        //     color: white,
-                        //     elevation: defaultCardElevation,
-                        child: ListTile(
-                      shape: RoundedRectangleBorder(
-                        borderRadius:
-                            BorderRadius.circular(constants.roundedCornerSize),
+      child: activitiesList.when(
+          data: (activities) {
+            return Container(
+                margin: const EdgeInsets.fromLTRB(0, 8, 0, 8),
+                child: ListView.separated(
+                  itemCount: activities.length,
+                  itemBuilder: (context, index) {
+                    final activity = activities[index];
+                    return Container(
+                      padding: const EdgeInsets.fromLTRB(8.0, 0, 8.0, 0),
+                      child: Center(
+                        child: InkWell(
+                          // child: Card(
+                          //     color: white,
+                          //     elevation: defaultCardElevation,
+                            child: ListTile(
+                              shape: RoundedRectangleBorder(
+                                borderRadius: BorderRadius.circular(constants.roundedCornerSize),
+                              ),
+                              tileColor: constants.tileBackgroundColor,
+                              leading: const Icon(Icons.directions_bike,
+                                  size: 32.0, color: zdvOrange),
+                              title: Text(activity.name,
+                                  overflow: TextOverflow.ellipsis,
+                                  maxLines: 2,
+                                  style: constants.headerFontStyle),
+                              subtitle: Text(
+                                  "${Conversions.metersToDistance(ref, activity.distance).toStringAsFixed(1)} ${units['distance']} ${DateFormat.yMd().format(activity.startDateLocal)}"),
+                              trailing: const Icon(
+                                Icons.arrow_forward_ios,
+                                color: zdvMidBlue,
+                              ),
+                              onTap: () {
+                                ref.read(detailTabsNotifier.notifier).setIndex(0);
+                                ref
+                                    .read(selectedActivityProvider.notifier)
+                                    .selectActivity(activity);
+                                Navigator.push(
+                                  context,
+                                  MaterialPageRoute(
+                                    builder: (_) {
+                                      return const DetailScreen(
+                                        // id: activities[index].id ?? -1,
+                                        // strava: strava,
+                                        // onRemove: () {
+                                        //   Navigator.pop(context);
+                                        //   onRemove(context, todo);
+                                        // },
+                                      );
+                                    },
+                                  ),
+                                );
+                              },
+                              // onItemClick(_activities[index], context);
+                            )),
+                        // )
                       ),
-                      tileColor: constants.tileBackgroundColor,
-                      leading: const Icon(Icons.directions_bike,
-                          size: 32.0, color: zdvOrange),
-                      title: Text(activity.name,
-                          overflow: TextOverflow.ellipsis,
-                          maxLines: 2,
-                          style: constants.headerFontStyle),
-                      subtitle: Text(
-                          "${Conversions.metersToDistance(ref, activity.distance).toStringAsFixed(1)} ${units['distance']} ${DateFormat.yMd().format(activity.startDateLocal)}"),
-                      trailing: const Icon(
-                        Icons.arrow_forward_ios,
-                        color: zdvMidBlue,
-                      ),
-                      onTap: () {
-                        ref.read(detailTabsNotifier.notifier).setIndex(0);
-                        ref
-                            .read(selectedActivityProvider.notifier)
-                            .selectActivity(activity);
-                        Navigator.push(
-                          context,
-                          MaterialPageRoute(
-                            builder: (_) {
-                              return const DetailScreen(
-                                  // id: activities[index].id ?? -1,
-                                  // strava: strava,
-                                  // onRemove: () {
-                                  //   Navigator.pop(context);
-                                  //   onRemove(context, todo);
-                                  // },
-                                  );
-                            },
-                          ),
-                        );
-                      },
-                      // onItemClick(_activities[index], context);
-                    )),
-                    // )
-                  ),
-                  // margin: EdgeInsets.all(1.0),
-                );
-              },
-              separatorBuilder: (context, index) => const SizedBox(
-                height: 10,
-              ),
-            ));
-      }, loading: () {
-        return const Center(child: CircularProgressIndicator());
-      }, error: (error, stack) {
-        return const Center(child: Text('Error loading activities'));
-      }),
+                      // margin: EdgeInsets.all(1.0),
+                    );
+                  }, separatorBuilder: (context, index) => const SizedBox(
+                  height: 10,
+                ),
+                )
+            );
+          },
+          loading: () {
+            return const Center(child: CircularProgressIndicator());
+          },
+          error: (error, stack) {
+            return const Center(child: Text('Error loading activities'));
+          }),
     );
+
 
     // if (activities.isEmpty) {
     //   //ref.read(stravaActivitiesProvider.notifier).loadActivities();

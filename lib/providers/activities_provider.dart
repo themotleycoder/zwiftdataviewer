@@ -112,8 +112,7 @@ Future<List<SummaryActivity>> fetchStravaActivities() async {
   // DateTime? mostRecentActivityDate;
   const String baseUrl = 'https://www.strava.com/api/v3';
   DateTime? lastActivityDate = await getLastActivityDate();
-  int afterTimestamp =
-      1420070400; //default is Thursday, January 1, 2015 12:00:00 AM
+  int afterTimestamp = 1420070400; //default is Thursday, January 1, 2015 12:00:00 AM
   List<SummaryActivity> cachedActivities = [];
 
   final accessToken = globals.token.accessToken;
@@ -121,7 +120,8 @@ Future<List<SummaryActivity>> fetchStravaActivities() async {
   final cacheFile = await _getCacheFile();
   if (cacheFile.existsSync()) {
     final cacheData = await cacheFile.readAsString();
-    cachedActivities = List.from(jsonDecode(cacheData))
+    cachedActivities =
+    List.from(jsonDecode(cacheData))
         .map((activity) => SummaryActivity.fromJson(activity))
         .toList();
     //   state = cachedActivities;
@@ -149,9 +149,9 @@ Future<List<SummaryActivity>> fetchStravaActivities() async {
 
     if (response.statusCode == 200) {
       final List<SummaryActivity> activities =
-          List.from(jsonDecode(response.body))
-              .map((activity) => SummaryActivity.fromJson(activity))
-              .toList();
+      List.from(jsonDecode(response.body))
+          .map((activity) => SummaryActivity.fromJson(activity))
+          .toList();
       final List<SummaryActivity> filteredActivities = activities
           .where((activity) => activity.type == ActivityType.VirtualRide)
           .toList();
@@ -162,6 +162,8 @@ Future<List<SummaryActivity>> fetchStravaActivities() async {
       } else {
         page++;
       }
+
+
     } else {
       throw Exception('Failed to load athlete activities');
     }
@@ -171,17 +173,17 @@ Future<List<SummaryActivity>> fetchStravaActivities() async {
   //   mostRecentActivityDate = allActivities[0].startDate;
   // }
 
+
   // final newActivities = allActivities.where((activity) => !state.contains(activity)).toList();
   fetchedActivities = [...cachedActivities, ...fetchedActivities];
   await cacheFile.writeAsString(jsonEncode(fetchedActivities));
 
   //await _storeLastActivityEpoch(DateTime.now().millisecondsSinceEpoch ~/ 1000);
   //if (mostRecentActivityDate != null) {
-  await saveLastActivityDate(
-      fetchedActivities[fetchedActivities.length - 1].startDate);
+    await saveLastActivityDate(fetchedActivities[fetchedActivities.length-1].startDate);
   //}
   final newActivities = fetchedActivities.reversed.toList();
-  return newActivities; //await ActivitiesNotifier(accessToken!).loadActivities();
+  return newActivities;//await ActivitiesNotifier(accessToken!).loadActivities();
 }
 
 final stravaActivitiesProvider =

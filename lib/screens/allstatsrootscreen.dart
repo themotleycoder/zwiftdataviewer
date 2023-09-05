@@ -26,47 +26,46 @@ class _AllStatsRootScreenState extends ConsumerState<AllStatsRootScreen>
     return Column(children: <Widget>[
       Container(
           child: TabBar(
-        indicatorColor: Colors.transparent,
-        unselectedLabelColor: zdvMidBlue,
-        //Colors.white,
-        labelColor: zdvmMidGreen[100],
-        indicatorSize: TabBarIndicatorSize.tab,
-        controller: controller,
-        dividerColor: Colors.transparent,
-        tabs: const [
-          Tab(
-            icon: Icon(Icons.terrain),
-            // text: 'Profile',
-          ),
-          Tab(
-            icon: Icon(Icons.bolt),
-            // text: 'Power',
-          ),
-          Tab(
-            icon: Icon(Icons.favorite_border),
-            // text: 'Time',
-          ),
-          Tab(
-            icon: Icon(Icons.route),
-            // text: 'Time',
-          ),
-          Tab(
-            icon: Icon(Icons.electric_bolt),
-            // text: 'Time',
-          ),
-        ],
-      )),
+            indicatorColor: Colors.transparent,
+            unselectedLabelColor: zdvMidBlue,//Colors.white,
+            labelColor: zdvmMidGreen[100],
+            indicatorSize: TabBarIndicatorSize.tab,
+            controller: controller,
+            dividerColor: Colors.transparent,
+            tabs: const [
+              Tab(
+                icon: Icon(Icons.terrain),
+                // text: 'Profile',
+              ),
+              Tab(
+                icon: Icon(Icons.bolt),
+                // text: 'Power',
+              ),
+              Tab(
+                icon: Icon(Icons.favorite_border),
+                // text: 'Time',
+              ),
+              Tab(
+                icon: Icon(Icons.route),
+                // text: 'Time',
+              ),
+              Tab(
+                icon: Icon(Icons.electric_bolt),
+                // text: 'Time',
+              ),
+            ],
+          )),
       Expanded(
           child: Padding(
         padding: const EdgeInsets.fromLTRB(0, 0, 0, 4),
         child: TabBarView(
           controller: controller,
           children: const <Widget>[
-            AllStatsScreenDistElev(),
-            AllStatsScreenScatter(),
-            AllStatsScreenHeartSummary(),
-            AllStatsScreenDistanceSummary(),
-            AllStatsScreenWattsSummary(),
+              AllStatsScreenDistElev(),
+              AllStatsScreenScatter(),
+              AllStatsScreenHeartSummary(),
+              AllStatsScreenDistanceSummary(),
+              AllStatsScreenWattsSummary(),
             // ),
           ],
         ),

@@ -42,4 +42,4 @@ const Color dividerColor = Colors.black12;
 const double boxSize = 10.0;
 Color? calenderColor = Colors.grey[600];
 const double defaultCardElevation = 0.0;
-const Color tileBackgroundColor = Color(0xfff5f5f5); //Colors.grey[100]
+const Color tileBackgroundColor = Color(0xfff5f5f5);//Colors.grey[100]

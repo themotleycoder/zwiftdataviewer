@@ -112,3 +112,5 @@ class AllStatsScreenHeartSummary extends ConsumerWidget {
     ];
   }
 }
+
+

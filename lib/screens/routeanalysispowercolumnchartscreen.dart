@@ -40,12 +40,7 @@ class DisplayChart extends ConsumerWidget {
           primaryYAxis: NumericAxis(
             plotBands: <PlotBand>[
               PlotBand(
-                start: ftp,
-                end: ftp,
-                borderColor: Colors.red,
-                text: 'FTP',
-                isVisible: true,
-                borderWidth: 1,
+                  start: ftp, end: ftp, borderColor: Colors.red, text: 'FTP', isVisible: true, borderWidth: 1,
               )
             ],
             minimum: 0,

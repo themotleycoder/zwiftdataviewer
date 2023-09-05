@@ -1,12 +1,12 @@
 import 'package:zwiftdataviewer/strava_lib/Models/summary_activity.dart';
 
 class StatsType {
-  static const String totalDistance = "TotalDistance";
-  static const String avgDistance = "AvgDistance";
-  static const String totalElevation = "TotalElevation";
-  static const String avgElevation = "AvgElevation";
-  static const String longestDistance = "LongestDistance";
-  static const String highestElevation = "HighestElevation";
+  static const String TotalDistance = "TotalDistance";
+  static const String AvgDistance = "AvgDistance";
+  static const String TotalElevation = "TotalElevation";
+  static const String AvgElevation = "AvgElevation";
+  static const String LongestDistance = "LongestDistance";
+  static const String HighestElevation = "HighestElevation";
 }
 
 class SummaryData {
@@ -27,12 +27,12 @@ class SummaryData {
         highestElevation = activity.totalElevationGain;
       }
     }
-    data[StatsType.totalDistance] = distance;
-    data[StatsType.avgDistance] = distance / activities.length;
-    data[StatsType.totalElevation] = elevation;
-    data[StatsType.avgElevation] = elevation / activities.length;
-    data[StatsType.longestDistance] = longestDistance;
-    data[StatsType.highestElevation] = highestElevation;
+    data[StatsType.TotalDistance] = distance;
+    data[StatsType.AvgDistance] = distance / activities.length;
+    data[StatsType.TotalElevation] = elevation;
+    data[StatsType.AvgElevation] = elevation / activities.length;
+    data[StatsType.LongestDistance] = longestDistance;
+    data[StatsType.HighestElevation] = highestElevation;
 
     return data;
   }

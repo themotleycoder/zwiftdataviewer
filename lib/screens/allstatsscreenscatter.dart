@@ -58,7 +58,7 @@ class AllStatsScreenScatter extends ConsumerWidget {
         ref
             .read(selectedActivityProvider.notifier)
             .selectActivity(selectedActivity);
-      },
+            },
       legend: const Legend(
         isVisible: true,
         position: LegendPosition.top,

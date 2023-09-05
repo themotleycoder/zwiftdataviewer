@@ -161,7 +161,7 @@ class DetailScreen extends ConsumerWidget {
             //     valueListenable: _tab,
             //     builder: (context, tab, _) {
             BottomNavigationBar(
-          elevation: constants.cardElevation,
+              elevation: constants.cardElevation,
           key: AppKeys.tabs,
           currentIndex: tabIndex,
           onTap: (index) =>

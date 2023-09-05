@@ -21,8 +21,7 @@ class HomeScreen extends ConsumerWidget {
     // final List<SummaryActivity> activities =
     //     ref.watch(stravaActivitiesProvider);
 
-    final AsyncValue<List<SummaryActivity>> activitiesList =
-        ref.watch(stravaActivitiesProvider);
+    final AsyncValue<List<SummaryActivity>> activitiesList = ref.watch(stravaActivitiesProvider);
 
     activitiesList.when(
       data: (a) {

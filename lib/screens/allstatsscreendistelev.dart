@@ -47,7 +47,8 @@ class AllStatsScreenDistElev extends ConsumerWidget {
       axes: <ChartAxis>[
         NumericAxis(
           opposedPosition: true,
-          name: 'yAxistotalDistance majorGridLines: const MajorGridLines(width: 0.5),
+          name: 'yAxis1',
+          majorGridLines: const MajorGridLines(width: 0.5),
           labelFormat: '{value}',
           minimum: 0,
           title: AxisTitle(text: 'Elevation (${units['height']!})'),
@@ -56,7 +57,7 @@ class AllStatsScreenDistElev extends ConsumerWidget {
       primaryXAxis: CategoryAxis(
         majorGridLines: const MajorGridLines(width: 0.5),
       ),
-      primaryYAxis: NavgDistance
+      primaryYAxis: NumericAxis(
         majorGridLines: const MajorGridLines(width: 0),
         opposedPosition: false,
         labelFormat: '{value}',
@@ -64,7 +65,7 @@ class AllStatsScreenDistElev extends ConsumerWidget {
         title: AxisTitle(text: 'Distance (${units['distance']!})'),
       ),
       series: ChartsData.getMultipleAxisColumnSeries(
-          ref, units, ref.watch(dateActivilongestDistanceer)),
+          ref, units, ref.watch(dateActivityFiltersProvider)),
       tooltipBehavior: TooltipBehavior(enable: true), //_tooltipBehavior,//
     );
   }
@@ -72,7 +73,7 @@ class AllStatsScreenDistElev extends ConsumerWidget {
   buildSummaryView(ref, Map<String, double> summaryData) {
     final Map<String, String> units = Conversions.units(ref);
     return Container(
-      padding: const EdgeInsets.fromLTRB(0, 0, 0, 16),
+      padding: const EdgeInsets.fromLTRB(0,0,0,16),
       child: ListView(
         shrinkWrap: true,
         children: <Widget>[
@@ -87,7 +88,7 @@ class AllStatsScreenDistElev extends ConsumerWidget {
             IconDataObject(
                 'Total',
                 Conversions.metersToHeight(
-                        ref, summaryData[stats.StatsType.totalElevation]!)
+                        ref, summaryData[stats.StatsType.TotalElevation]!)
                     .toStringAsFixed(1),
                 Icons.filter_hdr,
                 units: units['height']),
@@ -103,7 +104,7 @@ class AllStatsScreenDistElev extends ConsumerWidget {
             IconDataObject(
                 'Average',
                 Conversions.metersToHeight(
-                        ref, summaryData[stats.StatsType.avgElevation]!)
+                        ref, summaryData[stats.StatsType.AvgElevation]!)
                     .toStringAsFixed(1),
                 Icons.filter_hdr,
                 units: units['height']),
@@ -119,7 +120,7 @@ class AllStatsScreenDistElev extends ConsumerWidget {
             IconDataObject(
                 'Highest',
                 Conversions.metersToHeight(
-                        ref, summaryData[stats.StatsType.highestElevation]!)
+                        ref, summaryData[stats.StatsType.HighestElevation]!)
                     .toStringAsFixed(1),
                 Icons.filter_hdr,
                 units: units['height'])
