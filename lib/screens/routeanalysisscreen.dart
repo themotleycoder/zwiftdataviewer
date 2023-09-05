@@ -4,7 +4,6 @@ import 'package:zwiftdataviewer/screens/routeanalysispowercolumnchartscreen.dart
 import 'package:zwiftdataviewer/screens/routeanalysispowertimepiechartscreen.dart';
 import 'package:zwiftdataviewer/screens/routeanalysisprofilechartscreen.dart';
 
-import '../utils/constants.dart';
 import '../utils/theme.dart';
 
 class RouteAnalysisScreen extends ConsumerStatefulWidget {
@@ -37,7 +36,8 @@ class _RouteAnalysisScreenState extends ConsumerState<RouteAnalysisScreen>
     return Column(children: <Widget>[
       TabBar(
         indicatorColor: Colors.transparent,
-        unselectedLabelColor: zdvMidBlue,//Colors.white,
+        unselectedLabelColor: zdvMidBlue,
+        //Colors.white,
         labelColor: zdvmMidGreen[100],
         indicatorSize: TabBarIndicatorSize.tab,
         dividerColor: Colors.transparent,
@@ -63,23 +63,12 @@ class _RouteAnalysisScreenState extends ConsumerState<RouteAnalysisScreen>
         child: TabBarView(
           controller: controller,
           children: const <Widget>[
-            Card(
-              elevation: defaultCardElevation,
-              child: RouteAnalysisProfileChartScreen(),
-            ),
-            Card(
-              elevation: defaultCardElevation,
-              child: WattsDataView(),
-            ),
-            Card(
-              elevation: defaultCardElevation,
-              child: TimeDataView(),
-            ),
+            RouteAnalysisProfileChartScreen(),
+            WattsDataView(),
+            TimeDataView(),
           ],
         ),
       ))
     ]);
-    // });
-    // });
   }
 }

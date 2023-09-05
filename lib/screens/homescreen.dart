@@ -1,14 +1,13 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:zwiftdataviewer/appkeys.dart';
+import 'package:zwiftdataviewer/providers/activities_provider.dart';
+import 'package:zwiftdataviewer/providers/tabs_provider.dart';
+import 'package:zwiftdataviewer/strava_lib/Models/summary_activity.dart';
 import 'package:zwiftdataviewer/utils/constants.dart';
+import 'package:zwiftdataviewer/utils/constants.dart' as constants;
 import 'package:zwiftdataviewer/utils/theme.dart';
 import 'package:zwiftdataviewer/widgets/filterdatebutton.dart';
-
-import 'package:zwiftdataviewer/delegates/activitysearchdelegate.dart';
-import 'package:zwiftdataviewer/providers/activities_provider.dart';
-import '../providers/tabs_provider.dart';
-import '../strava_lib/Models/summary_activity.dart';
 
 class HomeScreen extends ConsumerWidget {
   const HomeScreen({super.key});
@@ -17,25 +16,41 @@ class HomeScreen extends ConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     final homePageTabs = ref.watch(homeTabsNotifier.notifier);
     final tabIndex = ref.watch(homeTabsNotifier);
+    List<SummaryActivity> activities = [];
 
-    final List<SummaryActivity> activities =
-    ref.watch(stravaActivitiesProvider);
+    // final List<SummaryActivity> activities =
+    //     ref.watch(stravaActivitiesProvider);
+
+    final AsyncValue<List<SummaryActivity>> activitiesList =
+        ref.watch(stravaActivitiesProvider);
+
+    activitiesList.when(
+      data: (a) {
+        activities = a;
+      },
+      loading: () {},
+      error: (error, stackTrace) {
+        print(error);
+      },
+    );
 
     return Scaffold(
         appBar: AppBar(
-            title: Text(
-              "Zwift Data Viewer",
-              style: appBarTextStyle,
-            ),
-            backgroundColor: zdvMidBlue,
-            elevation: 0.0,
-            actions: getActions(context, ref)),
+          title: Text(
+            "Zwift Data Viewer",
+            style: appBarTextStyle,
+          ),
+          backgroundColor: Colors.white,
+          elevation: 0.0,
+          actions: getActions(context, ref),
+        ),
         body: Stack(children: [
           Container(
             child: homePageTabs.getView(homePageTabs.index),
           ),
         ]),
         bottomNavigationBar: BottomNavigationBar(
+          elevation: constants.cardElevation,
           key: AppKeys.tabs,
           currentIndex: tabIndex,
           onTap: (index) => ref.read(homeTabsNotifier.notifier).setIndex(index),
@@ -71,17 +86,18 @@ class HomeScreen extends ConsumerWidget {
 
   List<Widget> getActions(context, ref) {
     List<Widget> actions = [];
-    final activities = ref.read(stravaActivitiesProvider.notifier);
+    final AsyncValue<List<SummaryActivity>> activitiesList =
+        ref.read(stravaActivitiesProvider);
     final tabIndex = ref.watch(homeTabsNotifier);
     if (tabIndex == HomeScreenTab.activities.index) {
       actions.add(
         IconButton(
           onPressed: () {
-            showSearch(
-                context: context,
-                delegate: ActivitySearch(activities.state.reversed.toList()));
+            // showSearch(
+            //     context: context,
+            //     delegate: ActivitySearch(activities.state.reversed.toList()));
           },
-          icon: const Icon(Icons.search, color: Colors.white),
+          icon: const Icon(Icons.search, color: Colors.black),
         ),
       );
     }

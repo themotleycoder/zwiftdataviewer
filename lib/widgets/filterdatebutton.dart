@@ -28,7 +28,7 @@ class FilterDateButton extends ConsumerWidget {
             // initialValue: model.dateFilter,
             onSelected: (dateFilter) => dateFilterProv.setFilter(dateFilter),
             itemBuilder: (BuildContext context) => _items(context, ref),
-            icon: const Icon(Icons.filter_list, color: Colors.white),
+            icon: const Icon(Icons.filter_list, color: Colors.black),
           )
           // },
           // ),

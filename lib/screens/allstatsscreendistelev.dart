@@ -3,7 +3,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:syncfusion_flutter_charts/charts.dart';
 import 'package:zwiftdataviewer/strava_lib/Models/summary_activity.dart';
 import 'package:zwiftdataviewer/utils/conversions.dart';
-import 'package:zwiftdataviewer/widgets/listitemviews.dart' as list_item_views;
+import 'package:zwiftdataviewer/widgets/iconitemwidgets.dart';
 
 import '../providers/filters_provider.dart';
 import '../utils/charts.dart';
@@ -20,7 +20,7 @@ class AllStatsScreenDistElev extends ConsumerWidget {
         ref.read(dateActivityFiltersProvider);
     final Map<String, double> summaryData =
         stats.SummaryData.createSummaryData(filteredActivities);
-    final Map<String, String> units = Conversions.units(ref);
+
     return Column(
         mainAxisSize: MainAxisSize.max,
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -29,86 +29,16 @@ class AllStatsScreenDistElev extends ConsumerWidget {
           Expanded(
               child: Padding(
             padding: const EdgeInsets.fromLTRB(0, 4, 0, 4),
-            child: _buildMultipleAxisColumnChart(
-                context, ref), //charts.BarChart(seriesList),
+            child: _buildMultipleAxisColumnChart(context, ref),
           )),
-          Container(
-            // padding: const EdgeInsets.fromLTRB(4, 0, 4, 0),
-            child: Column(
-              children: <Widget>[
-                list_item_views.tripleDataLineItem(
-                    "Distance",
-                    Icons.explore,
-                    ["Total", "Avg", "Longest"],
-                    [
-                      Conversions.metersToDistance(
-                              ref, summaryData[stats.StatsType.TotalDistance]!)
-                          .toStringAsFixed(1),
-                      Conversions.metersToDistance(
-                              ref, summaryData[stats.StatsType.AvgDistance]!)
-                          .toStringAsFixed(1),
-                      Conversions.metersToDistance(ref,
-                              summaryData[stats.StatsType.LongestDistance]!)
-                          .toStringAsFixed(1)
-                    ],
-                    units["distance"]!),
-                list_item_views.tripleDataLineItem(
-                  "Elevation",
-                  Icons.explore,
-                  ["Total", "Avg", "Highest"],
-                  [
-                    Conversions.metersToHeight(
-                            ref, summaryData[stats.StatsType.TotalElevation]!)
-                        .toStringAsFixed(1),
-                    Conversions.metersToHeight(
-                            ref, summaryData[stats.StatsType.AvgElevation]!)
-                        .toStringAsFixed(1),
-                    Conversions.metersToHeight(
-                            ref, summaryData[stats.StatsType.HighestElevation]!)
-                        .toStringAsFixed(1)
-                  ],
-                  units['height']!,
-                )
-              ],
-            ),
-          )
+          buildSummaryView(ref, summaryData),
         ]);
-    // });
   }
 
   /// Returns the chart with multiple axes.
   SfCartesianChart _buildMultipleAxisColumnChart(BuildContext context, ref) {
     final Map<String, String> units = Conversions.units(ref);
     late bool isCardView = true;
-
-    // late TooltipBehavior _tooltipBehavior = TooltipBehavior(
-    //     enable: true,
-    //     // color: Colors.grey[400],
-    //     builder: (dynamic data, dynamic point, dynamic series, int pointIndex,
-    //         int seriesIndex) {
-    //       return Container(
-    //           alignment: Alignment.center,
-    //           height: 40,
-    //           width: 70,
-    //           decoration: BoxDecoration(
-    //             //color: Colors.grey[400],
-    //             borderRadius: const BorderRadius.all(Radius.circular(6.0)),
-    //           ),
-    //           child: Padding(
-    //               padding: const EdgeInsets.fromLTRB(4, 0, 0, 0),
-    //               child: Row(children: <Widget>[
-    //                 // SizedBox(
-    //                 //   height: 30,
-    //                 //   width: 35,
-    //                 //   child: Image.asset(_getImageTemplate(pointIndex)),
-    //                 // ),
-    //                 Text(
-    //                   data.year.toString(),
-    //                   style: const TextStyle(fontSize: 12, color: Colors.white),
-    //                   textScaleFactor: 1.0,
-    //                 ),
-    //               ])));
-    //     });
 
     return SfCartesianChart(
       legend: Legend(isVisible: !isCardView),
@@ -117,8 +47,7 @@ class AllStatsScreenDistElev extends ConsumerWidget {
       axes: <ChartAxis>[
         NumericAxis(
           opposedPosition: true,
-          name: 'yAxis1',
-          majorGridLines: const MajorGridLines(width: 0.5),
+          name: 'yAxistotalDistance majorGridLines: const MajorGridLines(width: 0.5),
           labelFormat: '{value}',
           minimum: 0,
           title: AxisTitle(text: 'Elevation (${units['height']!})'),
@@ -127,7 +56,7 @@ class AllStatsScreenDistElev extends ConsumerWidget {
       primaryXAxis: CategoryAxis(
         majorGridLines: const MajorGridLines(width: 0.5),
       ),
-      primaryYAxis: NumericAxis(
+      primaryYAxis: NavgDistance
         majorGridLines: const MajorGridLines(width: 0),
         opposedPosition: false,
         labelFormat: '{value}',
@@ -135,8 +64,68 @@ class AllStatsScreenDistElev extends ConsumerWidget {
         title: AxisTitle(text: 'Distance (${units['distance']!})'),
       ),
       series: ChartsData.getMultipleAxisColumnSeries(
-          ref, units, ref.watch(dateActivityFiltersProvider)),
+          ref, units, ref.watch(dateActivilongestDistanceer)),
       tooltipBehavior: TooltipBehavior(enable: true), //_tooltipBehavior,//
+    );
+  }
+
+  buildSummaryView(ref, Map<String, double> summaryData) {
+    final Map<String, String> units = Conversions.units(ref);
+    return Container(
+      padding: const EdgeInsets.fromLTRB(0, 0, 0, 16),
+      child: ListView(
+        shrinkWrap: true,
+        children: <Widget>[
+          IconHeaderDataRow([
+            IconDataObject(
+                'Total',
+                Conversions.metersToDistance(
+                        ref, summaryData[stats.StatsType.TotalDistance]!)
+                    .toStringAsFixed(1),
+                Icons.route,
+                units: units['distance']),
+            IconDataObject(
+                'Total',
+                Conversions.metersToHeight(
+                        ref, summaryData[stats.StatsType.totalElevation]!)
+                    .toStringAsFixed(1),
+                Icons.filter_hdr,
+                units: units['height']),
+          ]),
+          IconHeaderDataRow([
+            IconDataObject(
+                'Average',
+                Conversions.metersToDistance(
+                        ref, summaryData[stats.StatsType.AvgDistance]!)
+                    .toStringAsFixed(1),
+                Icons.route,
+                units: units['height']),
+            IconDataObject(
+                'Average',
+                Conversions.metersToHeight(
+                        ref, summaryData[stats.StatsType.avgElevation]!)
+                    .toStringAsFixed(1),
+                Icons.filter_hdr,
+                units: units['height']),
+          ]),
+          IconHeaderDataRow([
+            IconDataObject(
+                'Longest',
+                Conversions.metersToDistance(
+                        ref, summaryData[stats.StatsType.LongestDistance]!)
+                    .toStringAsFixed(1),
+                Icons.route,
+                units: units['height']),
+            IconDataObject(
+                'Highest',
+                Conversions.metersToHeight(
+                        ref, summaryData[stats.StatsType.highestElevation]!)
+                    .toStringAsFixed(1),
+                Icons.filter_hdr,
+                units: units['height'])
+          ]),
+        ],
+      ),
     );
   }
 }

@@ -11,7 +11,8 @@ class ShortDataAnalysis extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final LapSummaryObject lapSummaryObject = ref.watch(lapSummaryObjectProvider);
+    final LapSummaryObject lapSummaryObject =
+        ref.watch(lapSummaryObjectProvider);
 
     Map<String, String> units = Conversions.units(ref);
     final time = lapSummaryObject.time;
@@ -36,7 +37,8 @@ class ShortDataAnalysis extends ConsumerWidget {
                 IconDataObject(
                     'Avg', cadence.toStringAsFixed(0), Icons.autorenew,
                     units: 'rpm'),
-                IconDataObject('Avg', Conversions.mpsToMph(speed).toStringAsFixed(1), Icons.speed,
+                IconDataObject('Avg',
+                    Conversions.mpsToMph(speed).toStringAsFixed(1), Icons.speed,
                     units: units['speed'])
               ]),
               IconHeaderDataRow([
@@ -66,12 +68,10 @@ class ShortDataAnalysisForPieLapSummary extends ConsumerWidget {
 
     final Map<String, String> units = Conversions.units(ref);
     final time = lapSummaryObject.time;
-    final double watts =
-        (lapSummaryObject.watts) / (lapSummaryObject.count);
+    final double watts = (lapSummaryObject.watts) / (lapSummaryObject.count);
     final double cadence =
         (lapSummaryObject.cadence) / (lapSummaryObject.count);
-    final double speed =
-        (lapSummaryObject.speed) / (lapSummaryObject.count);
+    final double speed = (lapSummaryObject.speed) / (lapSummaryObject.count);
     final double distance = lapSummaryObject.distance;
     final double elevation = lapSummaryObject.altitude;
     return Expanded(
@@ -86,7 +86,8 @@ class ShortDataAnalysisForPieLapSummary extends ConsumerWidget {
           IconHeaderDataRow([
             IconDataObject('Avg', cadence.toStringAsFixed(0), Icons.autorenew,
                 units: 'rpm'),
-            IconDataObject('Avg', Conversions.mpsToMph(speed).toStringAsFixed(1), Icons.speed,
+            IconDataObject('Avg',
+                Conversions.mpsToMph(speed).toStringAsFixed(1), Icons.speed,
                 units: units['speed'])
           ]),
           IconHeaderDataRow([

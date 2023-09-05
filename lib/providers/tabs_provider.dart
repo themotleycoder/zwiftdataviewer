@@ -3,9 +3,6 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../screens/allstatsrootscreen.dart';
 import '../screens/calendarscreen.dart';
-import '../screens/routeanalysisscreen.dart';
-import '../screens/routedetailscreen.dart';
-import '../screens/routesectiondetailscreen.dart';
 import '../screens/settingscreen.dart';
 import '../widgets/activitieslistview.dart';
 

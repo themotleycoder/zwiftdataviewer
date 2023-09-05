@@ -106,7 +106,7 @@ class RenderRouteDetails extends ConsumerWidget {
           // final activityDetail = activityDetails;
           return Expanded(
               child: Container(
-                  padding: const EdgeInsets.fromLTRB(0, 8, 0 ,0),
+                  padding: const EdgeInsets.fromLTRB(0, 8, 0, 0),
                   child: ListView(
                     children: <Widget>[
                       IconHeaderDataRow([

@@ -254,9 +254,11 @@ class WebScraper {
 /// WebScraperException throws exception with specified message.
 class WebScraperException implements Exception {
   var _message;
+
   WebScraperException(String? message) {
     _message = message;
   }
+
   String? errorMessage() {
     return _message;
   }

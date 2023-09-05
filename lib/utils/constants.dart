@@ -11,7 +11,7 @@ const int defaultDataDate =
 // enum DateFilter { all, month, week, year }
 
 TextStyle appBarTextStyle =
-    const TextStyle(inherit: true, color: Colors.white, fontSize: 16.0);
+    const TextStyle(inherit: true, color: Colors.black, fontSize: 16.0);
 TextStyle headerTextStyle =
     const TextStyle(inherit: true, fontSize: 12.0, color: Colors.blueGrey);
 TextStyle bodyTextStyleComplete = const TextStyle(
@@ -35,8 +35,11 @@ TextStyle headerFontStyle = const TextStyle(
 const double iconPadding = 8.0;
 const double rowHeight = 80;
 const double iconSize = 32.0;
+const double roundedCornerSize = 8.0;
+const double cardElevation = 0.0;
 const Color iconColor = zdvmOrange;
 const Color dividerColor = Colors.black12;
 const double boxSize = 10.0;
 Color? calenderColor = Colors.grey[600];
 const double defaultCardElevation = 0.0;
+const Color tileBackgroundColor = Color(0xfff5f5f5); //Colors.grey[100]

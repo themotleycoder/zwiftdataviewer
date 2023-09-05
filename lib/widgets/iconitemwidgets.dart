@@ -1,5 +1,6 @@
 import 'package:flutter/cupertino.dart';
 import 'package:zwiftdataviewer/utils/constants.dart' as constants;
+import 'package:zwiftdataviewer/widgets/tiles.dart';
 
 import '../utils/theme.dart';
 
@@ -24,37 +25,26 @@ Widget IconHeaderDataRow(List<IconDataObject> dataObjects) {
 
 Widget IconHeaderData(String title, String data, IconData icon,
     {String? units}) {
-  return Container(
-      width: 180,
-      // decoration: BoxDecoration(
-      //   borderRadius: BorderRadius.circular(10),
-      //   border: Border.all(
-      //     color: Colors.grey,
-      //     width: 1,
-      //   ),
-      // ),
-      padding: const EdgeInsets.fromLTRB(8, 4, 8, 4),
-      margin: const EdgeInsets.fromLTRB(8, 0, 8, 8),
-      child: Row(
+  return layoutTile(Row(
+    mainAxisAlignment: MainAxisAlignment.start,
+    children: <Widget>[
+      SizedBox(
+        // color: Colors.yellow,
+        width: 50,
+        height: 50,
+        child: Icon(icon, color: zdvMidBlue, size: 30),
+      ),
+      Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
         mainAxisAlignment: MainAxisAlignment.start,
-        children: <Widget>[
-          SizedBox(
-            // color: Colors.yellow,
-            width: 50,
-            height: 50,
-            child: Icon(icon, color: zdvMidBlue, size: 30),
-          ),
-          Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            mainAxisAlignment: MainAxisAlignment.start,
-            children: [
-              Text(title, style: constants.headerTextStyle),
-              Row(children: [
-                Text(data, style: constants.bodyTextStyle),
-                Text(" ${units ?? ''}", style: constants.headerTextStyle)
-              ]),
-            ],
-          ),
+        children: [
+          Text(title, style: constants.headerTextStyle),
+          Row(children: [
+            Text(data, style: constants.bodyTextStyle),
+            Text(" ${units ?? ''}", style: constants.headerTextStyle)
+          ]),
         ],
-      ));
+      ),
+    ],
+  ));
 }

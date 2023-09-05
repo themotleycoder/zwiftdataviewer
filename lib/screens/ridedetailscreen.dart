@@ -84,10 +84,10 @@ class DetailScreen extends ConsumerWidget {
                     // "(${DateFormat.yMd().format(
                     // DateTime.parse(activityDetail.startDate))})",
                     style: constants.appBarTextStyle),
-                backgroundColor: zdvMidBlue,
+                backgroundColor: Colors.white,
                 elevation: 0.0,
                 leading: IconButton(
-                    icon: const Icon(Icons.arrow_back, color: Colors.white),
+                    icon: const Icon(Icons.arrow_back, color: Colors.black),
                     onPressed: () {
                       Navigator.pop(context);
                     })),
@@ -161,6 +161,7 @@ class DetailScreen extends ConsumerWidget {
             //     valueListenable: _tab,
             //     builder: (context, tab, _) {
             BottomNavigationBar(
+          elevation: constants.cardElevation,
           key: AppKeys.tabs,
           currentIndex: tabIndex,
           onTap: (index) =>
