@@ -5,8 +5,10 @@ import 'package:zwiftdataviewer/screens/ridedetailscreen.dart';
 import 'package:zwiftdataviewer/strava_lib/Models/summary_activity.dart';
 import 'package:zwiftdataviewer/utils/constants.dart' as constants;
 import 'package:zwiftdataviewer/utils/conversions.dart';
-import 'package:zwiftdataviewer/utils/theme.dart';
 import 'package:zwiftdataviewer/widgets/iconitemwidgets.dart';
+import 'package:zwiftdataviewer/widgets/tiles.dart';
+
+import '../utils/theme.dart';
 
 class ChartPointShortSummaryWidget extends ConsumerWidget {
   const ChartPointShortSummaryWidget({super.key});
@@ -18,59 +20,66 @@ class ChartPointShortSummaryWidget extends ConsumerWidget {
     final Map<String, String> units = Conversions.units(ref);
 
     return Container(
-      padding: const EdgeInsets.fromLTRB(0,0,0,16),
+      padding: const EdgeInsets.fromLTRB(0, 0, 0, 16),
       child: Column(
         mainAxisAlignment: MainAxisAlignment.center,
         children: <Widget>[
-          InkWell(
-              onTap: () {
-                selectedActivity.name != ""
-                    ? Navigator.push(
-                        context,
-                        MaterialPageRoute(
-                          builder: (_) {
-                            return const DetailScreen();
-                          },
-                        ),
-                      )
-                    : null;
-              },
-              child: Row(children: [
-                Expanded(
-                  child: Container(
-                    padding: const EdgeInsets.fromLTRB(16.0, 8.0, 16.0, 8.0),
-                    child: Text(selectedActivity.name,
-                        style: constants.bodyTextStyle,
-                        overflow: TextOverflow.ellipsis,
-                        maxLines: 1,
-                        textAlign: TextAlign.left),
-                  ),
-                ),
-                Container(
-                  padding: const EdgeInsets.fromLTRB(16.0, 8.0, 16.0, 8.0),
-                  child: selectedActivity.name != ""
-                      ? const Icon(
-                          Icons.arrow_forward_ios,
-                          color: zdvMidBlue,
-                        )
-                      : null,
-                ),
-              ])),
+          Row(
+            mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+            children: [
+              layoutTile(Row(
+                  mainAxisAlignment: MainAxisAlignment.end,
+                  children: <Widget>[
+                    Expanded(
+                        child: Padding(
+                            padding:
+                                const EdgeInsets.fromLTRB(16.0, 0.0, 0.0, 0.0),
+                            child: Text(
+                                selectedActivity.name == ""
+                                    ? "No ride selected"
+                                    : selectedActivity.name,
+                                style: constants.bodyTextStyle,
+                                overflow: TextOverflow.ellipsis,
+                                maxLines: 1,
+                                textAlign: TextAlign.left))),
+                    SizedBox(
+                      width: 50,
+                      height: 50,
+                      child: selectedActivity.name != ""
+                          ? IconButton(
+                              color: zdvMidBlue,
+                              onPressed: () {
+                                Navigator.push(
+                                  context,
+                                  MaterialPageRoute(
+                                    builder: (_) {
+                                      return const DetailScreen();
+                                    },
+                                  ),
+                                );
+                              },
+                              icon: const Icon(Icons.arrow_forward_ios),
+                            )
+                          : null,
+                    ),
+                  ])),
+            ],
+          ),
           IconHeaderDataRow([
             IconDataObject(
                 'Distance',
-                Conversions.metersToDistance(
-                    ref, selectedActivity.distance)
+                Conversions.metersToDistance(ref, selectedActivity.distance)
                     .toStringAsFixed(1),
                 Icons.route,
                 units: units['distance']),
             IconDataObject(
                 'Elevation',
-                Conversions.metersToHeight(ref, selectedActivity.totalElevationGain)
+                Conversions.metersToHeight(
+                        ref, selectedActivity.totalElevationGain)
                     .toStringAsFixed(1),
                 Icons.filter_hdr,
                 units: units['height']),
-            ]),
+          ]),
           IconHeaderDataRow([
             IconDataObject(
                 'Time',
