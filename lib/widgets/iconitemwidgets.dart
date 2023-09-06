@@ -1,6 +1,6 @@
 import 'package:flutter/cupertino.dart';
 import 'package:zwiftdataviewer/utils/constants.dart' as constants;
-import 'package:zwiftdataviewer/widgets/tiles.dart';
+import 'package:zwiftdataviewer/widgets/tilewidget.dart';
 
 import '../utils/theme.dart';
 

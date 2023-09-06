@@ -55,7 +55,7 @@ class HomeScreen extends ConsumerWidget {
           onTap: (index) => ref.read(homeTabsNotifier.notifier).setIndex(index),
           type: BottomNavigationBarType.fixed,
           unselectedItemColor: zdvmMidBlue[100],
-          fixedColor: zdvmOrange[400],
+          fixedColor: zdvMidGreen,
           items: [
             BottomNavigationBarItem(
               icon: Badge(
@@ -68,6 +68,10 @@ class HomeScreen extends ConsumerWidget {
             const BottomNavigationBarItem(
               icon: Icon(Icons.show_chart, key: AppKeys.statsTab),
               label: "Statistics",
+            ),
+            const BottomNavigationBarItem(
+              icon: Icon(Icons.route, key: AppKeys.routesTab),
+              label: "Routes",
             ),
             const BottomNavigationBarItem(
               icon: Icon(Icons.calendar_today, key: AppKeys.calendarTab),

@@ -1,5 +1,6 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:zwiftdataviewer/screens/routesscreen.dart';
 
 import '../screens/allstatsrootscreen.dart';
 import '../screens/calendarscreen.dart';
@@ -26,8 +27,10 @@ class HomeTabsNotifier extends StateNotifier<int> {
       case 1:
         return const AllStatsRootScreen();
       case 2:
-        return CalendarScreen();
+        return const RoutesScreen();
       case 3:
+        return const CalendarScreen();
+      case 4:
         return const SettingsScreen();
       case 0:
       default:

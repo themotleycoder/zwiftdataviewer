@@ -6,7 +6,7 @@ import 'package:zwiftdataviewer/strava_lib/Models/summary_activity.dart';
 import 'package:zwiftdataviewer/utils/constants.dart' as constants;
 import 'package:zwiftdataviewer/utils/conversions.dart';
 import 'package:zwiftdataviewer/widgets/iconitemwidgets.dart';
-import 'package:zwiftdataviewer/widgets/tiles.dart';
+import 'package:zwiftdataviewer/widgets/tilewidget.dart';
 
 import '../utils/theme.dart';
 
