@@ -8,7 +8,7 @@ import 'package:zwiftdataviewer/utils/theme.dart';
 import '../providers/activities_provider.dart';
 import '../providers/activity_select_provider.dart';
 import '../providers/tabs_provider.dart';
-import '../strava_lib/Models/summary_activity.dart';
+import 'package:flutter_strava_api/Models/summary_activity.dart';
 import '../utils/conversions.dart';
 
 class ActivitiesListView extends ConsumerWidget {

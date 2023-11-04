@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:syncfusion_flutter_charts/charts.dart';
-import 'package:zwiftdataviewer/strava_lib/API/streams.dart';
+import 'package:flutter_strava_api/API/streams.dart';
 import 'package:zwiftdataviewer/utils/conversions.dart';
 import 'package:zwiftdataviewer/utils/theme.dart';
 
@@ -138,7 +138,7 @@ class DisplayChart extends ConsumerWidget {
           color: zdvRed,
           name: 'Heart Rate',
           xValueMapper: (DistanceValue heartrate, _) => heartrate.distance,
-          yValueMapper: (DistanceValue heartrate, _) => heartrate.value,
+          yValueMapper: (DistanceValue heartrate, _) => heartrate.value*5,
           dataLabelSettings: const DataLabelSettings(isVisible: false),
           enableTooltip: false,
           markerSettings: const MarkerSettings(isVisible: false)),

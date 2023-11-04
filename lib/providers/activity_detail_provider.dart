@@ -5,8 +5,8 @@ import 'package:flutter/widgets.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:http/http.dart' as http;
 import 'package:path_provider/path_provider.dart';
-import 'package:zwiftdataviewer/strava_lib/Models/activity.dart';
-import 'package:zwiftdataviewer/strava_lib/globals.dart' as globals;
+import 'package:flutter_strava_api/Models/activity.dart';
+import 'package:flutter_strava_api/globals.dart' as globals;
 
 import 'activity_select_provider.dart';
 

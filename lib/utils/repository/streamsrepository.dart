@@ -1,4 +1,4 @@
-import 'package:zwiftdataviewer/strava_lib/API/streams.dart';
+import 'package:flutter_strava_api/API/streams.dart';
 
 abstract class StreamsRepository {
   Future<StreamsDetailCollection?> loadStreams(int activityId);

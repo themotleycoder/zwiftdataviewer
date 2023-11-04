@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:zwiftdataviewer/strava_lib/Models/segmentEffort.dart';
+import 'package:flutter_strava_api/Models/segmentEffort.dart';
 import 'package:zwiftdataviewer/utils/constants.dart' as constants;
 import 'package:zwiftdataviewer/utils/conversions.dart';
 import 'package:zwiftdataviewer/utils/theme.dart';
@@ -95,7 +95,7 @@ class RouteSectionDetailScreen extends ConsumerWidget {
       segmentEfforts = activityDetail.segmentEfforts??[];
 
       return ListView.separated(
-        itemCount: segmentEfforts == null ? 0 : segmentEfforts!.length,
+        itemCount: segmentEfforts == null ? 0 : segmentEfforts.length,
         separatorBuilder: (BuildContext context, int index) => Container(
             // padding: EdgeInsets.all(5.0),
             // child: Center(),
@@ -113,10 +113,10 @@ class RouteSectionDetailScreen extends ConsumerWidget {
                   elevation: defaultCardElevation,
                   child: ListTile(
                     leading: createIcon(effort.prRank ?? 0),
-                    title: Text(segmentEfforts![index].segment!.name ?? "",
+                    title: Text(segmentEfforts[index].segment!.name ?? "",
                         style: constants.headerFontStyle),
                     subtitle:
-                        createSubTitle(ref, segmentEfforts![index], units),
+                        createSubTitle(ref, segmentEfforts[index], units),
                     // trailing: Icon(
                     //   Icons.arrow_forward_ios,
                     //   color: Constants.zdvMidBlue[100],

@@ -1,28 +1,54 @@
+import 'package:expandable/expandable.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:intl/intl.dart';
-import 'package:table_calendar/table_calendar.dart';
-import 'package:zwiftdataviewer/screens/worlddetailscreen.dart';
-import 'package:zwiftdataviewer/utils/constants.dart' as constants;
+import 'package:zwiftdataviewer/appkeys.dart';
+import 'package:zwiftdataviewer/providers/filters/filtered_routefilter_provider.dart';
 import 'package:zwiftdataviewer/utils/theme.dart';
-import 'package:zwiftdataviewer/utils/worlddata.dart';
-
-import '../appkeys.dart';
-import '../providers/route_provider.dart';
-import '../providers/world_calendar_provider.dart';
-import '../providers/world_select_provider.dart';
-import '../utils/constants.dart';
+import 'package:zwiftdataviewer/widgets/routedetailtilewidget.dart';
 
 class RoutesScreen extends ConsumerWidget {
-  const RoutesScreen({super.key});
+  const RoutesScreen() : super(key: AppKeys.worldDetailsScreen);
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    AsyncValue<Map<DateTime, List<WorldData>>> asyncWorldCalender =
-        ref.watch(loadWorldCalendarProvider);
+    //final WorldData worldData = ref.watch(selectedWorldProvider);
+    // ref.read(selectedWorldProvider.notifier).worldSelect = "";
+    // final AsyncValue<List<RouteData>> routeDataModel =
+    // ref.watch(allRoutesProvider);
 
-    return const Column(mainAxisSize: MainAxisSize.max, children: <Widget>[
+    // final AsyncValue<List<RouteData>> routeDataModel =
+    var routeDataModel = ref.watch(distanceRouteFiltersProvider);
 
-    ]);
-  }
+    return Scaffold(
+        // appBar: AppBar(
+        //     title: Text('Routes'),//worldData.name ?? "", style: constants.appBarTextStyle),
+        //     backgroundColor: white,
+        //     elevation: 0.0,
+        //     leading: IconButton(
+        //         icon: const Icon(Icons.arrow_back, color: Colors.black),
+        //         onPressed: () {
+        //           Navigator.pop(context);
+        //         })),
+        body: ExpandableTheme(
+          data: const ExpandableThemeData(
+            iconColor: zdvMidBlue,
+            useInkWell: true,
+          ),
+          child: routeDataModel.when(
+              data: (routes) {
+                return ListView.builder(
+                    physics: const BouncingScrollPhysics(),
+                    itemCount: routes.length,
+                    itemBuilder: (BuildContext ctxt, int index) {
+                      return RouteDetailTile(routes[index]);
+                    });
+              },
+              error: (Object error, StackTrace stackTrace) {
+                return Text(error.toString());
+              },
+              loading: () {
+                return const Center(child: CircularProgressIndicator());
+              }),
+        ));
+  } //);
 }

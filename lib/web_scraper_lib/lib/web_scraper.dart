@@ -50,13 +50,13 @@ class WebScraper {
       var client = Client();
 
       try {
-        var _response = await client.get(Uri.parse(baseUrl! + route));
+        var response = await client.get(Uri.parse(baseUrl! + route));
         // Calculating Time Elapsed using timer from dart:core.
         timeElaspsed = stopwatch.elapsed.inMilliseconds;
         stopwatch.stop();
         stopwatch.reset();
         // Parses the response body once it's retrieved to be used on the other methods.
-        _document = parse(_response.body);
+        _document = parse(response.body);
       } catch (e) {
         throw WebScraperException(e.toString());
       }
@@ -70,10 +70,10 @@ class WebScraper {
   Future<bool> loadFullURL(String page) async {
     var client = Client();
     try {
-      var _response = await client.get(Uri.parse(page));
+      var response = await client.get(Uri.parse(page));
       // Calculating Time Elapsed using timer from dart:core.
       // Parses the response body once it's retrieved to be used on the other methods.
-      _document = parse(_response.body);
+      _document = parse(response.body);
     } catch (e) {
       throw WebScraperException(e.toString());
     }
@@ -133,11 +133,11 @@ class WebScraper {
       for (var variableName in variableNames) {
         // Regular expression to get the variable names.
         var re = RegExp(
-            '$variableName *=.*?;(?=([^\"\']*\"[^\"\']*\")*[^\"\']*\$)',
+            '$variableName *=.*?;(?=([^"\']*"[^"\']*")*[^"\']*\$)',
             multiLine: true);
         //  Iterate all matches
         Iterable matches = re.allMatches(script.text);
-        matches.forEach((match) {
+        for (var match in matches) {
           if (match != null) {
             // List for all the occurence of the variable name.
             var temp = result[variableName];
@@ -147,7 +147,7 @@ class WebScraper {
             temp!.add(script.text.substring(match.start, match.end));
             result[variableName] = temp;
           }
-        });
+        }
       }
     }
 

@@ -7,7 +7,7 @@ import '../screens/calendarscreen.dart';
 import '../screens/settingscreen.dart';
 import '../widgets/activitieslistview.dart';
 
-enum HomeScreenTab { activities, stats, calendar, settings }
+enum HomeScreenTab { activities, stats, routes, calendar, settings }
 
 class HomeTabsNotifier extends StateNotifier<int> {
   HomeTabsNotifier() : super(0);

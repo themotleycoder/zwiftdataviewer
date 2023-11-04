@@ -46,21 +46,21 @@ class Validation {
     var s = str.split('/');
     if (s.length > 1) {
       var hostSlice = <String>[];
-      s.forEach((String e) {
+      for (var e in s) {
         if (e.isNotEmpty) {
           hostSlice.add(e);
         }
-      });
+      }
       var newStr = '';
       var i = 0;
-      hostSlice.forEach((String e) {
+      for (var e in hostSlice) {
         if (i > 0) {
-          newStr = newStr + '/' + e;
+          newStr = '$newStr/$e';
         } else {
           newStr += e;
         }
         i++;
-      });
+      }
       str = newStr;
     }
     return str;

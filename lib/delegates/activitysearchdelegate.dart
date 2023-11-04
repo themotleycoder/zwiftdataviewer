@@ -1,12 +1,12 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_strava_api/strava.dart';
 import 'package:intl/intl.dart';
 import 'package:zwiftdataviewer/secrets.dart';
-import 'package:zwiftdataviewer/strava_lib/Models/summary_activity.dart';
-import 'package:zwiftdataviewer/strava_lib/globals.dart' as globals;
+import 'package:flutter_strava_api/Models/summary_activity.dart';
+import 'package:flutter_strava_api/globals.dart' as globals;
 import 'package:zwiftdataviewer/utils/constants.dart' as constants;
 
 import '../screens/ridedetailscreen.dart';
-import '../strava_lib/strava.dart';
 import '../utils/constants.dart';
 import '../utils/theme.dart';
 

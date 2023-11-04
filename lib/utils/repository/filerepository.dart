@@ -5,8 +5,8 @@ import 'package:flutter/services.dart';
 import 'package:html/parser.dart' as Parser;
 import 'package:http/http.dart';
 import 'package:path_provider/path_provider.dart';
-import 'package:zwiftdataviewer/strava_lib/API/streams.dart';
-import 'package:zwiftdataviewer/strava_lib/Models/activity.dart';
+import 'package:flutter_strava_api/API/streams.dart';
+import 'package:flutter_strava_api/Models/activity.dart';
 import 'package:zwiftdataviewer/utils/constants.dart' as constants;
 import 'package:zwiftdataviewer/utils/repository/activitesrepository.dart';
 import 'package:zwiftdataviewer/utils/repository/configrepository.dart';
@@ -19,8 +19,8 @@ import '../../providers/climb_select_provider.dart';
 import '../../providers/config_provider.dart';
 import '../../providers/route_provider.dart';
 import '../../providers/world_select_provider.dart';
-import '../../strava_lib/Models/summary_activity.dart';
-import '../../strava_lib/globals.dart';
+import 'package:flutter_strava_api/Models/summary_activity.dart';
+import 'package:flutter_strava_api/globals.dart';
 
 class FileRepository
     implements
@@ -35,7 +35,7 @@ class FileRepository
   }
 
   Future<File> get _localActivityFile async {
-    final path = await 'assets/testjson/';
+    const path = 'assets/testjson/';
     return File('$path/activities.json');
   }
 
@@ -238,8 +238,15 @@ class FileRepository
         final String eventOnly =
             val.children[index + 5].innerHtml ?? val.children[index + 7] ?? "";
         final int id = worldLookupByName[world] ?? 0;
+
+        final double distanceMeters = double.parse(distance.substring(0, distance.indexOf('km')))*1000;
+        //final double distanceMiles = double.parse((distanceKM * 0.621371).toStringAsFixed(0)).toDouble();
+
+        final double altitudeMeters = double.parse(altitude == "" ? "0.0" : altitude.substring(0, altitude.indexOf('m')));
+        // final double altitudeFeet = double.parse((altitudeMeters * 3.28084).toStringAsFixed(0)).toDouble();
+
         final RouteData route =
-            RouteData(url, world, distance, altitude, eventOnly, routeName, id);
+            RouteData(url, world, distanceMeters, altitudeMeters, eventOnly, routeName, id);
 
         if (route.eventOnly?.toLowerCase() != 'run only' &&
             route.eventOnly?.toLowerCase() != 'run only, event only') {

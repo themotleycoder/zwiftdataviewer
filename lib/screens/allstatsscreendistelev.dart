@@ -1,11 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:syncfusion_flutter_charts/charts.dart';
-import 'package:zwiftdataviewer/strava_lib/Models/summary_activity.dart';
+import 'package:flutter_strava_api/Models/summary_activity.dart';
 import 'package:zwiftdataviewer/utils/conversions.dart';
 import 'package:zwiftdataviewer/widgets/iconitemwidgets.dart';
 
-import '../providers/filters_provider.dart';
+import '../providers/filters/filters_provider.dart';
 import '../utils/charts.dart';
 import '../utils/stats.dart' as stats;
 
@@ -42,7 +42,6 @@ class AllStatsScreenDistElev extends ConsumerWidget {
 
     return SfCartesianChart(
       legend: Legend(isVisible: !isCardView),
-
       /// API for multiple axis. It can returns the various axis to the chart.
       axes: <ChartAxis>[
         NumericAxis(
@@ -66,6 +65,13 @@ class AllStatsScreenDistElev extends ConsumerWidget {
       ),
       series: ChartsData.getMultipleAxisColumnSeries(
           ref, units, ref.watch(dateActivityFiltersProvider)),
+      onSelectionChanged: (SelectionArgs args) {
+        args;
+        // var lapSummaryObject = laps[args.pointIndex];
+        // ref
+        //     .read(lapSummaryObjectProvider.notifier)
+        //     .selectSummary(lapSummaryObject);
+      },
       tooltipBehavior: TooltipBehavior(enable: true), //_tooltipBehavior,//
     );
   }
@@ -73,7 +79,7 @@ class AllStatsScreenDistElev extends ConsumerWidget {
   buildSummaryView(ref, Map<String, double> summaryData) {
     final Map<String, String> units = Conversions.units(ref);
     return Container(
-      padding: const EdgeInsets.fromLTRB(0,0,0,16),
+      padding: const EdgeInsets.fromLTRB(0, 0, 0, 16),
       child: ListView(
         shrinkWrap: true,
         children: <Widget>[

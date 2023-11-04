@@ -1,5 +1,5 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:zwiftdataviewer/strava_lib/Models/summary_activity.dart';
+import 'package:flutter_strava_api/Models/summary_activity.dart';
 
 class SummaryActivityNotifier extends StateNotifier<SummaryActivity> {
   SummaryActivityNotifier() : super(emptyActivity);

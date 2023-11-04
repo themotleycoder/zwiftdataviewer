@@ -4,7 +4,7 @@ import 'package:zwiftdataviewer/providers/config_provider.dart';
 class Conversions {
   static double metersToDistance(WidgetRef ref, double meters) {
     final bool isMetric = ref.watch(configProvider).isMetric ?? false;
-    if (isMetric != null && isMetric) {
+    if (isMetric) {
       return (meters * 0.001);
     } else {
       return (meters * 0.000621);
@@ -13,7 +13,7 @@ class Conversions {
 
   static double metersToHeight(WidgetRef ref, double meters) {
     final bool isMetric = ref.watch(configProvider).isMetric ?? false;
-    if (isMetric != null && isMetric) {
+    if (isMetric) {
       return meters;
     } else {
       return (meters * 3.2808);
@@ -39,7 +39,7 @@ class Conversions {
   static Map<String, String> units(WidgetRef ref) {
     final bool isMetric = ref.watch(configProvider).isMetric ?? false;
 
-    if (isMetric != null && isMetric) {
+    if (isMetric) {
       return {'distance': 'km', 'height': 'm', 'speed': 'kph'};
     } else {
       return {'distance': 'mi', 'height': 'ft', 'speed': 'mph'};

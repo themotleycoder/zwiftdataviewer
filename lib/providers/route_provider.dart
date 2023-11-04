@@ -55,22 +55,22 @@ class RouteNotifier extends StateNotifier<Map<int, List<RouteData>>> {
 class RouteData {
   String? url;
   String? world;
-  String? distance;
-  String? altitude;
+  double? distanceMeters;
+  double? altitudeMeters;
   String? eventOnly;
   String? routeName;
   bool? completed = false;
   int? id;
   int? imageId;
 
-  RouteData(this.url, this.world, this.distance, this.altitude, this.eventOnly,
+  RouteData(this.url, this.world, this.distanceMeters, this.altitudeMeters, this.eventOnly,
       this.routeName, this.id);
 
   RouteData.fromJson(Map<String, dynamic> json) {
     url = json['url'];
     world = json['world'];
-    distance = json['distance'];
-    altitude = json['altitude'];
+    distanceMeters = json['distanceMeters'];
+    altitudeMeters = json['altitudeMeters'];
     eventOnly = json['eventOnly'];
     routeName = json['routeName'];
     completed = json['completed'];
@@ -82,8 +82,8 @@ class RouteData {
     final Map<String, dynamic> data = <String, dynamic>{};
     data['url'] = url;
     data['world'] = world;
-    data['distance'] = distance;
-    data['altitude'] = altitude;
+    data['distanceMeters'] = distanceMeters;
+    data['altitudeMeters'] = altitudeMeters;
     data['eventOnly'] = eventOnly;
     data['routeName'] = routeName;
     data['completed'] = completed;

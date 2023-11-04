@@ -1,10 +1,10 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:zwiftdataviewer/strava_lib/globals.dart' as globals;
+import 'package:flutter_strava_api/globals.dart' as globals;
 
 import '../secrets.dart';
-import '../strava_lib/API/streams.dart';
-import '../strava_lib/globals.dart';
-import '../strava_lib/strava.dart';
+import 'package:flutter_strava_api/API/streams.dart';
+import 'package:flutter_strava_api/globals.dart';
+import 'package:flutter_strava_api/strava.dart';
 import '../utils/repository/filerepository.dart';
 import '../utils/repository/webrepository.dart';
 

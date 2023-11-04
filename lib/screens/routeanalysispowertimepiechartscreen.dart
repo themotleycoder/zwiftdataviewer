@@ -6,7 +6,7 @@ import '../appkeys.dart';
 import '../providers/activity_detail_provider.dart';
 import '../providers/config_provider.dart';
 import '../providers/lap_select_provider.dart';
-import '../strava_lib/Models/activity.dart';
+import 'package:flutter_strava_api/Models/activity.dart';
 import '../utils/theme.dart';
 import '../widgets/shortdataanalysis.dart';
 

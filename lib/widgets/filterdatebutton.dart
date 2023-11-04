@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:zwiftdataviewer/appkeys.dart';
 
-import '../providers/filters_provider.dart';
+import '../providers/filters/filters_provider.dart';
 
 class FilterDateButton extends ConsumerWidget {
   final bool isActive;

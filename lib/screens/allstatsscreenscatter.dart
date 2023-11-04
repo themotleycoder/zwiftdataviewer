@@ -1,12 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:syncfusion_flutter_charts/charts.dart';
-import 'package:zwiftdataviewer/strava_lib/Models/summary_activity.dart';
+import 'package:flutter_strava_api/Models/summary_activity.dart';
 import 'package:zwiftdataviewer/utils/conversions.dart';
 import 'package:zwiftdataviewer/widgets/chartpointshortsummarywidget.dart';
 
 import '../providers/activity_select_provider.dart';
-import '../providers/filters_provider.dart';
+import '../providers/filters/filters_provider.dart';
 import '../utils/charts.dart';
 
 class AllStatsScreenScatter extends ConsumerWidget {
