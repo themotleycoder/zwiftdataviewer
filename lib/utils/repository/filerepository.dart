@@ -1,12 +1,16 @@
 import 'dart:convert';
 import 'dart:io';
 
+import 'package:flutter/foundation.dart';
 import 'package:flutter/services.dart';
-import 'package:html/parser.dart' as Parser;
-import 'package:http/http.dart';
-import 'package:path_provider/path_provider.dart';
 import 'package:flutter_strava_api/API/streams.dart';
 import 'package:flutter_strava_api/Models/activity.dart';
+import 'package:flutter_strava_api/Models/summary_activity.dart';
+import 'package:flutter_strava_api/globals.dart';
+import 'package:html/parser.dart' as parser;
+import 'package:http/http.dart';
+import 'package:path_provider/path_provider.dart';
+import 'package:zwiftdataviewer/models/routedata.dart';
 import 'package:zwiftdataviewer/utils/constants.dart' as constants;
 import 'package:zwiftdataviewer/utils/repository/activitesrepository.dart';
 import 'package:zwiftdataviewer/utils/repository/configrepository.dart';
@@ -17,10 +21,7 @@ import 'package:zwiftdataviewer/utils/worlddata.dart';
 
 import '../../providers/climb_select_provider.dart';
 import '../../providers/config_provider.dart';
-import '../../providers/route_provider.dart';
 import '../../providers/world_select_provider.dart';
-import 'package:flutter_strava_api/Models/summary_activity.dart';
-import 'package:flutter_strava_api/globals.dart';
 
 class FileRepository
     implements
@@ -66,7 +67,9 @@ class FileRepository
         activities.add(SummaryActivity.fromJson(obj));
       }
     } catch (e) {
-      print('file load error$e.toString()');
+      if (kDebugMode) {
+        print('file load error$e.toString()');
+      }
     }
     return activities;
   }
@@ -80,7 +83,9 @@ class FileRepository
       final DetailedActivity activity = DetailedActivity.fromJson(jsonResponse);
       return activity;
     } catch (e) {
-      print('file load error$e');
+      if (kDebugMode) {
+        print('file load error$e');
+      }
       return DetailedActivity();
     }
   }
@@ -92,7 +97,9 @@ class FileRepository
     try {
       final String jsonStr =
           await rootBundle.loadString('assets/testjson/photos_test.json');
-      print('');
+      if (kDebugMode) {
+        print('');
+      }
       final List<dynamic> jsonResponse = json.decode(jsonStr);
       for (Map m in jsonResponse) {
         photoActivity = PhotoActivity.fromJson(m);
@@ -100,7 +107,9 @@ class FileRepository
       }
       return retVal;
     } catch (e) {
-      print('file load error$e');
+      if (kDebugMode) {
+        print('file load error$e');
+      }
       return [];
     }
   }
@@ -115,7 +124,9 @@ class FileRepository
           StreamsDetailCollection.fromJson(jsonResponse);
       return streams;
     } catch (e) {
-      print('file load error$e');
+      if (kDebugMode) {
+        print('file load error$e');
+      }
       return null;
     }
   }
@@ -175,7 +186,9 @@ class FileRepository
         }
       }
     } catch (e) {
-      print('file load error - scraping route data');
+      if (kDebugMode) {
+        print('file load error - scraping route data');
+      }
       routes = await scrapeRouteData();
       saveRouteData(routes);
     }
@@ -212,7 +225,7 @@ class FileRepository
     final response =
         await Client().get(Uri.parse('https://zwiftinsider.com/routes/'));
     if (response.statusCode == 200) {
-      var doc = Parser.parse(response.body);
+      var doc = parser.parse(response.body);
       var vals = doc.getElementsByClassName("wpv-loop js-wpv-loop")[0].children;
       for (dynamic val in vals) {
         int index = 1;
@@ -223,7 +236,9 @@ class FileRepository
               url.substring(url.indexOf('>') + 1, url.indexOf('</a>'));
         } catch (e) {
           if (isInDebug) {
-            print('html parse error - scraping route data');
+            if (kDebugMode) {
+              print('html parse error - scraping route data');
+            }
           }
           index -= 1;
           url = val.children[index].innerHtml ?? "";
@@ -278,7 +293,9 @@ class FileRepository
         calendarData[DateTime.parse(key)] = list;
       });
     } catch (e) {
-      print('file load error - scraping world calendar data');
+      if (kDebugMode) {
+        print('file load error - scraping world calendar data');
+      }
       calendarData = await scrapeWorldCalendarData();
       saveWorldCalendarData(calendarData);
     }
@@ -326,7 +343,7 @@ class FileRepository
       // final String htmlStr =
       //     await rootBundle.loadString('assets/testjson/worldcalendar.html');
 
-      var doc = Parser.parse(response.body);
+      var doc = parser.parse(response.body);
       var vals = doc.getElementsByClassName("day-with-date");
       for (dynamic val in vals) {
         int dayNumber =
@@ -348,7 +365,6 @@ class FileRepository
     return worlds;
   }
 
-  @override
   Future<Map<DateTime, List<ClimbData>>> scrapeClimbPortalData() async {
     Map<DateTime, List<ClimbData>> climbs = {};
     final response =
@@ -357,7 +373,7 @@ class FileRepository
       // final String htmlStr =
       //     await rootBundle.loadString('assets/testjson/worldcalendar.html');
 
-      var doc = Parser.parse(response.body);
+      var doc = parser.parse(response.body);
       var vals = doc.getElementsByClassName("day-with-date");
       for (dynamic val in vals) {
         int dayNumber =

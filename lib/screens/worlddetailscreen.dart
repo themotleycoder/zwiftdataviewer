@@ -2,12 +2,12 @@ import 'package:expandable/expandable.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:zwiftdataviewer/appkeys.dart';
+import 'package:zwiftdataviewer/models/routedata.dart';
 import 'package:zwiftdataviewer/utils/constants.dart' as constants;
 import 'package:zwiftdataviewer/utils/theme.dart';
 import 'package:zwiftdataviewer/widgets/routedetailtilewidget.dart';
 
 import '../providers/filters/filtered_routes_provider.dart';
-import '../providers/route_provider.dart';
 import '../providers/world_select_provider.dart';
 
 class WorldDetailScreen extends ConsumerWidget {

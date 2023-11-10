@@ -1,8 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-// import 'package:flutter_svg/flutter_svg.dart';
 import 'package:url_launcher/url_launcher.dart';
-import 'package:zwiftdataviewer/providers/route_provider.dart';
+import 'package:zwiftdataviewer/models/routedata.dart';
 import 'package:zwiftdataviewer/utils/constants.dart' as constants;
 import 'package:zwiftdataviewer/utils/conversions.dart';
 import 'package:zwiftdataviewer/utils/theme.dart';
@@ -24,7 +23,7 @@ class RouteDetailTile extends ConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     final Map<String, String> units = Conversions.units(ref);
     String routeName =
-        "${_routeData.world}: ${_routeData.routeName}" ?? "";
+        "${_routeData.world}: ${_routeData.routeName}";
     if (_routeData.eventOnly == "Event Only") {
       routeName = "$routeName (Event Only)";
     }

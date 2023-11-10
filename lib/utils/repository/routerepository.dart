@@ -1,4 +1,4 @@
-import '../../providers/route_provider.dart';
+import 'package:zwiftdataviewer/models/routedata.dart';
 
 abstract class RouteRepository {
   Future<Map<int, List<RouteData>>> loadRouteData();

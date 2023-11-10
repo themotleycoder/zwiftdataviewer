@@ -8,7 +8,6 @@ import 'package:zwiftdataviewer/utils/theme.dart';
 import 'package:zwiftdataviewer/utils/worlddata.dart';
 
 import '../appkeys.dart';
-import '../providers/route_provider.dart';
 import '../providers/world_calendar_provider.dart';
 import '../providers/world_select_provider.dart';
 import '../utils/constants.dart';
@@ -18,6 +17,7 @@ class CalendarScreen extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
+
     AsyncValue<Map<DateTime, List<WorldData>>> asyncWorldCalender =
         ref.watch(loadWorldCalendarProvider);
 
@@ -105,7 +105,7 @@ _getEventsForDay(WidgetRef ref, Map<DateTime, List<WorldData>> worldData,
 
 Widget _buildEventList(WidgetRef ref, BuildContext context) {
   final List<WorldData> selectedEvents = ref.watch(eventsForDayProvider);
-  ref.read(routeProvider.notifier).load();
+  // ref.read(routeProvider.notifier).load();
   final List<Widget> list = selectedEvents
       .map((world) => Card(
           color: Colors.white,

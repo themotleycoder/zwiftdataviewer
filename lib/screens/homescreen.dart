@@ -1,12 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:flutter_strava_api/Models/summary_activity.dart';
 import 'package:zwiftdataviewer/appkeys.dart';
 import 'package:zwiftdataviewer/delegates/activitysearchdelegate.dart';
+import 'package:zwiftdataviewer/models/routedata.dart';
 import 'package:zwiftdataviewer/providers/activities_provider.dart';
-import 'package:zwiftdataviewer/providers/filters/filtered_routes_provider.dart';
-import 'package:zwiftdataviewer/providers/route_provider.dart';
+import 'package:zwiftdataviewer/providers/routedataprovider.dart';
 import 'package:zwiftdataviewer/providers/tabs_provider.dart';
-import 'package:flutter_strava_api/Models/summary_activity.dart';
 import 'package:zwiftdataviewer/utils/constants.dart';
 import 'package:zwiftdataviewer/utils/constants.dart' as constants;
 import 'package:zwiftdataviewer/utils/theme.dart';
@@ -20,12 +20,24 @@ class HomeScreen extends ConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     final homePageTabs = ref.watch(homeTabsNotifier.notifier);
     final tabIndex = ref.watch(homeTabsNotifier);
+    int count = 0;
 
     final AsyncValue<List<SummaryActivity>> activitiesList =
         ref.watch(stravaActivitiesProvider);
 
-    final AsyncValue<List<RouteData>> routeDataModel =
-        ref.watch(allRoutesProvider);
+    final AsyncValue<Map<int, List<RouteData>>> routeDataState =
+        ref.watch(routeDataProvider);
+
+    routeDataState.when(data: (Map<int, List<RouteData>> data) {
+      List<RouteData> element;
+      for(element in data.values) {
+        count += element.length;
+      }
+    }, error: (Object error, StackTrace stackTrace) {
+      count = 0;
+    }, loading: () {
+      count = 0;
+    });
 
     return Scaffold(
         appBar: activitiesList.when(
@@ -104,25 +116,25 @@ class HomeScreen extends ConsumerWidget {
               icon: Icon(Icons.show_chart, key: AppKeys.statsTab),
               label: "Statistics",
             ),
-            routeDataModel.when(
-                data: (routeData) => BottomNavigationBarItem(
-                      icon: Badge(
-                    backgroundColor: zdvmYellow[100],
-                    label: Text(routeData.length.toString()),
-                    child:
-                    const Icon(Icons.route, key: AppKeys.routesTab),
-                  ),
-                      label: "Routes",
-                    ),
-                error: (Object error, StackTrace stackTrace) =>
-                    const BottomNavigationBarItem(
-                      icon: Icon(Icons.route, key: AppKeys.routesTab),
-                      label: "Routes",
-                    ),
-                loading: () => const BottomNavigationBarItem(
-                      icon: Icon(Icons.route, key: AppKeys.routesTab),
-                      label: "Routes",
-                    )),
+            // routeDataModel.when(
+            //     data: (routeData) =>
+            BottomNavigationBarItem(
+              icon: Badge(
+                backgroundColor: zdvmYellow[100],
+                label: Text(count.toString()),
+                child: const Icon(Icons.route, key: AppKeys.routesTab),
+              ),
+              label: "Routes",
+            ),
+            // error: (Object error, StackTrace stackTrace) =>
+            //     const BottomNavigationBarItem(
+            //       icon: Icon(Icons.route, key: AppKeys.routesTab),
+            //       label: "Routes",
+            //     ),
+            // loading: () => const BottomNavigationBarItem(
+            //       icon: Icon(Icons.route, key: AppKeys.routesTab),
+            //       label: "Routes",
+            //     )),
             const BottomNavigationBarItem(
               icon: Icon(Icons.calendar_today, key: AppKeys.calendarTab),
               label: "Calendar",
