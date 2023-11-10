@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:intl/intl.dart';
 import 'package:table_calendar/table_calendar.dart';
+import 'package:zwiftdataviewer/models/worlddata.dart';
 import 'package:zwiftdataviewer/screens/worlddetailscreen.dart';
 import 'package:zwiftdataviewer/utils/constants.dart' as constants;
 import 'package:zwiftdataviewer/utils/theme.dart';

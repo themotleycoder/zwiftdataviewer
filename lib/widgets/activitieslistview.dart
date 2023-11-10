@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:flutter_strava_api/Models/summary_activity.dart';
 import 'package:intl/intl.dart';
 import 'package:zwiftdataviewer/screens/ridedetailscreen.dart';
 import 'package:zwiftdataviewer/utils/constants.dart' as constants;
@@ -8,7 +9,6 @@ import 'package:zwiftdataviewer/utils/theme.dart';
 import '../providers/activities_provider.dart';
 import '../providers/activity_select_provider.dart';
 import '../providers/tabs_provider.dart';
-import 'package:flutter_strava_api/Models/summary_activity.dart';
 import '../utils/conversions.dart';
 
 class ActivitiesListView extends ConsumerWidget {

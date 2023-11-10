@@ -1,5 +1,5 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:zwiftdataviewer/providers/world_select_provider.dart';
+import 'package:zwiftdataviewer/models/worlddata.dart';
 
 import '../utils/repository/filerepository.dart';
 

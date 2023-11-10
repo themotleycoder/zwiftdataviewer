@@ -2,13 +2,12 @@ import 'dart:convert';
 import 'dart:io';
 
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:flutter_strava_api/Models/activity.dart';
+import 'package:flutter_strava_api/Models/summary_activity.dart';
+import 'package:flutter_strava_api/globals.dart' as globals;
 import 'package:http/http.dart' as http;
 import 'package:path_provider/path_provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
-import 'package:flutter_strava_api/Models/summary_activity.dart';
-import 'package:flutter_strava_api/globals.dart' as globals;
-
-import 'package:flutter_strava_api/Models/activity.dart';
 
 class ActivitiesNotifier extends StateNotifier<List<SummaryActivity>> {
   final String _baseUrl = 'https://www.strava.com/api/v3';

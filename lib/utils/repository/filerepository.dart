@@ -11,6 +11,7 @@ import 'package:html/parser.dart' as parser;
 import 'package:http/http.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:zwiftdataviewer/models/routedata.dart';
+import 'package:zwiftdataviewer/models/worlddata.dart';
 import 'package:zwiftdataviewer/utils/constants.dart' as constants;
 import 'package:zwiftdataviewer/utils/repository/activitesrepository.dart';
 import 'package:zwiftdataviewer/utils/repository/configrepository.dart';
@@ -21,7 +22,6 @@ import 'package:zwiftdataviewer/utils/worlddata.dart';
 
 import '../../providers/climb_select_provider.dart';
 import '../../providers/config_provider.dart';
-import '../../providers/world_select_provider.dart';
 
 class FileRepository
     implements

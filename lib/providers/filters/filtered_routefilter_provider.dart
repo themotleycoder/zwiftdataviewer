@@ -1,8 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:zwiftdataviewer/models/routedata.dart';
+import 'package:zwiftdataviewer/models/worlddata.dart';
 import 'package:zwiftdataviewer/providers/filters/filtered_routes_provider.dart';
-import 'package:zwiftdataviewer/providers/world_select_provider.dart';
+
 
 class DistanceFiltersNotifier extends StateNotifier<RouteFilterObject> {
   DistanceFiltersNotifier()

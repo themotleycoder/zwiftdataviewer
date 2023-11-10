@@ -1,4 +1,4 @@
-import '../providers/world_select_provider.dart';
+import 'package:zwiftdataviewer/models/worlddata.dart';
 
 enum GuestWorldId {
   all,

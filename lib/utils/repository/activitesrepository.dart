@@ -1,5 +1,4 @@
 import 'package:flutter_strava_api/Models/activity.dart';
-
 import 'package:flutter_strava_api/Models/summary_activity.dart';
 
 abstract class ActivitiesRepository {

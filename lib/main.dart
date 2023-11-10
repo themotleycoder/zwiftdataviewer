@@ -1,5 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:flutter_strava_api/Models/token.dart';
+import 'package:flutter_strava_api/globals.dart' as globals;
+import 'package:flutter_strava_api/strava.dart';
 import 'package:stack_trace/stack_trace.dart' as stack_trace;
 import 'package:zwiftdataviewer/routes.dart';
 import 'package:zwiftdataviewer/screens/allstatsrootscreen.dart';
@@ -7,9 +10,6 @@ import 'package:zwiftdataviewer/screens/calendarscreen.dart';
 import 'package:zwiftdataviewer/screens/homescreen.dart';
 import 'package:zwiftdataviewer/screens/routesscreen.dart';
 import 'package:zwiftdataviewer/screens/settingscreen.dart';
-import 'package:flutter_strava_api/Models/token.dart';
-import 'package:flutter_strava_api/globals.dart' as globals;
-import 'package:flutter_strava_api/strava.dart';
 import 'package:zwiftdataviewer/utils/theme.dart';
 
 import 'secrets.dart';

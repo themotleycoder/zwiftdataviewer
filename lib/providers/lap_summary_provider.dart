@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-
 import 'package:flutter_strava_api/Models/activity.dart';
+
 import '../utils/theme.dart';
 import 'activity_detail_provider.dart';
 import 'config_provider.dart';
