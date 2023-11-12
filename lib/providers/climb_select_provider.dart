@@ -1,44 +1,20 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:zwiftdataviewer/models/climbdata.dart';
+import 'package:zwiftdataviewer/utils/climbdata.dart';
 
-import '../utils/climbdata.dart';
 
 class ClimbSelectNotifier extends StateNotifier<ClimbData> {
   ClimbSelectNotifier()
-      : super(ClimbData(1, GuestWorldId.watopia, 'Watopia',
-            'https://zwiftinsider.com/watopia/'));
+      : super(ClimbData(1, ClimbId.bealachnaba, 'Bealach na Bà',
+            'https://zwiftinsider.com/portal/bealach-na-ba/'));
 
   set worldSelect(ClimbData climbSelect) {
-    state = worldSelect;
+    state = climbSelect;
   }
 
-  ClimbData get worldSelect => state;
+  ClimbData get climbSelect => state;
 }
 
 final selectedClimbProvider =
     StateNotifierProvider<ClimbSelectNotifier, ClimbData>(
         (ref) => ClimbSelectNotifier());
-
-class ClimbData {
-  int? id;
-  GuestWorldId? guestWorldId;
-  String? name;
-  String? url;
-
-  ClimbData(this.id, this.guestWorldId, this.name, this.url);
-
-  ClimbData.fromJson(Map<String, dynamic> json) {
-    id = json['id'];
-    // guestWorldId = json['guestWorldId'];
-    name = json['name'];
-    url = json['url'];
-  }
-
-  Map<String, dynamic> toJson() {
-    final Map<String, dynamic> data = <String, dynamic>{};
-    data['id'] = id;
-    data['guestWorldId'] = guestWorldId.toString();
-    data['name'] = name;
-    data['url'] = url;
-    return data;
-  }
-}

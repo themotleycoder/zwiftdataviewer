@@ -10,8 +10,10 @@ import 'package:flutter_strava_api/globals.dart';
 import 'package:html/parser.dart' as parser;
 import 'package:http/http.dart';
 import 'package:path_provider/path_provider.dart';
+import 'package:zwiftdataviewer/models/climbdata.dart';
 import 'package:zwiftdataviewer/models/routedata.dart';
 import 'package:zwiftdataviewer/models/worlddata.dart';
+import 'package:zwiftdataviewer/utils/climbdata.dart';
 import 'package:zwiftdataviewer/utils/constants.dart' as constants;
 import 'package:zwiftdataviewer/utils/repository/activitesrepository.dart';
 import 'package:zwiftdataviewer/utils/repository/configrepository.dart';
@@ -20,7 +22,6 @@ import 'package:zwiftdataviewer/utils/repository/streamsrepository.dart';
 import 'package:zwiftdataviewer/utils/repository/worldcalendarrepository.dart';
 import 'package:zwiftdataviewer/utils/worlddata.dart';
 
-import '../../providers/climb_select_provider.dart';
 import '../../providers/config_provider.dart';
 
 class FileRepository
@@ -53,6 +54,11 @@ class FileRepository
   Future<File> get _localWorldCalendarFile async {
     final path = await _localPath;
     return File('$path/worldcalendar.json');
+  }
+
+  Future<File> get _localClimbCalendarFile async {
+    final path = await _localPath;
+    return File('$path/climbcalendar.json');
   }
 
   @override
@@ -278,6 +284,8 @@ class FileRepository
     return routes;
   }
 
+  /// World Calendar Portal Methods
+
   @override
   Future<Map<DateTime, List<WorldData>>> loadWorldCalendarData() async {
     Map<DateTime, List<WorldData>> calendarData = {};
@@ -365,7 +373,66 @@ class FileRepository
     return worlds;
   }
 
-  Future<Map<DateTime, List<ClimbData>>> scrapeClimbPortalData() async {
+  /// Climb Calendar Portal Methods
+
+  @override
+  Future<Map<DateTime, List<ClimbData>>> loadClimbCalendarData() async {
+    Map<DateTime, List<ClimbData>> calendarData = {};
+    final file = await _localClimbCalendarFile;
+    try {
+      final string = await file.readAsString();
+      final Map<String, dynamic> json = const JsonDecoder().convert(string);
+      json.forEach((key, climbRoute) {
+        List<ClimbData> list = [];
+        for (dynamic w in climbRoute) {
+          list.add(ClimbData(w['id'], null, w['name'], w['url']));
+        }
+        calendarData[DateTime.parse(key)] = list;
+      });
+    } catch (e) {
+      if (kDebugMode) {
+        print('file load error - scraping climb calendar data');
+      }
+      calendarData = await scrapeClimbCalendarData();
+      saveClimbCalendarData(calendarData);
+    }
+
+    return calendarData;
+  }
+
+  @override
+  Future saveClimbCalendarData(Map<DateTime, List<ClimbData>> routeData) async {
+    final file = await _localWorldCalendarFile;
+    String content = '{';
+    bool hasContent = false;
+    routeData.forEach((key, worldRoute) {
+      if (hasContent) {
+        content += ',';
+      }
+
+      String dateTime = key.toString();
+
+      content += jsonEncode(dateTime);
+      content += ":[";
+
+      for (int x = 0; x < worldRoute.length; x++) {
+        Map<String, dynamic> item = worldRoute[x].toJson();
+        if (x > 0) {
+          content += ',';
+        }
+        content += jsonEncode(item);
+      }
+      content += "]";
+
+      hasContent = true;
+    });
+
+    content += '}';
+    file.writeAsStringSync(content);
+  }
+
+  @override
+  Future<Map<DateTime, List<ClimbData>>> scrapeClimbCalendarData() async {
     Map<DateTime, List<ClimbData>> climbs = {};
     final response =
     await Client().get(Uri.parse('https://zwiftinsider.com/climb-portal-schedule/'));
@@ -383,16 +450,20 @@ class FileRepository
         List<dynamic> locations = val.getElementsByClassName("spiffy-title");
         List<ClimbData> climbData = [];
         for (dynamic location in locations) {
-          climbData.add(null!);//worldLookupByName[location.innerHtml]]!);
+          String str = location.innerHtml;
+          str = str.replaceAll('’', '\'');
+          climbData.add(climbsData[climbLookupByName[str]]!);
         }
 
         climbs[key] = climbData;
       }
-      // saveWorldClimbData(climbs);
+      saveClimbCalendarData(climbs);
     } else {
       throw Exception();
     }
     return climbs;
   }
+
+
 
 }

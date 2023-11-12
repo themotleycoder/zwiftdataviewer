@@ -5,8 +5,8 @@ import 'package:flutter_strava_api/globals.dart' as globals;
 import 'package:flutter_strava_api/strava.dart';
 import 'package:stack_trace/stack_trace.dart' as stack_trace;
 import 'package:zwiftdataviewer/routes.dart';
+import 'package:zwiftdataviewer/screens/allcalendarsrootscreen.dart';
 import 'package:zwiftdataviewer/screens/allstatsrootscreen.dart';
-import 'package:zwiftdataviewer/screens/calendarscreen.dart';
 import 'package:zwiftdataviewer/screens/homescreen.dart';
 import 'package:zwiftdataviewer/screens/routesscreen.dart';
 import 'package:zwiftdataviewer/screens/settingscreen.dart';
@@ -58,7 +58,7 @@ Future<void> main() async {
       AppRoutes.home: (context) => const HomeScreen(),
       AppRoutes.allStats: (context) => const AllStatsRootScreen(),
       AppRoutes.allroutes: (context) => const RoutesScreen(),
-      AppRoutes.calendar: (context) => const CalendarScreen(),
+      AppRoutes.calendar: (context) => const AllCalendarsRootScreen(),
       AppRoutes.settings: (context) => const SettingsScreen(),
     },
   )));

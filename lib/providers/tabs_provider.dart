@@ -1,11 +1,11 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:zwiftdataviewer/screens/allcalendarsrootscreen.dart';
+import 'package:zwiftdataviewer/screens/allstatsrootscreen.dart';
 import 'package:zwiftdataviewer/screens/routesscreen.dart';
+import 'package:zwiftdataviewer/screens/settingscreen.dart';
+import 'package:zwiftdataviewer/widgets/activitieslistview.dart';
 
-import '../screens/allstatsrootscreen.dart';
-import '../screens/calendarscreen.dart';
-import '../screens/settingscreen.dart';
-import '../widgets/activitieslistview.dart';
 
 enum HomeScreenTab { activities, stats, routes, calendar, settings }
 
@@ -29,7 +29,7 @@ class HomeTabsNotifier extends StateNotifier<int> {
       case 2:
         return const RoutesScreen();
       case 3:
-        return const CalendarScreen();
+        return const AllCalendarsRootScreen();
       case 4:
         return const SettingsScreen();
       case 0:

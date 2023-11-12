@@ -30,7 +30,7 @@ class HomeScreen extends ConsumerWidget {
 
     routeDataState.when(data: (Map<int, List<RouteData>> data) {
       List<RouteData> element;
-      for(element in data.values) {
+      for (element in data.values) {
         count += element.length;
       }
     }, error: (Object error, StackTrace stackTrace) {
@@ -137,7 +137,7 @@ class HomeScreen extends ConsumerWidget {
             //     )),
             const BottomNavigationBarItem(
               icon: Icon(Icons.calendar_today, key: AppKeys.calendarTab),
-              label: "Calendar",
+              label: "Calendars",
             ),
             const BottomNavigationBarItem(
               icon: Icon(Icons.settings, key: AppKeys.settingsTab),

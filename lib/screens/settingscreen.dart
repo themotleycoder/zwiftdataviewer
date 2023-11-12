@@ -95,7 +95,7 @@ class SettingsScreen extends ConsumerWidget {
                   color: zdvmMidBlue[100],
                   onPressed: () => refreshRouteData())),
           createCard(
-              'Refresh Calendar Data',
+              'Refresh Calendars Data',
               IconButton(
                   key: AppKeys.refreshButton,
                   tooltip: 'refresh',
@@ -116,6 +116,7 @@ class SettingsScreen extends ConsumerWidget {
 
   refreshCalendarData() {
     FileRepository().scrapeWorldCalendarData();
+    FileRepository().scrapeClimbCalendarData();
   }
 
   Card createCard(String label, Widget widget) {

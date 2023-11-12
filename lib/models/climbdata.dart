@@ -1,18 +1,18 @@
 import 'package:zwiftdataviewer/models/calendardata.dart';
-import 'package:zwiftdataviewer/utils/worlddata.dart';
+import 'package:zwiftdataviewer/utils/climbdata.dart';
 
-class WorldData extends CalendarData {
-  GuestWorldId? guestWorldId;
+class ClimbData extends CalendarData {
+  ClimbId? climbId;
   String? name;
   String? url;
 
-  WorldData(int id, this.guestWorldId, this.name, this.url){
+  ClimbData(int id, this.climbId, this.name, this.url){
     super.id = id;
   }
 
-  WorldData.fromJson(Map<String, dynamic> json) {
+  ClimbData.fromJson(Map<String, dynamic> json) {
     id = json['id'];
-    // guestWorldId = json['guestWorldId'];
+    climbId = json['climbId'];
     name = json['name'];
     url = json['url'];
   }
@@ -20,7 +20,7 @@ class WorldData extends CalendarData {
   Map<String, dynamic> toJson() {
     final Map<String, dynamic> data = <String, dynamic>{};
     data['id'] = id;
-    data['guestWorldId'] = guestWorldId.toString();
+    data['climbId'] = climbId.toString();
     data['name'] = name;
     data['url'] = url;
     return data;

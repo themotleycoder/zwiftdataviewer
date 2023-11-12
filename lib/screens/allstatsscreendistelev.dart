@@ -106,7 +106,7 @@ class AllStatsScreenDistElev extends ConsumerWidget {
                         ref, summaryData[stats.StatsType.AvgDistance]!)
                     .toStringAsFixed(1),
                 Icons.route,
-                units: units['height']),
+                units: units['distance']),
             IconDataObject(
                 'Average',
                 Conversions.metersToHeight(
@@ -122,7 +122,7 @@ class AllStatsScreenDistElev extends ConsumerWidget {
                         ref, summaryData[stats.StatsType.LongestDistance]!)
                     .toStringAsFixed(1),
                 Icons.route,
-                units: units['height']),
+                units: units['distance']),
             IconDataObject(
                 'Highest',
                 Conversions.metersToHeight(
