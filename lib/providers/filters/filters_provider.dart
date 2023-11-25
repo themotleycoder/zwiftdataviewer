@@ -1,8 +1,7 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_strava_api/Models/summary_activity.dart';
 import 'package:zwiftdataviewer/providers/activities_provider.dart';
-
-import '../../utils/worlddata.dart';
+import 'package:zwiftdataviewer/utils/worldsconfig.dart';
 
 enum DateFilter { all, month, week, year }
 
@@ -82,5 +81,3 @@ final filteredRoutesProvider = Provider((ref) {
     }
   }).toList();
 });
-
-

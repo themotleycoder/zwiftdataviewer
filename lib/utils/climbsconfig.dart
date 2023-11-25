@@ -1,5 +1,3 @@
-
-
 import 'package:zwiftdataviewer/models/climbdata.dart';
 
 enum ClimbId {
@@ -49,7 +47,7 @@ enum climbType {
   eventonly,
 }
 
-final Map<int, ClimbData> climbsData = {
+final Map<int, ClimbData> allClimbsConfig = {
   1: ClimbData(1, ClimbId.bealachnaba, 'Bealach na Bà',
       'https://zwiftinsider.com/portal/bealach-na-ba/'),
   2: ClimbData(2, ClimbId.coldaspin, "Col d'Aspin",
@@ -74,7 +72,10 @@ final Map<int, ClimbData> climbsData = {
       'https://zwiftinsider.com/portal/crow-road/'),
   12: ClimbData(12, ClimbId.laLagunaNegra, 'La Laguna Negra',
       'https://zwiftinsider.com/portal/la-laguna-negra/'),
-  13: ClimbData(13, ClimbId.laSuperPlanchedesBellesFilles, 'La Super Planche des Belles Filles',
+  13: ClimbData(
+      13,
+      ClimbId.laSuperPlanchedesBellesFilles,
+      'La Super Planche des Belles Filles',
       'https://zwiftinsider.com/portal/la-super-planche-des-belles-filles/'),
   14: ClimbData(14, ClimbId.oldLaHonda, 'Old La Honda',
       'https://zwiftinsider.com/portal/old-la-honda/'),

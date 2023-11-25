@@ -2,25 +2,25 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_strava_api/Models/activity.dart';
 import 'package:syncfusion_flutter_charts/charts.dart';
+import 'package:zwiftdataviewer/appkeys.dart';
+import 'package:zwiftdataviewer/providers/activity_detail_provider.dart';
+import 'package:zwiftdataviewer/providers/config_provider.dart';
+import 'package:zwiftdataviewer/providers/lap_select_provider.dart';
+import 'package:zwiftdataviewer/screens/layouts/routeanalysistablayout.dart';
+import 'package:zwiftdataviewer/utils/theme.dart';
+import 'package:zwiftdataviewer/widgets/shortdataanalysis.dart';
 
-import '../appkeys.dart';
-import '../providers/activity_detail_provider.dart';
-import '../providers/config_provider.dart';
-import '../providers/lap_select_provider.dart';
-import '../utils/theme.dart';
-import '../widgets/shortdataanalysis.dart';
-
-class TimeDataView extends StatelessWidget {
-  const TimeDataView({super.key});
+class RouteAnalysisTimeDataView extends RouteAnalysisTabLayout {
+  const RouteAnalysisTimeDataView({super.key});
 
   @override
-  Widget build(BuildContext context) {
-    return const Column(
-      children: [
-        Expanded(child: DisplayChart()),
-        ShortDataAnalysisForPieLapSummary(),
-      ],
-    );
+  ConsumerWidget buildChart() {
+    return const DisplayChart();
+  }
+
+  @override
+  buildChartDataView() {
+    return const ShortDataAnalysisForPieLapSummary();
   }
 }
 
@@ -29,18 +29,19 @@ class DisplayChart extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    AsyncValue<List<LapSummaryObject>> lapSummaryData =
-        ref.watch(lapSummaryDataProvider(ref.watch(stravaActivityDetailsProvider)));
+    AsyncValue<List<LapSummaryObject>> lapSummaryData = ref.watch(
+        lapSummaryDataProvider(ref.watch(stravaActivityDetailsProvider)));
 
     return lapSummaryData.when(data: (laps) {
-      return SfCircularChart(
+      return Expanded(
+          child: SfCircularChart(
           series: createDataSet(laps),
           onSelectionChanged: (SelectionArgs args) {
             var lapSummaryObject = laps[args.pointIndex];
             ref
                 .read(lapSummaryObjectPieProvider.notifier)
                 .selectSummary(lapSummaryObject);
-          });
+          }));
     }, error: (Object error, StackTrace stackTrace) {
       return const Text("error");
     }, loading: () {

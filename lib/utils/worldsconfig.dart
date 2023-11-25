@@ -37,7 +37,7 @@ enum routeType {
   eventonly,
 }
 
-final Map<int, WorldData> worldsData = {
+final Map<int, WorldData> allWorldsConfig = {
   1: WorldData(
       1, GuestWorldId.watopia, 'Watopia', 'https://zwiftinsider.com/watopia/'),
   2: WorldData(2, GuestWorldId.richmond, 'Richmond',

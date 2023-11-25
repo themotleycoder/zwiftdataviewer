@@ -1,14 +1,14 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:zwiftdataviewer/models/worlddata.dart';
+import 'package:zwiftdataviewer/providers/world_calendar_provider.dart';
+import 'package:zwiftdataviewer/providers/world_select_provider.dart';
 import 'package:zwiftdataviewer/screens/worlddetailscreen.dart';
 import 'package:zwiftdataviewer/utils/theme.dart';
-import 'package:zwiftdataviewer/utils/worlddata.dart';
+import 'package:zwiftdataviewer/utils/worldsconfig.dart';
 import 'package:zwiftdataviewer/widgets/worldeventscalendarwidget.dart';
 
 import '../appkeys.dart';
-import '../providers/world_calendar_provider.dart';
-import '../providers/world_select_provider.dart';
 import '../utils/constants.dart';
 
 class WorldCalendarScreen extends ConsumerWidget {
@@ -16,7 +16,6 @@ class WorldCalendarScreen extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-
     final AsyncValue<Map<DateTime, List<WorldData>>> asyncWorldCalender =
         ref.watch(loadWorldCalendarProvider);
 
@@ -40,7 +39,7 @@ class WorldCalendarScreen extends ConsumerWidget {
 }
 
 Widget _buildEventList(WidgetRef ref, BuildContext context) {
-  final List<WorldData> selectedEvents = ref.watch(eventsForDayProvider);
+  final List<WorldData> selectedEvents = ref.watch(worldEventsForDayProvider);
   // ref.read(routeProvider.notifier).load();
   final List<Widget> list = selectedEvents
       .map((world) => Card(
@@ -50,14 +49,14 @@ Widget _buildEventList(WidgetRef ref, BuildContext context) {
           child: InkWell(
             child: ListTile(
                 leading: const Icon(Icons.map, size: 32.0, color: zdvOrange),
-                title: Text(worldsData[world.id]!.name ?? "NA"),
+                title: Text(allWorldsConfig[world.id]!.name ?? "NA"),
                 trailing: Icon(
                   Icons.arrow_forward_ios,
                   color: zdvmMidBlue[100],
                 ),
                 onTap: () {
                   ref.read(selectedWorldProvider.notifier).state =
-                      worldsData[world.id] as WorldData;
+                      allWorldsConfig[world.id] as WorldData;
                   Navigator.push(
                     context,
                     MaterialPageRoute(
@@ -77,14 +76,14 @@ Widget _buildEventList(WidgetRef ref, BuildContext context) {
       child: InkWell(
         child: ListTile(
             leading: const Icon(Icons.map, size: 32.0, color: zdvYellow),
-            title: Text(worldsData[1]?.name ?? ""),
+            title: Text(allWorldsConfig[1]?.name ?? ""),
             trailing: Icon(
               Icons.arrow_forward_ios,
               color: zdvmMidBlue[100],
             ),
             onTap: () {
               ref.read(selectedWorldProvider.notifier).worldSelect =
-                  worldsData[1] as WorldData;
+                  allWorldsConfig[1] as WorldData;
               Navigator.push(
                 context,
                 MaterialPageRoute(

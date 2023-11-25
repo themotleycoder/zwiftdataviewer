@@ -1,14 +1,12 @@
-import 'package:zwiftdataviewer/models/calendardata.dart';
-import 'package:zwiftdataviewer/utils/climbdata.dart';
+import 'package:zwiftdataviewer/utils/climbsconfig.dart';
 
-class ClimbData extends CalendarData {
+class ClimbData {
+  int? id;
   ClimbId? climbId;
   String? name;
   String? url;
 
-  ClimbData(int id, this.climbId, this.name, this.url){
-    super.id = id;
-  }
+  ClimbData(this.id, this.climbId, this.name, this.url);
 
   ClimbData.fromJson(Map<String, dynamic> json) {
     id = json['id'];

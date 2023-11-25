@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:zwiftdataviewer/appkeys.dart';
-import 'package:zwiftdataviewer/screens/routeanalysisscreen.dart';
+import 'package:zwiftdataviewer/screens/routestats/routeanalysisrootscreen.dart';
 import 'package:zwiftdataviewer/screens/routedetailscreen.dart';
 import 'package:zwiftdataviewer/screens/routesectiondetailscreen.dart';
 import 'package:zwiftdataviewer/utils/constants.dart' as constants;
@@ -161,7 +161,7 @@ class DetailScreen extends ConsumerWidget {
             //     valueListenable: _tab,
             //     builder: (context, tab, _) {
             BottomNavigationBar(
-              elevation: constants.cardElevation,
+          elevation: constants.cardElevation,
           key: AppKeys.tabs,
           currentIndex: tabIndex,
           onTap: (index) =>

@@ -1,7 +1,6 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:zwiftdataviewer/models/climbdata.dart';
-
-import '../utils/repository/filerepository.dart';
+import 'package:zwiftdataviewer/utils/repository/filerepository.dart';
 
 final loadClimbCalendarProvider =
     FutureProvider.autoDispose<Map<DateTime, List<ClimbData>>>((ref) async {
@@ -10,8 +9,8 @@ final loadClimbCalendarProvider =
   return await repository.loadClimbCalendarData();
 });
 
-class DaySelectNotifier extends StateNotifier<DateTime> {
-  DaySelectNotifier() : super(DateTime.now());
+class ClimbDaySelectNotifier extends StateNotifier<DateTime> {
+  ClimbDaySelectNotifier() : super(DateTime.now());
 
   void selectDay(DateTime daySelect) {
     state = daySelect;
@@ -20,11 +19,12 @@ class DaySelectNotifier extends StateNotifier<DateTime> {
   DateTime get daySelect => state;
 }
 
-final selectedDayProvider = StateNotifierProvider<DaySelectNotifier, DateTime>(
-    (ref) => DaySelectNotifier());
+final selectedClimbDayProvider =
+    StateNotifierProvider<ClimbDaySelectNotifier, DateTime>(
+        (ref) => ClimbDaySelectNotifier());
 
-class EventsForDayNotifier extends StateNotifier<List<ClimbData>> {
-  EventsForDayNotifier() : super([]);
+class ClimbEventsForDayNotifier extends StateNotifier<List<ClimbData>> {
+  ClimbEventsForDayNotifier() : super([]);
 
   void setEventsForDay(List<ClimbData> events) {
     state = events;
@@ -33,6 +33,6 @@ class EventsForDayNotifier extends StateNotifier<List<ClimbData>> {
   List<ClimbData> get events => state;
 }
 
-final eventsForDayProvider =
-    StateNotifierProvider<EventsForDayNotifier, List<ClimbData>>(
-        (ref) => EventsForDayNotifier());
+final climbEventsForDayProvider =
+    StateNotifierProvider<ClimbEventsForDayNotifier, List<ClimbData>>(
+        (ref) => ClimbEventsForDayNotifier());

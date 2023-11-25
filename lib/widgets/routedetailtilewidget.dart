@@ -22,8 +22,7 @@ class RouteDetailTile extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final Map<String, String> units = Conversions.units(ref);
-    String routeName =
-        "${_routeData.world}: ${_routeData.routeName}";
+    String routeName = "${_routeData.world}: ${_routeData.routeName}";
     if (_routeData.eventOnly == "Event Only") {
       routeName = "$routeName (Event Only)";
     }
@@ -46,15 +45,13 @@ class RouteDetailTile extends ConsumerWidget {
           subtitle: Column(children: [
             Row(children: [
               const Icon(Icons.route, color: zdvMidBlue, size: 30),
-              Text(" ${Conversions.metersToDistance(
-                  ref, _routeData.distanceMeters!)
-                  .toStringAsFixed(1)}${units['distance']}")
+              Text(
+                  " ${Conversions.metersToDistance(ref, _routeData.distanceMeters!).toStringAsFixed(1)}${units['distance']}")
             ]),
             Row(children: [
               const Icon(Icons.filter_hdr, color: zdvMidBlue, size: 30),
-              Text(" ${Conversions.metersToHeight(
-                  ref, _routeData.altitudeMeters!)
-                  .toStringAsFixed(1)}${units['height']}")
+              Text(
+                  " ${Conversions.metersToHeight(ref, _routeData.altitudeMeters!).toStringAsFixed(1)}${units['height']}")
             ])
           ]),
           trailing: const Icon(
@@ -186,6 +183,4 @@ class RouteDetailTile extends ConsumerWidget {
       throw 'Could not launch $uri';
     }
   }
-
-
 }

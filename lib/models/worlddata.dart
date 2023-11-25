@@ -1,14 +1,12 @@
-import 'package:zwiftdataviewer/models/calendardata.dart';
-import 'package:zwiftdataviewer/utils/worlddata.dart';
+import 'package:zwiftdataviewer/utils/worldsconfig.dart';
 
-class WorldData extends CalendarData {
+class WorldData {
+  int? id;
   GuestWorldId? guestWorldId;
   String? name;
   String? url;
 
-  WorldData(int id, this.guestWorldId, this.name, this.url){
-    super.id = id;
-  }
+  WorldData(this.id, this.guestWorldId, this.name, this.url);
 
   WorldData.fromJson(Map<String, dynamic> json) {
     id = json['id'];

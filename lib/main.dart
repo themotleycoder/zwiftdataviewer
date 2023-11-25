@@ -6,7 +6,7 @@ import 'package:flutter_strava_api/strava.dart';
 import 'package:stack_trace/stack_trace.dart' as stack_trace;
 import 'package:zwiftdataviewer/routes.dart';
 import 'package:zwiftdataviewer/screens/allcalendarsrootscreen.dart';
-import 'package:zwiftdataviewer/screens/allstatsrootscreen.dart';
+import 'package:zwiftdataviewer/screens/allstats/allstatsrootscreen.dart';
 import 'package:zwiftdataviewer/screens/homescreen.dart';
 import 'package:zwiftdataviewer/screens/routesscreen.dart';
 import 'package:zwiftdataviewer/screens/settingscreen.dart';

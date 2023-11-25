@@ -2,25 +2,25 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_strava_api/Models/activity.dart';
 import 'package:syncfusion_flutter_charts/charts.dart';
+import 'package:zwiftdataviewer/appkeys.dart';
+import 'package:zwiftdataviewer/providers/activity_detail_provider.dart';
 import 'package:zwiftdataviewer/providers/lap_select_provider.dart';
+import 'package:zwiftdataviewer/providers/lap_summary_provider.dart';
+import 'package:zwiftdataviewer/screens/layouts/routeanalysistablayout.dart';
+import 'package:zwiftdataviewer/utils/theme.dart';
 import 'package:zwiftdataviewer/widgets/shortdataanalysis.dart';
 
-import '../appkeys.dart';
-import '../providers/activity_detail_provider.dart';
-import '../providers/lap_summary_provider.dart';
-import '../utils/theme.dart';
-
-class WattsDataView extends ConsumerWidget {
-  const WattsDataView({super.key});
+class RouteAnalysisWattsDataView extends RouteAnalysisTabLayout {
+  const RouteAnalysisWattsDataView({super.key});
 
   @override
-  Widget build(BuildContext context, WidgetRef ref) {
-    return const Column(
-      children: [
-        Expanded(child: DisplayChart()),
-        ShortDataAnalysis(),
-      ],
-    );
+  ConsumerWidget buildChart() {
+    return const DisplayChart();
+  }
+
+  @override
+  buildChartDataView() {
+    return const ShortDataAnalysis();
   }
 }
 
@@ -35,12 +35,18 @@ class DisplayChart extends ConsumerWidget {
         ref.watch(lapsProvider(ref.watch(stravaActivityDetailsProvider)!));
 
     return lapsData.when(data: (laps) {
-      return SfCartesianChart(
+      return Expanded(
+          child: SfCartesianChart(
           primaryXAxis: NumericAxis(isVisible: false),
           primaryYAxis: NumericAxis(
             plotBands: <PlotBand>[
               PlotBand(
-                  start: ftp, end: ftp, borderColor: Colors.red, text: 'FTP', isVisible: true, borderWidth: 1,
+                start: ftp,
+                end: ftp,
+                borderColor: Colors.red,
+                text: 'FTP',
+                isVisible: true,
+                borderWidth: 1,
               )
             ],
             minimum: 0,
@@ -52,7 +58,7 @@ class DisplayChart extends ConsumerWidget {
             ref
                 .read(lapSummaryObjectProvider.notifier)
                 .selectSummary(lapSummaryObject);
-          });
+          }));
     }, error: (Object error, StackTrace stackTrace) {
       return const Text("error");
     }, loading: () {

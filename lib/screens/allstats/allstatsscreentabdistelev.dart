@@ -2,46 +2,28 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_strava_api/Models/summary_activity.dart';
 import 'package:syncfusion_flutter_charts/charts.dart';
+import 'package:zwiftdataviewer/screens/layouts/allstatstablayout.dart';
 import 'package:zwiftdataviewer/utils/conversions.dart';
 import 'package:zwiftdataviewer/widgets/iconitemwidgets.dart';
 
-import '../providers/filters/filters_provider.dart';
-import '../utils/charts.dart';
-import '../utils/stats.dart' as stats;
+import '../../providers/filters/filters_provider.dart';
+import '../../utils/charts.dart';
+import '../../utils/stats.dart' as stats;
 
-class AllStatsScreenDistElev extends ConsumerWidget {
-  const AllStatsScreenDistElev({super.key});
+class AllStatsScreenTabDistElev extends AllStatsTabLayout {
+  const AllStatsScreenTabDistElev({super.key});
 
   static const secondaryMeasureAxisId = 'secondaryMeasureAxisId';
 
   @override
-  Widget build(BuildContext context, WidgetRef ref) {
-    final List<SummaryActivity> filteredActivities =
-        ref.read(dateActivityFiltersProvider);
-    final Map<String, double> summaryData =
-        stats.SummaryData.createSummaryData(filteredActivities);
-
-    return Column(
-        mainAxisSize: MainAxisSize.max,
-        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-        crossAxisAlignment: CrossAxisAlignment.stretch,
-        children: [
-          Expanded(
-              child: Padding(
-            padding: const EdgeInsets.fromLTRB(0, 4, 0, 4),
-            child: _buildMultipleAxisColumnChart(context, ref),
-          )),
-          buildSummaryView(ref, summaryData),
-        ]);
-  }
-
-  /// Returns the chart with multiple axes.
-  SfCartesianChart _buildMultipleAxisColumnChart(BuildContext context, ref) {
+  SfCartesianChart buildChart(
+      WidgetRef ref, units, List<SummaryActivity> filteredActivities) {
     final Map<String, String> units = Conversions.units(ref);
     late bool isCardView = true;
 
     return SfCartesianChart(
       legend: Legend(isVisible: !isCardView),
+
       /// API for multiple axis. It can returns the various axis to the chart.
       axes: <ChartAxis>[
         NumericAxis(
@@ -76,8 +58,10 @@ class AllStatsScreenDistElev extends ConsumerWidget {
     );
   }
 
-  buildSummaryView(ref, Map<String, double> summaryData) {
-    final Map<String, String> units = Conversions.units(ref);
+  @override
+  Container buildChartSummaryWidget(BuildContext context, WidgetRef ref, Map<String, String> units) {
+    final List<SummaryActivity> filteredActivities = ref.read(dateActivityFiltersProvider);
+    final Map<String, double> summaryData = stats.SummaryData.createSummaryData(filteredActivities);
     return Container(
       padding: const EdgeInsets.fromLTRB(0, 0, 0, 16),
       child: ListView(
@@ -135,6 +119,8 @@ class AllStatsScreenDistElev extends ConsumerWidget {
       ),
     );
   }
+
+
 }
 
 class YearlyTotals {

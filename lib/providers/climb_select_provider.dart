@@ -1,7 +1,6 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:zwiftdataviewer/models/climbdata.dart';
-import 'package:zwiftdataviewer/utils/climbdata.dart';
-
+import 'package:zwiftdataviewer/utils/climbsconfig.dart';
 
 class ClimbSelectNotifier extends StateNotifier<ClimbData> {
   ClimbSelectNotifier()

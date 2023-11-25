@@ -1,8 +1,6 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:zwiftdataviewer/models/calendardata.dart';
 import 'package:zwiftdataviewer/models/worlddata.dart';
-
-import '../utils/repository/filerepository.dart';
+import 'package:zwiftdataviewer/utils/repository/filerepository.dart';
 
 final loadWorldCalendarProvider =
     FutureProvider.autoDispose<Map<DateTime, List<WorldData>>>((ref) async {
@@ -11,8 +9,8 @@ final loadWorldCalendarProvider =
   return await repository.loadWorldCalendarData();
 });
 
-class DaySelectNotifier extends StateNotifier<DateTime> {
-  DaySelectNotifier() : super(DateTime.now());
+class WorldDaySelectNotifier extends StateNotifier<DateTime> {
+  WorldDaySelectNotifier() : super(DateTime.now());
 
   void selectDay(DateTime daySelect) {
     state = daySelect;
@@ -21,19 +19,20 @@ class DaySelectNotifier extends StateNotifier<DateTime> {
   DateTime get daySelect => state;
 }
 
-final selectedDayProvider = StateNotifierProvider<DaySelectNotifier, DateTime>(
-    (ref) => DaySelectNotifier());
+final selectedWorldDayProvider =
+    StateNotifierProvider<WorldDaySelectNotifier, DateTime>(
+        (ref) => WorldDaySelectNotifier());
 
-class EventsForDayNotifier extends StateNotifier<List<WorldData>> {
-  EventsForDayNotifier() : super([]);
+class WorldEventsForDayNotifier extends StateNotifier<List<WorldData>> {
+  WorldEventsForDayNotifier() : super([]);
 
   void setEventsForDay(List<WorldData> events) {
     state = events;
   }
 
-  List<CalendarData> get events => state;
+  List<WorldData> get events => state;
 }
 
-final eventsForDayProvider =
-    StateNotifierProvider<EventsForDayNotifier, List<WorldData>>(
-        (ref) => EventsForDayNotifier());
+final worldEventsForDayProvider =
+    StateNotifierProvider<WorldEventsForDayNotifier, List<WorldData>>(
+        (ref) => WorldEventsForDayNotifier());

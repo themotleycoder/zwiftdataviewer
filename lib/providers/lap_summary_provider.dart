@@ -1,6 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:flutter_strava_api/API/streams.dart';
 import 'package:flutter_strava_api/Models/activity.dart';
+import 'package:zwiftdataviewer/providers/activity_select_provider.dart';
+import 'package:zwiftdataviewer/providers/streams_provider.dart';
 
 import '../utils/theme.dart';
 import 'activity_detail_provider.dart';
@@ -10,19 +13,45 @@ final lapsProvider = FutureProvider.autoDispose
     .family<List<LapSummaryObject>, DetailedActivity>((ref, activity) async {
   final ftp = ref.watch(configProvider).ftp ?? 0.0;
   List<LapSummaryObject> retValue = [];
-  for (var lap in activity.laps ?? []) {
-    retValue.add(LapSummaryObject(
-      0,
-      lap.lapIndex,
-      lap.distance,
-      lap.movingTime,
-      lap.totalElevationGain,
-      lap.averageCadence,
-      lap.averageWatts,
-      lap.averageSpeed,
-      getColorForWatts(lap.averageWatts, ftp),
-    ));
-  }
+  // if (activity.laps!.length > 1) {
+    for (var lap in activity.laps ?? []) {
+      retValue.add(LapSummaryObject(
+        0,
+        lap.lapIndex,
+        lap.distance,
+        lap.movingTime,
+        lap.totalElevationGain,
+        lap.averageCadence,
+        lap.averageWatts,
+        lap.averageSpeed,
+        getColorForWatts(lap.averageWatts, ftp),
+      ));
+    }
+  // } else {
+  //   AsyncValue<StreamsDetailCollection> streamsData =
+  //     ref.read(streamsProvider(ref.watch(selectedActivityProvider).id));
+  //
+  //     streamsData.when(data: (streams) {
+  //       for (var stream in streams.streams ?? []){
+  //         retValue.add(LapSummaryObject(
+  //           0,
+  //           0,
+  //           stream.distance ?? 0,
+  //           stream.time ?? 0,
+  //           stream.altitude ?? 0,
+  //           0,
+  //           stream.watts as double ?? 0,
+  //           0,
+  //           getColorForWatts(stream.watts as double, ftp),
+  //         ));
+  //         stream.watts;
+  //       }
+  //     }, error: (Object error, StackTrace stackTrace) {
+  //       stackTrace.toString();
+  //     }, loading: () {
+  //
+  //     });
+  // }
   return retValue;
 });
 

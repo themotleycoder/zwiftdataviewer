@@ -3,37 +3,17 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_strava_api/Models/summary_activity.dart';
 import 'package:intl/intl.dart';
 import 'package:syncfusion_flutter_charts/charts.dart';
-import 'package:zwiftdataviewer/utils/conversions.dart';
+import 'package:zwiftdataviewer/screens/layouts/allstatstablayout.dart';
 import 'package:zwiftdataviewer/utils/theme.dart';
 import 'package:zwiftdataviewer/widgets/chartpointshortsummarywidget.dart';
 
-import '../providers/activity_select_provider.dart';
-import '../providers/filters/filters_provider.dart';
-import '../utils/datevalueobj.dart';
+import '../../providers/activity_select_provider.dart';
+import '../../utils/datevalueobj.dart';
 
-class AllStatsScreenDistanceSummary extends ConsumerWidget {
-  const AllStatsScreenDistanceSummary({super.key});
+class AllStatsScreenTabWattsSummary extends AllStatsTabLayout {
+  const AllStatsScreenTabWattsSummary({super.key});
 
   @override
-  Widget build(BuildContext context, WidgetRef ref) {
-    final List<SummaryActivity> filteredActivities =
-        ref.read(dateActivityFiltersProvider);
-
-    final Map<String, String> units = Conversions.units(ref);
-    return Column(
-        mainAxisSize: MainAxisSize.max,
-        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-        crossAxisAlignment: CrossAxisAlignment.stretch,
-        children: [
-          Expanded(
-              child: Padding(
-            padding: const EdgeInsets.fromLTRB(0, 4, 0, 4),
-            child: buildChart(ref, units, filteredActivities),
-          )),
-          const ChartPointShortSummaryWidget(),
-        ]);
-  }
-
   SfCartesianChart buildChart(
       WidgetRef ref, units, List<SummaryActivity> filteredActivities) {
     return SfCartesianChart(
@@ -54,7 +34,7 @@ class AllStatsScreenDistanceSummary extends ConsumerWidget {
           majorGridLines: const MajorGridLines(width: 0.5),
           opposedPosition: false,
           labelFormat: '{value}',
-          // minimum: 50,
+          minimum: 50,
           // maximum: 200,
         ),
         trackballBehavior: TrackballBehavior(
@@ -80,28 +60,31 @@ class AllStatsScreenDistanceSummary extends ConsumerWidget {
         });
   }
 
+  @override
+  Container buildChartSummaryWidget(BuildContext context, WidgetRef ref, Map<String, String> units) {
+    return getChartPointShortSummaryWidget(context, ref, units);
+  }
+
   List<ChartSeries<DateValue, DateTime>> _createDataSet(
       WidgetRef ref, List<SummaryActivity> activities) {
-    final List<DateValue> distanceData = [];
+    final List<DateValue> wattsData = [];
     SummaryActivity? activity;
     final int length = activities.length;
     for (int x = 0; x < length; x++) {
       activity = activities[x];
-      distanceData.add(DateValue(activity.startDate,
-          Conversions.metersToDistance(ref, activity.distance)));
+      wattsData.add(DateValue(activity.startDate, activity.averageWatts));
     }
 
-    final Map<String, String> units = Conversions.units(ref);
     return <ChartSeries<DateValue, DateTime>>[
       LineSeries<DateValue, DateTime>(
           animationDuration: 1500,
-          dataSource: distanceData,
+          dataSource: wattsData,
           width: 1,
           opacity: 0.8,
-          color: zdvYellow,
-          name: 'Distance (${units['distance']!})',
-          xValueMapper: (DateValue distance, _) => distance.date,
-          yValueMapper: (DateValue distance, _) => distance.value,
+          color: zdvMidBlue,
+          name: 'Avg Watts',
+          xValueMapper: (DateValue watts, _) => watts.date,
+          yValueMapper: (DateValue watts, _) => watts.value,
           dataLabelSettings: const DataLabelSettings(isVisible: false),
           enableTooltip: false,
           markerSettings: const MarkerSettings(isVisible: false)),

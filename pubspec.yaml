@@ -13,7 +13,7 @@ environment:
 
 dependencies:
   http: ^1.0.0
-#  oauth2: ^2.0.0
+  #  oauth2: ^2.0.0
   url_launcher: ^6.1.0
   uni_links: ^0.5.1
   intl: ^0.18.1

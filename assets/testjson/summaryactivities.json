@@ -1,0 +1,44 @@
+{
+  "activitySummaries": [
+    {
+      "name": "Zwift - Volcano Climb in Watopia",
+      "averageWatts": "210.4",
+      "averageHeartrate": "157.8",
+      "averageSpeed": "20.5",
+      "distance": "18.7",
+      "totalElevationGain": "1036.7"
+    },
+    {
+      "name": "Zwift - SST (Short) in Watopia",
+      "averageWatts": "206.3",
+      "averageHeartrate": "150.3",
+      "averageSpeed": "21.9",
+      "distance": "18.5",
+      "totalElevationGain": "380.6"
+    },
+    {
+      "name": "Zwift - London Loop in London",
+      "averageWatts": "202.8",
+      "averageHeartrate": "159.4",
+      "averageSpeed": "20.2",
+      "distance": "20.2",
+      "totalElevationGain": "1286.1"
+    },
+    {
+      "name": "Zwift - Shorelines and Summits in Watopia",
+      "averageWatts": "203.1",
+      "averageHeartrate": "159.7",
+      "averageSpeed": "18.9",
+      "distance": "28.1",
+      "totalElevationGain": "2034.1"
+    },
+    {
+      "name": "Zwift - Group Ride: Tour of Watopia Ride 2023 | Stage 5 | Long on The Big Ring in Watopia",
+      "averageWatts": "194.4",
+      "averageHeartrate": "160.7",
+      "averageSpeed": "20.8",
+      "distance": "31.8",
+      "totalElevationGain": "902.2"
+    }
+  ]
+}

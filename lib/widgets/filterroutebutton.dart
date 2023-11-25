@@ -7,8 +7,7 @@ import 'package:zwiftdataviewer/providers/filters/filtered_routefilter_provider.
 import 'package:zwiftdataviewer/providers/filters/filtered_routes_provider.dart';
 import 'package:zwiftdataviewer/utils/conversions.dart';
 import 'package:zwiftdataviewer/utils/theme.dart';
-import 'package:zwiftdataviewer/utils/worlddata.dart';
-
+import 'package:zwiftdataviewer/utils/worldsconfig.dart';
 
 class FilterRouteButton extends ConsumerWidget {
   final bool isActive;
@@ -24,10 +23,12 @@ class FilterRouteButton extends ConsumerWidget {
         ref.watch(allRoutesProvider);
 
     routeDataModel.when(data: (routes) {
-      maxLength = routes.isNotEmpty?routes[0]
-          .distanceMeters!:1; //Conversions.metersToDistance(ref, routes[0].distanceMeters!);
-      maxElevation = routes.isNotEmpty?routes[0]
-          .altitudeMeters!:1; //Conversions.metersToHeight(ref, routes[0].altitudeMeters!);
+      maxLength = routes.isNotEmpty
+          ? routes[0].distanceMeters!
+          : 1; //Conversions.metersToDistance(ref, routes[0].distanceMeters!);
+      maxElevation = routes.isNotEmpty
+          ? routes[0].altitudeMeters!
+          : 1; //Conversions.metersToHeight(ref, routes[0].altitudeMeters!);
       for (var route in routes) {
         final d = route
             .distanceMeters!; //Conversions.metersToDistance(ref, route.distanceMeters!);
@@ -66,7 +67,8 @@ class FilterRouteButton extends ConsumerWidget {
     final controller = GroupButtonController();
 
     final List<WorldSelectedObj> selectedWorlds = [];
-    final List<WorldData> allWorlds = worldsData.values.toList(growable: false);
+    final List<WorldData> allWorlds =
+        allWorldsConfig.values.toList(growable: false);
     int index = 0;
     for (var world in allWorlds) {
       controller.selectIndex(index);
@@ -145,9 +147,12 @@ class FilterRouteButton extends ConsumerWidget {
                               .where((element) => element.isSelected)
                               .map((e) => e.world)
                               .toList(growable: false);
-                          distanceFilterProv.setFilter(RouteFilterObject( distanceRangeValues, elevationRangeValues, selectedWorldsList));
+                          distanceFilterProv.setFilter(RouteFilterObject(
+                              distanceRangeValues,
+                              elevationRangeValues,
+                              selectedWorldsList));
                         },
-                        buttons: worldsData.entries
+                        buttons: allWorldsConfig.entries
                             .map((e) => e.value)
                             .toList(growable: false),
                         buttonTextBuilder: (selected, world, context) {

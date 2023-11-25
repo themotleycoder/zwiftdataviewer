@@ -4,7 +4,6 @@ import 'package:zwiftdataviewer/models/routedata.dart';
 import 'package:zwiftdataviewer/models/worlddata.dart';
 import 'package:zwiftdataviewer/providers/filters/filtered_routes_provider.dart';
 
-
 class DistanceFiltersNotifier extends StateNotifier<RouteFilterObject> {
   DistanceFiltersNotifier()
       : super(RouteFilterObject(

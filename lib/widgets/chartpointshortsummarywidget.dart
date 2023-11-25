@@ -10,14 +10,19 @@ import 'package:zwiftdataviewer/widgets/tilewidget.dart';
 
 import '../utils/theme.dart';
 
-class ChartPointShortSummaryWidget extends ConsumerWidget {
-  const ChartPointShortSummaryWidget({super.key});
+// class ChartPointShortSummaryWidget extends ConsumerWidget {
 
-  @override
-  Widget build(BuildContext context, WidgetRef ref) {
-    final SummaryActivity selectedActivity =
-        ref.watch(selectedActivityProvider);
-    final Map<String, String> units = Conversions.units(ref);
+Container getChartPointShortSummaryWidget(BuildContext context, WidgetRef ref, Map<String, String> units) {
+  // const ChartPointShortSummaryWidget({super.key});
+
+  final SummaryActivity selectedActivity =
+  ref.watch(selectedActivityProvider);
+
+  // @override
+  // Widget build(BuildContext context, WidgetRef ref) {
+  //   final SummaryActivity selectedActivity =
+  //       ref.watch(selectedActivityProvider);
+  //   final Map<String, String> units = Conversions.units(ref);
 
     return Container(
       padding: const EdgeInsets.fromLTRB(0, 0, 0, 16),
@@ -94,4 +99,4 @@ class ChartPointShortSummaryWidget extends ConsumerWidget {
       ),
     );
   }
-}
+// }

@@ -9,8 +9,8 @@ class RouteData {
   int? id;
   int? imageId;
 
-  RouteData(this.url, this.world, this.distanceMeters, this.altitudeMeters, this.eventOnly,
-      this.routeName, this.id);
+  RouteData(this.url, this.world, this.distanceMeters, this.altitudeMeters,
+      this.eventOnly, this.routeName, this.id);
 
   RouteData.fromJson(Map<String, dynamic> json) {
     url = json['url'];

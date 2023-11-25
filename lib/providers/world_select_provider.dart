@@ -1,7 +1,6 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:zwiftdataviewer/models/worlddata.dart';
-
-import '../utils/worlddata.dart';
+import 'package:zwiftdataviewer/utils/worldsconfig.dart';
 
 class WorldSelectNotifier extends StateNotifier<WorldData> {
   WorldSelectNotifier()
@@ -18,5 +17,3 @@ class WorldSelectNotifier extends StateNotifier<WorldData> {
 final selectedWorldProvider =
     StateNotifierProvider<WorldSelectNotifier, WorldData>(
         (ref) => WorldSelectNotifier());
-
-

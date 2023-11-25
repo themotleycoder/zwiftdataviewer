@@ -1,11 +1,10 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:zwiftdataviewer/screens/allcalendarsrootscreen.dart';
-import 'package:zwiftdataviewer/screens/allstatsrootscreen.dart';
+import 'package:zwiftdataviewer/screens/allstats/allstatsrootscreen.dart';
 import 'package:zwiftdataviewer/screens/routesscreen.dart';
 import 'package:zwiftdataviewer/screens/settingscreen.dart';
 import 'package:zwiftdataviewer/widgets/activitieslistview.dart';
-
 
 enum HomeScreenTab { activities, stats, routes, calendar, settings }
 

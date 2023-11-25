@@ -13,14 +13,14 @@ import 'package:path_provider/path_provider.dart';
 import 'package:zwiftdataviewer/models/climbdata.dart';
 import 'package:zwiftdataviewer/models/routedata.dart';
 import 'package:zwiftdataviewer/models/worlddata.dart';
-import 'package:zwiftdataviewer/utils/climbdata.dart';
+import 'package:zwiftdataviewer/utils/climbsconfig.dart';
 import 'package:zwiftdataviewer/utils/constants.dart' as constants;
 import 'package:zwiftdataviewer/utils/repository/activitesrepository.dart';
 import 'package:zwiftdataviewer/utils/repository/configrepository.dart';
 import 'package:zwiftdataviewer/utils/repository/routerepository.dart';
 import 'package:zwiftdataviewer/utils/repository/streamsrepository.dart';
 import 'package:zwiftdataviewer/utils/repository/worldcalendarrepository.dart';
-import 'package:zwiftdataviewer/utils/worlddata.dart';
+import 'package:zwiftdataviewer/utils/worldsconfig.dart';
 
 import '../../providers/config_provider.dart';
 
@@ -238,8 +238,7 @@ class FileRepository
         String routeName = "NA";
         String url = val.children[index].innerHtml ?? "";
         try {
-          routeName =
-              url.substring(url.indexOf('>') + 1, url.indexOf('</a>'));
+          routeName = url.substring(url.indexOf('>') + 1, url.indexOf('</a>'));
         } catch (e) {
           if (isInDebug) {
             if (kDebugMode) {
@@ -248,8 +247,7 @@ class FileRepository
           }
           index -= 1;
           url = val.children[index].innerHtml ?? "";
-          routeName =
-              url.substring(url.indexOf('>') + 1, url.indexOf('</a>'));
+          routeName = url.substring(url.indexOf('>') + 1, url.indexOf('</a>'));
         }
         url = url.substring(url.indexOf('https'), url.indexOf('/">'));
         final String world = val.children[index + 1].innerHtml ?? "";
@@ -260,14 +258,17 @@ class FileRepository
             val.children[index + 5].innerHtml ?? val.children[index + 7] ?? "";
         final int id = worldLookupByName[world] ?? 0;
 
-        final double distanceMeters = double.parse(distance.substring(0, distance.indexOf('km')))*1000;
+        final double distanceMeters =
+            double.parse(distance.substring(0, distance.indexOf('km'))) * 1000;
         //final double distanceMiles = double.parse((distanceKM * 0.621371).toStringAsFixed(0)).toDouble();
 
-        final double altitudeMeters = double.parse(altitude == "" ? "0.0" : altitude.substring(0, altitude.indexOf('m')));
+        final double altitudeMeters = double.parse(altitude == ""
+            ? "0.0"
+            : altitude.substring(0, altitude.indexOf('m')));
         // final double altitudeFeet = double.parse((altitudeMeters * 3.28084).toStringAsFixed(0)).toDouble();
 
-        final RouteData route =
-            RouteData(url, world, distanceMeters, altitudeMeters, eventOnly, routeName, id);
+        final RouteData route = RouteData(url, world, distanceMeters,
+            altitudeMeters, eventOnly, routeName, id);
 
         if (route.eventOnly?.toLowerCase() != 'run only' &&
             route.eventOnly?.toLowerCase() != 'run only, event only') {
@@ -361,7 +362,8 @@ class FileRepository
         List<dynamic> locations = val.getElementsByClassName("spiffy-title");
         List<WorldData> worldData = [];
         for (dynamic location in locations) {
-          worldData.add(worldsData[worldLookupByName[location.innerHtml]]!);
+          worldData
+              .add(allWorldsConfig[worldLookupByName[location.innerHtml]]!);
         }
 
         worlds[key] = worldData;
@@ -402,7 +404,7 @@ class FileRepository
 
   @override
   Future saveClimbCalendarData(Map<DateTime, List<ClimbData>> routeData) async {
-    final file = await _localWorldCalendarFile;
+    final file = await _localClimbCalendarFile;
     String content = '{';
     bool hasContent = false;
     routeData.forEach((key, worldRoute) {
@@ -434,8 +436,8 @@ class FileRepository
   @override
   Future<Map<DateTime, List<ClimbData>>> scrapeClimbCalendarData() async {
     Map<DateTime, List<ClimbData>> climbs = {};
-    final response =
-    await Client().get(Uri.parse('https://zwiftinsider.com/climb-portal-schedule/'));
+    final response = await Client()
+        .get(Uri.parse('https://zwiftinsider.com/climb-portal-schedule/'));
     if (response.statusCode == 200) {
       // final String htmlStr =
       //     await rootBundle.loadString('assets/testjson/worldcalendar.html');
@@ -444,15 +446,15 @@ class FileRepository
       var vals = doc.getElementsByClassName("day-with-date");
       for (dynamic val in vals) {
         int dayNumber =
-        int.parse(val.getElementsByClassName("day-number")[0].innerHtml);
+            int.parse(val.getElementsByClassName("day-number")[0].innerHtml);
         DateTime key =
-        DateTime(DateTime.now().year, DateTime.now().month, dayNumber);
+            DateTime(DateTime.now().year, DateTime.now().month, dayNumber);
         List<dynamic> locations = val.getElementsByClassName("spiffy-title");
         List<ClimbData> climbData = [];
         for (dynamic location in locations) {
           String str = location.innerHtml;
           str = str.replaceAll('’', '\'');
-          climbData.add(climbsData[climbLookupByName[str]]!);
+          climbData.add(allClimbsConfig[climbLookupByName[str]]!);
         }
 
         climbs[key] = climbData;
@@ -463,7 +465,4 @@ class FileRepository
     }
     return climbs;
   }
-
-
-
 }

@@ -92,58 +92,57 @@ class RouteSectionDetailScreen extends ConsumerWidget {
     //         ref.read(selectedActivityProvider).id));
 
     // return asyncActivityDetail.when(data: (DetailedActivity activityDetail) {
-      segmentEfforts = activityDetail.segmentEfforts??[];
+    segmentEfforts = activityDetail.segmentEfforts ?? [];
 
-      return ListView.separated(
-        itemCount: segmentEfforts == null ? 0 : segmentEfforts.length,
-        separatorBuilder: (BuildContext context, int index) => Container(
-            // padding: EdgeInsets.all(5.0),
-            // child: Center(),
-            // color: Colors.white,
-            // margin: EdgeInsets.all(1.0),
-            ),
-        itemBuilder: (BuildContext context, int index) {
-          final SegmentEffort effort = segmentEfforts![index];
-          return Container(
-            padding: const EdgeInsets.fromLTRB(0, 0, 0, 0),
-            child: Center(
-                child: InkWell(
-              child: Card(
-                  color: Colors.white,
-                  elevation: defaultCardElevation,
-                  child: ListTile(
-                    leading: createIcon(effort.prRank ?? 0),
-                    title: Text(segmentEfforts[index].segment!.name ?? "",
-                        style: constants.headerFontStyle),
-                    subtitle:
-                        createSubTitle(ref, segmentEfforts[index], units),
-                    // trailing: Icon(
-                    //   Icons.arrow_forward_ios,
-                    //   color: Constants.zdvMidBlue[100],
-                    // ),
-                    // onTap: () {
-                    //   Navigator.push(
-                    //     context,
-                    //     MaterialPageRoute(
-                    //       builder: (_) {
-                    //         return DetailScreen(
-                    //           id: _activities[index].id,
-                    //           // onRemove: () {
-                    //           //   Navigator.pop(context);
-                    //           //   onRemove(context, todo);
-                    //           // },
-                    //         );
-                    //       },
-                    //     ),
-                    //   );
-                    // },
-                    // onItemClick(_activities[index], context);
-                  )),
-            )),
-            // margin: EdgeInsets.all(1.0),
-          );
-        },
-      );
+    return ListView.separated(
+      itemCount: segmentEfforts == null ? 0 : segmentEfforts.length,
+      separatorBuilder: (BuildContext context, int index) => Container(
+          // padding: EdgeInsets.all(5.0),
+          // child: Center(),
+          // color: Colors.white,
+          // margin: EdgeInsets.all(1.0),
+          ),
+      itemBuilder: (BuildContext context, int index) {
+        final SegmentEffort effort = segmentEfforts![index];
+        return Container(
+          padding: const EdgeInsets.fromLTRB(0, 0, 0, 0),
+          child: Center(
+              child: InkWell(
+            child: Card(
+                color: Colors.white,
+                elevation: defaultCardElevation,
+                child: ListTile(
+                  leading: createIcon(effort.prRank ?? 0),
+                  title: Text(segmentEfforts[index].segment!.name ?? "",
+                      style: constants.headerFontStyle),
+                  subtitle: createSubTitle(ref, segmentEfforts[index], units),
+                  // trailing: Icon(
+                  //   Icons.arrow_forward_ios,
+                  //   color: Constants.zdvMidBlue[100],
+                  // ),
+                  // onTap: () {
+                  //   Navigator.push(
+                  //     context,
+                  //     MaterialPageRoute(
+                  //       builder: (_) {
+                  //         return DetailScreen(
+                  //           id: _activities[index].id,
+                  //           // onRemove: () {
+                  //           //   Navigator.pop(context);
+                  //           //   onRemove(context, todo);
+                  //           // },
+                  //         );
+                  //       },
+                  //     ),
+                  //   );
+                  // },
+                  // onItemClick(_activities[index], context);
+                )),
+          )),
+          // margin: EdgeInsets.all(1.0),
+        );
+      },
+    );
     // }, error: (Object error, StackTrace stackTrace) {
     //   return const Text("error");
     // }, loading: () {

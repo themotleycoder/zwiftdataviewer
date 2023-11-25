@@ -1,11 +1,10 @@
 import 'package:flutter/material.dart';
-import 'package:url_launcher/url_launcher.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:url_launcher/url_launcher.dart';
 import 'package:zwiftdataviewer/models/climbdata.dart';
 import 'package:zwiftdataviewer/providers/climb_calendar_provider.dart';
 import 'package:zwiftdataviewer/providers/climb_select_provider.dart';
-import 'package:zwiftdataviewer/utils/climbdata.dart';
-
+import 'package:zwiftdataviewer/utils/climbsconfig.dart';
 import 'package:zwiftdataviewer/utils/theme.dart';
 import 'package:zwiftdataviewer/widgets/climbeventscalendarwidget.dart';
 
@@ -17,7 +16,6 @@ class ClimbCalendarScreen extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-
     final AsyncValue<Map<DateTime, List<ClimbData>>> asyncClimbCalender =
         ref.watch(loadClimbCalendarProvider);
 
@@ -41,7 +39,7 @@ class ClimbCalendarScreen extends ConsumerWidget {
 }
 
 Widget _buildEventList(WidgetRef ref, BuildContext context) {
-  final List<ClimbData> selectedEvents = ref.watch(eventsForDayProvider);
+  final List<ClimbData> selectedEvents = ref.watch(climbEventsForDayProvider);
   // ref.read(routeProvider.notifier).load();
   final List<Widget> list = selectedEvents
       .map((climb) => Card(
@@ -51,15 +49,15 @@ Widget _buildEventList(WidgetRef ref, BuildContext context) {
           child: InkWell(
             child: ListTile(
                 leading: const Icon(Icons.map, size: 32.0, color: zdvOrange),
-                title: Text(climbsData[climb.id]!.name ?? "NA"),
+                title: Text(allClimbsConfig[climb.id]!.name ?? "NA"),
                 trailing: Icon(
                   Icons.arrow_forward_ios,
                   color: zdvmMidBlue[100],
                 ),
                 onTap: () {
                   ref.read(selectedClimbProvider.notifier).state =
-                      climbsData[climb.id] as ClimbData;
-                  launchMyUrl(climbsData[climb.id]!.url ?? "NA");
+                      allClimbsConfig[climb.id] as ClimbData;
+                  launchMyUrl(allClimbsConfig[climb.id]!.url ?? "NA");
                 }),
           )))
       .toList();
@@ -75,8 +73,8 @@ void launchMyUrl(String url) async {
   site = site.substring(0, site.indexOf('/'));
   final Uri uri = Uri.https(site, path);
   if (await canLaunchUrl(uri)) {
-  await launchUrl(uri);
+    await launchUrl(uri);
   } else {
-  throw 'Could not launch $uri';
+    throw 'Could not launch $uri';
   }
 }

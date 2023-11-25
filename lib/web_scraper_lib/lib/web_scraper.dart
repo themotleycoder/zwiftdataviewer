@@ -132,8 +132,7 @@ class WebScraper {
       // Looping in all the variable names that are required to extract.
       for (var variableName in variableNames) {
         // Regular expression to get the variable names.
-        var re = RegExp(
-            '$variableName *=.*?;(?=([^"\']*"[^"\']*")*[^"\']*\$)',
+        var re = RegExp('$variableName *=.*?;(?=([^"\']*"[^"\']*")*[^"\']*\$)',
             multiLine: true);
         //  Iterate all matches
         Iterable matches = re.allMatches(script.text);
@@ -254,9 +253,11 @@ class WebScraper {
 /// WebScraperException throws exception with specified message.
 class WebScraperException implements Exception {
   var _message;
+
   WebScraperException(String? message) {
     _message = message;
   }
+
   String? errorMessage() {
     return _message;
   }

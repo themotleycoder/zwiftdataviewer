@@ -1,10 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:zwiftdataviewer/screens/routeanalysispowercolumnchartscreen.dart';
-import 'package:zwiftdataviewer/screens/routeanalysispowertimepiechartscreen.dart';
-import 'package:zwiftdataviewer/screens/routeanalysisprofilechartscreen.dart';
+import 'package:zwiftdataviewer/screens/routestats/routeanalysistabpowercolumnchartscreen.dart';
+import 'package:zwiftdataviewer/screens/routestats/routeanalysistabpowertimepiechartscreen.dart';
+import 'package:zwiftdataviewer/screens/routestats/routeanalysistabprofilechartscreen.dart';
 
-import '../utils/theme.dart';
+import '../../utils/theme.dart';
 
 class RouteAnalysisScreen extends ConsumerStatefulWidget {
   const RouteAnalysisScreen({super.key});
@@ -64,8 +64,8 @@ class _RouteAnalysisScreenState extends ConsumerState<RouteAnalysisScreen>
           controller: controller,
           children: const <Widget>[
             RouteAnalysisProfileChartScreen(),
-            WattsDataView(),
-            TimeDataView(),
+            RouteAnalysisWattsDataView(),
+            RouteAnalysisTimeDataView(),
           ],
         ),
       ))

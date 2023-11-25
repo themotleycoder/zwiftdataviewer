@@ -2,40 +2,20 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_strava_api/Models/summary_activity.dart';
 import 'package:syncfusion_flutter_charts/charts.dart';
-import 'package:zwiftdataviewer/utils/conversions.dart';
+import 'package:zwiftdataviewer/screens/layouts/allstatstablayout.dart';
 import 'package:zwiftdataviewer/widgets/chartpointshortsummarywidget.dart';
 
-import '../providers/activity_select_provider.dart';
-import '../providers/filters/filters_provider.dart';
-import '../utils/charts.dart';
+import '../../providers/activity_select_provider.dart';
+import '../../utils/charts.dart';
 
-class AllStatsScreenScatter extends ConsumerWidget {
-  const AllStatsScreenScatter({super.key});
+class AllStatsScreenTabScatter extends AllStatsTabLayout {
+  const AllStatsScreenTabScatter({super.key});
 
   @override
-  Widget build(BuildContext context, WidgetRef ref) {
-    final List<SummaryActivity> filteredActivities =
-        ref.read(dateActivityFiltersProvider);
-
-    Map<String, String> units = Conversions.units(ref);
-    return Column(
-        mainAxisSize: MainAxisSize.max,
-        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-        crossAxisAlignment: CrossAxisAlignment.stretch,
-        children: [
-          Expanded(
-              child: Padding(
-            padding: const EdgeInsets.fromLTRB(0, 4, 0, 4),
-            child: buildScatterChart(ref, units, filteredActivities),
-          )),
-          const ChartPointShortSummaryWidget(),
-        ]);
-  }
-
-  SfCartesianChart buildScatterChart(
-      WidgetRef ref, units, List<SummaryActivity> activities) {
+  SfCartesianChart buildChart(
+      WidgetRef ref, units, List<SummaryActivity> filteredActivities) {
     final Map<int, List<SummaryActivity>> result =
-        groupActivitiesByYear(activities);
+        groupActivitiesByYear(filteredActivities);
 
     final chartSeries = ChartsData.getScatterSeries(ref, units, result);
 
@@ -58,13 +38,18 @@ class AllStatsScreenScatter extends ConsumerWidget {
         ref
             .read(selectedActivityProvider.notifier)
             .selectActivity(selectedActivity);
-            },
+      },
       legend: const Legend(
         isVisible: true,
         position: LegendPosition.top,
         borderWidth: 1,
       ),
     );
+  }
+
+  @override
+  Container buildChartSummaryWidget(BuildContext context, WidgetRef ref, Map<String, String> units) {
+    return getChartPointShortSummaryWidget(context, ref, units);
   }
 
   Map<int, List<SummaryActivity>> groupActivitiesByYear(

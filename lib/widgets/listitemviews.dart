@@ -154,24 +154,24 @@ Widget tripleDataSingleHeaderLineItem(
       //         Border(bottom: BorderSide(color: Constants.dividerColor))),
       // child: Column(
       //   children: <Widget>[
-          // Container(
-          //     padding: const EdgeInsets.fromLTRB(16.0, 0.0, 16.0, 8.0),
-          //     child: Text(title, style: constants.headerTextStyle)),
-          child: Row(
-              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-              children: List.generate(labels.length, (index) {
-                return Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  mainAxisAlignment: MainAxisAlignment.start,
-                  children: <Widget>[
-                    Text(labels[index], style: constants.headerTextStyle),
-                    Text(dataPoints[index], style: constants.bodyTextStyle)
-                  ],
-                );
-              }))
-        // ],
+      // Container(
+      //     padding: const EdgeInsets.fromLTRB(16.0, 0.0, 16.0, 8.0),
+      //     child: Text(title, style: constants.headerTextStyle)),
+      child: Row(
+          mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+          children: List.generate(labels.length, (index) {
+            return Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              mainAxisAlignment: MainAxisAlignment.start,
+              children: <Widget>[
+                Text(labels[index], style: constants.headerTextStyle),
+                Text(dataPoints[index], style: constants.bodyTextStyle)
+              ],
+            );
+          }))
+      // ],
       // ));
-  );
+      );
 }
 
 // Widget tripleDataLineItem(String title, IconData? icon, List<String> labels,

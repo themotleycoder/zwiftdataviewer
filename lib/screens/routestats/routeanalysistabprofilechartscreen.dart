@@ -2,26 +2,26 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_strava_api/API/streams.dart';
 import 'package:syncfusion_flutter_charts/charts.dart';
+import 'package:zwiftdataviewer/appkeys.dart';
+import 'package:zwiftdataviewer/providers/activity_select_provider.dart';
+import 'package:zwiftdataviewer/providers/combinedstream_select_provider.dart';
+import 'package:zwiftdataviewer/providers/streams_provider.dart';
+import 'package:zwiftdataviewer/screens/layouts/routeanalysistablayout.dart';
 import 'package:zwiftdataviewer/utils/conversions.dart';
 import 'package:zwiftdataviewer/utils/theme.dart';
+import 'package:zwiftdataviewer/widgets/iconitemwidgets.dart';
 
-import '../appkeys.dart';
-import '../providers/activity_select_provider.dart';
-import '../providers/combinedstream_select_provider.dart';
-import '../providers/streams_provider.dart';
-import '../widgets/iconitemwidgets.dart';
-
-class RouteAnalysisProfileChartScreen extends ConsumerWidget {
+class RouteAnalysisProfileChartScreen extends RouteAnalysisTabLayout {
   const RouteAnalysisProfileChartScreen({super.key});
 
   @override
-  Widget build(BuildContext context, WidgetRef ref) {
-    return const Column(children: [
-      Expanded(
-        child: DisplayChart(),
-      ),
-      ProfileDataView(),
-    ]);
+  ConsumerWidget buildChart() {
+    return const DisplayChart();
+  }
+
+  @override
+  buildChartDataView() {
+    return const ProfileDataView();
   }
 }
 
@@ -138,7 +138,7 @@ class DisplayChart extends ConsumerWidget {
           color: zdvRed,
           name: 'Heart Rate',
           xValueMapper: (DistanceValue heartrate, _) => heartrate.distance,
-          yValueMapper: (DistanceValue heartrate, _) => heartrate.value*5,
+          yValueMapper: (DistanceValue heartrate, _) => heartrate.value * 5,
           dataLabelSettings: const DataLabelSettings(isVisible: false),
           enableTooltip: false,
           markerSettings: const MarkerSettings(isVisible: false)),

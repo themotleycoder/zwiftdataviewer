@@ -10,7 +10,6 @@ import 'package:zwiftdataviewer/utils/theme.dart';
 import 'package:zwiftdataviewer/widgets/routedetailtilewidget.dart';
 
 import '../providers/filters/filtered_routes_provider.dart';
-import '../providers/world_select_provider.dart';
 
 class ClimbDetailScreen extends ConsumerWidget {
   const ClimbDetailScreen() : super(key: AppKeys.worldDetailsScreen);
@@ -36,21 +35,18 @@ class ClimbDetailScreen extends ConsumerWidget {
             iconColor: zdvMidBlue,
             useInkWell: true,
           ),
-          child: routeDataModel.when(
-              data: (routes) {
-                return ListView.builder(
-                    physics: const BouncingScrollPhysics(),
-                    itemCount: routes.length,
-                    itemBuilder: (BuildContext ctxt, int index) {
-                      return RouteDetailTile(routes[index]);
-                    });
-              },
-              error: (Object error, StackTrace stackTrace) {
-                return Text(error.toString());
-              },
-              loading: () {
-                return const Center(child: CircularProgressIndicator());
-              }),
+          child: routeDataModel.when(data: (routes) {
+            return ListView.builder(
+                physics: const BouncingScrollPhysics(),
+                itemCount: routes.length,
+                itemBuilder: (BuildContext ctxt, int index) {
+                  return RouteDetailTile(routes[index]);
+                });
+          }, error: (Object error, StackTrace stackTrace) {
+            return Text(error.toString());
+          }, loading: () {
+            return const Center(child: CircularProgressIndicator());
+          }),
         ));
   } //);
 }
