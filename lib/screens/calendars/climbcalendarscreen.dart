@@ -1,15 +1,14 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:url_launcher/url_launcher.dart';
+import 'package:zwiftdataviewer/appkeys.dart';
 import 'package:zwiftdataviewer/models/climbdata.dart';
 import 'package:zwiftdataviewer/providers/climb_calendar_provider.dart';
 import 'package:zwiftdataviewer/providers/climb_select_provider.dart';
 import 'package:zwiftdataviewer/utils/climbsconfig.dart';
+import 'package:zwiftdataviewer/utils/constants.dart';
 import 'package:zwiftdataviewer/utils/theme.dart';
 import 'package:zwiftdataviewer/widgets/climbeventscalendarwidget.dart';
-
-import '../appkeys.dart';
-import '../utils/constants.dart';
 
 class ClimbCalendarScreen extends ConsumerWidget {
   const ClimbCalendarScreen({super.key});

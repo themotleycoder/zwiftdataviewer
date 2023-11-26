@@ -81,17 +81,11 @@ class RouteSectionDetailScreen extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    Map<String, String> units = Conversions.units(ref);
+    final Map<String, String> units = Conversions.units(ref);
     List<SegmentEffort>? segmentEfforts = [];
-    // CombinedStreams? selectionModel;
 
     final activityDetail = ref.watch(stravaActivityDetailsProvider);
 
-    // AsyncValue<DetailedActivity> asyncActivityDetail = ref.watch(
-    //     activityDetailFromStreamProvider(
-    //         ref.read(selectedActivityProvider).id));
-
-    // return asyncActivityDetail.when(data: (DetailedActivity activityDetail) {
     segmentEfforts = activityDetail.segmentEfforts ?? [];
 
     return ListView.separated(

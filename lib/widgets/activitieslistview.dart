@@ -60,7 +60,7 @@ class ActivitiesListView extends ConsumerWidget {
                           context,
                           MaterialPageRoute(
                             builder: (_) {
-                              return const DetailScreen(
+                              return DetailScreen(
                                   // id: activities[index].id ?? -1,
                                   // strava: strava,
                                   // onRemove: () {
@@ -72,9 +72,7 @@ class ActivitiesListView extends ConsumerWidget {
                           ),
                         );
                       },
-                      // onItemClick(_activities[index], context);
                     )),
-                    // )
                   ),
                 );
               },

@@ -1,9 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:zwiftdataviewer/screens/climbcalendarscreen.dart';
-import 'package:zwiftdataviewer/screens/worldcalendarscreen.dart';
+import 'package:zwiftdataviewer/screens/calendars/climbcalendarscreen.dart';
+import 'package:zwiftdataviewer/screens/calendars/worldcalendarscreen.dart';
 
-import '../utils/theme.dart';
+
+import '../../utils/theme.dart';
 
 class AllCalendarsRootScreen extends ConsumerStatefulWidget {
   const AllCalendarsRootScreen({super.key});

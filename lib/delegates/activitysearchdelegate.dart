@@ -106,7 +106,7 @@ class ActivitySearch extends SearchDelegate<SummaryActivity> {
                           context,
                           MaterialPageRoute(
                             builder: (_) {
-                              return const DetailScreen(
+                              return DetailScreen(
                                   // id: summaryActivity.id ?? -1,
                                   // strava: strava,
                                   // onRemove: () {

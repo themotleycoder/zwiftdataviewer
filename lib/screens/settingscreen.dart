@@ -2,32 +2,15 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:zwiftdataviewer/appkeys.dart';
+import 'package:zwiftdataviewer/providers/config_provider.dart';
 import 'package:zwiftdataviewer/utils/constants.dart' as constants;
+import 'package:zwiftdataviewer/utils/constants.dart';
 import 'package:zwiftdataviewer/utils/repository/filerepository.dart';
 import 'package:zwiftdataviewer/utils/theme.dart';
 
-import '../providers/config_provider.dart';
-import '../utils/constants.dart';
-
-// class SettingsScreen extends StatefulWidget {
-//   const SettingsScreen();
-//
-//   @override
-//   _SettingsScreenState createState() => _SettingsScreenState();
-// }
 
 class SettingsScreen extends ConsumerWidget {
   const SettingsScreen({super.key});
-
-  // ConfigData? _configData;
-  // late String val;
-
-  // @override
-  // void initState() {
-  //   super.initState();
-  //   _configData =
-  //       Provider.of<ConfigDataModel>(context, listen: false).configData;
-  // }
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
@@ -104,11 +87,6 @@ class SettingsScreen extends ConsumerWidget {
                   onPressed: () => refreshCalendarData())),
         ]));
   }
-
-  // @override
-  // void dispose() {
-  //   super.dispose();
-  // }
 
   refreshRouteData() {
     FileRepository().scrapeRouteData();

@@ -5,7 +5,7 @@ import 'package:flutter_strava_api/globals.dart' as globals;
 import 'package:flutter_strava_api/strava.dart';
 import 'package:stack_trace/stack_trace.dart' as stack_trace;
 import 'package:zwiftdataviewer/routes.dart';
-import 'package:zwiftdataviewer/screens/allcalendarsrootscreen.dart';
+import 'package:zwiftdataviewer/screens/calendars/allcalendarsrootscreen.dart';
 import 'package:zwiftdataviewer/screens/allstats/allstatsrootscreen.dart';
 import 'package:zwiftdataviewer/screens/homescreen.dart';
 import 'package:zwiftdataviewer/screens/routesscreen.dart';
@@ -55,7 +55,7 @@ Future<void> main() async {
     // onGenerateTitle: (context) =>
     //     ProviderLocalizations.of(context).appTitle,
     routes: {
-      AppRoutes.home: (context) => const HomeScreen(),
+      AppRoutes.home: (context) => HomeScreen(),
       AppRoutes.allStats: (context) => const AllStatsRootScreen(),
       AppRoutes.allroutes: (context) => const RoutesScreen(),
       AppRoutes.calendar: (context) => const AllCalendarsRootScreen(),
