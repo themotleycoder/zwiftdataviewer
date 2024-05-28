@@ -1,9 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:flutter_strava_api/API/streams.dart';
 import 'package:flutter_strava_api/Models/activity.dart';
-import 'package:zwiftdataviewer/providers/activity_select_provider.dart';
-import 'package:zwiftdataviewer/providers/streams_provider.dart';
 
 import '../utils/theme.dart';
 import 'activity_detail_provider.dart';

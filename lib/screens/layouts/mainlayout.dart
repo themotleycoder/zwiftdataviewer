@@ -20,7 +20,7 @@ abstract class MainLayout extends ConsumerWidget {
 
   // String getTitle(WidgetRef ref);
 
-  buildAppBar(BuildContext context, WidgetRef ref);
+  buildAppBar(BuildContext context, WidgetRef ref){}
 
   buildBody(BuildContext context, WidgetRef ref);
 
