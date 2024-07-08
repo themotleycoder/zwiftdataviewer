@@ -1,8 +1,9 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:flutter_strava_api/API/streams.dart';
+import 'package:flutter_strava_api/api/streams.dart';
 import 'package:flutter_strava_api/globals.dart' as globals;
 import 'package:flutter_strava_api/globals.dart';
 import 'package:flutter_strava_api/strava.dart';
+import 'package:path_provider/path_provider.dart';
 
 import '../secrets.dart';
 import '../utils/repository/filerepository.dart';
@@ -12,9 +13,13 @@ class StreamsNotifier extends StateNotifier<StreamsDetailCollection> {
   StreamsNotifier() : super(StreamsDetailCollection());
 
   // final Strava strava = Strava(isInDebug, secret);
-  final FileRepository? fileRepository = FileRepository();
-  final WebRepository? webRepository =
-      WebRepository(strava: Strava(isInDebug, secret));
+  // final FileRepository? fileRepository = FileRepository();
+  
+  // final WebRepository? webRepository =
+  //     WebRepository(
+  //       strava: Strava(isInDebug, client_secret),
+  //       cache: Strava.cache
+  //     );
 
   get streams => state;
 
@@ -42,14 +47,20 @@ class StreamsNotifier extends StateNotifier<StreamsDetailCollection> {
 final streamsProvider = FutureProvider.autoDispose
     .family<StreamsDetailCollection, int>((ref, id) async {
   final FileRepository fileRepository = FileRepository();
+
+  final cacheDir = await getApplicationDocumentsDirectory();
+  final cache = Cache(cacheDir.path);
+  // final strava = Strava(isInDebug, client_secret);
   final WebRepository webRepository =
-      WebRepository(strava: Strava(isInDebug, secret));
+      WebRepository(
+        strava: Strava(isInDebug, client_secret),
+        cache: cache
+      );
 
   StreamsDetailCollection retvalue = StreamsDetailCollection();
   if (globals.isInDebug) {
     retvalue = (await fileRepository.loadStreams(id))!;
   } else {
-    print('WOULD CALL WEB SVC NOW! - loadStreams');
     retvalue = await webRepository.loadStreams(id);
   }
   return retvalue;

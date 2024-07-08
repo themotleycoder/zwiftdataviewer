@@ -3,7 +3,7 @@ import 'dart:io';
 
 import 'package:flutter/widgets.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:flutter_strava_api/Models/activity.dart';
+import 'package:flutter_strava_api/models/activity.dart';
 import 'package:flutter_strava_api/globals.dart' as globals;
 import 'package:http/http.dart' as http;
 import 'package:path_provider/path_provider.dart';

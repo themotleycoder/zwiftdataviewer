@@ -2,7 +2,7 @@ import 'dart:convert';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:flutter_strava_api/Models/summary_activity.dart';
+import 'package:flutter_strava_api/models/summary_activity.dart';
 import 'package:zwiftdataviewer/appkeys.dart';
 import 'package:zwiftdataviewer/delegates/activitysearchdelegate.dart';
 import 'package:zwiftdataviewer/models/routedata.dart';

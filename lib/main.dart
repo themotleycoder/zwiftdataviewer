@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:flutter_strava_api/Models/token.dart';
+import 'package:flutter_strava_api/models/token.dart';
 import 'package:flutter_strava_api/globals.dart' as globals;
 import 'package:flutter_strava_api/strava.dart';
 import 'package:stack_trace/stack_trace.dart' as stack_trace;
@@ -25,13 +25,13 @@ Future<void> main() async {
   Future<Token?> getClient() async {
     bool isAuthOk = false;
 
-    final Strava strava = Strava(globals.isInDebug, secret);
+    final Strava strava = Strava(globals.isInDebug, client_secret);
     const prompt = 'auto';
 
     isAuthOk = await strava.oauth(
-        clientId,
+        client_id,
         'activity:write,activity:read_all,profile:read_all,profile:write',
-        secret,
+        client_secret,
         prompt);
 
     if (isAuthOk) {

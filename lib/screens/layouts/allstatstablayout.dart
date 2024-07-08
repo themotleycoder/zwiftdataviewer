@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:flutter_strava_api/Models/summary_activity.dart';
+import 'package:flutter_strava_api/models/summary_activity.dart';
 import 'package:syncfusion_flutter_charts/charts.dart';
 import 'package:zwiftdataviewer/providers/filters/filters_provider.dart';
 import 'package:zwiftdataviewer/utils/conversions.dart';

@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:flutter_strava_api/Models/segmentEffort.dart';
+import 'package:flutter_strava_api/models/segmentEffort.dart';
 import 'package:zwiftdataviewer/utils/constants.dart' as constants;
 import 'package:zwiftdataviewer/utils/conversions.dart';
 import 'package:zwiftdataviewer/utils/theme.dart';

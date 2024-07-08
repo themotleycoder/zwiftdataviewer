@@ -1,4 +1,4 @@
-import 'package:flutter_strava_api/Models/summary_activity.dart';
+import 'package:flutter_strava_api/models/summary_activity.dart';
 
 class StatsType {
   static const String TotalDistance = "TotalDistance";

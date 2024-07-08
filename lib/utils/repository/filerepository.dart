@@ -3,9 +3,9 @@ import 'dart:io';
 
 import 'package:flutter/foundation.dart';
 import 'package:flutter/services.dart';
-import 'package:flutter_strava_api/API/streams.dart';
-import 'package:flutter_strava_api/Models/activity.dart';
-import 'package:flutter_strava_api/Models/summary_activity.dart';
+import 'package:flutter_strava_api/api/streams.dart';
+import 'package:flutter_strava_api/models/activity.dart';
+import 'package:flutter_strava_api/models/summary_activity.dart';
 import 'package:flutter_strava_api/globals.dart';
 import 'package:html/parser.dart' as parser;
 import 'package:http/http.dart';

@@ -27,13 +27,9 @@
             <!-- To get redirect url when using url_launcher   -->
             <intent-filter>
                 <action android:name="android.intent.action.VIEW" />
-
                 <category android:name="android.intent.category.DEFAULT" />
                 <category android:name="android.intent.category.BROWSABLE" />
-
-                <data
-                    android:host="redirect"
-                    android:scheme="stravaflutter" />
+                <data android:scheme="stravaflutter" />
                 <data android:pathPattern="/.*" />
             </intent-filter>
             <!-- Provide required visibility configuration for API level 30 and above -->

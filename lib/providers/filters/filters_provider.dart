@@ -1,5 +1,5 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:flutter_strava_api/Models/summary_activity.dart';
+import 'package:flutter_strava_api/models/summary_activity.dart';
 import 'package:zwiftdataviewer/providers/activities_provider.dart';
 import 'package:zwiftdataviewer/utils/worldsconfig.dart';
 

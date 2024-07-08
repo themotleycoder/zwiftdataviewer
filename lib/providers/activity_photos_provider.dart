@@ -1,8 +1,9 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:flutter_strava_api/Models/activity.dart';
+import 'package:flutter_strava_api/models/activity.dart';
 import 'package:flutter_strava_api/globals.dart' as globals;
 import 'package:flutter_strava_api/globals.dart';
 import 'package:flutter_strava_api/strava.dart';
+import 'package:path_provider/path_provider.dart';
 
 import '../secrets.dart';
 import '../utils/repository/filerepository.dart';
@@ -12,9 +13,9 @@ import 'activity_select_provider.dart';
 class ActivityPhotosNotifier extends StateNotifier<List<PhotoActivity>> {
   ActivityPhotosNotifier() : super([]);
 
-  final FileRepository? fileRepository = FileRepository();
-  final WebRepository? webRepository =
-      WebRepository(strava: Strava(isInDebug, secret));
+  // final FileRepository? fileRepository = FileRepository();
+  // final WebRepository? webRepository =
+  //     WebRepository(strava: Strava(isInDebug, client_secret));
 
   List<PhotoActivity> get activityPhotos => state;
 
@@ -26,14 +27,18 @@ class ActivityPhotosNotifier extends StateNotifier<List<PhotoActivity>> {
 final photoActivitiesProvider =
     FutureProvider.autoDispose<List<PhotoActivity>>((ref) async {
   final FileRepository fileRepository = FileRepository();
+  final cacheDir = await getApplicationDocumentsDirectory();
+  final cache = Cache(cacheDir.path);
   final WebRepository webRepository =
-      WebRepository(strava: Strava(isInDebug, secret));
+      WebRepository(
+        strava: Strava(isInDebug, client_secret),
+        cache: cache
+      );
   final activityId = ref.read(selectedActivityProvider).id;
 
   if (globals.isInDebug) {
     return fileRepository.loadActivityPhotos(activityId);
   } else {
-    print('WOULD CALL WEB SVC NOW! - loadActivityPhotos');
     return webRepository.loadActivityPhotos(activityId);
   }
 });

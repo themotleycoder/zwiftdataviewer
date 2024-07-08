@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_strava_api/Models/summary_activity.dart';
+import 'package:flutter_strava_api/models/summary_activity.dart';
 import 'package:flutter_strava_api/globals.dart' as globals;
 import 'package:flutter_strava_api/strava.dart';
 import 'package:intl/intl.dart';
@@ -50,7 +50,7 @@ class ActivitySearch extends SearchDelegate<SummaryActivity> {
             // In the false case
             (element) => element.name.toLowerCase().contains(query),
           ));
-    final Strava strava = Strava(globals.isInDebug, secret);
+    final Strava strava = Strava(globals.isInDebug, client_secret);
 
     return ListView.builder(
       itemCount: suggestionList.length,
@@ -69,7 +69,7 @@ class ActivitySearch extends SearchDelegate<SummaryActivity> {
                 (element) => element.name.contains(selectedResult?.name ?? ""))
             .toList();
 
-    final Strava strava = Strava(globals.isInDebug, secret);
+    final Strava strava = Strava(globals.isInDebug, client_secret);
 
     return ListView.separated(
       itemCount: results == null ? 0 : results.length,

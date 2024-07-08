@@ -1,90 +1,167 @@
 import 'dart:convert';
 import 'dart:io';
-
-import 'package:flutter_strava_api/API/streams.dart';
-import 'package:flutter_strava_api/Models/activity.dart';
-import 'package:flutter_strava_api/Models/summary_activity.dart';
-import 'package:flutter_strava_api/Models/token.dart';
+import 'package:flutter_strava_api/api/streams.dart';
+import 'package:flutter_strava_api/models/activity.dart';
+import 'package:flutter_strava_api/models/summary_activity.dart';
 import 'package:flutter_strava_api/strava.dart';
-import 'package:path_provider/path_provider.dart';
 import 'package:zwiftdataviewer/utils/repository/activitesrepository.dart';
 import 'package:zwiftdataviewer/utils/repository/streamsrepository.dart';
-
 import '../../secrets.dart';
 
 class WebRepository implements ActivitiesRepository, StreamsRepository {
   final Strava strava;
+  final Cache cache;
 
-  WebRepository({required this.strava});
+  WebRepository({required this.strava, required this.cache});
 
   @override
-  Future<List<SummaryActivity?>?> loadActivities(
-      int beforeDate, int afterDate) async {
-    await getClient();
-    // beforeDate = (beforeDate / 1000).round();
-    // afterDate = (afterDate / 1000).round();
-    var list =
-        await strava.getLoggedInAthleteActivities(beforeDate, afterDate, null)
-        //   .then((activities) {
-        // if (activities != null && activities.length > 0) {
-        //   saveActivities(activities);
-        //   return activities;
-        // }
-        ;
-    return list;
+  Future<List<SummaryActivity>> loadActivities(int beforeDate, int afterDate) async {
+    try {
+      await _ensureAuthenticated();
+      final cachedActivities = await cache.getActivities(beforeDate, afterDate);
+      if (cachedActivities != null) {
+        return cachedActivities;
+      }
+      final activities = await strava.getLoggedInAthleteActivities(beforeDate, afterDate, null);
+      await cache.saveActivities(activities);
+      return activities;
+    } catch (e) {
+      print('Error loading activities: $e');
+      rethrow;
+    }
   }
 
   @override
   Future<DetailedActivity> loadActivityDetail(int activityId) async {
-    return await strava.getActivityById(activityId.toString());
+    try {
+      await _ensureAuthenticated();
+      final cachedActivity = await cache.getActivityDetail(activityId);
+      if (cachedActivity != null) {
+        return cachedActivity;
+      }
+      final activity = await strava.getActivityById(activityId.toString());
+      await cache.saveActivityDetail(activity);
+      return activity;
+    } catch (e) {
+      print('Error loading activity detail: $e');
+      rethrow;
+    }
   }
 
   @override
   Future<List<PhotoActivity>> loadActivityPhotos(int activityId) async {
-    final List<PhotoActivity> photos =
-        await strava.getPhotosFromActivityById(activityId);
-    return photos;
+    try {
+      await _ensureAuthenticated();
+      final cachedPhotos = await cache.getActivityPhotos(activityId);
+      if (cachedPhotos != null) {
+        return cachedPhotos;
+      }
+      final photos = await strava.getPhotosFromActivityById(activityId);
+      await cache.saveActivityPhotos(activityId, photos);
+      return photos;
+    } catch (e) {
+      print('Error loading activity photos: $e');
+      rethrow;
+    }
   }
 
   @override
   Future<StreamsDetailCollection> loadStreams(int activityId) async {
-    return await strava.getStreamsByActivity(activityId.toString());
+    try {
+      await _ensureAuthenticated();
+      final cachedStreams = await cache.getStreams(activityId);
+      if (cachedStreams != null) {
+        return cachedStreams;
+      }
+      final streams = await strava.getStreamsByActivity(activityId.toString());
+      await cache.saveStreams(activityId, streams);
+      return streams;
+    } catch (e) {
+      print('Error loading streams: $e');
+      rethrow;
+    }
   }
 
   @override
-  Future saveActivities(List<SummaryActivity> activities) async {
-    final directory = await getApplicationDocumentsDirectory();
-    final path = directory.path;
-    final File localActivityFile = File('$path/activities.json');
-    String content = '[';
-    for (int x = 0; x < activities.length; x++) {
-      Map<String, dynamic> item = activities[x].toJson();
-      if (x > 0) {
-        content += ',';
-      }
-      content += jsonEncode(item);
-    }
-    content += ']';
-    localActivityFile.writeAsStringSync(content);
+  Future<void> saveActivities(List<SummaryActivity> activities) async {
+    await cache.saveActivities(activities);
   }
 
-  Future<Token?> getClient() async {
-    bool isAuthOk = false;
-
-    // strava = Strava(globals.isInDebug, secret);
-    const prompt = 'auto';
-
-    isAuthOk = await strava.oauth(
-        clientId,
+  Future<void> _ensureAuthenticated() async {
+    if (!await strava.isAuthenticated()) {
+      final isAuthOk = await strava.oauth(
+        client_id,
         'activity:write,activity:read_all,profile:read_all,profile:write',
-        secret,
-        prompt);
-
-    if (isAuthOk) {
-      Token storedToken = await strava.getStoredToken();
-      return storedToken;
+        client_secret,
+        'auto',
+      );
+      if (!isAuthOk) {
+        throw Exception('Authentication failed');
+      }
     }
+  }
+}
 
+class Cache {
+  final String _cacheDir;
+
+  Cache(this._cacheDir);
+
+  Future<List<SummaryActivity>?> getActivities(int beforeDate, int afterDate) async {
+    final file = File('$_cacheDir/activities_${beforeDate}_$afterDate.json');
+    if (await file.exists()) {
+      final content = await file.readAsString();
+      final List<dynamic> json = jsonDecode(content);
+      return json.map((e) => SummaryActivity.fromJson(e)).toList();
+    }
     return null;
+  }
+
+  Future<void> saveActivities(List<SummaryActivity> activities) async {
+    final file = File('$_cacheDir/activities_${activities.first.startDate.millisecondsSinceEpoch}_${activities.last.startDate.millisecondsSinceEpoch}.json');
+    await file.writeAsString(jsonEncode(activities.map((e) => e.toJson()).toList()));
+  }
+
+  Future<DetailedActivity?> getActivityDetail(int activityId) async {
+    final file = File('$_cacheDir/activity_$activityId.json');
+    if (await file.exists()) {
+      final content = await file.readAsString();
+      return DetailedActivity.fromJson(jsonDecode(content));
+    }
+    return null;
+  }
+
+  Future<void> saveActivityDetail(DetailedActivity activity) async {
+    final file = File('$_cacheDir/activity_${activity.id}.json');
+    await file.writeAsString(jsonEncode(activity.toJson()));
+  }
+
+  Future<List<PhotoActivity>?> getActivityPhotos(int activityId) async {
+    final file = File('$_cacheDir/photos_$activityId.json');
+    if (await file.exists()) {
+      final content = await file.readAsString();
+      final List<dynamic> json = jsonDecode(content);
+      return json.map((e) => PhotoActivity.fromJson(e)).toList();
+    }
+    return null;
+  }
+
+  Future<void> saveActivityPhotos(int activityId, List<PhotoActivity> photos) async {
+    final file = File('$_cacheDir/photos_$activityId.json');
+    await file.writeAsString(jsonEncode(photos.map((e) => e.toJson()).toList()));
+  }
+
+  Future<StreamsDetailCollection?> getStreams(int activityId) async {
+    final file = File('$_cacheDir/streams_$activityId.json');
+    if (await file.exists()) {
+      final content = await file.readAsString();
+      return StreamsDetailCollection.fromJson(jsonDecode(content));
+    }
+    return null;
+  }
+
+  Future<void> saveStreams(int activityId, StreamsDetailCollection streams) async {
+    final file = File('$_cacheDir/streams_$activityId.json');
+    await file.writeAsString(jsonEncode(streams.toJson()));
   }
 }

@@ -1,5 +1,5 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:flutter_strava_api/API/streams.dart';
+import 'package:flutter_strava_api/api/streams.dart';
 
 class CombinedStreamSelectNotifier extends StateNotifier<CombinedStreams> {
   CombinedStreamSelectNotifier() : super(CombinedStreams(0, 0, 0, 0, 0, 0, 0));
