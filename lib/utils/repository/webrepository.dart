@@ -1,5 +1,6 @@
 import 'dart:convert';
 import 'dart:io';
+import 'package:flutter/foundation.dart';
 import 'package:flutter_strava_api/api/streams.dart';
 import 'package:flutter_strava_api/models/activity.dart';
 import 'package:flutter_strava_api/models/summary_activity.dart';
@@ -26,7 +27,11 @@ class WebRepository implements ActivitiesRepository, StreamsRepository {
       await cache.saveActivities(activities);
       return activities;
     } catch (e) {
-      print('Error loading activities: $e');
+      if (kDebugMode) {
+        if (kDebugMode) {
+          print('Error loading activities: $e');
+        }
+      }
       rethrow;
     }
   }
@@ -43,7 +48,9 @@ class WebRepository implements ActivitiesRepository, StreamsRepository {
       await cache.saveActivityDetail(activity);
       return activity;
     } catch (e) {
-      print('Error loading activity detail: $e');
+      if (kDebugMode) {
+        print('Error loading activity detail: $e');
+      }
       rethrow;
     }
   }
@@ -60,7 +67,9 @@ class WebRepository implements ActivitiesRepository, StreamsRepository {
       await cache.saveActivityPhotos(activityId, photos);
       return photos;
     } catch (e) {
-      print('Error loading activity photos: $e');
+      if (kDebugMode) {
+        print('Error loading activity photos: $e');
+      }
       rethrow;
     }
   }
@@ -77,7 +86,9 @@ class WebRepository implements ActivitiesRepository, StreamsRepository {
       await cache.saveStreams(activityId, streams);
       return streams;
     } catch (e) {
-      print('Error loading streams: $e');
+      if (kDebugMode) {
+        print('Error loading streams: $e');
+      }
       rethrow;
     }
   }
@@ -88,7 +99,7 @@ class WebRepository implements ActivitiesRepository, StreamsRepository {
   }
 
   Future<void> _ensureAuthenticated() async {
-    if (!await strava.isAuthenticated()) {
+    if (!strava.isAuthenticated()) {
       final isAuthOk = await strava.oauth(
         client_id,
         'activity:write,activity:read_all,profile:read_all,profile:write',

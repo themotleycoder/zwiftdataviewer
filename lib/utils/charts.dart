@@ -1,5 +1,4 @@
-import 'package:flutter/widgets.dart';
-import 'package:flutter_palette/flutter_palette.dart';
+import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_strava_api/models/summary_activity.dart';
 import 'package:syncfusion_flutter_charts/charts.dart';
@@ -10,7 +9,6 @@ import 'conversions.dart';
 
 class ChartsData {
   static
-
       /// Returns the list of chart series which need to
       /// render on the multiple axes chart.
       List<ChartSeries<YearlyTotals, String>> getMultipleAxisColumnSeries(
@@ -115,21 +113,38 @@ class ChartsData {
     //     .setSelectedActivity(selectedRide);
   }
 
+  // Custom color generation function to replace ColorPalette.splitComplimentary
   static Map<int, Color> generateColor(List<int> years) {
     if (years.isEmpty) {
       return {};
     }
 
-    final ColorPalette palette = ColorPalette.splitComplimentary(
-      zdvMidGreen,
-      numberOfColors: years.length,
-      hueVariability: 30,
-      saturationVariability: 30,
-      brightnessVariability: 30,
-    );
-
+    // Base color (zdvMidGreen)
+    final HSVColor baseColor = HSVColor.fromColor(zdvMidGreen);
+    
+    // Generate a list of colors with varying hues
+    final List<Color> colors = [];
+    final int count = years.length;
+    
+    for (int i = 0; i < count; i++) {
+      // Calculate a new hue by rotating around the color wheel
+      // For split complementary effect, we'll use a 150 degree spread
+      final double hueOffset = (i * 150.0 / count) % 360;
+      final double newHue = (baseColor.hue + hueOffset) % 360;
+      
+      // Add some variability to saturation and value
+      final double satVariability = (i % 3 - 1) * 0.1; // -0.1, 0, or 0.1
+      final double valVariability = (i % 3 - 1) * 0.1; // -0.1, 0, or 0.1
+      
+      final double newSaturation = (baseColor.saturation + satVariability).clamp(0.3, 1.0);
+      final double newValue = (baseColor.value + valVariability).clamp(0.7, 1.0);
+      
+      colors.add(HSVColor.fromAHSV(1.0, newHue, newSaturation, newValue).toColor());
+    }
+    
+    // Map years to colors
     return {
-      for (var entry in years.asMap().entries) entry.value: palette[entry.key]
+      for (var entry in years.asMap().entries) entry.value: colors[entry.key]
     };
   }
 }

@@ -8,25 +8,24 @@ publish_to: 'none' # Remove this line if you wish to publish to pub.dev
 version: 1.0.0+1
 
 environment:
-  sdk: ">=2.17.0 <3.0.0"
+  sdk: ">=2.17.0 <4.0.0"
   flutter: ">=3.0.0"
 
 dependencies:
   http: ^1.0.0
   #  oauth2: ^2.0.0
-  url_launcher: ^6.1.0
-  #uni_links: ^0.5.1
+  url_launcher: ^6.2.5
   intl: ^0.18.1
-  path_provider: ^2.0.9
+  path_provider: ^2.1.2
   shared_preferences: ^2.0.13
   # google_maps_flutter: ^0.5.28+1
-  carousel_slider: ^4.1.1
+  # Removed carousel_slider due to conflicts with Flutter's material package
   expandable: ^5.0.1
   flutter_svg: ^2.0.5
   flutter:
     sdk: flutter
   table_calendar: ^3.0.9
-  flutter_palette: ^1.1.0+1
+  # Removed flutter_palette dependency which uses problematic flutter_color_models
   syncfusion_flutter_charts: ^22.1.34
   flutter_riverpod: ^2.3.6
   html: ^0.15.3
@@ -42,6 +41,10 @@ dependencies:
 dev_dependencies:
   flutter_test:
     sdk: flutter
+
+# Override transitive dependencies with compatible versions
+dependency_overrides:
+  uni_links: ^0.5.1
 
   # The "flutter_lints" package below contains a set of recommended lints to
   # encourage good coding practices. The lint set provided by the package is

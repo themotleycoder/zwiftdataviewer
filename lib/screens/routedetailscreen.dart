@@ -1,6 +1,6 @@
-import 'package:carousel_slider/carousel_slider.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:zwiftdataviewer/utils/simple_carousel.dart';
 import 'package:zwiftdataviewer/utils/conversions.dart';
 
 import '../providers/activity_detail_provider.dart';
@@ -43,23 +43,12 @@ class PrefetchImageDemo extends ConsumerWidget {
           data: (data) {
             return LayoutBuilder(
                 builder: (BuildContext context, BoxConstraints constraints) {
-              return CarouselSlider.builder(
+              return SimpleCarousel(
                 itemCount: data.length,
-                options: CarouselOptions(
-                  height: constraints.maxHeight,
-                  autoPlay: data.length > 1 ? true : false,
-                  viewportFraction: 2,
-                  clipBehavior: Clip.antiAlias,
-                  enlargeCenterPage: false,
-                  // onPageChanged: (index, reason) {
-                  //   // if (!mounted) {
-                  //   //   setState(() {
-                  //   //     _current = index;
-                  //   //   });
-                  //   // }
-                  // }
-                ),
-                itemBuilder: (context, index, index2) {
+                height: constraints.maxHeight,
+                autoPlay: data.length > 1,
+                clipBehavior: Clip.antiAlias,
+                itemBuilder: (context, index) {
                   return Center(
                     child: FadeInImage.assetNetwork(
                         placeholder: 'assets/zwiftdatalogo.png',
