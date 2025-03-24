@@ -11,7 +11,7 @@ class FilterButton extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    var guestWorldFilter = ref.watch(guestWorldFiltersNotifier.notifier);
+    ref.watch(guestWorldFiltersNotifier.notifier);
 
     return IgnorePointer(
       ignoring: !isActive,

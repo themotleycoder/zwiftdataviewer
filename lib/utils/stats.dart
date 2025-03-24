@@ -1,12 +1,12 @@
 import 'package:flutter_strava_api/models/summary_activity.dart';
 
 class StatsType {
-  static const String TotalDistance = "TotalDistance";
-  static const String AvgDistance = "AvgDistance";
-  static const String TotalElevation = "TotalElevation";
-  static const String AvgElevation = "AvgElevation";
-  static const String LongestDistance = "LongestDistance";
-  static const String HighestElevation = "HighestElevation";
+  static const String TotalDistance = 'TotalDistance';
+  static const String AvgDistance = 'AvgDistance';
+  static const String TotalElevation = 'TotalElevation';
+  static const String AvgElevation = 'AvgElevation';
+  static const String LongestDistance = 'LongestDistance';
+  static const String HighestElevation = 'HighestElevation';
 }
 
 class SummaryData {

@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_strava_api/models/summary_activity.dart';
 import 'package:flutter_strava_api/globals.dart' as globals;
+import 'package:flutter_strava_api/models/summary_activity.dart';
 import 'package:flutter_strava_api/strava.dart';
 import 'package:intl/intl.dart';
 import 'package:zwiftdataviewer/secrets.dart';
@@ -22,7 +22,7 @@ class ActivitySearch extends SearchDelegate<SummaryActivity> {
       IconButton(
         icon: const Icon(Icons.close),
         onPressed: () {
-          query = "";
+          query = '';
           selectedResult = null;
           buildResults(context);
         },
@@ -66,7 +66,7 @@ class ActivitySearch extends SearchDelegate<SummaryActivity> {
         ? activities
         : activities
             .where(
-                (element) => element.name.contains(selectedResult?.name ?? ""))
+                (element) => element.name.contains(selectedResult?.name ?? ''))
             .toList();
 
     final Strava strava = Strava(globals.isInDebug, client_secret);
@@ -93,10 +93,10 @@ class ActivitySearch extends SearchDelegate<SummaryActivity> {
                     child: ListTile(
                       leading: const Icon(Icons.directions_bike,
                           size: 32.0, color: zdvOrange),
-                      title: Text(summaryActivity.name ?? "NA",
+                      title: Text(summaryActivity.name,
                           style: constants.headerFontStyle),
                       subtitle: Text(DateFormat.yMd().add_jm().format(
-                          summaryActivity.startDateLocal ?? DateTime.now())),
+                          summaryActivity.startDateLocal)),
                       trailing: Icon(
                         Icons.arrow_forward_ios,
                         color: zdvmMidBlue[100],

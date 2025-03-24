@@ -57,6 +57,6 @@ class ClimbDetailScreen extends DetailScreenLayout {
   @override
   String getTitle(WidgetRef ref) {
     final ClimbData climbData = ref.read(selectedClimbProvider);
-    return climbData.name ?? "Climb Details";
+    return climbData.name ?? 'Climb Details';
   }
 }

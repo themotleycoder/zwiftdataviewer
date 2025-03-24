@@ -57,7 +57,7 @@ class DisplayChart extends ConsumerWidget {
         ref.watch(streamsProvider(activityId));
 
     return Expanded(
-      child: Container(
+      child: SizedBox(
         height: 300, // Ensure the chart has a fixed height
         child: streamsData.when(
           data: (streams) {

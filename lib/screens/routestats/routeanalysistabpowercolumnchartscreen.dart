@@ -49,25 +49,14 @@ class DisplayChart extends ConsumerWidget {
 
     // Trigger loading of lap data
     WidgetsBinding.instance.addPostFrameCallback((_) {
-      if (activityDetails != null) {
-        ref.read(lapsProvider(activityDetails));
-      }
-    });
-
-    if (activityDetails == null) {
-      return Expanded(
-        child: UIHelpers.buildEmptyStateWidget(
-          'No activity selected',
-          icon: Icons.electric_bolt,
-        ),
-      );
-    }
+      ref.read(lapsProvider(activityDetails));
+        });
 
     final AsyncValue<List<LapSummaryObject>> lapsData =
         ref.watch(lapsProvider(activityDetails));
 
     return Expanded(
-      child: Container(
+      child: SizedBox(
         height: 300, // Ensure the chart has a fixed height
         child: lapsData.when(
           data: (laps) {
@@ -124,7 +113,6 @@ class DisplayChart extends ConsumerWidget {
 
   List<ChartSeries<LapSummaryObject, int>> _createDataSet(
       BuildContext context, List<LapSummaryObject> lapSummaryObjData) {
-    const double ftp = 229;
 
     return [
       // LineSeries<LapSummaryObject, int>(

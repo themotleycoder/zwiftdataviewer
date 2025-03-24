@@ -48,25 +48,14 @@ class DisplayChart extends ConsumerWidget {
 
     // Trigger loading of lap summary data
     WidgetsBinding.instance.addPostFrameCallback((_) {
-      if (activityDetails != null) {
-        ref.read(lapSummaryDataProvider(activityDetails));
-      }
-    });
-
-    if (activityDetails == null) {
-      return Expanded(
-        child: UIHelpers.buildEmptyStateWidget(
-          'No activity selected',
-          icon: Icons.pie_chart,
-        ),
-      );
-    }
+      ref.read(lapSummaryDataProvider(activityDetails));
+        });
 
     final AsyncValue<List<LapSummaryObject>> lapSummaryData = 
         ref.watch(lapSummaryDataProvider(activityDetails));
 
     return Expanded(
-      child: Container(
+      child: SizedBox(
         height: 300, // Ensure the chart has a fixed height
         child: lapSummaryData.when(
           data: (laps) {

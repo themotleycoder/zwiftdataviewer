@@ -25,10 +25,6 @@ class HomeScreen extends MainLayout {
   /// @param key An optional key for this widget
   HomeScreen({super.key});
 
-  @override
-  Widget build(BuildContext context, WidgetRef ref) {
-    return super.build(context, ref);
-  }
 
   /// Gets the action buttons for the app bar based on the current tab.
   ///
@@ -73,14 +69,14 @@ class HomeScreen extends MainLayout {
     
     return activityList.when(
       data: (activityData) => UIHelpers.buildAppBar(
-        "Zwift Data Viewer",
+        'Zwift Data Viewer',
         actions: getActions(context, ref, activityData),
       ),
       error: (Object error, StackTrace stackTrace) {
-        return UIHelpers.buildAppBar("Zwift Data Viewer");
+        return UIHelpers.buildAppBar('Zwift Data Viewer');
       },
       loading: () {
-        return UIHelpers.buildAppBar("Zwift Data Viewer");
+        return UIHelpers.buildAppBar('Zwift Data Viewer');
       },
     );
   }
@@ -120,31 +116,31 @@ class HomeScreen extends MainLayout {
               label: Text(activityData.length.toString()),
               child: const Icon(Icons.list, key: AppKeys.activitiesTab),
             ),
-            label: "Activities",
+            label: 'Activities',
           ),
           loading: () => BottomNavigationBarItem(
               icon: Badge(
                 backgroundColor: zdvmYellow[100],
-                label: const Text("0"),
+                label: const Text('0'),
                 child: const Icon(Icons.list, key: AppKeys.activitiesTab),
               ),
-              label: "Activities"),
+              label: 'Activities'),
           error: (Object error, StackTrace stackTrace) {
             // Log error for debugging
             debugPrint('Error loading activities: $error');
             return BottomNavigationBarItem(
               icon: Badge(
                 backgroundColor: zdvmYellow[100],
-                label: const Text("0"),
+                label: const Text('0'),
                 child: const Icon(Icons.list, key: AppKeys.activitiesTab),
               ),
-              label: "Activities",
+              label: 'Activities',
             );
           },
         ),
         const BottomNavigationBarItem(
           icon: Icon(Icons.show_chart, key: AppKeys.statsTab),
-          label: "Statistics",
+          label: 'Statistics',
         ),
         routeDataState.when(
             data: (routeData) => BottomNavigationBarItem(
@@ -155,31 +151,31 @@ class HomeScreen extends MainLayout {
                             0,
                             (sum, list) =>
                                 sum +
-                                (list.length ?? 0)) // Use null-aware operators
+                                (list.length)) // Use null-aware operators
                         .toString()),
                     child: const Icon(Icons.route, key: AppKeys.routesTab),
                   ),
-                  label: "Routes",
+                  label: 'Routes',
                 ),
             error: (Object error, StackTrace stackTrace) {
               // Log error for debugging
               debugPrint('Error loading routes: $error');
               return const BottomNavigationBarItem(
                 icon: Icon(Icons.route, key: AppKeys.routesTab),
-                label: "Routes",
+                label: 'Routes',
               );
             },
             loading: () => const BottomNavigationBarItem(
                   icon: Icon(Icons.route, key: AppKeys.routesTab),
-                  label: "Routes",
+                  label: 'Routes',
                 )),
         const BottomNavigationBarItem(
           icon: Icon(Icons.calendar_today, key: AppKeys.calendarTab),
-          label: "Calendars",
+          label: 'Calendars',
         ),
         const BottomNavigationBarItem(
           icon: Icon(Icons.settings, key: AppKeys.settingsTab),
-          label: "Settings",
+          label: 'Settings',
         ),
       ],
     );

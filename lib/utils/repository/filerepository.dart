@@ -4,9 +4,9 @@ import 'dart:io';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_strava_api/api/streams.dart';
+import 'package:flutter_strava_api/globals.dart';
 import 'package:flutter_strava_api/models/activity.dart';
 import 'package:flutter_strava_api/models/summary_activity.dart';
-import 'package:flutter_strava_api/globals.dart';
 import 'package:html/parser.dart' as parser;
 import 'package:http/http.dart';
 import 'package:path_provider/path_provider.dart';
@@ -241,11 +241,11 @@ class FileRepository
         await Client().get(Uri.parse('https://zwiftinsider.com/routes/'));
     if (response.statusCode == 200) {
       var doc = parser.parse(response.body);
-      var vals = doc.getElementsByClassName("wpv-loop js-wpv-loop")[0].children;
+      var vals = doc.getElementsByClassName('wpv-loop js-wpv-loop')[0].children;
       for (dynamic val in vals) {
         int index = 1;
-        String routeName = "NA";
-        String url = val.children[index].innerHtml ?? "";
+        String routeName = 'NA';
+        String url = val.children[index].innerHtml ?? '';
         try {
           routeName = url.substring(url.indexOf('>') + 1, url.indexOf('</a>'));
         } catch (e) {
@@ -255,24 +255,23 @@ class FileRepository
             }
           }
           index -= 1;
-          url = val.children[index].innerHtml ?? "";
+          url = val.children[index].innerHtml ?? '';
           routeName = url.substring(url.indexOf('>') + 1, url.indexOf('</a>'));
         }
         url = url.substring(url.indexOf('https'), url.indexOf('/">'));
-        final String world = val.children[index + 1].innerHtml ?? "";
-        final String distance = val.children[index + 2].innerHtml ?? "";
-        final String altitude = val.children[index + 3].innerHtml ?? "";
-        final String leadin = val.children[index + 4].innerHtml ?? "";
+        final String world = val.children[index + 1].innerHtml ?? '';
+        final String distance = val.children[index + 2].innerHtml ?? '';
+        final String altitude = val.children[index + 3].innerHtml ?? '';
         final String eventOnly =
-            val.children[index + 5].innerHtml ?? val.children[index + 7] ?? "";
+            val.children[index + 5].innerHtml ?? val.children[index + 7] ?? '';
         final int id = worldLookupByName[world] ?? 0;
 
         final double distanceMeters =
             double.parse(distance.substring(0, distance.indexOf('km'))) * 1000;
         //final double distanceMiles = double.parse((distanceKM * 0.621371).toStringAsFixed(0)).toDouble();
 
-        final double altitudeMeters = double.parse(altitude == ""
-            ? "0.0"
+        final double altitudeMeters = double.parse(altitude == ''
+            ? '0.0'
             : altitude.substring(0, altitude.indexOf('m')));
         // final double altitudeFeet = double.parse((altitudeMeters * 3.28084).toStringAsFixed(0)).toDouble();
 
@@ -334,7 +333,7 @@ class FileRepository
       String dateTime = key.toString();
 
       content += jsonEncode(dateTime);
-      content += ":[";
+      content += ':[';
 
       for (int x = 0; x < worldRoute.length; x++) {
         Map<String, dynamic> item = worldRoute[x].toJson();
@@ -343,7 +342,7 @@ class FileRepository
         }
         content += jsonEncode(item);
       }
-      content += "]";
+      content += ']';
 
       hasContent = true;
     });
@@ -362,13 +361,13 @@ class FileRepository
       //     await rootBundle.loadString('assets/testjson/worldcalendar.html');
 
       var doc = parser.parse(response.body);
-      var vals = doc.getElementsByClassName("day-with-date");
+      var vals = doc.getElementsByClassName('day-with-date');
       for (dynamic val in vals) {
         int dayNumber =
-            int.parse(val.getElementsByClassName("day-number")[0].innerHtml);
+            int.parse(val.getElementsByClassName('day-number')[0].innerHtml);
         DateTime key =
             DateTime(DateTime.now().year, DateTime.now().month, dayNumber);
-        List<dynamic> locations = val.getElementsByClassName("spiffy-title");
+        List<dynamic> locations = val.getElementsByClassName('spiffy-title');
         List<WorldData> worldData = [];
         for (dynamic location in locations) {
           worldData
@@ -386,7 +385,6 @@ class FileRepository
 
   /// Climb Calendar Portal Methods
 
-  @override
   Future<Map<DateTime, List<ClimbData>>> loadClimbCalendarData() async {
     Map<DateTime, List<ClimbData>> calendarData = {};
     final file = await _localClimbCalendarFile;
@@ -411,7 +409,6 @@ class FileRepository
     return calendarData;
   }
 
-  @override
   Future saveClimbCalendarData(Map<DateTime, List<ClimbData>> routeData) async {
     final file = await _localClimbCalendarFile;
     String content = '{';
@@ -424,7 +421,7 @@ class FileRepository
       String dateTime = key.toString();
 
       content += jsonEncode(dateTime);
-      content += ":[";
+      content += ':[';
 
       for (int x = 0; x < worldRoute.length; x++) {
         Map<String, dynamic> item = worldRoute[x].toJson();
@@ -433,7 +430,7 @@ class FileRepository
         }
         content += jsonEncode(item);
       }
-      content += "]";
+      content += ']';
 
       hasContent = true;
     });
@@ -442,7 +439,6 @@ class FileRepository
     file.writeAsStringSync(content);
   }
 
-  @override
   Future<Map<DateTime, List<ClimbData>>> scrapeClimbCalendarData() async {
     Map<DateTime, List<ClimbData>> climbs = {};
     final response = await Client()
@@ -452,13 +448,13 @@ class FileRepository
       //     await rootBundle.loadString('assets/testjson/worldcalendar.html');
 
       var doc = parser.parse(response.body);
-      var vals = doc.getElementsByClassName("day-with-date");
+      var vals = doc.getElementsByClassName('day-with-date');
       for (dynamic val in vals) {
         int dayNumber =
-            int.parse(val.getElementsByClassName("day-number")[0].innerHtml);
+            int.parse(val.getElementsByClassName('day-number')[0].innerHtml);
         DateTime key =
             DateTime(DateTime.now().year, DateTime.now().month, dayNumber);
-        List<dynamic> locations = val.getElementsByClassName("spiffy-title");
+        List<dynamic> locations = val.getElementsByClassName('spiffy-title');
         List<ClimbData> climbData = [];
         for (dynamic location in locations) {
           String str = location.innerHtml;

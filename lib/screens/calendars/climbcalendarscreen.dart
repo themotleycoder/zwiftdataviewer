@@ -90,13 +90,15 @@ Widget _buildEventList(WidgetRef ref, BuildContext context) {
 /// @param context The BuildContext for navigation
 /// @return A Card widget for the climb
 Widget _buildClimbCard(ClimbData climb, WidgetRef ref, BuildContext context) {
-  final climbName = allClimbsConfig[climb.id]?.name ?? "Unknown Climb";
+  final climbName = allClimbsConfig[climb.id]?.name ?? 'Unknown Climb';
   
   return Card(
     color: Colors.white,
     elevation: defaultCardElevation,
     margin: const EdgeInsets.all(8.0),
+    semanticContainer: true,
     child: InkWell(
+      borderRadius: BorderRadius.circular(4.0),
       child: ListTile(
         leading: const Icon(Icons.terrain, size: 32.0, color: zdvOrange),
         title: Text(climbName),
@@ -108,12 +110,10 @@ Widget _buildClimbCard(ClimbData climb, WidgetRef ref, BuildContext context) {
         onTap: () {
           ref.read(selectedClimbProvider.notifier).state =
               allClimbsConfig[climb.id] as ClimbData;
-          launchMyUrl(allClimbsConfig[climb.id]?.url ?? "NA");
+          launchMyUrl(allClimbsConfig[climb.id]?.url ?? 'NA');
         },
       ),
-      borderRadius: BorderRadius.circular(4.0),
     ),
-    semanticContainer: true,
   );
 }
 

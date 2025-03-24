@@ -9,7 +9,7 @@ import 'package:zwiftdataviewer/utils/worldsconfig.dart';
 class WorldSelectNotifier extends StateNotifier<WorldData> {
   /// Creates a WorldSelectNotifier with Watopia as the initial selected world.
   WorldSelectNotifier()
-      : super(WorldData(1, GuestWorldId.watopia, 'Watopia',
+      : super(const WorldData(1, GuestWorldId.watopia, 'Watopia',
             'https://zwiftinsider.com/watopia/'));
 
   /// Sets the selected world.

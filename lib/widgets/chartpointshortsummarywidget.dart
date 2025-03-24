@@ -31,8 +31,8 @@ Container getChartPointShortSummaryWidget(
                           padding:
                               const EdgeInsets.fromLTRB(16.0, 0.0, 0.0, 0.0),
                           child: Text(
-                              selectedActivity.name == ""
-                                  ? "No ride selected"
+                              selectedActivity.name == ''
+                                  ? 'No ride selected'
                                   : selectedActivity.name,
                               style: constants.bodyTextStyle,
                               overflow: TextOverflow.ellipsis,
@@ -41,7 +41,7 @@ Container getChartPointShortSummaryWidget(
                   SizedBox(
                     width: 50,
                     height: 50,
-                    child: selectedActivity.name != ""
+                    child: selectedActivity.name != ''
                         ? IconButton(
                             color: zdvMidBlue,
                             onPressed: () {

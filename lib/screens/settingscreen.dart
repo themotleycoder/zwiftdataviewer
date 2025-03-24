@@ -6,7 +6,6 @@ import 'package:zwiftdataviewer/providers/config_provider.dart';
 import 'package:zwiftdataviewer/utils/constants.dart';
 import 'package:zwiftdataviewer/utils/repository/filerepository.dart';
 import 'package:zwiftdataviewer/utils/theme.dart';
-import 'package:zwiftdataviewer/utils/ui_helpers.dart';
 
 /// A screen that displays application settings.
 ///

@@ -27,7 +27,7 @@ class DetailScreen extends MainLayout {
     final activityDetail = ref.watch(stravaActivityDetailsProvider);
     
     return UIHelpers.buildAppBar(
-      "${activityDetail.name}",
+      '${activityDetail.name}',
       leading: IconButton(
         icon: const Icon(Icons.arrow_back, color: Colors.black),
         onPressed: () => Navigator.pop(context),
@@ -67,21 +67,21 @@ class DetailScreen extends MainLayout {
             message: 'View ride details',
             child: Icon(Icons.list, key: AppKeys.activitiesTab),
           ),
-          label: "Details",
+          label: 'Details',
         ),
         BottomNavigationBarItem(
           icon: Tooltip(
             message: 'View ride analysis',
             child: Icon(Icons.insights, key: AppKeys.analysisTab),
           ),
-          label: "Analysis",
+          label: 'Analysis',
         ),
         BottomNavigationBarItem(
           icon: Tooltip(
             message: 'View ride sections',
             child: Icon(Icons.calendar_today, key: AppKeys.sectionsTab),
           ),
-          label: "Sections",
+          label: 'Sections',
         ),
       ],
     );

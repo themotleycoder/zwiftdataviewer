@@ -83,16 +83,9 @@ class WebRepository implements ActivitiesRepository, StreamsRepository {
         return cachedStreams;
       }
       final streams = await strava.getStreamsByActivity(activityId.toString());
-      if (streams != null) {
-        await cache.saveStreams(activityId, streams);
-        return streams;
-      } else {
-        if (kDebugMode) {
-          print('Streams data is null for activity $activityId');
-        }
-        return StreamsDetailCollection();
-      }
-    } catch (e) {
+      await cache.saveStreams(activityId, streams);
+      return streams;
+        } catch (e) {
       if (kDebugMode) {
         print('Error loading streams: $e');
       }
@@ -192,14 +185,8 @@ class Cache {
     try {
       final file = File('$_cacheDir/streams_$activityId.json');
       final jsonData = streams.toJson();
-      if (jsonData != null) {
-        await file.writeAsString(jsonEncode(jsonData));
-      } else {
-        if (kDebugMode) {
-          print('Cannot save null streams data');
-        }
-      }
-    } catch (e) {
+      await file.writeAsString(jsonEncode(jsonData));
+        } catch (e) {
       if (kDebugMode) {
         print('Error saving streams: $e');
       }

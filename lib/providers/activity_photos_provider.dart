@@ -1,7 +1,7 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:flutter_strava_api/models/activity.dart';
 import 'package:flutter_strava_api/globals.dart' as globals;
 import 'package:flutter_strava_api/globals.dart';
+import 'package:flutter_strava_api/models/activity.dart';
 import 'package:flutter_strava_api/strava.dart';
 import 'package:path_provider/path_provider.dart';
 
@@ -48,20 +48,20 @@ final activityPhotoUrlsProvider = FutureProvider.autoDispose
   final List<String> imagesUrls = [];
 
   for (PhotoActivity image in photos) {
-    String str = image.urls!["1800"] ??
-        image.urls!["1000"] ??
-        image.urls!["600"] ??
-        image.urls!["200"] ??
-        image.urls!["100"] ??
-        image.urls!["50"] ??
-        image.urls!["25"] ??
-        image.urls!["10"] ??
-        image.urls!["5"] ??
-        image.urls!["3"] ??
-        image.urls!["2"] ??
-        image.urls!["1"] ??
-        image.urls!["0"] ??
-        "";
+    String str = image.urls!['1800'] ??
+        image.urls!['1000'] ??
+        image.urls!['600'] ??
+        image.urls!['200'] ??
+        image.urls!['100'] ??
+        image.urls!['50'] ??
+        image.urls!['25'] ??
+        image.urls!['10'] ??
+        image.urls!['5'] ??
+        image.urls!['3'] ??
+        image.urls!['2'] ??
+        image.urls!['1'] ??
+        image.urls!['0'] ??
+        '';
     imagesUrls
         .add(str); //.substring(0, str.lastIndexOf('-')) + "-768x419.jpg");
   }

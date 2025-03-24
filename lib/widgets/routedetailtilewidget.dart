@@ -22,9 +22,9 @@ class RouteDetailTile extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final Map<String, String> units = Conversions.units(ref);
-    String routeName = "${_routeData.world}: ${_routeData.routeName}";
-    if (_routeData.eventOnly == "Event Only") {
-      routeName = "$routeName (Event Only)";
+    String routeName = '${_routeData.world}: ${_routeData.routeName}';
+    if (_routeData.eventOnly == 'Event Only') {
+      routeName = '$routeName (Event Only)';
     }
     return Container(
       margin: const EdgeInsets.fromLTRB(0.0, 0, 0.0, 8.0),
@@ -59,7 +59,7 @@ class RouteDetailTile extends ConsumerWidget {
             color: zdvMidBlue,
           ),
           onTap: () {
-            launchURL(_routeData.url ?? "NA");
+            launchURL(_routeData.url ?? 'NA');
           },
         )),
         // )

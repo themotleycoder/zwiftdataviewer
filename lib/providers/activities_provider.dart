@@ -2,9 +2,9 @@ import 'dart:convert';
 import 'dart:io';
 
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:flutter_strava_api/globals.dart' as globals;
 import 'package:flutter_strava_api/models/activity.dart';
 import 'package:flutter_strava_api/models/summary_activity.dart';
-import 'package:flutter_strava_api/globals.dart' as globals;
 import 'package:http/http.dart' as http;
 import 'package:path_provider/path_provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -19,8 +19,7 @@ class ActivitiesNotifier extends StateNotifier<List<SummaryActivity>> {
     final cacheFile = await _getCacheFile();
     if (cacheFile.existsSync()) {
       final cacheData = await cacheFile.readAsString();
-      final List<SummaryActivity> cachedActivities =
-          List.from(jsonDecode(cacheData))
+      List.from(jsonDecode(cacheData))
               .map((activity) => SummaryActivity.fromJson(activity))
               .toList();
       //   state = cachedActivities;
@@ -273,23 +272,7 @@ Future<File> _getCacheFile() async {
   return File('${directory.path}/strava_activities_cache.json');
 }
 
-Future<int> _getLastActivityEpoch() async {
-  final directory = await getApplicationDocumentsDirectory();
-  final file = File('${directory.path}/last_activity_epoch.txt');
 
-  if (file.existsSync()) {
-    final contents = await file.readAsString();
-    return int.parse(contents);
-  } else {
-    return 1420070400; //default is Thursday, January 1, 2015 12:00:00 AM
-  }
-}
-
-Future<void> _storeLastActivityEpoch(int lastActivityEpoch) async {
-  final directory = await getApplicationDocumentsDirectory();
-  final file = File('${directory.path}/last_activity_epoch.txt');
-  await file.writeAsString('$lastActivityEpoch');
-}
 
 Future<void> saveLastActivityDate(DateTime date) async {
   final prefs = await SharedPreferences.getInstance();

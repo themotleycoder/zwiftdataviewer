@@ -10,11 +10,11 @@ import 'package:zwiftdataviewer/utils/worldsconfig.dart';
 // Mock data for testing
 final mockWorldData = {
   DateTime(2025, 3, 24): [
-    WorldData(1, GuestWorldId.watopia, 'Watopia', 'https://zwiftinsider.com/watopia/'),
-    WorldData(3, GuestWorldId.london, 'London', 'https://zwiftinsider.com/london/'),
+    const WorldData(1, GuestWorldId.watopia, 'Watopia', 'https://zwiftinsider.com/watopia/'),
+    const WorldData(3, GuestWorldId.london, 'London', 'https://zwiftinsider.com/london/'),
   ],
   DateTime(2025, 3, 25): [
-    WorldData(2, GuestWorldId.richmond, 'Richmond', 'https://zwiftinsider.com/richmond/'),
+    const WorldData(2, GuestWorldId.richmond, 'Richmond', 'https://zwiftinsider.com/richmond/'),
   ],
 };
 

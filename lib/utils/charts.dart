@@ -91,9 +91,9 @@ class ChartsData {
         },
         xValueMapper: (SummaryActivity stats, _) =>
             Conversions.metersToDistance(
-                ref, (stats.distance ?? 0).roundToDouble()),
+                ref, (stats.distance).roundToDouble()),
         yValueMapper: (SummaryActivity stats, _) => Conversions.metersToHeight(
-            ref, (stats.totalElevationGain ?? 0).roundToDouble()),
+            ref, (stats.totalElevationGain).roundToDouble()),
         dataSource: activities[key]!,
         selectionBehavior: SelectionBehavior(enable: true),
         initialSelectedDataIndexes: const [0],

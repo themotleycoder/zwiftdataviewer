@@ -26,7 +26,7 @@ class RouteSectionDetailScreen extends ConsumerWidget {
       col = zdvOrange;
       text = '3';
     } else {
-      text = "";
+      text = '';
     }
 
     return Stack(children: <Widget>[
@@ -107,7 +107,7 @@ class RouteSectionDetailScreen extends ConsumerWidget {
                 elevation: defaultCardElevation,
                 child: ListTile(
                   leading: createIcon(effort.prRank ?? 0),
-                  title: Text(segmentEfforts[index].segment!.name ?? "",
+                  title: Text(segmentEfforts[index].segment!.name ?? '',
                       style: constants.headerFontStyle),
                   subtitle: createSubTitle(ref, segmentEfforts[index], units),
                   // trailing: Icon(

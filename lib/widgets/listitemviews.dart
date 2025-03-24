@@ -22,7 +22,7 @@ Widget singleDataLineItem(
         Row(crossAxisAlignment: CrossAxisAlignment.end, children: [
           Text(dataPoint,
               textAlign: TextAlign.right, style: constants.bodyTextStyle),
-          Text(" $units",
+          Text(' $units',
               textAlign: TextAlign.right, style: constants.inlineBodyTextStyle),
         ])
       ]));
@@ -120,7 +120,7 @@ Widget doubleDataSingleHeaderLineItem(String title, IconData? icon,
         children: <Widget>[
           Container(
               padding: const EdgeInsets.fromLTRB(16.0, 0.0, 16.0, 8.0),
-              child: Text("$title ($units)", style: constants.headerTextStyle)),
+              child: Text('$title ($units)', style: constants.headerTextStyle)),
           Row(
               mainAxisAlignment: MainAxisAlignment.spaceAround,
               children: List.generate(labels.length, (index) {
@@ -222,7 +222,7 @@ Widget gridViewItem(
       child: Row(mainAxisAlignment: MainAxisAlignment.center, children: [
         Column(
           children: <Widget>[
-            Text("$label ($units)", style: constants.headerTextStyle),
+            Text('$label ($units)', style: constants.headerTextStyle),
             Text(dataPoint, style: constants.bodyTextStyle),
           ],
         )

@@ -113,7 +113,9 @@ Widget _buildWorldCard(WorldData world, WidgetRef ref, BuildContext context) {
     color: Colors.white,
     elevation: defaultCardElevation,
     margin: const EdgeInsets.all(8.0),
+    semanticContainer: true,
     child: InkWell(
+      borderRadius: BorderRadius.circular(4.0),
       child: ListTile(
         leading: const Icon(Icons.map, size: 32.0, color: zdvOrange),
         title: Text(worldName),
@@ -124,9 +126,7 @@ Widget _buildWorldCard(WorldData world, WidgetRef ref, BuildContext context) {
         ),
         onTap: () => _navigateToWorldDetail(world.id!, ref, context),
       ),
-      borderRadius: BorderRadius.circular(4.0),
     ),
-    semanticContainer: true,
   );
 }
 
@@ -140,7 +140,9 @@ Widget _buildWatopiaCard(WidgetRef ref, BuildContext context) {
     color: Colors.white,
     elevation: defaultCardElevation,
     margin: const EdgeInsets.all(8.0),
+    semanticContainer: true,
     child: InkWell(
+      borderRadius: BorderRadius.circular(4.0),
       child: ListTile(
         leading: const Icon(Icons.map, size: 32.0, color: zdvYellow),
         title: Text(allWorldsConfig[1]?.name ?? 'Watopia'),
@@ -151,9 +153,7 @@ Widget _buildWatopiaCard(WidgetRef ref, BuildContext context) {
         ),
         onTap: () => _navigateToWorldDetail(1, ref, context),
       ),
-      borderRadius: BorderRadius.circular(4.0),
     ),
-    semanticContainer: true,
   );
 }
 
