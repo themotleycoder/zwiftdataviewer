@@ -44,7 +44,7 @@ dev_dependencies:
 
 # Override transitive dependencies with compatible versions
 dependency_overrides:
-  uni_links: ^0.5.1
+  # uni_links: ^0.5.1
 
   # The "flutter_lints" package below contains a set of recommended lints to
   # encourage good coding practices. The lint set provided by the package is

@@ -10,16 +10,30 @@ import 'package:zwiftdataviewer/utils/theme.dart';
 import 'package:zwiftdataviewer/utils/worldsconfig.dart';
 import 'package:zwiftdataviewer/widgets/worldeventscalendarwidget.dart';
 
-class WorldCalendarScreen extends ConsumerWidget {
+class WorldCalendarScreen extends ConsumerStatefulWidget {
   const WorldCalendarScreen({super.key});
 
   @override
-  Widget build(BuildContext context, WidgetRef ref) {
+  ConsumerState<WorldCalendarScreen> createState() => _WorldCalendarScreenState();
+}
+
+class _WorldCalendarScreenState extends ConsumerState<WorldCalendarScreen> {
+  @override
+  Widget build(BuildContext context) {
     final AsyncValue<Map<DateTime, List<WorldData>>> asyncWorldCalender =
         ref.watch(loadWorldCalendarProvider);
 
     return Column(mainAxisSize: MainAxisSize.max, children: <Widget>[
       asyncWorldCalender.when(data: (Map<DateTime, List<WorldData>> worldData) {
+        // Initialize events for the current day after the data is loaded
+        // Using a post-frame callback to avoid modifying the provider during build
+        WidgetsBinding.instance.addPostFrameCallback((_) {
+          final selectedDay = ref.read(selectedWorldDayProvider);
+          final DateTime d = DateTime(selectedDay.year, selectedDay.month, selectedDay.day);
+          final events = worldData[d] ?? [];
+          ref.read(worldEventsForDayProvider.notifier).setEventsForDay(events);
+        });
+        
         return WorldEventsCalendarWidget(ref, worldData);
       }, error: (Object error, StackTrace stackTrace) {
         print(error);

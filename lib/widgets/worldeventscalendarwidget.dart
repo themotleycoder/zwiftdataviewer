@@ -17,7 +17,6 @@ class WorldEventsCalendarWidget extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-
     return TableCalendar(
       startingDayOfWeek: StartingDayOfWeek.monday,
       calendarStyle: const CalendarStyle(
