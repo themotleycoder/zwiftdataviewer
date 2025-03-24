@@ -5,72 +5,100 @@ import 'package:zwiftdataviewer/screens/allstats/allstatsscreentabdistelev.dart'
 import 'package:zwiftdataviewer/screens/allstats/allstatsscreentabheartsummary.dart';
 import 'package:zwiftdataviewer/screens/allstats/allstatsscreentabscatter.dart';
 import 'package:zwiftdataviewer/screens/allstats/allstatsscreentabwattssummary.dart';
+import 'package:zwiftdataviewer/utils/theme.dart';
 
-import '../../utils/theme.dart';
-
+/// A screen that displays various statistics tabs.
+///
+/// This screen serves as a container for different statistics views,
+/// allowing the user to switch between them using a tab bar.
 class AllStatsRootScreen extends ConsumerStatefulWidget {
+  /// Creates an AllStatsRootScreen instance.
+  ///
+  /// @param key An optional key for this widget
   const AllStatsRootScreen({super.key});
 
   @override
-  ConsumerState<AllStatsRootScreen> createState() {
-    return _AllStatsRootScreenState();
-  }
+  ConsumerState<AllStatsRootScreen> createState() => _AllStatsRootScreenState();
 }
 
+/// The state for the AllStatsRootScreen.
+///
+/// This state manages the tab controller and builds the tab bar and tab views.
 class _AllStatsRootScreenState extends ConsumerState<AllStatsRootScreen>
     with TickerProviderStateMixin {
+  /// The tab controller for managing the tabs.
+  late final TabController _tabController;
+
+  @override
+  void initState() {
+    super.initState();
+    _tabController = TabController(length: 5, vsync: this);
+  }
+
+  @override
+  void dispose() {
+    _tabController.dispose();
+    super.dispose();
+  }
+
   @override
   Widget build(BuildContext context) {
-    final controller = TabController(length: 5, vsync: this);
-
     return Column(children: <Widget>[
-      Container(
-          child: TabBar(
+      TabBar(
         indicatorColor: Colors.transparent,
         unselectedLabelColor: zdvMidBlue,
-        //Colors.white,
         labelColor: zdvmMidGreen[100],
         indicatorSize: TabBarIndicatorSize.tab,
-        controller: controller,
+        controller: _tabController,
         dividerColor: Colors.transparent,
         tabs: const [
           Tab(
-            icon: Icon(Icons.terrain),
-            // text: 'Profile',
+            icon: Tooltip(
+              message: 'Elevation profile',
+              child: Icon(Icons.terrain),
+            ),
           ),
           Tab(
-            icon: Icon(Icons.bolt),
-            // text: 'Power',
+            icon: Tooltip(
+              message: 'Power data',
+              child: Icon(Icons.bolt),
+            ),
           ),
           Tab(
-            icon: Icon(Icons.favorite_border),
-            // text: 'Time',
+            icon: Tooltip(
+              message: 'Heart rate data',
+              child: Icon(Icons.favorite_border),
+            ),
           ),
           Tab(
-            icon: Icon(Icons.route),
-            // text: 'Time',
+            icon: Tooltip(
+              message: 'Distance summary',
+              child: Icon(Icons.route),
+            ),
           ),
           Tab(
-            icon: Icon(Icons.electric_bolt),
-            // text: 'Time',
+            icon: Tooltip(
+              message: 'Watts summary',
+              child: Icon(Icons.electric_bolt),
+            ),
           ),
         ],
-      )),
+      ),
       Expanded(
-          child: Padding(
-        padding: const EdgeInsets.fromLTRB(0, 0, 0, 4),
-        child: TabBarView(
-          controller: controller,
-          children: const <Widget>[
-            AllStatsScreenTabDistElev(),
-            AllStatsScreenTabScatter(),
-            AllStatsScreenTabHeartSummary(),
-            AllStatsScreenTabDistanceSummary(),
-            AllStatsScreenTabWattsSummary(),
-            // ),
-          ],
+        child: Padding(
+          padding: const EdgeInsets.fromLTRB(0, 0, 0, 4),
+          child: TabBarView(
+            controller: _tabController,
+            children: const <Widget>[
+              AllStatsScreenTabDistElev(),
+              AllStatsScreenTabScatter(),
+              AllStatsScreenTabHeartSummary(),
+              AllStatsScreenTabDistanceSummary(),
+              AllStatsScreenTabWattsSummary(),
+            ],
+          ),
         ),
-      ))
+      )
     ]);
   }
 }

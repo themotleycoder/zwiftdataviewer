@@ -8,9 +8,17 @@ import 'package:zwiftdataviewer/providers/config_provider.dart';
 import 'package:zwiftdataviewer/providers/lap_select_provider.dart';
 import 'package:zwiftdataviewer/screens/layouts/routeanalysistablayout.dart';
 import 'package:zwiftdataviewer/utils/theme.dart';
+import 'package:zwiftdataviewer/utils/ui_helpers.dart';
 import 'package:zwiftdataviewer/widgets/shortdataanalysis.dart';
 
+/// A screen that displays time distribution data for a route.
+///
+/// This screen shows a pie chart with time spent in different power zones,
+/// along with a summary of the selected zone.
 class RouteAnalysisTimeDataView extends RouteAnalysisTabLayout {
+  /// Creates a RouteAnalysisTimeDataView instance.
+  ///
+  /// @param key An optional key for this widget
   const RouteAnalysisTimeDataView({super.key});
 
   @override
@@ -24,46 +32,113 @@ class RouteAnalysisTimeDataView extends RouteAnalysisTabLayout {
   }
 }
 
+/// A widget that displays a pie chart with time spent in different power zones.
+///
+/// This widget fetches lap summary data for the selected activity and displays
+/// it in a pie chart, with each slice representing a different power zone.
 class DisplayChart extends ConsumerWidget {
+  /// Creates a DisplayChart instance.
+  ///
+  /// @param key An optional key for this widget
   const DisplayChart({super.key});
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    AsyncValue<List<LapSummaryObject>> lapSummaryData = ref.watch(
-        lapSummaryDataProvider(ref.watch(stravaActivityDetailsProvider)));
+    final activityDetails = ref.watch(stravaActivityDetailsProvider);
 
-    return lapSummaryData.when(data: (laps) {
+    // Trigger loading of lap summary data
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      if (activityDetails != null) {
+        ref.read(lapSummaryDataProvider(activityDetails));
+      }
+    });
+
+    if (activityDetails == null) {
       return Expanded(
-          child: SfCircularChart(
-          series: createDataSet(laps),
-          onSelectionChanged: (SelectionArgs args) {
-            var lapSummaryObject = laps[args.pointIndex];
-            ref
-                .read(lapSummaryObjectPieProvider.notifier)
-                .selectSummary(lapSummaryObject);
-          }));
-    }, error: (Object error, StackTrace stackTrace) {
-      return const Text("error");
-    }, loading: () {
-      return const Center(
-        child: CircularProgressIndicator(
-          key: AppKeys.lapsLoading,
+        child: UIHelpers.buildEmptyStateWidget(
+          'No activity selected',
+          icon: Icons.pie_chart,
         ),
       );
-    });
+    }
+
+    final AsyncValue<List<LapSummaryObject>> lapSummaryData = 
+        ref.watch(lapSummaryDataProvider(activityDetails));
+
+    return Expanded(
+      child: Container(
+        height: 300, // Ensure the chart has a fixed height
+        child: lapSummaryData.when(
+          data: (laps) {
+            if (laps.isEmpty) {
+              return UIHelpers.buildEmptyStateWidget(
+                'No power zone data available for this activity',
+                icon: Icons.pie_chart,
+              );
+            }
+            
+            return SfCircularChart(
+              series: createDataSet(laps),
+              legend: const Legend(
+                isVisible: true,
+                position: LegendPosition.bottom,
+                overflowMode: LegendItemOverflowMode.wrap,
+              ),
+              tooltipBehavior: TooltipBehavior(enable: true),
+              onSelectionChanged: (SelectionArgs args) {
+                if (args.pointIndex >= 0 && args.pointIndex < laps.length) {
+                  var lapSummaryObject = laps[args.pointIndex];
+                  ref
+                      .read(lapSummaryObjectPieProvider.notifier)
+                      .selectSummary(lapSummaryObject);
+                }
+              },
+            );
+          }, 
+          error: (Object error, StackTrace stackTrace) {
+            debugPrint('Error loading lap summary data: $error');
+            return UIHelpers.buildErrorWidget(
+              'Failed to load power zone data',
+              () => ref.refresh(lapSummaryDataProvider(activityDetails)),
+            );
+          }, 
+          loading: () {
+            return UIHelpers.buildLoadingIndicator(
+              key: AppKeys.lapsLoading,
+            );
+          },
+        ),
+      ),
+    );
   }
 
-  List<PieSeries<LapSummaryObject, int>> createDataSet(
+  /// Creates a dataset for the pie chart.
+  ///
+  /// @param laps The list of lap summary objects
+  /// @return A list of pie series for the chart
+  List<PieSeries<LapSummaryObject, String>> createDataSet(
       List<LapSummaryObject> laps) {
+    // Filter out laps with zero time to avoid empty slices
+    final nonZeroLaps = laps.where((lap) => lap.time > 0).toList();
+    
+    if (nonZeroLaps.isEmpty) {
+      return [];
+    }
+    
     return [
-      PieSeries<LapSummaryObject, int>(
+      PieSeries<LapSummaryObject, String>(
         explode: true,
         explodeIndex: 0,
         explodeOffset: '10%',
-        xValueMapper: (LapSummaryObject stats, _) => stats.lap,
+        xValueMapper: (LapSummaryObject stats, _) => stats.lap.toString(),
         yValueMapper: (LapSummaryObject stats, _) => stats.time,
         pointColorMapper: (LapSummaryObject stats, _) => stats.color,
-        dataSource: laps,
+        dataSource: nonZeroLaps,
+        dataLabelSettings: const DataLabelSettings(
+          isVisible: true,
+          labelPosition: ChartDataLabelPosition.outside,
+        ),
+        dataLabelMapper: (LapSummaryObject stats, _) => _getZoneName(stats.lap),
         selectionBehavior: SelectionBehavior(
           enable: true,
         ),
@@ -71,6 +146,22 @@ class DisplayChart extends ConsumerWidget {
         endAngle: 0,
       )
     ];
+  }
+  
+  /// Gets the name of a power zone based on its index.
+  ///
+  /// @param zoneIndex The index of the power zone
+  /// @return The name of the power zone
+  String _getZoneName(int zoneIndex) {
+    switch (zoneIndex) {
+      case 1: return 'Z1';
+      case 2: return 'Z2';
+      case 3: return 'Z3';
+      case 4: return 'Z4';
+      case 5: return 'Z5';
+      case 6: return 'Z6';
+      default: return '';
+    }
   }
 }
 

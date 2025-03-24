@@ -1,3 +1,4 @@
+import 'package:flutter/foundation.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_strava_api/api/streams.dart';
 import 'package:flutter_strava_api/globals.dart' as globals;
@@ -58,10 +59,19 @@ final streamsProvider = FutureProvider.autoDispose
       );
 
   StreamsDetailCollection retvalue = StreamsDetailCollection();
-  if (globals.isInDebug) {
-    retvalue = (await fileRepository.loadStreams(id))!;
-  } else {
-    retvalue = await webRepository.loadStreams(id);
+  try {
+    if (globals.isInDebug) {
+      // Remove the force unwrap (!) operator which was causing the error
+      retvalue = await fileRepository.loadStreams(id);
+    } else {
+      retvalue = await webRepository.loadStreams(id);
+    }
+  } catch (e) {
+    if (kDebugMode) {
+      print('Error in streamsProvider: $e');
+    }
+    // Return an empty StreamsDetailCollection in case of error
+    retvalue = StreamsDetailCollection();
   }
   return retvalue;
 });

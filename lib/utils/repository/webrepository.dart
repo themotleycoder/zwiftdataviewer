@@ -83,13 +83,21 @@ class WebRepository implements ActivitiesRepository, StreamsRepository {
         return cachedStreams;
       }
       final streams = await strava.getStreamsByActivity(activityId.toString());
-      await cache.saveStreams(activityId, streams);
-      return streams;
+      if (streams != null) {
+        await cache.saveStreams(activityId, streams);
+        return streams;
+      } else {
+        if (kDebugMode) {
+          print('Streams data is null for activity $activityId');
+        }
+        return StreamsDetailCollection();
+      }
     } catch (e) {
       if (kDebugMode) {
         print('Error loading streams: $e');
       }
-      rethrow;
+      // Return an empty StreamsDetailCollection instead of rethrowing
+      return StreamsDetailCollection();
     }
   }
 
@@ -165,14 +173,36 @@ class Cache {
   Future<StreamsDetailCollection?> getStreams(int activityId) async {
     final file = File('$_cacheDir/streams_$activityId.json');
     if (await file.exists()) {
-      final content = await file.readAsString();
-      return StreamsDetailCollection.fromJson(jsonDecode(content));
+      try {
+        final content = await file.readAsString();
+        final jsonData = jsonDecode(content);
+        if (jsonData != null) {
+          return StreamsDetailCollection.fromJson(jsonData);
+        }
+      } catch (e) {
+        if (kDebugMode) {
+          print('Error parsing streams JSON: $e');
+        }
+      }
     }
     return null;
   }
 
   Future<void> saveStreams(int activityId, StreamsDetailCollection streams) async {
-    final file = File('$_cacheDir/streams_$activityId.json');
-    await file.writeAsString(jsonEncode(streams.toJson()));
+    try {
+      final file = File('$_cacheDir/streams_$activityId.json');
+      final jsonData = streams.toJson();
+      if (jsonData != null) {
+        await file.writeAsString(jsonEncode(jsonData));
+      } else {
+        if (kDebugMode) {
+          print('Cannot save null streams data');
+        }
+      }
+    } catch (e) {
+      if (kDebugMode) {
+        print('Error saving streams: $e');
+      }
+    }
   }
 }

@@ -121,19 +121,28 @@ class FileRepository
   }
 
   @override
-  Future<StreamsDetailCollection?> loadStreams(int activityId) async {
+  Future<StreamsDetailCollection> loadStreams(int activityId) async {
     try {
       final String jsonStr =
           await rootBundle.loadString('assets/testjson/streams_test.json');
-      final Map<String, dynamic> jsonResponse = json.decode(jsonStr);
-      final StreamsDetailCollection streams =
-          StreamsDetailCollection.fromJson(jsonResponse);
-      return streams;
+      final jsonResponse = json.decode(jsonStr);
+      
+      if (jsonResponse != null && jsonResponse is Map<String, dynamic>) {
+        final StreamsDetailCollection streams =
+            StreamsDetailCollection.fromJson(jsonResponse);
+        return streams;
+      } else {
+        if (kDebugMode) {
+          print('Invalid JSON structure in streams_test.json');
+        }
+        return StreamsDetailCollection();
+      }
     } catch (e) {
       if (kDebugMode) {
-        print('file load error$e');
+        print('file load error: $e');
       }
-      return null;
+      // Return an empty StreamsDetailCollection instead of null
+      return StreamsDetailCollection();
     }
   }
 

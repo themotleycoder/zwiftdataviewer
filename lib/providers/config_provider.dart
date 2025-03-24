@@ -35,14 +35,28 @@ class ConfigNotifier extends StateNotifier<ConfigData> {
   }
 }
 
+/// Represents the configuration data for the application.
+///
+/// This class stores user preferences and application settings.
 class ConfigData {
+  /// The timestamp of the last data synchronization.
   int? lastSyncDate;
+  
+  /// Whether to use metric units (true) or imperial units (false).
   bool? isMetric = false;
+  
+  /// The user's Functional Threshold Power in watts.
   double? ftp;
+  
+  /// Whether data has been loaded.
   bool? dataLoaded = false;
 
+  /// Creates a new ConfigData instance with default values.
   ConfigData();
 
+  /// Creates a ConfigData instance from a JSON map.
+  ///
+  /// @param json The JSON map containing configuration data
   ConfigData.fromJson(Map<String, dynamic> json) {
     lastSyncDate = json['lastSyncDate'];
     isMetric = json['isMetric'] ?? false;
@@ -50,6 +64,9 @@ class ConfigData {
     dataLoaded = json['dataLoaded'] ?? false;
   }
 
+  /// Converts this ConfigData instance to a JSON map.
+  ///
+  /// @return A map containing the configuration data
   Map<String, dynamic> toJson() {
     final Map<String, dynamic> data = <String, dynamic>{};
     data['lastSyncDate'] = lastSyncDate;
@@ -57,5 +74,26 @@ class ConfigData {
     data['ftp'] = ftp;
     data['dataLoaded'] = dataLoaded;
     return data;
+  }
+  
+  /// Creates a copy of this ConfigData instance with the given fields replaced.
+  ///
+  /// @param lastSyncDate The new lastSyncDate value, or null to keep the current value
+  /// @param isMetric The new isMetric value, or null to keep the current value
+  /// @param ftp The new ftp value, or null to keep the current value
+  /// @param dataLoaded The new dataLoaded value, or null to keep the current value
+  /// @return A new ConfigData instance with the updated fields
+  ConfigData copyWith({
+    int? lastSyncDate,
+    bool? isMetric,
+    double? ftp,
+    bool? dataLoaded,
+  }) {
+    final result = ConfigData();
+    result.lastSyncDate = lastSyncDate ?? this.lastSyncDate;
+    result.isMetric = isMetric ?? this.isMetric;
+    result.ftp = ftp ?? this.ftp;
+    result.dataLoaded = dataLoaded ?? this.dataLoaded;
+    return result;
   }
 }

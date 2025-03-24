@@ -8,9 +8,17 @@ import 'package:zwiftdataviewer/providers/lap_select_provider.dart';
 import 'package:zwiftdataviewer/providers/lap_summary_provider.dart';
 import 'package:zwiftdataviewer/screens/layouts/routeanalysistablayout.dart';
 import 'package:zwiftdataviewer/utils/theme.dart';
+import 'package:zwiftdataviewer/utils/ui_helpers.dart';
 import 'package:zwiftdataviewer/widgets/shortdataanalysis.dart';
 
+/// A screen that displays power data analysis for a route.
+///
+/// This screen shows a column chart with power data for each lap,
+/// along with a summary of the selected lap.
 class RouteAnalysisWattsDataView extends RouteAnalysisTabLayout {
+  /// Creates a RouteAnalysisWattsDataView instance.
+  ///
+  /// @param key An optional key for this widget
   const RouteAnalysisWattsDataView({super.key});
 
   @override
@@ -24,50 +32,94 @@ class RouteAnalysisWattsDataView extends RouteAnalysisTabLayout {
   }
 }
 
+/// A widget that displays a column chart with power data for each lap.
+///
+/// This widget fetches lap data for the selected activity and displays
+/// it in a column chart, with a line indicating the FTP threshold.
 class DisplayChart extends ConsumerWidget {
+  /// Creates a DisplayChart instance.
+  ///
+  /// @param key An optional key for this widget
   const DisplayChart({super.key});
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     const double ftp = 229;
+    final activityDetails = ref.watch(stravaActivityDetailsProvider);
 
-    AsyncValue<List<LapSummaryObject>> lapsData =
-        ref.watch(lapsProvider(ref.watch(stravaActivityDetailsProvider)!));
+    // Trigger loading of lap data
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      if (activityDetails != null) {
+        ref.read(lapsProvider(activityDetails));
+      }
+    });
 
-    return lapsData.when(data: (laps) {
+    if (activityDetails == null) {
       return Expanded(
-          child: SfCartesianChart(
-          primaryXAxis: NumericAxis(isVisible: false),
-          primaryYAxis: NumericAxis(
-            plotBands: <PlotBand>[
-              PlotBand(
-                start: ftp,
-                end: ftp,
-                borderColor: Colors.red,
-                text: 'FTP',
-                isVisible: true,
-                borderWidth: 1,
-              )
-            ],
-            minimum: 0,
-            interval: 50,
-          ),
-          series: _createDataSet(context, laps),
-          onSelectionChanged: (SelectionArgs args) {
-            var lapSummaryObject = laps[args.pointIndex];
-            ref
-                .read(lapSummaryObjectProvider.notifier)
-                .selectSummary(lapSummaryObject);
-          }));
-    }, error: (Object error, StackTrace stackTrace) {
-      return const Text("error");
-    }, loading: () {
-      return const Center(
-        child: CircularProgressIndicator(
-          key: AppKeys.lapsLoading,
+        child: UIHelpers.buildEmptyStateWidget(
+          'No activity selected',
+          icon: Icons.electric_bolt,
         ),
       );
-    });
+    }
+
+    final AsyncValue<List<LapSummaryObject>> lapsData =
+        ref.watch(lapsProvider(activityDetails));
+
+    return Expanded(
+      child: Container(
+        height: 300, // Ensure the chart has a fixed height
+        child: lapsData.when(
+          data: (laps) {
+            if (laps.isEmpty) {
+              return UIHelpers.buildEmptyStateWidget(
+                'No lap data available for this activity',
+                icon: Icons.electric_bolt,
+              );
+            }
+            
+            return SfCartesianChart(
+              primaryXAxis: NumericAxis(isVisible: false),
+              primaryYAxis: NumericAxis(
+                plotBands: <PlotBand>[
+                  PlotBand(
+                    start: ftp,
+                    end: ftp,
+                    borderColor: Colors.red,
+                    text: 'FTP',
+                    isVisible: true,
+                    borderWidth: 1,
+                  )
+                ],
+                minimum: 0,
+                interval: 50,
+              ),
+              series: _createDataSet(context, laps),
+              onSelectionChanged: (SelectionArgs args) {
+                if (args.pointIndex >= 0 && args.pointIndex < laps.length) {
+                  var lapSummaryObject = laps[args.pointIndex];
+                  ref
+                      .read(lapSummaryObjectProvider.notifier)
+                      .selectSummary(lapSummaryObject);
+                }
+              },
+            );
+          }, 
+          error: (Object error, StackTrace stackTrace) {
+            debugPrint('Error loading lap data: $error');
+            return UIHelpers.buildErrorWidget(
+              'Failed to load lap data',
+              () => ref.refresh(lapsProvider(activityDetails)),
+            );
+          }, 
+          loading: () {
+            return UIHelpers.buildLoadingIndicator(
+              key: AppKeys.lapsLoading,
+            );
+          },
+        ),
+      ),
+    );
   }
 
   List<ChartSeries<LapSummaryObject, int>> _createDataSet(

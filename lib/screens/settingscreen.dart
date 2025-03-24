@@ -3,110 +3,168 @@ import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:zwiftdataviewer/appkeys.dart';
 import 'package:zwiftdataviewer/providers/config_provider.dart';
-import 'package:zwiftdataviewer/utils/constants.dart' as constants;
 import 'package:zwiftdataviewer/utils/constants.dart';
 import 'package:zwiftdataviewer/utils/repository/filerepository.dart';
 import 'package:zwiftdataviewer/utils/theme.dart';
+import 'package:zwiftdataviewer/utils/ui_helpers.dart';
 
+/// A screen that displays application settings.
+///
+/// This screen allows the user to configure various settings such as FTP,
+/// measurement units, and refresh data.
 
 class SettingsScreen extends ConsumerWidget {
+  /// Creates a SettingsScreen instance.
+  ///
+  /// @param key An optional key for this widget
   const SettingsScreen({super.key});
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    ConfigData configData = ConfigData();
-
-    configData = ref.watch(configProvider);
+    final configData = ref.watch(configProvider);
 
     return Container(
         padding: const EdgeInsets.all(8.0),
         alignment: Alignment.center,
-        child: Column(children: [
-          createCard(
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.stretch,
+          children: [
+            // FTP Setting
+            createCard(
               'FTP',
               Expanded(
-                  child: Container(
-                margin: const EdgeInsets.fromLTRB(0, 0, 16, 0),
-                padding: const EdgeInsets.fromLTRB(0, 0, 0, 0),
-                child: TextField(
+                child: Container(
+                  margin: const EdgeInsets.fromLTRB(0, 0, 16, 0),
+                  padding: const EdgeInsets.fromLTRB(0, 0, 0, 0),
+                  child: TextField(
                     textAlign: TextAlign.right,
                     keyboardType: TextInputType.number,
                     decoration: InputDecoration(
                       hintText: configData.ftp?.toString() ?? '0',
                       border: InputBorder.none,
+                      contentPadding: const EdgeInsets.symmetric(vertical: 8.0),
                     ),
                     onSubmitted: (value) {
-                      configData.ftp = double.parse(value);
-                      ref.read(configProvider.notifier).setConfig(configData);
-
-                      // setState(() {
-                      //   _configData!.ftp = int.parse(value);
-                      //   print(_configData!.ftp);
-                      // });
-                      // Provider.of<ConfigDataModel>(context, listen: false)
-                      //     .configData = _configData;
+                      if (value.isNotEmpty) {
+                        final updatedConfig = configData.copyWith(
+                          ftp: double.tryParse(value) ?? configData.ftp,
+                        );
+                        ref.read(configProvider.notifier).setConfig(updatedConfig);
+                      }
                     },
                     inputFormatters: <TextInputFormatter>[
                       FilteringTextInputFormatter.digitsOnly
-                    ]),
-                // ],
-              ))),
-          createCard(
-            'Metric',
-            Switch(
-              value: configData.isMetric!,
-              onChanged: (value) {
-                configData.isMetric = value;
-                ref.read(configProvider.notifier).setConfig(configData);
-                // setState(() {
-                //   _configData!.isMetric = value;
-                //   print(_configData!.isMetric);
-                // });
-                // Provider.of<ConfigDataModel>(context, listen: false)
-                //     .configData = _configData;
-              },
-              activeTrackColor: zdvmLgtBlue,
-              activeColor: zdvmMidBlue[100],
+                    ],
+                  ),
+                ),
+              ),
+              tooltip: 'Your Functional Threshold Power in watts',
             ),
-          ),
-          createCard(
+            // Metric/Imperial Setting
+            createCard(
+              'Metric',
+              Switch(
+                value: configData.isMetric ?? true,
+                onChanged: (value) {
+                  final updatedConfig = configData.copyWith(
+                    isMetric: value,
+                  );
+                  ref.read(configProvider.notifier).setConfig(updatedConfig);
+                },
+                activeTrackColor: zdvmLgtBlue,
+                activeColor: zdvmMidBlue[100],
+              ),
+              tooltip: 'Toggle between metric (km) and imperial (miles) units',
+            ),
+            // Refresh Route Data
+            createCard(
               'Refresh Route Data',
               IconButton(
-                  key: AppKeys.refreshButton,
-                  tooltip: 'refresh',
-                  icon: const Icon(Icons.refresh),
-                  color: zdvmMidBlue[100],
-                  onPressed: () => refreshRouteData())),
-          createCard(
+                key: AppKeys.refreshButton,
+                tooltip: 'Refresh route data from Zwift',
+                icon: const Icon(Icons.refresh),
+                color: zdvmMidBlue[100],
+                onPressed: () {
+                  refreshRouteData();
+                  ScaffoldMessenger.of(context).showSnackBar(
+                    const SnackBar(
+                      content: Text('Route data refresh started'),
+                      duration: Duration(seconds: 2),
+                    ),
+                  );
+                },
+              ),
+              tooltip: 'Update route data from Zwift servers',
+            ),
+            
+            // Refresh Calendar Data
+            createCard(
               'Refresh Calendars Data',
               IconButton(
-                  key: AppKeys.refreshButton,
-                  tooltip: 'refresh',
-                  icon: const Icon(Icons.refresh),
-                  color: zdvmMidBlue[100],
-                  onPressed: () => refreshCalendarData())),
+                key: const Key('refreshCalendarButton'),
+                tooltip: 'Refresh calendar data from Zwift',
+                icon: const Icon(Icons.refresh),
+                color: zdvmMidBlue[100],
+                onPressed: () {
+                  refreshCalendarData();
+                  ScaffoldMessenger.of(context).showSnackBar(
+                    const SnackBar(
+                      content: Text('Calendar data refresh started'),
+                      duration: Duration(seconds: 2),
+                    ),
+                  );
+                },
+              ),
+              tooltip: 'Update world and climb calendar data from Zwift servers',
+            ),
         ]));
   }
 
-  refreshRouteData() {
+  /// Refreshes route data from Zwift.
+  ///
+  /// This method triggers a scrape of route data from Zwift servers.
+  void refreshRouteData() {
     FileRepository().scrapeRouteData();
   }
 
-  refreshCalendarData() {
+  /// Refreshes calendar data from Zwift.
+  ///
+  /// This method triggers a scrape of world and climb calendar data from Zwift servers.
+  void refreshCalendarData() {
     FileRepository().scrapeWorldCalendarData();
     FileRepository().scrapeClimbCalendarData();
   }
 
-  Card createCard(String label, Widget widget) {
-    return Card(
-        elevation: defaultCardElevation,
-        child:
-            Row(mainAxisAlignment: MainAxisAlignment.spaceBetween, children: [
-          Container(
-            margin: const EdgeInsets.fromLTRB(16.0, 8.0, 16.0, 8.0),
-            child: Text(label, style: constants.headerTextStyle),
+  /// Creates a card with a label and a widget.
+  ///
+  /// @param label The label text for the card
+  /// @param widget The widget to display in the card
+  /// @param tooltip Optional tooltip for the card
+  /// @return A Card widget
+  Card createCard(String label, Widget widget, {String? tooltip}) {
+    final cardContent = Row(
+      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+      children: [
+        Container(
+          margin: const EdgeInsets.fromLTRB(16.0, 8.0, 16.0, 8.0),
+          child: Text(
+            label, 
+            style: headerTextStyle,
           ),
-          widget
-        ]));
+        ),
+        widget
+      ],
+    );
+    
+    return Card(
+      elevation: defaultCardElevation,
+      margin: const EdgeInsets.symmetric(vertical: 4.0),
+      child: tooltip != null
+          ? Tooltip(
+              message: tooltip,
+              child: cardContent,
+            )
+          : cardContent,
+    );
   }
 }

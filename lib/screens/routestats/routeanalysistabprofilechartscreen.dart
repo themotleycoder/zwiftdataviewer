@@ -9,9 +9,17 @@ import 'package:zwiftdataviewer/providers/streams_provider.dart';
 import 'package:zwiftdataviewer/screens/layouts/routeanalysistablayout.dart';
 import 'package:zwiftdataviewer/utils/conversions.dart';
 import 'package:zwiftdataviewer/utils/theme.dart';
+import 'package:zwiftdataviewer/utils/ui_helpers.dart';
 import 'package:zwiftdataviewer/widgets/iconitemwidgets.dart';
 
+/// A screen that displays the elevation profile chart for a route.
+///
+/// This screen shows a chart with elevation, heart rate, and power data
+/// plotted against distance.
 class RouteAnalysisProfileChartScreen extends RouteAnalysisTabLayout {
+  /// Creates a RouteAnalysisProfileChartScreen instance.
+  ///
+  /// @param key An optional key for this widget
   const RouteAnalysisProfileChartScreen({super.key});
 
   @override
@@ -25,62 +33,103 @@ class RouteAnalysisProfileChartScreen extends RouteAnalysisTabLayout {
   }
 }
 
+/// A widget that displays a chart with elevation, heart rate, and power data.
+///
+/// This widget fetches stream data for the selected activity and displays
+/// it in a chart with multiple series.
 class DisplayChart extends ConsumerWidget {
+  /// Creates a DisplayChart instance.
+  ///
+  /// @param key An optional key for this widget
   const DisplayChart({super.key});
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final Map<String, String> units = Conversions.units(ref);
-
-    AsyncValue<StreamsDetailCollection> streamsData =
-        ref.watch(streamsProvider(ref.watch(selectedActivityProvider).id));
-
-    return streamsData.when(data: (streams) {
-      return SfCartesianChart(
-          tooltipBehavior: null,
-          plotAreaBorderWidth: 0,
-          legend: const Legend(
-              isVisible: true,
-              overflowMode: LegendItemOverflowMode.wrap,
-              position: LegendPosition.top),
-          primaryXAxis: NumericAxis(
-              title: AxisTitle(text: 'Distance (${units['distance']!})'),
-              majorGridLines: const MajorGridLines(width: 0),
-              minimum: 0),
-          primaryYAxis: NumericAxis(
-              labelFormat: ' ',
-              axisLine: const AxisLine(width: 0),
-              majorTickLines: const MajorTickLines(color: Colors.transparent)),
-          trackballBehavior: TrackballBehavior(
-            enable: true,
-            tooltipSettings: const InteractiveTooltip(enable: false),
-            markerSettings: const TrackballMarkerSettings(
-              markerVisibility: TrackballVisibilityMode.visible,
-              height: 10,
-              width: 10,
-              borderWidth: 1,
-            ),
-            hideDelay: 3000,
-            activationMode: ActivationMode.singleTap,
-            shouldAlwaysShow: true,
-          ),
-          series: _createDataSet(ref, streams.streams ?? []),
-          onTrackballPositionChanging: (TrackballArgs args) {
-            final dataPointIndex = args.chartPointInfo.dataPointIndex ?? 0;
-            var combinedStreams = streams.streams![dataPointIndex];
-            ref
-                .read(combinedStreamSelectNotifier.notifier)
-                .selectStream(combinedStreams);
-          });
-    }, error: (Object error, StackTrace stackTrace) {
-      return const Text("error");
-    }, loading: () {
-      return const Center(
-        child: CircularProgressIndicator(
-          key: AppKeys.activitiesLoading,
-        ),
-      );
+    final activityId = ref.watch(selectedActivityProvider).id;
+    
+    // Trigger loading of streams data
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      ref.read(streamsProvider(activityId));
     });
+
+    final AsyncValue<StreamsDetailCollection> streamsData =
+        ref.watch(streamsProvider(activityId));
+
+    return Expanded(
+      child: Container(
+        height: 300, // Ensure the chart has a fixed height
+        child: streamsData.when(
+          data: (streams) {
+            if (streams.streams == null || streams.streams!.isEmpty) {
+              return Center(
+                child: UIHelpers.buildEmptyStateWidget(
+                  'No stream data available for this activity',
+                  icon: Icons.show_chart,
+                ),
+              );
+            }
+            
+            return SfCartesianChart(
+              tooltipBehavior: null,
+              plotAreaBorderWidth: 0,
+              legend: const Legend(
+                isVisible: true,
+                overflowMode: LegendItemOverflowMode.wrap,
+                position: LegendPosition.top,
+              ),
+              primaryXAxis: NumericAxis(
+                title: AxisTitle(text: 'Distance (${units['distance']!})'),
+                majorGridLines: const MajorGridLines(width: 0),
+                minimum: 0,
+              ),
+              primaryYAxis: NumericAxis(
+                labelFormat: ' ',
+                axisLine: const AxisLine(width: 0),
+                majorTickLines: const MajorTickLines(color: Colors.transparent),
+              ),
+              trackballBehavior: TrackballBehavior(
+                enable: true,
+                tooltipSettings: const InteractiveTooltip(enable: false),
+                markerSettings: const TrackballMarkerSettings(
+                  markerVisibility: TrackballVisibilityMode.visible,
+                  height: 10,
+                  width: 10,
+                  borderWidth: 1,
+                ),
+                hideDelay: 3000,
+                activationMode: ActivationMode.singleTap,
+                shouldAlwaysShow: true,
+              ),
+              series: _createDataSet(ref, streams.streams ?? []),
+              onTrackballPositionChanging: (TrackballArgs args) {
+                final dataPointIndex = args.chartPointInfo.dataPointIndex ?? 0;
+                if (streams.streams != null && 
+                    dataPointIndex >= 0 && 
+                    dataPointIndex < streams.streams!.length) {
+                  var combinedStreams = streams.streams![dataPointIndex];
+                  ref
+                      .read(combinedStreamSelectNotifier.notifier)
+                      .selectStream(combinedStreams);
+                }
+              },
+            );
+          }, 
+          error: (Object error, StackTrace stackTrace) {
+            debugPrint('Error loading streams data: $error');
+            return UIHelpers.buildErrorWidget(
+              'Failed to load activity stream data',
+              () => ref.refresh(streamsProvider(activityId)),
+            );
+          }, 
+          loading: () {
+            return UIHelpers.buildLoadingIndicator(
+              key: AppKeys.activitiesLoading,
+            );
+          },
+        ),
+      ),
+    );
   }
 
   List<XyDataSeries<DistanceValue, num>> _createDataSet(
@@ -146,10 +195,15 @@ class DisplayChart extends ConsumerWidget {
   }
 }
 
+/// A widget that displays detailed metrics for the selected point on the chart.
+///
+/// This widget shows distance, elevation, heart rate, power, cadence, and grade
+/// data for the point selected on the chart.
 class ProfileDataView extends ConsumerWidget {
+  /// Creates a ProfileDataView instance.
+  ///
+  /// @param key An optional key for this widget
   const ProfileDataView({super.key});
-
-  // const ProfileDataView({super.key});
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
