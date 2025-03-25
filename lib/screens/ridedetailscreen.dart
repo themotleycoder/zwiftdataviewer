@@ -53,10 +53,11 @@ class DetailScreen extends MainLayout {
 
   @override
   buildBottomNavigationBar(BuildContext context, WidgetRef ref) {
+    final currentIndex = ref.watch(detailTabsNotifier);
     return BottomNavigationBar(
       elevation: cardElevation,
       key: AppKeys.tabs,
-      currentIndex: getTabIndex(ref),
+      currentIndex: currentIndex,
       onTap: (index) => ref.read(detailTabsNotifier.notifier).setIndex(index),
       type: BottomNavigationBarType.fixed,
       unselectedItemColor: zdvmMidBlue[100],
@@ -64,25 +65,19 @@ class DetailScreen extends MainLayout {
       items: const [
         // Navigation items with semantic labels for accessibility
         BottomNavigationBarItem(
-          icon: Tooltip(
-            message: 'View ride details',
-            child: Icon(Icons.list, key: AppKeys.activitiesTab),
-          ),
+          icon: Icon(Icons.list, key: AppKeys.activitiesTab),
           label: 'Details',
+          tooltip: 'View ride details',
         ),
         BottomNavigationBarItem(
-          icon: Tooltip(
-            message: 'View ride analysis',
-            child: Icon(Icons.insights, key: AppKeys.analysisTab),
-          ),
+          icon: Icon(Icons.insights, key: AppKeys.analysisTab),
           label: 'Analysis',
+          tooltip: 'View ride analysis',
         ),
         BottomNavigationBarItem(
-          icon: Tooltip(
-            message: 'View ride sections',
-            child: Icon(Icons.calendar_today, key: AppKeys.sectionsTab),
-          ),
+          icon: Icon(Icons.calendar_today, key: AppKeys.sectionsTab),
           label: 'Sections',
+          tooltip: 'View ride sections',
         ),
       ],
     );
@@ -90,6 +85,6 @@ class DetailScreen extends MainLayout {
 
   @override
   getTabIndex(WidgetRef ref) {
-    return ref.read(detailTabsNotifier);
+    return ref.watch(detailTabsNotifier);
   }
 }
