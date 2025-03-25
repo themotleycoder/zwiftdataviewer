@@ -15,5 +15,4 @@ abstract class RouteAnalysisTabLayout extends ConsumerWidget {
   buildChart();
 
   buildChartDataView();
-
 }

@@ -1,6 +1,8 @@
+import 'dart:async';
 import 'dart:convert';
 import 'dart:io';
 
+import 'package:flutter/foundation.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_strava_api/globals.dart' as globals;
 import 'package:flutter_strava_api/models/activity.dart';
@@ -15,7 +17,13 @@ import 'package:shared_preferences/shared_preferences.dart';
 /// It returns a list of SummaryActivity objects sorted by date (newest first).
 final stravaActivitiesProvider =
     FutureProvider<List<SummaryActivity>>((ref) async {
-  return await fetchStravaActivities();
+  try {
+    return await fetchStravaActivities();
+  } catch (e, stackTrace) {
+    debugPrint('Error in stravaActivitiesProvider: $e');
+    debugPrint(stackTrace.toString());
+    rethrow;
+  }
 });
 
 /// Fetches Strava activities from API or cache
@@ -23,13 +31,14 @@ final stravaActivitiesProvider =
 /// This function first checks for cached activities, then fetches new activities
 /// from the Strava API that occurred after the last known activity date.
 /// It filters for VirtualRide activities only and combines with cached activities.
+/// Implements retry logic for network errors.
 Future<List<SummaryActivity>> fetchStravaActivities() async {
   const String baseUrl = 'https://www.strava.com/api/v3';
   DateTime? lastActivityDate = await getLastActivityDate();
   int afterTimestamp = 1420070400; // Default: Jan 1, 2015
   List<SummaryActivity> cachedActivities = [];
   final accessToken = globals.token.accessToken;
-  
+
   if (accessToken == null) {
     throw Exception('No access token available');
   }
@@ -56,49 +65,116 @@ Future<List<SummaryActivity>> fetchStravaActivities() async {
     bool hasMorePages = true;
 
     while (hasMorePages) {
-      final url = Uri.parse(
-          '$baseUrl/athlete/activities?page=$page&per_page=$perPage&after=$afterTimestamp');
-      final response = await http.get(
-        url,
-        headers: {'Authorization': 'Bearer $accessToken'},
-      );
+      try {
+        final url = Uri.parse(
+            '$baseUrl/athlete/activities?page=$page&per_page=$perPage&after=$afterTimestamp');
+        
+        // Use retry mechanism for network requests
+        final response = await _retryHttpRequest(
+          () => http.get(
+            url,
+            headers: {'Authorization': 'Bearer $accessToken'},
+          ),
+        );
 
-      if (response.statusCode == 200) {
-        final List<SummaryActivity> activities =
-            List.from(jsonDecode(response.body))
-                .map((activity) => SummaryActivity.fromJson(activity))
-                .toList();
-        final List<SummaryActivity> filteredActivities = activities
-            .where((activity) => activity.type == ActivityType.VirtualRide)
-            .toList();
-        fetchedActivities.addAll(filteredActivities);
+        if (response.statusCode == 200) {
+          final List<SummaryActivity> activities =
+              List.from(jsonDecode(response.body))
+                  .map((activity) => SummaryActivity.fromJson(activity))
+                  .toList();
+          final List<SummaryActivity> filteredActivities = activities
+              .where((activity) => activity.type == ActivityType.VirtualRide)
+              .toList();
+          fetchedActivities.addAll(filteredActivities);
 
-        if (activities.length < perPage) {
+          if (activities.length < perPage) {
+            hasMorePages = false;
+          } else {
+            page++;
+          }
+        } else {
+          debugPrint('HTTP error: ${response.statusCode} - ${response.body}');
+          throw Exception(
+              'Failed to load athlete activities: ${response.statusCode}');
+        }
+      } catch (e) {
+        debugPrint('Error fetching page $page: $e');
+        // If we've already fetched some activities, we can stop and use what we have
+        if (fetchedActivities.isNotEmpty) {
+          debugPrint('Using partial results (${fetchedActivities.length} activities)');
           hasMorePages = false;
         } else {
-          page++;
+          // If we haven't fetched any activities yet, rethrow to use cached data
+          rethrow;
         }
-      } else {
-        throw Exception('Failed to load athlete activities: ${response.statusCode}');
       }
     }
 
     // Combine and save activities
-    List<SummaryActivity> allActivities = [...cachedActivities, ...fetchedActivities];
-    
-    if (allActivities.isNotEmpty) {
-      await cacheFile.writeAsString(jsonEncode(allActivities));
-      await saveLastActivityDate(allActivities.last.startDate);
+    List<SummaryActivity> allActivities = [
+      ...cachedActivities,
+      ...fetchedActivities
+    ];
+
+    // Remove duplicates (in case we're re-fetching some activities)
+    final Map<String, SummaryActivity> uniqueActivities = {};
+    for (var activity in allActivities) {
+      uniqueActivities[activity.id.toString()] = activity;
     }
-    
+    allActivities = uniqueActivities.values.toList();
+
+    if (allActivities.isNotEmpty) {
+      try {
+        await cacheFile.writeAsString(jsonEncode(allActivities));
+        await saveLastActivityDate(allActivities.last.startDate);
+      } catch (e) {
+        debugPrint('Error saving cache: $e');
+        // Continue even if saving cache fails
+      }
+    }
+
     // Return activities sorted by date (newest first)
     return allActivities.reversed.toList();
   } catch (e) {
+    debugPrint('Error in fetchStravaActivities: $e');
     // If there's an error but we have cached data, return it
     if (cachedActivities.isNotEmpty) {
+      debugPrint('Returning ${cachedActivities.length} cached activities');
       return cachedActivities.reversed.toList();
     }
     rethrow; // Otherwise rethrow the error
+  }
+}
+
+/// Retry an HTTP request with exponential backoff
+///
+/// This function will retry the HTTP request up to [maxRetries] times
+/// with exponential backoff between retries.
+Future<http.Response> _retryHttpRequest(
+  Future<http.Response> Function() requestFn, {
+  int maxRetries = 3,
+}) async {
+  int retryCount = 0;
+  Duration delay = const Duration(seconds: 1);
+  
+  while (true) {
+    try {
+      return await requestFn();
+    } catch (e) {
+      retryCount++;
+      if (retryCount >= maxRetries) {
+        debugPrint('Max retries reached ($maxRetries)');
+        rethrow;
+      }
+      
+      // Log the error and retry after delay
+      debugPrint('Network error (attempt $retryCount/$maxRetries): $e');
+      debugPrint('Retrying after ${delay.inSeconds} seconds...');
+      
+      await Future.delayed(delay);
+      // Exponential backoff: 1s, 2s, 4s, etc.
+      delay *= 2;
+    }
   }
 }
 

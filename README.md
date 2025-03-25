@@ -1,110 +1,101 @@
 # Zwift Data Viewer
 
-A Flutter application for viewing and analyzing Zwift data, including activities, routes, and world schedules.
-
-## Features
-
-- View Zwift activities and statistics
-- Browse Zwift routes with detailed information
-- Check the Zwift world calendar to see which worlds are available on specific days
-- Analyze ride data with charts and statistics
-
-## Project Structure
-
-The project follows a feature-based structure with clear separation of concerns:
-
-```
-lib/
-  ├── delegates/         # Search delegates for filtering data
-  ├── models/            # Data models representing domain entities
-  ├── providers/         # State management using Riverpod
-  │   └── filters/       # Providers for filtering data
-  ├── screens/           # UI screens organized by feature
-  │   ├── allstats/      # Statistics screens
-  │   ├── calendars/     # Calendar screens
-  │   ├── layouts/       # Layout templates
-  │   └── routestats/    # Route statistics screens
-  ├── utils/             # Utility functions and constants
-  │   └── repository/    # Data repositories for fetching and storing data
-  └── widgets/           # Reusable UI components
-```
-
-## Architecture
-
-The application follows a clean architecture approach with the following layers:
-
-1. **UI Layer** (screens, widgets): Responsible for displaying data and handling user interactions.
-2. **State Management Layer** (providers): Manages the application state using Riverpod.
-3. **Domain Layer** (models): Contains the business logic and data models.
-4. **Data Layer** (repositories): Handles data fetching and persistence.
+A Flutter application for viewing and analyzing Zwift data.
 
 ## Getting Started
+
+This project is a Flutter application that uses the Strava API to fetch and display Zwift activity data.
 
 ### Prerequisites
 
 - Flutter SDK (version 3.0.0 or higher)
 - Dart SDK (version 2.17.0 or higher)
-- Android Studio or VS Code with Flutter extensions
+- Android Studio or Visual Studio Code with Flutter extensions
+- A Strava API account for authentication
 
 ### Installation
 
 1. Clone the repository:
    ```
    git clone https://github.com/yourusername/zwiftdataviewer.git
-   ```
-
-2. Navigate to the project directory:
-   ```
    cd zwiftdataviewer
    ```
 
-3. Install dependencies:
+2. Install dependencies:
    ```
    flutter pub get
    ```
 
-4. Run the app:
+3. Configure Strava API credentials:
+   - Edit the `lib/secrets.dart` file with your Strava API credentials
+   - Replace the placeholder values with your actual Strava Client ID and Client Secret
+
+## Building for Production
+
+### Android
+
+To build the app for production on Android, follow these steps:
+
+1. Ensure you have set up the keystore for signing:
+   - See the instructions in `android/README.md` for details on setting up the keystore and signing configuration
+
+2. Set up environment variables for the keystore:
    ```
-   flutter run
+   export KEYSTORE_PASSWORD=your_keystore_password
+   export KEY_ALIAS=your_key_alias
+   export KEY_PASSWORD=your_key_password
    ```
 
-## Development Guidelines
+3. Build the APK:
+   ```
+   flutter build apk --release
+   ```
 
-### Code Style
+4. The APK will be generated at:
+   ```
+   build/app/outputs/flutter-apk/app-release.apk
+   ```
 
-- Follow the [Dart Style Guide](https://dart.dev/guides/language/effective-dart/style)
-- Use meaningful variable and function names
-- Add documentation comments for public APIs
-- Keep functions small and focused on a single responsibility
+### iOS
 
-### State Management
+To build the app for production on iOS, follow these steps:
 
-- Use Riverpod for state management
-- Create providers for each distinct piece of state
-- Use StateNotifier for complex state that changes over time
-- Use FutureProvider for asynchronous data loading
+1. Open the iOS project in Xcode:
+   ```
+   open ios/Runner.xcworkspace
+   ```
 
-### Error Handling
+2. Configure signing in Xcode:
+   - Select the Runner project in the Project Navigator
+   - Select the Runner target
+   - Go to the Signing & Capabilities tab
+   - Select your team and configure signing
 
-- Handle errors gracefully with user-friendly error messages
-- Use try-catch blocks for error-prone operations
-- Log errors for debugging purposes
-- Provide retry mechanisms where appropriate
+3. Build the app:
+   ```
+   flutter build ios --release
+   ```
 
-### Testing
+4. Archive the app in Xcode for distribution
 
-- Write unit tests for business logic
-- Write widget tests for UI components
-- Use integration tests for end-to-end testing
+## Features
+
+- View Zwift activities
+- Analyze ride data including power, heart rate, and elevation
+- View Zwift routes and climb information
+- Calendar view of Zwift events
+- Customizable settings including FTP and measurement units
+
+## Security Considerations
+
+- Strava API credentials are hardcoded in the `lib/secrets.dart` file, which should be kept secure and not committed to version control (it's included in .gitignore)
+- For production builds, ensure you replace the placeholder credentials with your actual Strava API credentials
+- The keystore file for Android signing should be kept secure and not committed to version control
 
 ## Contributing
 
-1. Fork the repository
-2. Create a feature branch: `git checkout -b feature/your-feature-name`
-3. Commit your changes: `git commit -m 'Add some feature'`
-4. Push to the branch: `git push origin feature/your-feature-name`
-5. Submit a pull request
+Contributions are welcome! Please feel free to submit a Pull Request.
 
 ## License
 
-This project is licensed under the MIT License - see the LICENSE file for details.
+This project is licensed under the terms found in the LICENSE file.

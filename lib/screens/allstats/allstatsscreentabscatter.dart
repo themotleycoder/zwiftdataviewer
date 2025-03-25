@@ -48,7 +48,8 @@ class AllStatsScreenTabScatter extends AllStatsTabLayout {
   }
 
   @override
-  Container buildChartSummaryWidget(BuildContext context, WidgetRef ref, Map<String, String> units) {
+  Container buildChartSummaryWidget(
+      BuildContext context, WidgetRef ref, Map<String, String> units) {
     return getChartPointShortSummaryWidget(context, ref, units);
   }
 

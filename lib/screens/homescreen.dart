@@ -23,8 +23,7 @@ class HomeScreen extends MainLayout {
   /// Creates a HomeScreen instance.
   ///
   /// @param key An optional key for this widget
-  HomeScreen({super.key});
-
+  const HomeScreen({super.key});
 
   /// Gets the action buttons for the app bar based on the current tab.
   ///
@@ -32,7 +31,8 @@ class HomeScreen extends MainLayout {
   /// @param ref The WidgetRef
   /// @param activityData The list of summary activities
   /// @return A list of action widgets for the app bar
-  List<Widget> getActions(BuildContext context, WidgetRef ref, List<SummaryActivity> activityData) {
+  List<Widget> getActions(
+      BuildContext context, WidgetRef ref, List<SummaryActivity> activityData) {
     List<Widget> actions = [];
     final tabIndex = ref.watch(homeTabsNotifier);
     if (tabIndex == HomeScreenTab.activities.index) {
@@ -66,7 +66,7 @@ class HomeScreen extends MainLayout {
   buildAppBar(BuildContext context, WidgetRef ref) {
     final AsyncValue<List<SummaryActivity>> activityList =
         ref.watch(stravaActivitiesProvider);
-    
+
     return activityList.when(
       data: (activityData) => UIHelpers.buildAppBar(
         'Zwift Data Viewer',
@@ -84,10 +84,10 @@ class HomeScreen extends MainLayout {
   @override
   buildBody(BuildContext context, WidgetRef ref) {
     final homePageTabs = ref.watch(homeTabsNotifier.notifier);
-    
+
     // Get the current tab view
     final currentView = homePageTabs.getView(homePageTabs.index);
-    
+
     // Wrap the view with error handling for better user experience
     return currentView;
   }
@@ -130,8 +130,8 @@ class HomeScreen extends MainLayout {
             debugPrint('Error loading activities: $error');
             return BottomNavigationBarItem(
               icon: Badge(
-                backgroundColor: zdvmYellow[100],
-                label: const Text('0'),
+                backgroundColor: Colors.red[100],
+                label: const Icon(Icons.error_outline, size: 10, color: Colors.red),
                 child: const Icon(Icons.list, key: AppKeys.activitiesTab),
               ),
               label: 'Activities',
@@ -150,8 +150,7 @@ class HomeScreen extends MainLayout {
                         .fold<int>(
                             0,
                             (sum, list) =>
-                                sum +
-                                (list.length)) // Use null-aware operators
+                                sum + (list.length)) // Use null-aware operators
                         .toString()),
                     child: const Icon(Icons.route, key: AppKeys.routesTab),
                   ),

@@ -19,7 +19,8 @@ class WorldCalendarScreen extends ConsumerStatefulWidget {
   const WorldCalendarScreen({super.key});
 
   @override
-  ConsumerState<WorldCalendarScreen> createState() => _WorldCalendarScreenState();
+  ConsumerState<WorldCalendarScreen> createState() =>
+      _WorldCalendarScreenState();
 }
 
 class _WorldCalendarScreenState extends ConsumerState<WorldCalendarScreen> {
@@ -28,40 +29,34 @@ class _WorldCalendarScreenState extends ConsumerState<WorldCalendarScreen> {
     final AsyncValue<Map<DateTime, List<WorldData>>> asyncWorldCalender =
         ref.watch(loadWorldCalendarProvider);
 
-    return Column(
-      mainAxisSize: MainAxisSize.max, 
-      children: <Widget>[
-        asyncWorldCalender.when(
-          data: (Map<DateTime, List<WorldData>> worldData) {
-            // Initialize events for the current day after the data is loaded
-            // Using a post-frame callback to avoid modifying the provider during build
-            WidgetsBinding.instance.addPostFrameCallback((_) {
-              final selectedDay = ref.read(selectedWorldDayProvider);
-              final DateTime d = DateTime(selectedDay.year, selectedDay.month, selectedDay.day);
-              final events = worldData[d] ?? [];
-              ref.read(worldEventsForDayProvider.notifier).setEventsForDay(events);
-            });
-            
-            return WorldEventsCalendarWidget(ref, worldData);
-          }, 
-          error: (Object error, StackTrace stackTrace) {
-            // Log error for debugging
-            debugPrint('Error loading world calendar data: $error');
-            return UIHelpers.buildErrorWidget(
-              'Failed to load world calendar data',
-              () => ref.refresh(loadWorldCalendarProvider),
-            );
-          }, 
-          loading: () {
-            return UIHelpers.buildLoadingIndicator(
-              key: AppKeys.activitiesLoading,
-            );
-          }
-        ),
-        const SizedBox(height: 8.0),
-        Expanded(child: _buildEventList(ref, context)),
-      ]
-    );
+    return Column(mainAxisSize: MainAxisSize.max, children: <Widget>[
+      asyncWorldCalender.when(data: (Map<DateTime, List<WorldData>> worldData) {
+        // Initialize events for the current day after the data is loaded
+        // Using a post-frame callback to avoid modifying the provider during build
+        WidgetsBinding.instance.addPostFrameCallback((_) {
+          final selectedDay = ref.read(selectedWorldDayProvider);
+          final DateTime d =
+              DateTime(selectedDay.year, selectedDay.month, selectedDay.day);
+          final events = worldData[d] ?? [];
+          ref.read(worldEventsForDayProvider.notifier).setEventsForDay(events);
+        });
+
+        return WorldEventsCalendarWidget(ref, worldData);
+      }, error: (Object error, StackTrace stackTrace) {
+        // Log error for debugging
+        debugPrint('Error loading world calendar data: $error');
+        return UIHelpers.buildErrorWidget(
+          'Failed to load world calendar data',
+          () => ref.refresh(loadWorldCalendarProvider),
+        );
+      }, loading: () {
+        return UIHelpers.buildLoadingIndicator(
+          key: AppKeys.activitiesLoading,
+        );
+      }),
+      const SizedBox(height: 8.0),
+      Expanded(child: _buildEventList(ref, context)),
+    ]);
   }
 }
 
@@ -79,7 +74,7 @@ Widget _buildEventList(WidgetRef ref, BuildContext context) {
   final List<Widget> list = selectedEvents
       .map((world) => _buildWorldCard(world, ref, context))
       .toList();
-  
+
   // Always add Watopia as it's always available
   if (!selectedEvents.any((world) => world.id == 1)) {
     list.add(_buildWatopiaCard(ref, context));
@@ -108,7 +103,7 @@ Widget _buildEventList(WidgetRef ref, BuildContext context) {
 /// @return A Card widget for the world
 Widget _buildWorldCard(WorldData world, WidgetRef ref, BuildContext context) {
   final worldName = allWorldsConfig[world.id]?.name ?? 'Unknown World';
-  
+
   return Card(
     color: Colors.white,
     elevation: defaultCardElevation,

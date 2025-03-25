@@ -20,12 +20,12 @@ class DetailScreen extends MainLayout {
   /// Creates a DetailScreen instance.
   ///
   /// @param key An optional key for this widget
-  DetailScreen({super.key});
+  const DetailScreen({super.key});
 
   @override
   buildAppBar(BuildContext context, WidgetRef ref) {
     final activityDetail = ref.watch(stravaActivityDetailsProvider);
-    
+
     return UIHelpers.buildAppBar(
       '${activityDetail.name}',
       leading: IconButton(

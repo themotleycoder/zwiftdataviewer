@@ -10,16 +10,20 @@ import 'package:zwiftdataviewer/utils/worldsconfig.dart';
 // Mock data for testing
 final mockWorldData = {
   DateTime(2025, 3, 24): [
-    const WorldData(1, GuestWorldId.watopia, 'Watopia', 'https://zwiftinsider.com/watopia/'),
-    const WorldData(3, GuestWorldId.london, 'London', 'https://zwiftinsider.com/london/'),
+    const WorldData(1, GuestWorldId.watopia, 'Watopia',
+        'https://zwiftinsider.com/watopia/'),
+    const WorldData(
+        3, GuestWorldId.london, 'London', 'https://zwiftinsider.com/london/'),
   ],
   DateTime(2025, 3, 25): [
-    const WorldData(2, GuestWorldId.richmond, 'Richmond', 'https://zwiftinsider.com/richmond/'),
+    const WorldData(2, GuestWorldId.richmond, 'Richmond',
+        'https://zwiftinsider.com/richmond/'),
   ],
 };
 
 void main() {
-  testWidgets('WorldCalendarScreen shows events for current day', (WidgetTester tester) async {
+  testWidgets('WorldCalendarScreen shows events for current day',
+      (WidgetTester tester) async {
     // Create a test provider container with overrides
     final container = ProviderContainer(
       overrides: [
@@ -33,8 +37,12 @@ void main() {
     container.listen<DateTime>(
       selectedWorldDayProvider,
       (previous, current) {
-        final events = mockWorldData[DateTime(current.year, current.month, current.day)] ?? [];
-        container.read(worldEventsForDayProvider.notifier).setEventsForDay(events);
+        final events =
+            mockWorldData[DateTime(current.year, current.month, current.day)] ??
+                [];
+        container
+            .read(worldEventsForDayProvider.notifier)
+            .setEventsForDay(events);
       },
     );
 

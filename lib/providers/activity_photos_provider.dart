@@ -22,10 +22,7 @@ final photoActivitiesProvider =
     final cacheDir = await getApplicationDocumentsDirectory();
     final cache = Cache(cacheDir.path);
     final WebRepository webRepository =
-        WebRepository(
-          strava: Strava(isInDebug, clientSecret),
-          cache: cache
-        );
+        WebRepository(strava: Strava(isInDebug, clientSecret), cache: cache);
     final activityId = ref.read(selectedActivityProvider).id;
 
     if (activityId <= 0) {
@@ -56,7 +53,7 @@ final activityPhotoUrlsProvider = FutureProvider.autoDispose
   try {
     for (PhotoActivity image in photos) {
       if (image.urls == null) continue;
-      
+
       // Try to get the highest resolution available
       String str = image.urls!['1800'] ??
           image.urls!['1000'] ??
@@ -72,7 +69,7 @@ final activityPhotoUrlsProvider = FutureProvider.autoDispose
           image.urls!['1'] ??
           image.urls!['0'] ??
           '';
-      
+
       if (str.isNotEmpty) {
         imagesUrls.add(str);
       }
@@ -82,6 +79,6 @@ final activityPhotoUrlsProvider = FutureProvider.autoDispose
       print('Error processing photo URLs: $e');
     }
   }
-  
+
   return imagesUrls;
 });

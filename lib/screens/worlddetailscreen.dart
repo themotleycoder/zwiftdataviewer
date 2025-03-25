@@ -21,7 +21,8 @@ class WorldDetailScreen extends DetailScreenLayout {
 
   @override
   getChildView(WidgetRef ref) {
-    final AsyncValue<List<RouteData>> routeDataModel = ref.watch(routesProvider);
+    final AsyncValue<List<RouteData>> routeDataModel =
+        ref.watch(routesProvider);
 
     return routeDataModel.when(
       data: (routes) {
@@ -31,7 +32,7 @@ class WorldDetailScreen extends DetailScreenLayout {
             icon: Icons.route,
           );
         }
-        
+
         return ListView.builder(
           physics: const BouncingScrollPhysics(),
           itemCount: routes.length,
@@ -39,7 +40,7 @@ class WorldDetailScreen extends DetailScreenLayout {
             return RouteDetailTile(routes[index]);
           },
         );
-      }, 
+      },
       error: (Object error, StackTrace stackTrace) {
         // Log error for debugging
         debugPrint('Error loading routes: $error');
@@ -47,7 +48,7 @@ class WorldDetailScreen extends DetailScreenLayout {
           'Failed to load routes for this world',
           () => ref.refresh(routesProvider),
         );
-      }, 
+      },
       loading: () {
         return UIHelpers.buildLoadingIndicator();
       },

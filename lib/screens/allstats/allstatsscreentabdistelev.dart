@@ -59,9 +59,12 @@ class AllStatsScreenTabDistElev extends AllStatsTabLayout {
   }
 
   @override
-  Container buildChartSummaryWidget(BuildContext context, WidgetRef ref, Map<String, String> units) {
-    final List<SummaryActivity> filteredActivities = ref.read(dateActivityFiltersProvider);
-    final Map<String, double> summaryData = stats.SummaryData.createSummaryData(filteredActivities);
+  Container buildChartSummaryWidget(
+      BuildContext context, WidgetRef ref, Map<String, String> units) {
+    final List<SummaryActivity> filteredActivities =
+        ref.read(dateActivityFiltersProvider);
+    final Map<String, double> summaryData =
+        stats.SummaryData.createSummaryData(filteredActivities);
     return Container(
       padding: const EdgeInsets.fromLTRB(0, 0, 0, 16),
       child: ListView(
@@ -119,8 +122,6 @@ class AllStatsScreenTabDistElev extends AllStatsTabLayout {
       ),
     );
   }
-
-
 }
 
 class YearlyTotals {

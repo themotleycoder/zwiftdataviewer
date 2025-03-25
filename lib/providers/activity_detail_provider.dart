@@ -47,7 +47,7 @@ class StravaActivityDetailsNotifier extends StateNotifier<DetailedActivity> {
   /// it fetches the details from the Strava API and caches them.
   Future<void> loadActivityDetails(int activityId) async {
     if (activityId <= 0) return;
-    
+
     try {
       // Check cache first
       final cacheFile = await _getCacheFile();
@@ -75,7 +75,8 @@ class StravaActivityDetailsNotifier extends StateNotifier<DetailedActivity> {
         state = activityDetail;
         await _saveActivityDetailToCache(json.decode(response.body));
       } else {
-        throw Exception('Failed to load activity details: ${response.statusCode}');
+        throw Exception(
+            'Failed to load activity details: ${response.statusCode}');
       }
     } catch (e) {
       // If we already have some data, keep it
@@ -101,26 +102,27 @@ class StravaActivityDetailsNotifier extends StateNotifier<DetailedActivity> {
     try {
       final cacheFile = await _getCacheFile();
       List activityDetails = [];
-      
+
       if (cacheFile.existsSync()) {
         final cachedData = await cacheFile.readAsString();
         activityDetails = jsonDecode(cachedData);
       }
-      
+
       // Check if activity already exists in cache
       bool exists = false;
       for (int i = 0; i < activityDetails.length; i++) {
-        if (activityDetails[i]['id'].toString() == activityDetail['id'].toString()) {
+        if (activityDetails[i]['id'].toString() ==
+            activityDetail['id'].toString()) {
           activityDetails[i] = activityDetail; // Update existing
           exists = true;
           break;
         }
       }
-      
+
       if (!exists) {
         activityDetails.add(activityDetail); // Add new
       }
-      
+
       await cacheFile.writeAsString(jsonEncode(activityDetails));
     } catch (e) {
       // Just log the error, don't fail the whole operation for a cache issue

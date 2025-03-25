@@ -1,4 +1,5 @@
 import 'dart:async';
+
 import 'package:flutter/material.dart';
 
 class SimpleCarousel extends StatefulWidget {
@@ -32,7 +33,7 @@ class _SimpleCarouselState extends State<SimpleCarousel> {
   void initState() {
     super.initState();
     _pageController = PageController();
-    
+
     if (widget.autoPlay && widget.itemCount > 1) {
       _startAutoPlay();
     }

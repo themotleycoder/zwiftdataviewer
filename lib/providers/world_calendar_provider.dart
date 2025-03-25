@@ -18,7 +18,7 @@ final loadWorldCalendarProvider =
     if (kDebugMode) {
       print('Error loading world calendar data: $e');
     }
-    
+
     // Return empty data instead of rethrowing
     // This allows the UI to show an empty state rather than an error
     return {};

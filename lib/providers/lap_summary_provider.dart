@@ -16,7 +16,7 @@ final lapsProvider = FutureProvider.autoDispose
   try {
     final ftp = ref.watch(configProvider).ftp ?? 0.0;
     List<LapSummaryObject> retValue = [];
-    
+
     // Create a lap summary object for each lap in the activity
     for (var lap in activity.laps ?? []) {
       retValue.add(LapSummaryObject(
@@ -31,7 +31,7 @@ final lapsProvider = FutureProvider.autoDispose
         getColorForWatts(lap.averageWatts, ftp),
       ));
     }
-    
+
     return retValue;
   } catch (e) {
     if (kDebugMode) {
@@ -45,13 +45,13 @@ final lapsProvider = FutureProvider.autoDispose
 ///
 /// This function returns a color that represents the power zone
 /// for the given watts value relative to the user's FTP.
-/// 
+///
 /// @param watts The power value in watts
 /// @param ftp The user's Functional Threshold Power
 /// @return A color representing the power zone
 Color getColorForWatts(double watts, double ftp) {
   if (ftp <= 0) return Colors.grey; // Avoid division by zero
-  
+
   if (watts < ftp * .60) {
     return Colors.grey; // Zone 1: Recovery
   } else if (watts >= ftp * .60 && watts <= ftp * .75) {

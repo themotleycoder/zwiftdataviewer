@@ -125,7 +125,7 @@ class FileRepository
       final String jsonStr =
           await rootBundle.loadString('assets/testjson/streams_test.json');
       final jsonResponse = json.decode(jsonStr);
-      
+
       if (jsonResponse != null && jsonResponse is Map<String, dynamic>) {
         final StreamsDetailCollection streams =
             StreamsDetailCollection.fromJson(jsonResponse);
@@ -249,24 +249,24 @@ class FileRepository
         print('Error deleting cached routes data: $e');
       }
     }
-    
+
     final Map<int, List<RouteData>> routes = {};
     try {
       final response = await Client().get(
         Uri.parse('https://zwiftinsider.com/routes/'),
         headers: {'User-Agent': 'ZwiftDataViewer App'},
       );
-      
+
       if (response.statusCode == 200) {
         var doc = parser.parse(response.body);
         var tableContainer = doc.getElementsByClassName('wpv-loop js-wpv-loop');
-        
+
         if (tableContainer.isEmpty) {
           throw Exception('Could not find route table on Zwift Insider');
         }
-        
+
         var rows = tableContainer[0].children;
-        
+
         for (dynamic row in rows) {
           try {
             // Find the route name and URL from the first cell with an anchor tag
@@ -274,10 +274,10 @@ class FileRepository
             if (routeNameCell == null) {
               continue; // Skip this row if no link found
             }
-            
+
             String routeName = routeNameCell.text ?? 'NA';
             String url = routeNameCell.attributes['href'] ?? '';
-            
+
             // Clean up the route name
             routeName = routeName
                 .replaceAll('&#039;', "'")
@@ -285,21 +285,22 @@ class FileRepository
                 .replaceAll('&amp;', '&')
                 .replaceAll("'", "'")
                 .trim();
-            
+
             // Get the cells in this row
             var cells = row.getElementsByTagName('td');
             if (cells.length < 6) {
               if (kDebugMode) {
-                print('Skipping row with insufficient cells for route: $routeName');
+                print(
+                    'Skipping row with insufficient cells for route: $routeName');
               }
               continue;
             }
-            
+
             // Extract data from the appropriate cells
             final String world = cells[1].text?.trim() ?? '';
             final String distance = cells[2].text?.trim() ?? '0km';
             final String altitude = cells[3].text?.trim() ?? '0m';
-            
+
             // Event only status might be in different positions depending on the table structure
             String eventOnly = '';
             if (cells.length > 5) {
@@ -308,13 +309,15 @@ class FileRepository
             if (eventOnly.isEmpty && cells.length > 7) {
               eventOnly = cells[7].text?.trim() ?? '';
             }
-            
+
             // Look up the world ID
             final int id = worldLookupByName[world] ?? 0;
             if (id == 0 && kDebugMode) {
-              print('Unknown world: $world for route: $routeName');
+              if (kDebugMode) {
+                print('Unknown world: $world for route: $routeName');
+              }
             }
-            
+
             // Parse distance and altitude
             double distanceMeters = 0;
             try {
@@ -322,87 +325,97 @@ class FileRepository
               if (distance.contains('(')) {
                 // Format like "29.6km (18.4 miles)"
                 final metricPart = distance.split('(')[0].trim();
-                
+
                 if (metricPart.toLowerCase().contains('km')) {
                   // Extract numeric value and convert km to meters
-                  final distanceStr = metricPart.replaceAll(RegExp(r'[^\d.]'), '');
+                  final distanceStr =
+                      metricPart.replaceAll(RegExp(r'[^\d.]'), '');
                   distanceMeters = double.parse(distanceStr) * 1000;
                 } else if (metricPart.toLowerCase().contains('m')) {
                   // Extract numeric value for meters
-                  final distanceStr = metricPart.replaceAll(RegExp(r'[^\d.]'), '');
+                  final distanceStr =
+                      metricPart.replaceAll(RegExp(r'[^\d.]'), '');
                   distanceMeters = double.parse(distanceStr);
                 } else {
                   // Default to km if no unit specified
-                  final distanceStr = metricPart.replaceAll(RegExp(r'[^\d.]'), '');
+                  final distanceStr =
+                      metricPart.replaceAll(RegExp(r'[^\d.]'), '');
                   distanceMeters = double.parse(distanceStr) * 1000;
                 }
               } else {
                 // Format without parentheses
                 if (distance.toLowerCase().contains('km')) {
                   // Extract numeric value and convert km to meters
-                  final distanceStr = distance.replaceAll(RegExp(r'[^\d.]'), '');
+                  final distanceStr =
+                      distance.replaceAll(RegExp(r'[^\d.]'), '');
                   distanceMeters = double.parse(distanceStr) * 1000;
-                } else if (distance.toLowerCase().contains('m') && !distance.toLowerCase().contains('km')) {
+                } else if (distance.toLowerCase().contains('m') &&
+                    !distance.toLowerCase().contains('km')) {
                   // Extract numeric value for meters
-                  final distanceStr = distance.replaceAll(RegExp(r'[^\d.]'), '');
+                  final distanceStr =
+                      distance.replaceAll(RegExp(r'[^\d.]'), '');
                   distanceMeters = double.parse(distanceStr);
                 } else {
                   // Default to km if no unit specified
-                  final distanceStr = distance.replaceAll(RegExp(r'[^\d.]'), '');
+                  final distanceStr =
+                      distance.replaceAll(RegExp(r'[^\d.]'), '');
                   distanceMeters = double.parse(distanceStr) * 1000;
                 }
               }
             } catch (e) {
               if (kDebugMode) {
-                print('Error parsing distance for route $routeName: $distance - $e');
+                print(
+                    'Error parsing distance for route $routeName: $distance - $e');
               }
             }
-            
+
             double altitudeMeters = 0;
             try {
               // Handle different altitude formats
               if (altitude.contains('(')) {
                 // Format like "204m (669')"
                 final metricPart = altitude.split('(')[0].trim();
-                
+
                 if (metricPart.toLowerCase().contains('m')) {
                   // Extract numeric value for meters
-                  final altitudeStr = metricPart.replaceAll(RegExp(r'[^\d.]'), '');
-                  altitudeMeters = altitudeStr.isEmpty ? 0 : double.parse(altitudeStr);
+                  final altitudeStr =
+                      metricPart.replaceAll(RegExp(r'[^\d.]'), '');
+                  altitudeMeters =
+                      altitudeStr.isEmpty ? 0 : double.parse(altitudeStr);
                 } else {
                   // Default case
-                  final altitudeStr = metricPart.replaceAll(RegExp(r'[^\d.]'), '');
-                  altitudeMeters = altitudeStr.isEmpty ? 0 : double.parse(altitudeStr);
+                  final altitudeStr =
+                      metricPart.replaceAll(RegExp(r'[^\d.]'), '');
+                  altitudeMeters =
+                      altitudeStr.isEmpty ? 0 : double.parse(altitudeStr);
                 }
               } else {
                 // Format without parentheses
                 if (altitude.toLowerCase().contains('m')) {
                   // Extract numeric value for meters
-                  final altitudeStr = altitude.replaceAll(RegExp(r'[^\d.]'), '');
-                  altitudeMeters = altitudeStr.isEmpty ? 0 : double.parse(altitudeStr);
+                  final altitudeStr =
+                      altitude.replaceAll(RegExp(r'[^\d.]'), '');
+                  altitudeMeters =
+                      altitudeStr.isEmpty ? 0 : double.parse(altitudeStr);
                 } else {
                   // Default case
-                  final altitudeStr = altitude.replaceAll(RegExp(r'[^\d.]'), '');
-                  altitudeMeters = altitudeStr.isEmpty ? 0 : double.parse(altitudeStr);
+                  final altitudeStr =
+                      altitude.replaceAll(RegExp(r'[^\d.]'), '');
+                  altitudeMeters =
+                      altitudeStr.isEmpty ? 0 : double.parse(altitudeStr);
                 }
               }
             } catch (e) {
               if (kDebugMode) {
-                print('Unusual altitude value for route $routeName: $altitude - $e');
+                print(
+                    'Unusual altitude value for route $routeName: $altitude - $e');
               }
             }
-            
+
             // Create the route data object
-            final RouteData route = RouteData(
-              url, 
-              world, 
-              distanceMeters,
-              altitudeMeters, 
-              eventOnly, 
-              routeName, 
-              id
-            );
-            
+            final RouteData route = RouteData(url, world, distanceMeters,
+                altitudeMeters, eventOnly, routeName, id);
+
             // Filter out run-only routes and add to the map
             if (route.eventOnly?.toLowerCase() != 'run only' &&
                 route.eventOnly?.toLowerCase() != 'run only, event only') {
@@ -419,12 +432,13 @@ class FileRepository
             continue;
           }
         }
-        
+
         // Save the scraped data
         await saveRouteData(routes);
-        
+
         if (kDebugMode) {
-          print('Successfully scraped ${routes.values.expand((x) => x).length} routes');
+          print(
+              'Successfully scraped ${routes.values.expand((x) => x).length} routes');
         }
       } else {
         throw Exception('Failed to load routes: HTTP ${response.statusCode}');
@@ -435,7 +449,7 @@ class FileRepository
       }
       throw Exception('Failed to scrape routes: $e');
     }
-    
+
     return routes;
   }
 
@@ -513,29 +527,30 @@ class FileRepository
         print('Error deleting cached world calendar data: $e');
       }
     }
-    
+
     Map<DateTime, List<WorldData>> worlds = {};
     try {
       final response = await Client().get(
         Uri.parse('https://zwiftinsider.com/schedule/'),
         headers: {'User-Agent': 'ZwiftDataViewer App'},
       );
-      
+
       if (response.statusCode == 200) {
         var doc = parser.parse(response.body);
         var dayElements = doc.getElementsByClassName('day-with-date');
-        
+
         if (dayElements.isEmpty) {
           throw Exception('Could not find calendar days on Zwift Insider');
         }
-        
+
         for (dynamic dayElement in dayElements) {
           try {
-            var dayNumberElements = dayElement.getElementsByClassName('day-number');
+            var dayNumberElements =
+                dayElement.getElementsByClassName('day-number');
             if (dayNumberElements.isEmpty) {
               continue; // Skip if no day number found
             }
-            
+
             // Parse the day number
             int dayNumber;
             try {
@@ -546,27 +561,29 @@ class FileRepository
               }
               continue;
             }
-            
+
             // Create the date for this day
-            DateTime key = DateTime(DateTime.now().year, DateTime.now().month, dayNumber);
-            
+            DateTime key =
+                DateTime(DateTime.now().year, DateTime.now().month, dayNumber);
+
             // Find all world names within this day
             List<WorldData> worldData = [];
-            var titleElements = dayElement.getElementsByClassName('spiffy-title');
-            
+            var titleElements =
+                dayElement.getElementsByClassName('spiffy-title');
+
             for (var titleElement in titleElements) {
               String worldName = titleElement.text.trim();
-              
+
               // Clean up the world name
               worldName = worldName
                   .replaceAll('&#039;', "'")
                   .replaceAll('&quot;', '"')
                   .replaceAll('&amp;', '&')
                   .replaceAll("'", "'");
-              
+
               // Look up the world ID
               int? worldId = worldLookupByName[worldName];
-              
+
               if (worldId != null && allWorldsConfig.containsKey(worldId)) {
                 // Add the world from the config
                 worldData.add(allWorldsConfig[worldId]!);
@@ -577,7 +594,7 @@ class FileRepository
                 // Skip unknown worlds
               }
             }
-            
+
             if (worldData.isNotEmpty) {
               worlds[key] = worldData;
             }
@@ -589,15 +606,17 @@ class FileRepository
             continue;
           }
         }
-        
+
         // Save the scraped data
         await saveWorldCalendarData(worlds);
-        
+
         if (kDebugMode) {
-          print('Successfully scraped world calendar with ${worlds.length} days');
+          print(
+              'Successfully scraped world calendar with ${worlds.length} days');
         }
       } else {
-        throw Exception('Failed to load world calendar: HTTP ${response.statusCode}');
+        throw Exception(
+            'Failed to load world calendar: HTTP ${response.statusCode}');
       }
     } catch (e) {
       if (kDebugMode) {
@@ -605,7 +624,7 @@ class FileRepository
       }
       throw Exception('Failed to scrape world calendar: $e');
     }
-    
+
     return worlds;
   }
 
@@ -680,52 +699,54 @@ class FileRepository
         print('Error deleting cached climb calendar data: $e');
       }
     }
-    
+
     Map<DateTime, List<ClimbData>> climbs = {};
     final response = await Client()
         .get(Uri.parse('https://zwiftinsider.com/climb-portal-schedule/'));
     if (response.statusCode == 200) {
       var doc = parser.parse(response.body);
       var vals = doc.getElementsByClassName('day-with-date');
-      
+
       for (dynamic val in vals) {
         int dayNumber =
             int.parse(val.getElementsByClassName('day-number')[0].innerHtml);
         DateTime key =
             DateTime(DateTime.now().year, DateTime.now().month, dayNumber);
-        
+
         // Find all spiffy-title elements within this day
         List<ClimbData> climbData = [];
         var eventGroups = val.getElementsByClassName('spiffy-event-group');
-        
+
         if (eventGroups.isNotEmpty) {
           for (var eventGroup in eventGroups) {
-            var titleElements = eventGroup.getElementsByClassName('spiffy-title');
-            
+            var titleElements =
+                eventGroup.getElementsByClassName('spiffy-title');
+
             for (var titleElement in titleElements) {
               String climbName = titleElement.innerHtml;
-              
+
               // Decode HTML entities and normalize apostrophes
               climbName = climbName
                   .replaceAll('&#039;', "'")
                   .replaceAll('&quot;', '"')
                   .replaceAll('&amp;', '&')
                   .replaceAll("'", "'");
-              
+
               // Extract the URL from the parent element if possible
               String url = '';
               try {
                 var linkElement = titleElement.parent?.parent;
-                if (linkElement != null && linkElement.attributes.containsKey('href')) {
+                if (linkElement != null &&
+                    linkElement.attributes.containsKey('href')) {
                   url = linkElement.attributes['href'] ?? '';
                 }
               } catch (e) {
                 url = 'https://zwiftinsider.com/climb-portal-schedule/';
               }
-              
+
               // Try to find the climb in the lookup map
               int? climbId = climbLookupByName[climbName];
-              
+
               if (climbId != null && allClimbsConfig.containsKey(climbId)) {
                 // Use the climb from the config
                 climbData.add(allClimbsConfig[climbId]!);
@@ -735,13 +756,13 @@ class FileRepository
                 if (kDebugMode) {
                   print('Unknown climb: $climbName');
                 }
-                
+
                 climbData.add(ClimbData(0, ClimbId.others, climbName, url));
               }
             }
           }
         }
-        
+
         if (climbData.isNotEmpty) {
           climbs[key] = climbData;
         }

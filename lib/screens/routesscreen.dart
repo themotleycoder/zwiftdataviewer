@@ -35,7 +35,7 @@ class RoutesScreen extends ConsumerWidget {
                 icon: Icons.route,
               );
             }
-            
+
             return ListView.builder(
               physics: const BouncingScrollPhysics(),
               itemCount: routes.length,
@@ -43,7 +43,7 @@ class RoutesScreen extends ConsumerWidget {
                 return RouteDetailTile(routes[index]);
               },
             );
-          }, 
+          },
           error: (Object error, StackTrace stackTrace) {
             // Log error for debugging
             debugPrint('Error loading routes: $error');
@@ -51,7 +51,7 @@ class RoutesScreen extends ConsumerWidget {
               'Failed to load routes',
               () => ref.refresh(distanceRouteFiltersProvider),
             );
-          }, 
+          },
           loading: () {
             return UIHelpers.buildLoadingIndicator();
           },

@@ -56,13 +56,13 @@ class ConfigNotifier extends StateNotifier<ConfigData> {
 class ConfigData {
   /// The timestamp of the last data synchronization.
   int? lastSyncDate;
-  
+
   /// Whether to use metric units (true) or imperial units (false).
   bool? isMetric = false;
-  
+
   /// The user's Functional Threshold Power in watts.
   double? ftp;
-  
+
   /// Whether data has been loaded.
   bool? dataLoaded = false;
 
@@ -90,7 +90,7 @@ class ConfigData {
     data['dataLoaded'] = dataLoaded;
     return data;
   }
-  
+
   /// Creates a copy of this ConfigData instance with the given fields replaced.
   ///
   /// @param lastSyncDate The new lastSyncDate value, or null to keep the current value

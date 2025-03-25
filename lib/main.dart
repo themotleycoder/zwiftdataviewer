@@ -1,3 +1,4 @@
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_strava_api/globals.dart' as globals;
@@ -22,6 +23,9 @@ Future<void> main() async {
   };
   WidgetsFlutterBinding.ensureInitialized();
 
+  // Initialize secrets
+  await Secrets.initialize();
+
   Future<Token?> getClient() async {
     bool isAuthOk = false;
 
@@ -42,7 +46,14 @@ Future<void> main() async {
     return null;
   }
 
-  await getClient();
+  try {
+    await getClient();
+  } catch (e) {
+    if (kDebugMode) {
+      print('Failed to authenticate with Strava: $e');
+    }
+    // Handle authentication failure gracefully
+  }
 
   runApp(ProviderScope(
       child: MaterialApp(
@@ -55,7 +66,7 @@ Future<void> main() async {
     // onGenerateTitle: (context) =>
     //     ProviderLocalizations.of(context).appTitle,
     routes: {
-      AppRoutes.home: (context) => HomeScreen(),
+      AppRoutes.home: (context) => const HomeScreen(),
       AppRoutes.allStats: (context) => const AllStatsRootScreen(),
       AppRoutes.allroutes: (context) => const RoutesScreen(),
       AppRoutes.calendar: (context) => const AllCalendarsRootScreen(),

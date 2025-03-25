@@ -14,8 +14,8 @@ class AllStatsScreenTabDistanceSummary extends AllStatsTabLayout {
   const AllStatsScreenTabDistanceSummary({super.key});
 
   @override
-  SfCartesianChart buildChart(
-      WidgetRef ref, Map<String, String> units, List<SummaryActivity> filteredActivities) {
+  SfCartesianChart buildChart(WidgetRef ref, Map<String, String> units,
+      List<SummaryActivity> filteredActivities) {
     return SfCartesianChart(
         tooltipBehavior: null,
         plotAreaBorderWidth: 0,
@@ -61,7 +61,8 @@ class AllStatsScreenTabDistanceSummary extends AllStatsTabLayout {
   }
 
   @override
-  Container buildChartSummaryWidget(BuildContext context, WidgetRef ref, Map<String, String> units) {
+  Container buildChartSummaryWidget(
+      BuildContext context, WidgetRef ref, Map<String, String> units) {
     return getChartPointShortSummaryWidget(context, ref, units);
   }
 
@@ -92,6 +93,4 @@ class AllStatsScreenTabDistanceSummary extends AllStatsTabLayout {
           markerSettings: const MarkerSettings(isVisible: false)),
     ];
   }
-
-
 }

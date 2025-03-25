@@ -8,7 +8,6 @@ abstract class DetailScreenLayout extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-
     return Scaffold(
         appBar: AppBar(
             title: Text(getTitle(ref)),
@@ -31,5 +30,4 @@ abstract class DetailScreenLayout extends ConsumerWidget {
   String getTitle(WidgetRef ref);
 
   getChildView(WidgetRef ref);
-
 }

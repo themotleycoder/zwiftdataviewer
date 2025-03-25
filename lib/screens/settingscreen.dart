@@ -23,8 +23,9 @@ class SettingsScreen extends ConsumerWidget {
     final configData = ref.watch(configProvider);
 
     return Container(
-        padding: const EdgeInsets.all(8.0),
-        alignment: Alignment.center,
+      padding: const EdgeInsets.all(8.0),
+      alignment: Alignment.center,
+      child: SingleChildScrollView(
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.stretch,
           children: [
@@ -48,7 +49,9 @@ class SettingsScreen extends ConsumerWidget {
                         final updatedConfig = configData.copyWith(
                           ftp: double.tryParse(value) ?? configData.ftp,
                         );
-                        ref.read(configProvider.notifier).setConfig(updatedConfig);
+                        ref
+                            .read(configProvider.notifier)
+                            .setConfig(updatedConfig);
                       }
                     },
                     inputFormatters: <TextInputFormatter>[
@@ -75,6 +78,29 @@ class SettingsScreen extends ConsumerWidget {
               ),
               tooltip: 'Toggle between metric (km) and imperial (miles) units',
             ),
+            // Strava API Info
+            Card(
+              elevation: defaultCardElevation,
+              margin: const EdgeInsets.symmetric(vertical: 4.0),
+              child: Padding(
+                padding: const EdgeInsets.all(16.0),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(
+                      'Strava API',
+                      style: headerTextStyle,
+                    ),
+                    const SizedBox(height: 8),
+                    const Text(
+                      'This app uses the Strava API to fetch your Zwift activities. '
+                      'The API credentials are configured by the app developer.',
+                      style: TextStyle(fontSize: 14),
+                    ),
+                  ],
+                ),
+              ),
+            ),
             // Refresh Route Data
             createCard(
               'Refresh Route Data',
@@ -95,7 +121,6 @@ class SettingsScreen extends ConsumerWidget {
               ),
               tooltip: 'Update route data from Zwift servers',
             ),
-            
             // Refresh Calendar Data
             createCard(
               'Refresh Calendars Data',
@@ -114,9 +139,13 @@ class SettingsScreen extends ConsumerWidget {
                   );
                 },
               ),
-              tooltip: 'Update world and climb calendar data from Zwift servers',
+              tooltip:
+                  'Update world and climb calendar data from Zwift servers',
             ),
-        ]));
+          ],
+        ),
+      ),
+    );
   }
 
   /// Refreshes route data from Zwift.
@@ -147,14 +176,14 @@ class SettingsScreen extends ConsumerWidget {
         Container(
           margin: const EdgeInsets.fromLTRB(16.0, 8.0, 16.0, 8.0),
           child: Text(
-            label, 
+            label,
             style: headerTextStyle,
           ),
         ),
         widget
       ],
     );
-    
+
     return Card(
       elevation: defaultCardElevation,
       margin: const EdgeInsets.symmetric(vertical: 4.0),

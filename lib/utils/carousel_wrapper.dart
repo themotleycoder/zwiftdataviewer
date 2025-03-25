@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+
 import 'simple_carousel.dart';
 
 // A wrapper for SimpleCarousel to maintain compatibility with existing code

@@ -1,5 +1,6 @@
 import 'dart:convert';
 import 'dart:io';
+
 import 'package:flutter/foundation.dart';
 import 'package:flutter_strava_api/api/streams.dart';
 import 'package:flutter_strava_api/models/activity.dart';
@@ -7,6 +8,7 @@ import 'package:flutter_strava_api/models/summary_activity.dart';
 import 'package:flutter_strava_api/strava.dart';
 import 'package:zwiftdataviewer/utils/repository/activitesrepository.dart';
 import 'package:zwiftdataviewer/utils/repository/streamsrepository.dart';
+
 import '../../secrets.dart';
 
 class WebRepository implements ActivitiesRepository, StreamsRepository {
@@ -16,14 +18,16 @@ class WebRepository implements ActivitiesRepository, StreamsRepository {
   WebRepository({required this.strava, required this.cache});
 
   @override
-  Future<List<SummaryActivity>> loadActivities(int beforeDate, int afterDate) async {
+  Future<List<SummaryActivity>> loadActivities(
+      int beforeDate, int afterDate) async {
     try {
       await _ensureAuthenticated();
       final cachedActivities = await cache.getActivities(beforeDate, afterDate);
       if (cachedActivities != null) {
         return cachedActivities;
       }
-      final activities = await strava.getLoggedInAthleteActivities(beforeDate, afterDate, null);
+      final activities = await strava.getLoggedInAthleteActivities(
+          beforeDate, afterDate, null);
       await cache.saveActivities(activities);
       return activities;
     } catch (e) {
@@ -85,7 +89,7 @@ class WebRepository implements ActivitiesRepository, StreamsRepository {
       final streams = await strava.getStreamsByActivity(activityId.toString());
       await cache.saveStreams(activityId, streams);
       return streams;
-        } catch (e) {
+    } catch (e) {
       if (kDebugMode) {
         print('Error loading streams: $e');
       }
@@ -119,7 +123,8 @@ class Cache {
 
   Cache(this._cacheDir);
 
-  Future<List<SummaryActivity>?> getActivities(int beforeDate, int afterDate) async {
+  Future<List<SummaryActivity>?> getActivities(
+      int beforeDate, int afterDate) async {
     final file = File('$_cacheDir/activities_${beforeDate}_$afterDate.json');
     if (await file.exists()) {
       final content = await file.readAsString();
@@ -130,8 +135,10 @@ class Cache {
   }
 
   Future<void> saveActivities(List<SummaryActivity> activities) async {
-    final file = File('$_cacheDir/activities_${activities.first.startDate.millisecondsSinceEpoch}_${activities.last.startDate.millisecondsSinceEpoch}.json');
-    await file.writeAsString(jsonEncode(activities.map((e) => e.toJson()).toList()));
+    final file = File(
+        '$_cacheDir/activities_${activities.first.startDate.millisecondsSinceEpoch}_${activities.last.startDate.millisecondsSinceEpoch}.json');
+    await file
+        .writeAsString(jsonEncode(activities.map((e) => e.toJson()).toList()));
   }
 
   Future<DetailedActivity?> getActivityDetail(int activityId) async {
@@ -158,9 +165,11 @@ class Cache {
     return null;
   }
 
-  Future<void> saveActivityPhotos(int activityId, List<PhotoActivity> photos) async {
+  Future<void> saveActivityPhotos(
+      int activityId, List<PhotoActivity> photos) async {
     final file = File('$_cacheDir/photos_$activityId.json');
-    await file.writeAsString(jsonEncode(photos.map((e) => e.toJson()).toList()));
+    await file
+        .writeAsString(jsonEncode(photos.map((e) => e.toJson()).toList()));
   }
 
   Future<StreamsDetailCollection?> getStreams(int activityId) async {
@@ -181,12 +190,13 @@ class Cache {
     return null;
   }
 
-  Future<void> saveStreams(int activityId, StreamsDetailCollection streams) async {
+  Future<void> saveStreams(
+      int activityId, StreamsDetailCollection streams) async {
     try {
       final file = File('$_cacheDir/streams_$activityId.json');
       final jsonData = streams.toJson();
       await file.writeAsString(jsonEncode(jsonData));
-        } catch (e) {
+    } catch (e) {
       if (kDebugMode) {
         print('Error saving streams: $e');
       }

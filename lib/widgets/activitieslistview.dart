@@ -60,7 +60,7 @@ class ActivitiesListView extends ConsumerWidget {
                           context,
                           MaterialPageRoute(
                             builder: (_) {
-                              return DetailScreen(
+                              return const DetailScreen(
                                   // id: activities[index].id ?? -1,
                                   // strava: strava,
                                   // onRemove: () {
@@ -83,7 +83,45 @@ class ActivitiesListView extends ConsumerWidget {
       }, loading: () {
         return const Center(child: CircularProgressIndicator());
       }, error: (error, stack) {
-        return const Center(child: Text('Error loading activities'));
+        return Center(
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              const Icon(
+                Icons.error_outline,
+                color: zdvOrange,
+                size: 48,
+              ),
+              const SizedBox(height: 16),
+              Text(
+                'Error loading activities',
+                style: constants.headerFontStyle,
+                textAlign: TextAlign.center,
+              ),
+              const SizedBox(height: 8),
+              Text(
+                error.toString().contains('ClientException')
+                    ? 'Network connection issue. Please check your internet connection.'
+                    : 'An error occurred while loading activities.',
+                textAlign: TextAlign.center,
+                style: const TextStyle(color: Colors.grey),
+              ),
+              const SizedBox(height: 16),
+              ElevatedButton.icon(
+                onPressed: () {
+                  // Refresh the activities provider
+                  ref.refresh(stravaActivitiesProvider);
+                },
+                icon: const Icon(Icons.refresh),
+                label: const Text('Retry'),
+                style: ElevatedButton.styleFrom(
+                  backgroundColor: zdvMidBlue,
+                  foregroundColor: Colors.white,
+                ),
+              ),
+            ],
+          ),
+        );
       }),
     );
   }

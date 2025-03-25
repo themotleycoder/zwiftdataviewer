@@ -10,7 +10,8 @@ abstract class AllStatsTabLayout extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final List<SummaryActivity> filteredActivities = ref.read(dateActivityFiltersProvider);
+    final List<SummaryActivity> filteredActivities =
+        ref.read(dateActivityFiltersProvider);
     final Map<String, String> units = Conversions.units(ref);
 
     return Column(
@@ -20,15 +21,16 @@ abstract class AllStatsTabLayout extends ConsumerWidget {
         children: [
           Expanded(
               child: Padding(
-                padding: const EdgeInsets.fromLTRB(0, 4, 0, 4),
-                child: buildChart(ref, units, filteredActivities),
-              )),
+            padding: const EdgeInsets.fromLTRB(0, 4, 0, 4),
+            child: buildChart(ref, units, filteredActivities),
+          )),
           buildChartSummaryWidget(context, ref, units),
         ]);
   }
 
-  SfCartesianChart buildChart(
-      WidgetRef ref, Map<String, String> units, List<SummaryActivity> filteredActivities);
+  SfCartesianChart buildChart(WidgetRef ref, Map<String, String> units,
+      List<SummaryActivity> filteredActivities);
 
-  Container buildChartSummaryWidget(BuildContext context, WidgetRef ref, Map<String, String> units);
+  Container buildChartSummaryWidget(
+      BuildContext context, WidgetRef ref, Map<String, String> units);
 }

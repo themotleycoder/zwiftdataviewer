@@ -46,7 +46,8 @@ final Map<int, WorldData> allWorldsConfig = {
       'https://zwiftinsider.com/richmond/'),
   3: const WorldData(
       3, GuestWorldId.london, 'London', 'https://zwiftinsider.com/london/'),
-  4: const WorldData(4, GuestWorldId.newyork, 'NYC', 'https://zwiftinsider.com/nyc/'),
+  4: const WorldData(
+      4, GuestWorldId.newyork, 'NYC', 'https://zwiftinsider.com/nyc/'),
   5: const WorldData(5, GuestWorldId.innsbruck, 'Innsbruck',
       'https://zwiftinsider.com/innsbruck/'),
   6: const WorldData(6, GuestWorldId.bolognatt, 'Bologna TT',

@@ -41,7 +41,7 @@ class RouteDetailTile extends ConsumerWidget {
           title: Text(routeName,
               overflow: TextOverflow.ellipsis,
               maxLines: 2,
-               style: constants.headerFontStyle),
+              style: constants.headerFontStyle),
           subtitle: Column(children: [
             Row(children: [
               const Icon(Icons.route, color: zdvMidBlue, size: 30),

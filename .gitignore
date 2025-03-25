@@ -49,6 +49,9 @@ app.*.map.json
 /android/app/profile
 /android/app/release
 
+# Keystore files
+/android/keystore/
+
 # iOS/XCode related
 **/ios/**/*.mode1v3
 **/ios/**/*.mode2v3

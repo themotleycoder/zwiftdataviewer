@@ -117,8 +117,8 @@ final Map<int, ClimbData> allClimbsConfig = {
       'https://zwiftinsider.com/portal/oude-kwaremont/'),
   23: ClimbData(23, ClimbId.plaDadet, "Pla d'Adet",
       'https://zwiftinsider.com/portal/pla-dadet/'),
-  24: ClimbData(24, ClimbId.poggio, 'Poggio',
-      'https://zwiftinsider.com/portal/poggio/'),
+  24: ClimbData(
+      24, ClimbId.poggio, 'Poggio', 'https://zwiftinsider.com/portal/poggio/'),
   25: ClimbData(25, ClimbId.puydeDome, 'Puy de Dome',
       'https://zwiftinsider.com/portal/puy-de-dome/'),
   26: ClimbData(26, ClimbId.rocacorba, 'Rocacorba',

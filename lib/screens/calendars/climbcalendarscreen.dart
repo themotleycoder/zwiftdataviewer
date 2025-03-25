@@ -27,27 +27,21 @@ class ClimbCalendarScreen extends ConsumerWidget {
     final AsyncValue<Map<DateTime, List<ClimbData>>> asyncClimbCalender =
         ref.watch(loadClimbCalendarProvider);
 
-    return Column(
-      mainAxisSize: MainAxisSize.max, 
-      children: <Widget>[
-        asyncClimbCalender.when(
-          data: (Map<DateTime, List<ClimbData>> climbData) {
-            return ClimbEventsCalendarWidget(ref, climbData);
-          }, 
-          error: (Object error, StackTrace stackTrace) {
-            // Log error for debugging
-            debugPrint('Error loading climb calendar data: $error');
-            return UIHelpers.buildErrorWidget(
-              'Failed to load climb calendar data',
-              () => ref.refresh(loadClimbCalendarProvider),
-            );
-          }, 
-          loading: () {
-            return UIHelpers.buildLoadingIndicator(
-              key: AppKeys.activitiesLoading,
-            );
-          }
-        ),
+    return Column(mainAxisSize: MainAxisSize.max, children: <Widget>[
+      asyncClimbCalender.when(data: (Map<DateTime, List<ClimbData>> climbData) {
+        return ClimbEventsCalendarWidget(ref, climbData);
+      }, error: (Object error, StackTrace stackTrace) {
+        // Log error for debugging
+        debugPrint('Error loading climb calendar data: $error');
+        return UIHelpers.buildErrorWidget(
+          'Failed to load climb calendar data',
+          () => ref.refresh(loadClimbCalendarProvider),
+        );
+      }, loading: () {
+        return UIHelpers.buildLoadingIndicator(
+          key: AppKeys.activitiesLoading,
+        );
+      }),
       const SizedBox(height: 8.0),
       Expanded(child: _buildEventList(ref, context)),
     ]);
@@ -65,7 +59,7 @@ class ClimbCalendarScreen extends ConsumerWidget {
 /// @return A ListView containing the climb event cards
 Widget _buildEventList(WidgetRef ref, BuildContext context) {
   final List<ClimbData> selectedEvents = ref.watch(climbEventsForDayProvider);
-  
+
   if (selectedEvents.isEmpty) {
     return Center(
       child: UIHelpers.buildEmptyStateWidget(
@@ -74,7 +68,7 @@ Widget _buildEventList(WidgetRef ref, BuildContext context) {
       ),
     );
   }
-  
+
   final List<Widget> list = selectedEvents
       .map((climb) => _buildClimbCard(climb, ref, context))
       .toList();
@@ -93,11 +87,11 @@ Widget _buildEventList(WidgetRef ref, BuildContext context) {
 Widget _buildClimbCard(ClimbData climb, WidgetRef ref, BuildContext context) {
   // First try to get the climb from allClimbsConfig using the ID
   final configClimb = allClimbsConfig[climb.id];
-  
+
   // If the climb is found in the config, use it; otherwise use the climb data directly
   final climbName = configClimb?.name ?? climb.name ?? 'Unknown Climb';
   final climbUrl = configClimb?.url ?? climb.url ?? 'NA';
-  
+
   return Card(
     color: Colors.white,
     elevation: defaultCardElevation,
@@ -110,7 +104,6 @@ Widget _buildClimbCard(ClimbData climb, WidgetRef ref, BuildContext context) {
         title: Text(climbName),
         subtitle: const Text('Tap to view climb details'),
         trailing: Row(
-          
           mainAxisSize: MainAxisSize.min,
           children: [
             IconButton(
@@ -119,7 +112,8 @@ Widget _buildClimbCard(ClimbData climb, WidgetRef ref, BuildContext context) {
               onPressed: () {
                 // If the climb is found in the config, use it; otherwise use the climb data directly
                 final selectedClimb = configClimb ?? climb;
-                ref.read(selectedClimbProvider.notifier).climbSelect = selectedClimb;
+                ref.read(selectedClimbProvider.notifier).climbSelect =
+                    selectedClimb;
                 // Navigate to the climb detail screen to see routes
                 launchMyUrl(selectedClimb.url ?? 'NA');
               },
@@ -160,7 +154,7 @@ Future<void> launchMyUrl(String url) async {
   try {
     // Parse the URL directly
     final Uri uri = Uri.parse(url);
-    
+
     if (await canLaunchUrl(uri)) {
       // Use the default launch mode to match the behavior of RouteDetailTile
       await launchUrl(uri);

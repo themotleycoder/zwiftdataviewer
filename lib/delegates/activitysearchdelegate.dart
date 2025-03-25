@@ -95,8 +95,9 @@ class ActivitySearch extends SearchDelegate<SummaryActivity> {
                           size: 32.0, color: zdvOrange),
                       title: Text(summaryActivity.name,
                           style: constants.headerFontStyle),
-                      subtitle: Text(DateFormat.yMd().add_jm().format(
-                          summaryActivity.startDateLocal)),
+                      subtitle: Text(DateFormat.yMd()
+                          .add_jm()
+                          .format(summaryActivity.startDateLocal)),
                       trailing: Icon(
                         Icons.arrow_forward_ios,
                         color: zdvmMidBlue[100],
@@ -106,7 +107,7 @@ class ActivitySearch extends SearchDelegate<SummaryActivity> {
                           context,
                           MaterialPageRoute(
                             builder: (_) {
-                              return DetailScreen(
+                              return const DetailScreen(
                                   // id: summaryActivity.id ?? -1,
                                   // strava: strava,
                                   // onRemove: () {

@@ -12,7 +12,6 @@ import '../utils/theme.dart';
 
 Container getChartPointShortSummaryWidget(
     BuildContext context, WidgetRef ref, Map<String, String> units) {
-
   final SummaryActivity selectedActivity = ref.watch(selectedActivityProvider);
 
   return Container(
@@ -49,7 +48,7 @@ Container getChartPointShortSummaryWidget(
                                 context,
                                 MaterialPageRoute(
                                   builder: (_) {
-                                    return DetailScreen();
+                                    return const DetailScreen();
                                   },
                                 ),
                               );

@@ -16,7 +16,7 @@ final routeDataProvider =
     if (kDebugMode) {
       print('Error loading route data: $e');
     }
-    
+
     // Return empty data instead of rethrowing
     // This allows the UI to show an empty state rather than an error
     return {};

@@ -50,7 +50,7 @@ class DisplayChart extends ConsumerWidget {
     // Trigger loading of lap data
     WidgetsBinding.instance.addPostFrameCallback((_) {
       ref.read(lapsProvider(activityDetails));
-        });
+    });
 
     final AsyncValue<List<LapSummaryObject>> lapsData =
         ref.watch(lapsProvider(activityDetails));
@@ -66,7 +66,7 @@ class DisplayChart extends ConsumerWidget {
                 icon: Icons.electric_bolt,
               );
             }
-            
+
             return SfCartesianChart(
               primaryXAxis: NumericAxis(isVisible: false),
               primaryYAxis: NumericAxis(
@@ -93,14 +93,14 @@ class DisplayChart extends ConsumerWidget {
                 }
               },
             );
-          }, 
+          },
           error: (Object error, StackTrace stackTrace) {
             debugPrint('Error loading lap data: $error');
             return UIHelpers.buildErrorWidget(
               'Failed to load lap data',
               () => ref.refresh(lapsProvider(activityDetails)),
             );
-          }, 
+          },
           loading: () {
             return UIHelpers.buildLoadingIndicator(
               key: AppKeys.lapsLoading,
@@ -113,7 +113,6 @@ class DisplayChart extends ConsumerWidget {
 
   List<ChartSeries<LapSummaryObject, int>> _createDataSet(
       BuildContext context, List<LapSummaryObject> lapSummaryObjData) {
-
     return [
       // LineSeries<LapSummaryObject, int>(
       //     dataSource: lapSummaryObjData,

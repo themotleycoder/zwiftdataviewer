@@ -47,7 +47,7 @@ class DisplayChart extends ConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     final Map<String, String> units = Conversions.units(ref);
     final activityId = ref.watch(selectedActivityProvider).id;
-    
+
     // Trigger loading of streams data
     WidgetsBinding.instance.addPostFrameCallback((_) {
       ref.read(streamsProvider(activityId));
@@ -69,7 +69,7 @@ class DisplayChart extends ConsumerWidget {
                 ),
               );
             }
-            
+
             return SfCartesianChart(
               tooltipBehavior: null,
               plotAreaBorderWidth: 0,
@@ -104,8 +104,8 @@ class DisplayChart extends ConsumerWidget {
               series: _createDataSet(ref, streams.streams ?? []),
               onTrackballPositionChanging: (TrackballArgs args) {
                 final dataPointIndex = args.chartPointInfo.dataPointIndex ?? 0;
-                if (streams.streams != null && 
-                    dataPointIndex >= 0 && 
+                if (streams.streams != null &&
+                    dataPointIndex >= 0 &&
                     dataPointIndex < streams.streams!.length) {
                   var combinedStreams = streams.streams![dataPointIndex];
                   ref
@@ -114,14 +114,14 @@ class DisplayChart extends ConsumerWidget {
                 }
               },
             );
-          }, 
+          },
           error: (Object error, StackTrace stackTrace) {
             debugPrint('Error loading streams data: $error');
             return UIHelpers.buildErrorWidget(
               'Failed to load activity stream data',
               () => ref.refresh(streamsProvider(activityId)),
             );
-          }, 
+          },
           loading: () {
             return UIHelpers.buildLoadingIndicator(
               key: AppKeys.activitiesLoading,

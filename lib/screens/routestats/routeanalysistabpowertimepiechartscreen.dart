@@ -49,9 +49,9 @@ class DisplayChart extends ConsumerWidget {
     // Trigger loading of lap summary data
     WidgetsBinding.instance.addPostFrameCallback((_) {
       ref.read(lapSummaryDataProvider(activityDetails));
-        });
+    });
 
-    final AsyncValue<List<LapSummaryObject>> lapSummaryData = 
+    final AsyncValue<List<LapSummaryObject>> lapSummaryData =
         ref.watch(lapSummaryDataProvider(activityDetails));
 
     return Expanded(
@@ -65,7 +65,7 @@ class DisplayChart extends ConsumerWidget {
                 icon: Icons.pie_chart,
               );
             }
-            
+
             return SfCircularChart(
               series: createDataSet(laps),
               legend: const Legend(
@@ -83,14 +83,14 @@ class DisplayChart extends ConsumerWidget {
                 }
               },
             );
-          }, 
+          },
           error: (Object error, StackTrace stackTrace) {
             debugPrint('Error loading lap summary data: $error');
             return UIHelpers.buildErrorWidget(
               'Failed to load power zone data',
               () => ref.refresh(lapSummaryDataProvider(activityDetails)),
             );
-          }, 
+          },
           loading: () {
             return UIHelpers.buildLoadingIndicator(
               key: AppKeys.lapsLoading,
@@ -109,11 +109,11 @@ class DisplayChart extends ConsumerWidget {
       List<LapSummaryObject> laps) {
     // Filter out laps with zero time to avoid empty slices
     final nonZeroLaps = laps.where((lap) => lap.time > 0).toList();
-    
+
     if (nonZeroLaps.isEmpty) {
       return [];
     }
-    
+
     return [
       PieSeries<LapSummaryObject, String>(
         explode: true,
@@ -136,20 +136,27 @@ class DisplayChart extends ConsumerWidget {
       )
     ];
   }
-  
+
   /// Gets the name of a power zone based on its index.
   ///
   /// @param zoneIndex The index of the power zone
   /// @return The name of the power zone
   String _getZoneName(int zoneIndex) {
     switch (zoneIndex) {
-      case 1: return 'Z1';
-      case 2: return 'Z2';
-      case 3: return 'Z3';
-      case 4: return 'Z4';
-      case 5: return 'Z5';
-      case 6: return 'Z6';
-      default: return '';
+      case 1:
+        return 'Z1';
+      case 2:
+        return 'Z2';
+      case 3:
+        return 'Z3';
+      case 4:
+        return 'Z4';
+      case 5:
+        return 'Z5';
+      case 6:
+        return 'Z6';
+      default:
+        return '';
     }
   }
 }

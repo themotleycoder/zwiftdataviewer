@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 abstract class MainLayout extends ConsumerWidget {
-  MainLayout({super.key});
+  const MainLayout({super.key});
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
@@ -15,7 +15,7 @@ abstract class MainLayout extends ConsumerWidget {
 
   // String getTitle(WidgetRef ref);
 
-  buildAppBar(BuildContext context, WidgetRef ref){}
+  buildAppBar(BuildContext context, WidgetRef ref) {}
 
   buildBody(BuildContext context, WidgetRef ref);
 

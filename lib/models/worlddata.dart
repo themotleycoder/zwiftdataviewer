@@ -7,13 +7,13 @@ import 'package:zwiftdataviewer/utils/worldsconfig.dart';
 class WorldData {
   /// The unique identifier for the world.
   final int? id;
-  
+
   /// The guest world ID enum value.
   final GuestWorldId? guestWorldId;
-  
+
   /// The name of the world.
   final String? name;
-  
+
   /// The URL with more information about the world.
   final String? url;
 

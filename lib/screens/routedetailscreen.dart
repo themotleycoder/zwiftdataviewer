@@ -45,8 +45,9 @@ class PrefetchImageDemo extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final AsyncValue<List<String>> imagesUrls = ref.watch(activityPhotoUrlsProvider(
-        ref.watch(photoActivitiesProvider).value ?? []));
+    final AsyncValue<List<String>> imagesUrls = ref.watch(
+        activityPhotoUrlsProvider(
+            ref.watch(photoActivitiesProvider).value ?? []));
 
     return Container(
       color: Colors.white,
@@ -62,7 +63,7 @@ class PrefetchImageDemo extends ConsumerWidget {
               ),
             );
           }
-          
+
           return LayoutBuilder(
             builder: (BuildContext context, BoxConstraints constraints) {
               return SimpleCarousel(
@@ -122,7 +123,9 @@ class RenderRouteDetails extends ConsumerWidget {
     // Trigger loading of activity details but don't wait for it
     // This ensures the UI updates when the provider is updated
     WidgetsBinding.instance.addPostFrameCallback((_) {
-      ref.read(stravaActivityDetailsProvider.notifier).loadActivityDetails(activityId);
+      ref
+          .read(stravaActivityDetailsProvider.notifier)
+          .loadActivityDetails(activityId);
     });
 
     return Expanded(
@@ -134,31 +137,26 @@ class RenderRouteDetails extends ConsumerWidget {
             IconHeaderDataRow([
               IconDataObject(
                 'Distance',
-                Conversions.metersToDistance(
-                  ref, 
-                  activityDetails.distance ?? 0
-                ).toStringAsFixed(1),
+                Conversions.metersToDistance(ref, activityDetails.distance ?? 0)
+                    .toStringAsFixed(1),
                 Icons.route,
                 units: units['distance'],
               ),
               IconDataObject(
                 'Elevation',
                 Conversions.metersToHeight(
-                  ref,
-                  activityDetails.totalElevationGain ?? 0
-                ).toStringAsFixed(0),
+                        ref, activityDetails.totalElevationGain ?? 0)
+                    .toStringAsFixed(0),
                 Icons.filter_hdr,
                 units: units['height'],
               )
             ]),
-            
+
             // Time and Calories
             IconHeaderDataRow([
               IconDataObject(
                 'Time',
-                Conversions.secondsToTime(
-                  activityDetails.elapsedTime ?? 0
-                ),
+                Conversions.secondsToTime(activityDetails.elapsedTime ?? 0),
                 Icons.schedule,
               ),
               IconDataObject(
@@ -167,7 +165,7 @@ class RenderRouteDetails extends ConsumerWidget {
                 Icons.local_pizza,
               ),
             ]),
-            
+
             // Heart Rate
             IconHeaderDataRow([
               IconDataObject(
@@ -183,13 +181,12 @@ class RenderRouteDetails extends ConsumerWidget {
                 units: 'bpm',
               ),
             ]),
-            
+
             // Power
             IconHeaderDataRow([
               IconDataObject(
                 'Avg Power',
-                (activityDetails.averageWatts ?? 0)
-                    .toStringAsFixed(0),
+                (activityDetails.averageWatts ?? 0).toStringAsFixed(0),
                 Icons.electric_bolt_outlined,
                 units: 'w',
               ),
@@ -200,22 +197,20 @@ class RenderRouteDetails extends ConsumerWidget {
                 units: 'w',
               ),
             ]),
-            
+
             // Speed
             IconHeaderDataRow([
               IconDataObject(
                 'Avg Speed',
-                Conversions.mpsToMph(
-                  activityDetails.averageSpeed ?? 0.0
-                ).toStringAsFixed(1),
+                Conversions.mpsToMph(activityDetails.averageSpeed ?? 0.0)
+                    .toStringAsFixed(1),
                 Icons.speed_outlined,
                 units: units['speed'],
               ),
               IconDataObject(
                 'Max Speed',
-                Conversions.mpsToMph(
-                  activityDetails.maxSpeed ?? 0
-                ).toStringAsFixed(1),
+                Conversions.mpsToMph(activityDetails.maxSpeed ?? 0)
+                    .toStringAsFixed(1),
                 Icons.speed,
                 units: units['speed'],
               ),

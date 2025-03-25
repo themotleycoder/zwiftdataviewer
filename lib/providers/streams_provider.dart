@@ -26,10 +26,7 @@ final streamsProvider = FutureProvider.autoDispose
     final cacheDir = await getApplicationDocumentsDirectory();
     final cache = Cache(cacheDir.path);
     final WebRepository webRepository =
-        WebRepository(
-          strava: Strava(isInDebug, clientSecret),
-          cache: cache
-        );
+        WebRepository(strava: Strava(isInDebug, clientSecret), cache: cache);
 
     if (globals.isInDebug) {
       return await fileRepository.loadStreams(id);

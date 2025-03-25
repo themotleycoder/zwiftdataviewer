@@ -15,7 +15,7 @@ import 'package:zwiftdataviewer/utils/theme.dart';
 class WorldEventsCalendarWidget extends StatelessWidget {
   /// The WidgetRef used to access providers.
   final WidgetRef ref;
-  
+
   /// The map of dates to world events.
   final Map<DateTime, List<WorldData>> worldData;
 
@@ -46,7 +46,8 @@ class WorldEventsCalendarWidget extends StatelessWidget {
             const TextStyle().copyWith(color: constants.calenderColor),
       ),
       headerStyle: const HeaderStyle(
-        formatButtonVisible: false, // Hides the button to change calendar format
+        formatButtonVisible:
+            false, // Hides the button to change calendar format
         titleCentered: true, // Centers the title
         leftChevronVisible: false, // Hides left arrow
         rightChevronVisible: false, // Hides right arrow
@@ -64,7 +65,8 @@ class WorldEventsCalendarWidget extends StatelessWidget {
       eventLoader: (DateTime dateTime) {
         final formattedDateTime =
             DateFormat('yyyy-MM-dd HH:mm:ss').format(dateTime);
-        final DateTime parsedDate = DateTime.parse(formattedDateTime.replaceAll('Z', ''));
+        final DateTime parsedDate =
+            DateTime.parse(formattedDateTime.replaceAll('Z', ''));
         return _getEventsForDay(ref, worldData, parsedDate) ?? [];
       },
       selectedDayPredicate: (day) {
@@ -90,11 +92,10 @@ class WorldEventsCalendarWidget extends StatelessWidget {
   /// @param date Optional date to get events for. If null, uses the selected day
   /// @return The list of world events for the day, or null if none
   List<WorldData>? _getEventsForDay(
-      WidgetRef ref, 
-      Map<DateTime, List<WorldData>> worldData,
+      WidgetRef ref, Map<DateTime, List<WorldData>> worldData,
       [DateTime? date]) {
     final DateTime selectedDay = ref.read(selectedWorldDayProvider);
-    final DateTime d = date != null 
+    final DateTime d = date != null
         ? DateTime(date.year, date.month, date.day)
         : DateTime(selectedDay.year, selectedDay.month, selectedDay.day);
 
