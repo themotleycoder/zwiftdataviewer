@@ -5,7 +5,6 @@ import 'package:zwiftdataviewer/appkeys.dart';
 import 'package:zwiftdataviewer/models/climbdata.dart';
 import 'package:zwiftdataviewer/providers/climb_calendar_provider.dart';
 import 'package:zwiftdataviewer/providers/climb_select_provider.dart';
-import 'package:zwiftdataviewer/screens/climbdetailscreen.dart';
 import 'package:zwiftdataviewer/screens/webviewscreen.dart';
 import 'package:zwiftdataviewer/utils/climbsconfig.dart';
 import 'package:zwiftdataviewer/utils/constants.dart';

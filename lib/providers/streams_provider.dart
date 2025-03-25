@@ -10,73 +10,37 @@ import '../secrets.dart';
 import '../utils/repository/filerepository.dart';
 import '../utils/repository/webrepository.dart';
 
-class StreamsNotifier extends StateNotifier<StreamsDetailCollection> {
-  StreamsNotifier() : super(StreamsDetailCollection());
-
-  // final Strava strava = Strava(isInDebug, secret);
-  // final FileRepository? fileRepository = FileRepository();
-  
-  // final WebRepository? webRepository =
-  //     WebRepository(
-  //       strava: Strava(isInDebug, client_secret),
-  //       cache: Strava.cache
-  //     );
-
-  get streams => state;
-
-  void addStream(StreamsDetailCollection stream) {
-    state = stream;
-  }
-
-  void setStreams(StreamsDetailCollection streams) {
-    state = streams;
-  }
-
-  // void addStreams(List<StreamsDetailCollection> streams) {
-  //   state = [...state, ...streams];
-  // }
-
-  // void removeStream(StreamsDetailCollection stream) {
-  //   state = state.where((element) => element.id != stream.id).toList();
-  // }
-
-  void updateStream(StreamsDetailCollection stream) {
-    state = stream;
-  }
-}
-
+/// Provider for activity streams data
+///
+/// This provider fetches stream data (time series data) for a specific activity.
+/// It uses either the file repository (in debug mode) or the web repository.
+/// The provider is auto-disposed when no longer needed and takes an activity ID parameter.
 final streamsProvider = FutureProvider.autoDispose
     .family<StreamsDetailCollection, int>((ref, id) async {
-  final FileRepository fileRepository = FileRepository();
+  if (id <= 0) {
+    return StreamsDetailCollection(); // Return empty collection for invalid ID
+  }
 
-  final cacheDir = await getApplicationDocumentsDirectory();
-  final cache = Cache(cacheDir.path);
-  // final strava = Strava(isInDebug, client_secret);
-  final WebRepository webRepository =
-      WebRepository(
-        strava: Strava(isInDebug, client_secret),
-        cache: cache
-      );
-
-  StreamsDetailCollection retvalue = StreamsDetailCollection();
   try {
+    final FileRepository fileRepository = FileRepository();
+    final cacheDir = await getApplicationDocumentsDirectory();
+    final cache = Cache(cacheDir.path);
+    final WebRepository webRepository =
+        WebRepository(
+          strava: Strava(isInDebug, client_secret),
+          cache: cache
+        );
+
     if (globals.isInDebug) {
-      // Remove the force unwrap (!) operator which was causing the error
-      retvalue = await fileRepository.loadStreams(id);
+      return await fileRepository.loadStreams(id);
     } else {
-      retvalue = await webRepository.loadStreams(id);
+      return await webRepository.loadStreams(id);
     }
   } catch (e) {
     if (kDebugMode) {
       print('Error in streamsProvider: $e');
     }
     // Return an empty StreamsDetailCollection in case of error
-    retvalue = StreamsDetailCollection();
+    return StreamsDetailCollection();
   }
-  return retvalue;
 });
-
-// final streamsProvider =
-//     StateNotifierProvider<StreamsNotifier, StreamsDetailCollection>((ref) {
-//   return StreamsNotifier();
-// });

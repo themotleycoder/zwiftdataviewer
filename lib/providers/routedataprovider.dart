@@ -2,12 +2,34 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:zwiftdataviewer/models/routedata.dart';
 import 'package:zwiftdataviewer/utils/repository/filerepository.dart';
 
+/// Provider for route data
+///
+/// This provider fetches route data from the file repository.
+/// It contains information about all available routes in Zwift.
 final routeDataProvider =
     FutureProvider<Map<int, List<RouteData>>>((ref) async {
-  return loadRouteDataFromFile();
+  try {
+    return await loadRouteDataFromFile();
+  } catch (e) {
+    // Log the error for debugging purposes
+    print('Error loading route data: $e');
+    
+    // Return empty data instead of rethrowing
+    // This allows the UI to show an empty state rather than an error
+    return {};
+  }
 });
 
+/// Loads route data from the file repository
+///
+/// This function fetches route data from the file repository.
+/// It's extracted as a separate function to allow for reuse.
 Future<Map<int, List<RouteData>>> loadRouteDataFromFile() async {
-  FileRepository repository = FileRepository();
-  return await repository.loadRouteData();
+  try {
+    FileRepository repository = FileRepository();
+    return await repository.loadRouteData();
+  } catch (e) {
+    print('Error in loadRouteDataFromFile: $e');
+    rethrow; // Let the provider handle the error
+  }
 }

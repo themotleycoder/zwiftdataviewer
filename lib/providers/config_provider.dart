@@ -17,20 +17,30 @@ class ConfigNotifier extends StateNotifier<ConfigData> {
     save();
   }
 
-  load() async {
+  /// Loads configuration data from storage
+  ///
+  /// This method attempts to load the configuration from the repository.
+  /// If an error occurs, it logs the error and keeps using the default config.
+  Future<void> load() async {
     try {
       final loadedConfig = await repository.loadConfig();
       state = loadedConfig;
     } catch (error) {
-      // handle error here
+      print('Error loading config: $error');
+      // Keep using the default config
     }
   }
 
-  save() async {
+  /// Saves configuration data to storage
+  ///
+  /// This method attempts to save the current configuration to the repository.
+  /// If an error occurs, it logs the error.
+  Future<void> save() async {
     try {
       await repository.saveConfig(state);
     } catch (error) {
-      // handle error here
+      print('Error saving config: $error');
+      // Consider notifying the user that settings couldn't be saved
     }
   }
 }

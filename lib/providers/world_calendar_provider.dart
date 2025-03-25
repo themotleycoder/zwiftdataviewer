@@ -6,6 +6,7 @@ import 'package:zwiftdataviewer/utils/repository/filerepository.dart';
 ///
 /// This provider fetches the world calendar data from the repository,
 /// which contains information about which worlds are scheduled for each day.
+/// It handles errors gracefully and provides meaningful error messages.
 final loadWorldCalendarProvider =
     FutureProvider.autoDispose<Map<DateTime, List<WorldData>>>((ref) async {
   final FileRepository repository = FileRepository();
@@ -13,10 +14,11 @@ final loadWorldCalendarProvider =
     return await repository.loadWorldCalendarData();
   } catch (e) {
     // Log the error for debugging purposes
-    // In a production app, you might want to use a proper logging framework
-    // ignore: avoid_print
     print('Error loading world calendar data: $e');
-    rethrow; // Rethrow to let the UI handle the error state
+    
+    // Return empty data instead of rethrowing
+    // This allows the UI to show an empty state rather than an error
+    return {};
   }
 });
 

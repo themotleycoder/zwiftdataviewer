@@ -6,11 +6,17 @@ import '../utils/theme.dart';
 import 'activity_detail_provider.dart';
 import 'config_provider.dart';
 
+/// Provider for lap summary objects
+///
+/// This provider creates a list of lap summary objects from a detailed activity.
+/// It uses the user's FTP setting to determine the color coding for power zones.
 final lapsProvider = FutureProvider.autoDispose
     .family<List<LapSummaryObject>, DetailedActivity>((ref, activity) async {
-  final ftp = ref.watch(configProvider).ftp ?? 0.0;
-  List<LapSummaryObject> retValue = [];
-  // if (activity.laps!.length > 1) {
+  try {
+    final ftp = ref.watch(configProvider).ftp ?? 0.0;
+    List<LapSummaryObject> retValue = [];
+    
+    // Create a lap summary object for each lap in the activity
     for (var lap in activity.laps ?? []) {
       retValue.add(LapSummaryObject(
         0,
@@ -24,48 +30,38 @@ final lapsProvider = FutureProvider.autoDispose
         getColorForWatts(lap.averageWatts, ftp),
       ));
     }
-  // } else {
-  //   AsyncValue<StreamsDetailCollection> streamsData =
-  //     ref.read(streamsProvider(ref.watch(selectedActivityProvider).id));
-  //
-  //     streamsData.when(data: (streams) {
-  //       for (var stream in streams.streams ?? []){
-  //         retValue.add(LapSummaryObject(
-  //           0,
-  //           0,
-  //           stream.distance ?? 0,
-  //           stream.time ?? 0,
-  //           stream.altitude ?? 0,
-  //           0,
-  //           stream.watts as double ?? 0,
-  //           0,
-  //           getColorForWatts(stream.watts as double, ftp),
-  //         ));
-  //         stream.watts;
-  //       }
-  //     }, error: (Object error, StackTrace stackTrace) {
-  //       stackTrace.toString();
-  //     }, loading: () {
-  //
-  //     });
-  // }
-  return retValue;
+    
+    return retValue;
+  } catch (e) {
+    print('Error creating lap summaries: $e');
+    return []; // Return empty list on error
+  }
 });
 
+/// Determines the color for a power value based on FTP zones
+///
+/// This function returns a color that represents the power zone
+/// for the given watts value relative to the user's FTP.
+/// 
+/// @param watts The power value in watts
+/// @param ftp The user's Functional Threshold Power
+/// @return A color representing the power zone
 Color getColorForWatts(double watts, double ftp) {
+  if (ftp <= 0) return Colors.grey; // Avoid division by zero
+  
   if (watts < ftp * .60) {
-    return Colors.grey;
+    return Colors.grey; // Zone 1: Recovery
   } else if (watts >= ftp * .60 && watts <= ftp * .75) {
-    return zdvMidBlue;
+    return zdvMidBlue; // Zone 2: Endurance
   } else if (watts > ftp * .75 && watts <= ftp * .89) {
-    return zdvMidGreen;
+    return zdvMidGreen; // Zone 3: Tempo
   } else if (watts > ftp * .89 && watts <= ftp * 1.04) {
-    return zdvYellow;
+    return zdvYellow; // Zone 4: Threshold
   } else if (watts > ftp * 1.04 && watts <= ftp * 1.18) {
-    return zdvOrange;
+    return zdvOrange; // Zone 5: VO2 Max
   } else if (watts > ftp * 1.18) {
-    return zdvRed;
+    return zdvRed; // Zone 6: Anaerobic
   } else {
-    return Colors.grey;
+    return Colors.grey; // Default
   }
 }
