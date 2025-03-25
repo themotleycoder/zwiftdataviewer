@@ -25,13 +25,13 @@ Future<void> main() async {
   Future<Token?> getClient() async {
     bool isAuthOk = false;
 
-    final Strava strava = Strava(globals.isInDebug, client_secret);
+    final Strava strava = Strava(globals.isInDebug, clientSecret);
     const prompt = 'auto';
 
     isAuthOk = await strava.oauth(
-        client_id,
+        clientId,
         'activity:write,activity:read_all,profile:read_all,profile:write',
-        client_secret,
+        clientSecret,
         prompt);
 
     if (isAuthOk) {

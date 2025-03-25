@@ -57,6 +57,6 @@ class WorldDetailScreen extends DetailScreenLayout {
   @override
   String getTitle(WidgetRef ref) {
     final WorldData worldData = ref.read(selectedWorldProvider);
-    return worldData.name ?? "World Details";
+    return worldData.name ?? 'World Details';
   }
 }

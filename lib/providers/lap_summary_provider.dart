@@ -1,3 +1,4 @@
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_strava_api/models/activity.dart';
@@ -33,7 +34,9 @@ final lapsProvider = FutureProvider.autoDispose
     
     return retValue;
   } catch (e) {
-    print('Error creating lap summaries: $e');
+    if (kDebugMode) {
+      print('Error creating lap summaries: $e');
+    }
     return []; // Return empty list on error
   }
 });

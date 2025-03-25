@@ -39,7 +39,8 @@ class DetailScreen extends MainLayout {
   @override
   buildBody(BuildContext context, WidgetRef ref) {
     // Return the appropriate screen based on the selected tab
-    switch (tabIndex) {
+    final currentTabIndex = getTabIndex(ref);
+    switch (currentTabIndex) {
       case 1:
         return const RouteAnalysisScreen();
       case 2:
@@ -55,7 +56,7 @@ class DetailScreen extends MainLayout {
     return BottomNavigationBar(
       elevation: cardElevation,
       key: AppKeys.tabs,
-      currentIndex: tabIndex,
+      currentIndex: getTabIndex(ref),
       onTap: (index) => ref.read(detailTabsNotifier.notifier).setIndex(index),
       type: BottomNavigationBarType.fixed,
       unselectedItemColor: zdvmMidBlue[100],

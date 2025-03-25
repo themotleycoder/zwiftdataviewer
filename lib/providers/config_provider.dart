@@ -1,3 +1,4 @@
+import 'package:flutter/foundation.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../utils/repository/filerepository.dart';
@@ -26,7 +27,9 @@ class ConfigNotifier extends StateNotifier<ConfigData> {
       final loadedConfig = await repository.loadConfig();
       state = loadedConfig;
     } catch (error) {
-      print('Error loading config: $error');
+      if (kDebugMode) {
+        print('Error loading config: $error');
+      }
       // Keep using the default config
     }
   }
@@ -39,7 +42,9 @@ class ConfigNotifier extends StateNotifier<ConfigData> {
     try {
       await repository.saveConfig(state);
     } catch (error) {
-      print('Error saving config: $error');
+      if (kDebugMode) {
+        print('Error saving config: $error');
+      }
       // Consider notifying the user that settings couldn't be saved
     }
   }

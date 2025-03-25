@@ -1,3 +1,4 @@
+import 'package:flutter/foundation.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_strava_api/globals.dart' as globals;
 import 'package:flutter_strava_api/globals.dart';
@@ -22,7 +23,7 @@ final photoActivitiesProvider =
     final cache = Cache(cacheDir.path);
     final WebRepository webRepository =
         WebRepository(
-          strava: Strava(isInDebug, client_secret),
+          strava: Strava(isInDebug, clientSecret),
           cache: cache
         );
     final activityId = ref.read(selectedActivityProvider).id;
@@ -37,7 +38,9 @@ final photoActivitiesProvider =
       return webRepository.loadActivityPhotos(activityId);
     }
   } catch (e) {
-    print('Error loading activity photos: $e');
+    if (kDebugMode) {
+      print('Error loading activity photos: $e');
+    }
     return []; // Return empty list on error
   }
 });
@@ -75,7 +78,9 @@ final activityPhotoUrlsProvider = FutureProvider.autoDispose
       }
     }
   } catch (e) {
-    print('Error processing photo URLs: $e');
+    if (kDebugMode) {
+      print('Error processing photo URLs: $e');
+    }
   }
   
   return imagesUrls;

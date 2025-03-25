@@ -4,13 +4,8 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 abstract class MainLayout extends ConsumerWidget {
   MainLayout({super.key});
 
-  int tabIndex = 0;
-
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-
-    tabIndex = getTabIndex(ref);
-
     return Scaffold(
       appBar: buildAppBar(context, ref),
       body: Stack(children: [Container(child: buildBody(context, ref))]),

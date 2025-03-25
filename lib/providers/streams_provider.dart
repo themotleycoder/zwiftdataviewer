@@ -27,7 +27,7 @@ final streamsProvider = FutureProvider.autoDispose
     final cache = Cache(cacheDir.path);
     final WebRepository webRepository =
         WebRepository(
-          strava: Strava(isInDebug, client_secret),
+          strava: Strava(isInDebug, clientSecret),
           cache: cache
         );
 

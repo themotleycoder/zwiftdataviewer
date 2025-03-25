@@ -1,3 +1,4 @@
+import 'package:flutter/foundation.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:zwiftdataviewer/models/routedata.dart';
 import 'package:zwiftdataviewer/utils/repository/filerepository.dart';
@@ -12,7 +13,9 @@ final routeDataProvider =
     return await loadRouteDataFromFile();
   } catch (e) {
     // Log the error for debugging purposes
-    print('Error loading route data: $e');
+    if (kDebugMode) {
+      print('Error loading route data: $e');
+    }
     
     // Return empty data instead of rethrowing
     // This allows the UI to show an empty state rather than an error
@@ -29,7 +32,9 @@ Future<Map<int, List<RouteData>>> loadRouteDataFromFile() async {
     FileRepository repository = FileRepository();
     return await repository.loadRouteData();
   } catch (e) {
-    print('Error in loadRouteDataFromFile: $e');
+    if (kDebugMode) {
+      print('Error in loadRouteDataFromFile: $e');
+    }
     rethrow; // Let the provider handle the error
   }
 }

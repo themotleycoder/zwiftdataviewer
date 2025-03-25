@@ -103,7 +103,7 @@ class HomeScreen extends MainLayout {
     return BottomNavigationBar(
       elevation: cardElevation,
       key: AppKeys.tabs,
-      currentIndex: tabIndex,
+      currentIndex: getTabIndex(ref),
       onTap: (index) => ref.read(homeTabsNotifier.notifier).setIndex(index),
       type: BottomNavigationBarType.fixed,
       unselectedItemColor: zdvmMidBlue[100],

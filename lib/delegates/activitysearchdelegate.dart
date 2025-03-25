@@ -50,7 +50,7 @@ class ActivitySearch extends SearchDelegate<SummaryActivity> {
             // In the false case
             (element) => element.name.toLowerCase().contains(query),
           ));
-    final Strava strava = Strava(globals.isInDebug, client_secret);
+    final Strava strava = Strava(globals.isInDebug, clientSecret);
 
     return ListView.builder(
       itemCount: suggestionList.length,
@@ -69,10 +69,10 @@ class ActivitySearch extends SearchDelegate<SummaryActivity> {
                 (element) => element.name.contains(selectedResult?.name ?? ''))
             .toList();
 
-    final Strava strava = Strava(globals.isInDebug, client_secret);
+    final Strava strava = Strava(globals.isInDebug, clientSecret);
 
     return ListView.separated(
-      itemCount: results == null ? 0 : results.length,
+      itemCount: results.length,
       separatorBuilder: (BuildContext context, int index) => Container(),
       itemBuilder: (BuildContext context, int index) {
         return buildListItem(context, results[index], strava);

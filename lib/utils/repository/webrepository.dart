@@ -102,9 +102,9 @@ class WebRepository implements ActivitiesRepository, StreamsRepository {
   Future<void> _ensureAuthenticated() async {
     if (!strava.isAuthenticated()) {
       final isAuthOk = await strava.oauth(
-        client_id,
+        clientId,
         'activity:write,activity:read_all,profile:read_all,profile:write',
-        client_secret,
+        clientSecret,
         'auto',
       );
       if (!isAuthOk) {

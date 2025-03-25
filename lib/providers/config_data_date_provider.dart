@@ -1,3 +1,4 @@
+import 'package:flutter/foundation.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
@@ -41,7 +42,9 @@ class ConfigDateNotifier extends StateNotifier<int> {
       return prefs.getInt('after_param') ??
           1420070400; // Default is Thursday, January 1, 2015 12:00:00 AM
     } catch (e) {
-      print('Error loading config date: $e');
+      if (kDebugMode) {
+        print('Error loading config date: $e');
+      }
       return 1420070400; // Return default on error
     }
   }
@@ -52,7 +55,9 @@ class ConfigDateNotifier extends StateNotifier<int> {
       final prefs = await SharedPreferences.getInstance();
       await prefs.setInt('after_param', state);
     } catch (e) {
-      print('Error saving config date: $e');
+      if (kDebugMode) {
+        print('Error saving config date: $e');
+      }
     }
   }
 }

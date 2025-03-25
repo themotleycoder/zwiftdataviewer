@@ -1,3 +1,4 @@
+import 'package:flutter/foundation.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:zwiftdataviewer/models/climbdata.dart';
 import 'package:zwiftdataviewer/utils/repository/filerepository.dart';
@@ -16,7 +17,9 @@ final loadClimbCalendarProvider =
     return await repository.scrapeClimbCalendarData();
   } catch (e) {
     // Log the error for debugging purposes
-    print('Error loading climb calendar data: $e');
+    if (kDebugMode) {
+      print('Error loading climb calendar data: $e');
+    }
     
     // Return empty data instead of rethrowing
     // This allows the UI to show an empty state rather than an error

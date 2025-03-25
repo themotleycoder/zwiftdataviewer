@@ -1,6 +1,7 @@
 import 'dart:convert';
 import 'dart:io';
 
+import 'package:flutter/foundation.dart';
 import 'package:flutter/widgets.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_strava_api/globals.dart' as globals;
@@ -81,7 +82,9 @@ class StravaActivityDetailsNotifier extends StateNotifier<DetailedActivity> {
       if (state.id != null) {
         return;
       }
-      print('Error loading activity details: $e');
+      if (kDebugMode) {
+        print('Error loading activity details: $e');
+      }
       rethrow;
     }
   }
@@ -121,7 +124,9 @@ class StravaActivityDetailsNotifier extends StateNotifier<DetailedActivity> {
       await cacheFile.writeAsString(jsonEncode(activityDetails));
     } catch (e) {
       // Just log the error, don't fail the whole operation for a cache issue
-      print('Error saving to cache: $e');
+      if (kDebugMode) {
+        print('Error saving to cache: $e');
+      }
     }
   }
 }

@@ -119,7 +119,7 @@ Widget _buildClimbCard(ClimbData climb, WidgetRef ref, BuildContext context) {
               onPressed: () {
                 // If the climb is found in the config, use it; otherwise use the climb data directly
                 final selectedClimb = configClimb ?? climb;
-                ref.read(selectedClimbProvider.notifier).state = selectedClimb;
+                ref.read(selectedClimbProvider.notifier).climbSelect = selectedClimb;
                 // Navigate to the climb detail screen to see routes
                 launchMyUrl(selectedClimb.url ?? 'NA');
               },
@@ -133,7 +133,7 @@ Widget _buildClimbCard(ClimbData climb, WidgetRef ref, BuildContext context) {
         onTap: () {
           // If the climb is found in the config, use it; otherwise use the climb data directly
           final selectedClimb = configClimb ?? climb;
-          ref.read(selectedClimbProvider.notifier).state = selectedClimb;
+          ref.read(selectedClimbProvider.notifier).climbSelect = selectedClimb;
           // Navigate to the WebViewScreen to display the climb details
           Navigator.push(
             context,
