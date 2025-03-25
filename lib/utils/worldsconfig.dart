@@ -14,6 +14,7 @@ enum GuestWorldId {
   bolognatt,
   makuriislands,
   scotland,
+  gravelmountain,
   others
 }
 
@@ -30,6 +31,7 @@ final Map<String, int> worldLookupByName = {
   'Paris': 11,
   'Makuri Islands': 12,
   'Scotland': 13,
+  'Gravel Mountain': 14,
 };
 
 enum routeType {
@@ -60,7 +62,9 @@ final Map<int, WorldData> allWorldsConfig = {
   12: const WorldData(12, GuestWorldId.makuriislands, 'Makuri Islands',
       'https://zwiftinsider.com/makuri-islands/'),
   13: const WorldData(13, GuestWorldId.scotland, 'Scotland',
-      'https://zwiftinsider.com/scotland/')
+      'https://zwiftinsider.com/scotland/'),
+  14: const WorldData(14, GuestWorldId.gravelmountain, 'Gravel Mountain',
+      'https://zwiftinsider.com/gravel-mountain/')
 };
 
 class World {}

@@ -318,21 +318,77 @@ class FileRepository
             // Parse distance and altitude
             double distanceMeters = 0;
             try {
-              final distanceStr = distance.replaceAll(RegExp(r'[^\d.]'), '');
-              distanceMeters = double.parse(distanceStr) * 1000;
+              // Handle different distance formats
+              if (distance.contains('(')) {
+                // Format like "29.6km (18.4 miles)"
+                final metricPart = distance.split('(')[0].trim();
+                
+                if (metricPart.toLowerCase().contains('km')) {
+                  // Extract numeric value and convert km to meters
+                  final distanceStr = metricPart.replaceAll(RegExp(r'[^\d.]'), '');
+                  distanceMeters = double.parse(distanceStr) * 1000;
+                } else if (metricPart.toLowerCase().contains('m')) {
+                  // Extract numeric value for meters
+                  final distanceStr = metricPart.replaceAll(RegExp(r'[^\d.]'), '');
+                  distanceMeters = double.parse(distanceStr);
+                } else {
+                  // Default to km if no unit specified
+                  final distanceStr = metricPart.replaceAll(RegExp(r'[^\d.]'), '');
+                  distanceMeters = double.parse(distanceStr) * 1000;
+                }
+              } else {
+                // Format without parentheses
+                if (distance.toLowerCase().contains('km')) {
+                  // Extract numeric value and convert km to meters
+                  final distanceStr = distance.replaceAll(RegExp(r'[^\d.]'), '');
+                  distanceMeters = double.parse(distanceStr) * 1000;
+                } else if (distance.toLowerCase().contains('m') && !distance.toLowerCase().contains('km')) {
+                  // Extract numeric value for meters
+                  final distanceStr = distance.replaceAll(RegExp(r'[^\d.]'), '');
+                  distanceMeters = double.parse(distanceStr);
+                } else {
+                  // Default to km if no unit specified
+                  final distanceStr = distance.replaceAll(RegExp(r'[^\d.]'), '');
+                  distanceMeters = double.parse(distanceStr) * 1000;
+                }
+              }
             } catch (e) {
               if (kDebugMode) {
-                print('Error parsing distance for route $routeName: $distance');
+                print('Error parsing distance for route $routeName: $distance - $e');
               }
             }
             
             double altitudeMeters = 0;
             try {
-              final altitudeStr = altitude.replaceAll(RegExp(r'[^\d.]'), '');
-              altitudeMeters = altitudeStr.isEmpty ? 0 : double.parse(altitudeStr);
+              // Handle different altitude formats
+              if (altitude.contains('(')) {
+                // Format like "204m (669')"
+                final metricPart = altitude.split('(')[0].trim();
+                
+                if (metricPart.toLowerCase().contains('m')) {
+                  // Extract numeric value for meters
+                  final altitudeStr = metricPart.replaceAll(RegExp(r'[^\d.]'), '');
+                  altitudeMeters = altitudeStr.isEmpty ? 0 : double.parse(altitudeStr);
+                } else {
+                  // Default case
+                  final altitudeStr = metricPart.replaceAll(RegExp(r'[^\d.]'), '');
+                  altitudeMeters = altitudeStr.isEmpty ? 0 : double.parse(altitudeStr);
+                }
+              } else {
+                // Format without parentheses
+                if (altitude.toLowerCase().contains('m')) {
+                  // Extract numeric value for meters
+                  final altitudeStr = altitude.replaceAll(RegExp(r'[^\d.]'), '');
+                  altitudeMeters = altitudeStr.isEmpty ? 0 : double.parse(altitudeStr);
+                } else {
+                  // Default case
+                  final altitudeStr = altitude.replaceAll(RegExp(r'[^\d.]'), '');
+                  altitudeMeters = altitudeStr.isEmpty ? 0 : double.parse(altitudeStr);
+                }
+              }
             } catch (e) {
               if (kDebugMode) {
-                print('Error parsing altitude for route $routeName: $altitude');
+                print('Unusual altitude value for route $routeName: $altitude - $e');
               }
             }
             
