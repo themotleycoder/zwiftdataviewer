@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:url_launcher/url_launcher.dart';
 import 'package:zwiftdataviewer/models/routedata.dart';
+import 'package:zwiftdataviewer/screens/webviewscreen.dart';
 import 'package:zwiftdataviewer/utils/constants.dart' as constants;
 import 'package:zwiftdataviewer/utils/conversions.dart';
 import 'package:zwiftdataviewer/utils/theme.dart';
@@ -59,7 +60,7 @@ class RouteDetailTile extends ConsumerWidget {
             color: zdvMidBlue,
           ),
           onTap: () {
-            launchURL(_routeData.url ?? 'NA');
+            launchURL(context, _routeData.url ?? 'NA');
           },
         )),
         // )
@@ -165,22 +166,23 @@ class RouteDetailTile extends ConsumerWidget {
   //             IconButton(
   //               icon: value,
   //               color: zdvmMidBlue[100],
-  //               onPressed: () => launchURL(url),
+  //               onPressed: (context) => launchURL(context, url),
   //             ),
   //           ],
   //         ),
   //       ));
   // }
 
-  launchURL(String url) async {
-    String site = url.substring(url.indexOf('//') + 2);
-    String path = site.substring(site.indexOf('/'));
-    site = site.substring(0, site.indexOf('/'));
-    final Uri uri = Uri.https(site, path);
-    if (await canLaunchUrl(uri)) {
-      await launchUrl(uri);
-    } else {
-      throw 'Could not launch $uri';
-    }
+  void launchURL(BuildContext context, String url) {
+    // Navigate to the WebViewScreen to display the route details
+    Navigator.push(
+      context,
+      MaterialPageRoute(
+        builder: (_) => WebViewScreen(
+          url: url,
+          title: '${_routeData.world}: ${_routeData.routeName}',
+        ),
+      ),
+    );
   }
 }

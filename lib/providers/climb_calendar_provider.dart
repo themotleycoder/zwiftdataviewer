@@ -6,7 +6,8 @@ final loadClimbCalendarProvider =
     FutureProvider.autoDispose<Map<DateTime, List<ClimbData>>>((ref) async {
   final FileRepository repository = FileRepository();
 
-  return await repository.loadClimbCalendarData();
+  // Force a refresh by scraping the data directly
+  return await repository.scrapeClimbCalendarData();
 });
 
 class ClimbDaySelectNotifier extends StateNotifier<DateTime> {

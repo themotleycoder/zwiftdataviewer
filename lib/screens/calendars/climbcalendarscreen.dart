@@ -5,6 +5,8 @@ import 'package:zwiftdataviewer/appkeys.dart';
 import 'package:zwiftdataviewer/models/climbdata.dart';
 import 'package:zwiftdataviewer/providers/climb_calendar_provider.dart';
 import 'package:zwiftdataviewer/providers/climb_select_provider.dart';
+import 'package:zwiftdataviewer/screens/climbdetailscreen.dart';
+import 'package:zwiftdataviewer/screens/webviewscreen.dart';
 import 'package:zwiftdataviewer/utils/climbsconfig.dart';
 import 'package:zwiftdataviewer/utils/constants.dart';
 import 'package:zwiftdataviewer/utils/theme.dart';
@@ -57,7 +59,7 @@ class ClimbCalendarScreen extends ConsumerWidget {
 ///
 /// This function creates a list of cards, each representing a climb event
 /// for the selected day. Each card displays the climb name and an icon,
-/// and tapping on a card opens the climb details in a web browser.
+/// and tapping on a card opens the climb details in a WebView within the app.
 ///
 /// @param ref The WidgetRef used to access providers
 /// @param context The BuildContext for navigation
@@ -90,7 +92,12 @@ Widget _buildEventList(WidgetRef ref, BuildContext context) {
 /// @param context The BuildContext for navigation
 /// @return A Card widget for the climb
 Widget _buildClimbCard(ClimbData climb, WidgetRef ref, BuildContext context) {
-  final climbName = allClimbsConfig[climb.id]?.name ?? 'Unknown Climb';
+  // First try to get the climb from allClimbsConfig using the ID
+  final configClimb = allClimbsConfig[climb.id];
+  
+  // If the climb is found in the config, use it; otherwise use the climb data directly
+  final climbName = configClimb?.name ?? climb.name ?? 'Unknown Climb';
+  final climbUrl = configClimb?.url ?? climb.url ?? 'NA';
   
   return Card(
     color: Colors.white,
@@ -102,36 +109,62 @@ Widget _buildClimbCard(ClimbData climb, WidgetRef ref, BuildContext context) {
       child: ListTile(
         leading: const Icon(Icons.terrain, size: 32.0, color: zdvOrange),
         title: Text(climbName),
-        subtitle: const Text('Tap to view details'),
-        trailing: Icon(
-          Icons.arrow_forward_ios,
-          color: zdvmMidBlue[100],
+        subtitle: const Text('Tap to view climb details'),
+        trailing: Row(
+          
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            IconButton(
+              icon: const Icon(Icons.route, color: zdvMidBlue),
+              tooltip: 'View routes with this climb',
+              onPressed: () {
+                // If the climb is found in the config, use it; otherwise use the climb data directly
+                final selectedClimb = configClimb ?? climb;
+                ref.read(selectedClimbProvider.notifier).state = selectedClimb;
+                // Navigate to the climb detail screen to see routes
+                launchMyUrl(selectedClimb.url ?? 'NA');
+              },
+            ),
+            Icon(
+              Icons.arrow_forward_ios,
+              color: zdvmMidBlue[100],
+            ),
+          ],
         ),
         onTap: () {
-          ref.read(selectedClimbProvider.notifier).state =
-              allClimbsConfig[climb.id] as ClimbData;
-          launchMyUrl(allClimbsConfig[climb.id]?.url ?? 'NA');
+          // If the climb is found in the config, use it; otherwise use the climb data directly
+          final selectedClimb = configClimb ?? climb;
+          ref.read(selectedClimbProvider.notifier).state = selectedClimb;
+          // Navigate to the WebViewScreen to display the climb details
+          Navigator.push(
+            context,
+            MaterialPageRoute(
+              builder: (_) => WebViewScreen(
+                url: climbUrl,
+                title: climbName,
+              ),
+            ),
+          );
         },
       ),
     ),
   );
 }
 
-/// Launches a URL in the default browser.
+/// Launches a URL in the default browser or in-app browser.
 ///
-/// This function parses the URL and launches it in the default browser.
+/// This function parses the URL and launches it using the platform's default behavior.
 /// If the URL cannot be launched, an error is thrown.
 ///
 /// @param url The URL to launch
 Future<void> launchMyUrl(String url) async {
   try {
-    String site = url.substring(url.indexOf('//') + 2);
-    String path = site.substring(site.indexOf('/'));
-    site = site.substring(0, site.indexOf('/'));
-    final Uri uri = Uri.https(site, path);
+    // Parse the URL directly
+    final Uri uri = Uri.parse(url);
     
     if (await canLaunchUrl(uri)) {
-      await launchUrl(uri, mode: LaunchMode.externalApplication);
+      // Use the default launch mode to match the behavior of RouteDetailTile
+      await launchUrl(uri);
     } else {
       debugPrint('Could not launch $uri');
     }
