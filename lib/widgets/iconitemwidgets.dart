@@ -30,8 +30,8 @@ Widget IconHeaderData(String title, String data, IconData icon,
     children: <Widget>[
       SizedBox(
         // color: Colors.yellow,
-        width: 50,
-        height: 50,
+        width: 48,
+        height: 48,
         child: Icon(icon, color: zdvMidBlue, size: 30),
       ),
       Column(

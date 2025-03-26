@@ -62,6 +62,21 @@ class AllStatsScreenTabScatter extends AllStatsTabLayout {
         position: LegendPosition.top,
         borderWidth: 1,
       ),
+      // Enable zooming and panning
+      zoomPanBehavior: ZoomPanBehavior(
+        // Enable both zooming and panning
+        enablePinching: true,
+        enablePanning: true,
+        enableDoubleTapZooming: true,
+        enableSelectionZooming: true,
+        enableMouseWheelZooming: true,
+        zoomMode: ZoomMode.xy, // Zoom in both directions
+      ),
+      // Add tooltip for better user experience
+      tooltipBehavior: TooltipBehavior(
+        enable: true,
+        format: 'Distance: point.x ${units['distance']!}\nElevation: point.y ${units['height']!}',
+      ),
     );
   }
 

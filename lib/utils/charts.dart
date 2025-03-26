@@ -96,8 +96,24 @@ class ChartsData {
         yValueMapper: (SummaryActivity stats, _) => Conversions.metersToHeight(
             ref, (stats.totalElevationGain).roundToDouble()),
         dataSource: activities[key]!,
-        selectionBehavior: SelectionBehavior(enable: true),
-        // Remove initialSelectedDataIndexes to avoid unmodifiable list error
+        // Increase marker size for better visibility and tap target
+        markerSettings: const MarkerSettings(
+          isVisible: true,
+          height: 10,
+          width: 10,
+        ),
+        // Improve selection behavior with visual feedback
+        selectionBehavior: SelectionBehavior(
+          enable: true,
+          // Increase selection tolerance radius
+          toggleSelection: true,
+          // Highlight selected point
+          selectedColor: Colors.red,
+          selectedBorderWidth: 2,
+          selectedBorderColor: Colors.white,
+          unselectedColor: colors[key],
+          unselectedBorderColor: colors[key],
+        ),
         onPointTap: (ChartPointDetails details) {
           // Get the index of the tapped data point
           final int pointIndex = details.pointIndex!;
