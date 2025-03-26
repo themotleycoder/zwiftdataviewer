@@ -103,6 +103,11 @@ class ChartsData {
           final int pointIndex = details.pointIndex!;
           // Get the corresponding SummaryActivity object and update the provider
           final selectedActivity = activities[key]![pointIndex];
+          
+          // Debug print to verify the selected activity
+          print('Selected activity: ${selectedActivity.name}, ID: ${selectedActivity.id}');
+          
+          // Update the provider with the selected activity
           ref.read(selectedActivityProvider.notifier).selectActivity(selectedActivity);
         },
       ));

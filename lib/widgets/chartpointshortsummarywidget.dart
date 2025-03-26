@@ -13,6 +13,9 @@ import '../utils/theme.dart';
 Container getChartPointShortSummaryWidget(
     BuildContext context, WidgetRef ref, Map<String, String> units) {
   final SummaryActivity selectedActivity = ref.watch(selectedActivityProvider);
+  
+  // Debug print to verify the selected activity in the widget
+  print('Widget displaying activity: ${selectedActivity.name}, ID: ${selectedActivity.id}');
 
   return Container(
     padding: const EdgeInsets.fromLTRB(0, 0, 0, 16),

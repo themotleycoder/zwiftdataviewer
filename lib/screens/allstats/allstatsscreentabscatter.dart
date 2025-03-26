@@ -13,17 +13,23 @@ class AllStatsScreenTabScatter extends AllStatsTabLayout {
 
   @override
   void didChangeDependencies(BuildContext context, WidgetRef ref, List<SummaryActivity> filteredActivities) {
-    // Select the most recent activity by default, but use a post-frame callback
-    // to avoid modifying the provider during build
+    // Select the most recent activity by default, but only if no activity is currently selected
     if (filteredActivities.isNotEmpty) {
       // Use Future.microtask to schedule the update after the current build is complete
       Future.microtask(() {
-        // Sort activities by date (most recent first)
-        final sortedActivities = List<SummaryActivity>.from(filteredActivities)
-          ..sort((a, b) => b.startDateLocal.compareTo(a.startDateLocal));
+        // Get the current selected activity
+        final currentActivity = ref.read(selectedActivityProvider);
         
-        // Select the most recent activity
-        ref.read(selectedActivityProvider.notifier).selectActivity(sortedActivities.first);
+        // Only select a new activity if no activity is currently selected (id == 0)
+        if (currentActivity.id == 0) {
+          print('No activity selected, selecting the most recent one');
+          // Sort activities by date (most recent first)
+          final sortedActivities = List<SummaryActivity>.from(filteredActivities)
+            ..sort((a, b) => b.startDateLocal.compareTo(a.startDateLocal));
+          
+          // Select the most recent activity
+          ref.read(selectedActivityProvider.notifier).selectActivity(sortedActivities.first);
+        }
       });
     }
   }
