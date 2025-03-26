@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_strava_api/models/summary_activity.dart';
 import 'package:syncfusion_flutter_charts/charts.dart';
+import 'package:zwiftdataviewer/providers/activity_select_provider.dart';
 import 'package:zwiftdataviewer/utils/theme.dart';
 import 'package:zwiftdataviewer/utils/yearlytotals.dart';
 
@@ -12,12 +13,12 @@ class ChartsData {
 
       /// Returns the list of chart series which need to
       /// render on the multiple axes chart.
-      List<ChartSeries<YearlyTotals, String>> getMultipleAxisColumnSeries(
+      List<CartesianSeries<YearlyTotals, String>> getMultipleAxisColumnSeries(
           WidgetRef ref,
           Map<String, String> units,
           List<SummaryActivity> activities) {
     var chartData = generateChartData(ref, units, activities);
-    return <ChartSeries<YearlyTotals, String>>[
+    return <CartesianSeries<YearlyTotals, String>>[
       ColumnSeries<YearlyTotals, String>(
           dataSource: chartData,
           xValueMapper: (YearlyTotals stats, _) => stats.year as String,
@@ -75,10 +76,10 @@ class ChartsData {
     return chartData;
   }
 
-  static List<ChartSeries<dynamic, dynamic>> getScatterSeries(
+  static List<CartesianSeries<dynamic, dynamic>> getScatterSeries(
       WidgetRef ref, units, Map<int, List<SummaryActivity>> activities) {
     final List<int> years = activities.keys.toList();
-    final List<ChartSeries<dynamic, dynamic>> chartSeries = [];
+    final List<CartesianSeries<dynamic, dynamic>> chartSeries = [];
 
     final Map<int, Color> colors = generateColor(years);
 
@@ -96,21 +97,17 @@ class ChartsData {
             ref, (stats.totalElevationGain).roundToDouble()),
         dataSource: activities[key]!,
         selectionBehavior: SelectionBehavior(enable: true),
-        initialSelectedDataIndexes: const [0],
+        // Remove initialSelectedDataIndexes to avoid unmodifiable list error
         onPointTap: (ChartPointDetails details) {
           // Get the index of the tapped data point
           final int pointIndex = details.pointIndex!;
-          // Get the corresponding SummaryActivity object and do something with it
-          _onSelectionChanged(activities[key]![pointIndex]);
+          // Get the corresponding SummaryActivity object and update the provider
+          final selectedActivity = activities[key]![pointIndex];
+          ref.read(selectedActivityProvider.notifier).selectActivity(selectedActivity);
         },
       ));
     }
     return chartSeries;
-  }
-
-  static _onSelectionChanged(SummaryActivity selectedRide) {
-    // Provider.of<SummaryActivitySelectDataModel>(context, listen: false)
-    //     .setSelectedActivity(selectedRide);
   }
 
   // Custom color generation function to replace ColorPalette.splitComplimentary

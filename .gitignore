@@ -5,9 +5,11 @@
 *.swp
 .DS_Store
 .atom/
+.build/
 .buildlog/
 .history
 .svn/
+.swiftpm/
 migrate_working_dir/
 
 # IntelliJ related
@@ -48,9 +50,19 @@ app.*.map.json
 /android/app/debug
 /android/app/profile
 /android/app/release
+/android/app/.cxx/
+
+# Keystore files
+/android/key.properties
 
 # Keystore files
 /android/keystore/
+
+# Script files
+build_with_key_properties.sh
+fix_android_studio_permissions.sh
+fix_selection_details.dart
+fix_selection_details_improved.dart
 
 # iOS/XCode related
 **/ios/**/*.mode1v3
@@ -78,6 +90,7 @@ app.*.map.json
 **/ios/Flutter/flutter_export_environment.sh
 **/ios/ServiceDefinitions.json
 **/ios/Runner/GeneratedPluginRegistrant.*
+**/ios/Podfile.lock
 
 # Coverage
 coverage/

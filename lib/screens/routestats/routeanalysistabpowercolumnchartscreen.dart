@@ -111,7 +111,7 @@ class DisplayChart extends ConsumerWidget {
     );
   }
 
-  List<ChartSeries<LapSummaryObject, int>> _createDataSet(
+  List<CartesianSeries<LapSummaryObject, int>> _createDataSet(
       BuildContext context, List<LapSummaryObject> lapSummaryObjData) {
     return [
       // LineSeries<LapSummaryObject, int>(

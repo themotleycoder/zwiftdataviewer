@@ -66,7 +66,7 @@ class AllStatsScreenTabDistanceSummary extends AllStatsTabLayout {
     return getChartPointShortSummaryWidget(context, ref, units);
   }
 
-  List<ChartSeries<DateValue, DateTime>> _createDataSet(
+  List<CartesianSeries<DateValue, DateTime>> _createDataSet(
       WidgetRef ref, List<SummaryActivity> activities) {
     final List<DateValue> distanceData = [];
     SummaryActivity? activity;
@@ -78,7 +78,7 @@ class AllStatsScreenTabDistanceSummary extends AllStatsTabLayout {
     }
 
     final Map<String, String> units = Conversions.units(ref);
-    return <ChartSeries<DateValue, DateTime>>[
+    return <CartesianSeries<DateValue, DateTime>>[
       LineSeries<DateValue, DateTime>(
           animationDuration: 1500,
           dataSource: distanceData,

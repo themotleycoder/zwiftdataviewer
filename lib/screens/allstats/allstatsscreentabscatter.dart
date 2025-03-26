@@ -12,6 +12,23 @@ class AllStatsScreenTabScatter extends AllStatsTabLayout {
   const AllStatsScreenTabScatter({super.key});
 
   @override
+  void didChangeDependencies(BuildContext context, WidgetRef ref, List<SummaryActivity> filteredActivities) {
+    // Select the most recent activity by default, but use a post-frame callback
+    // to avoid modifying the provider during build
+    if (filteredActivities.isNotEmpty) {
+      // Use Future.microtask to schedule the update after the current build is complete
+      Future.microtask(() {
+        // Sort activities by date (most recent first)
+        final sortedActivities = List<SummaryActivity>.from(filteredActivities)
+          ..sort((a, b) => b.startDateLocal.compareTo(a.startDateLocal));
+        
+        // Select the most recent activity
+        ref.read(selectedActivityProvider.notifier).selectActivity(sortedActivities.first);
+      });
+    }
+  }
+
+  @override
   SfCartesianChart buildChart(
       WidgetRef ref, units, List<SummaryActivity> filteredActivities) {
     final Map<int, List<SummaryActivity>> result =
@@ -32,13 +49,8 @@ class AllStatsScreenTabScatter extends AllStatsTabLayout {
         title: AxisTitle(text: 'Elevation (${units['height']!})'),
       ),
       series: chartSeries,
-      onSelectionChanged: (SelectionArgs args) {
-        var selectedActivity =
-            result.values.toList()[args.seriesIndex][args.pointIndex];
-        ref
-            .read(selectedActivityProvider.notifier)
-            .selectActivity(selectedActivity);
-      },
+      // The onSelectionChanged callback is now handled in the ScatterSeries.onPointTap
+      // in the ChartsData.getScatterSeries method
       legend: const Legend(
         isVisible: true,
         position: LegendPosition.top,

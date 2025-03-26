@@ -65,7 +65,7 @@ class AllStatsScreenTabHeartSummary extends AllStatsTabLayout {
     return getChartPointShortSummaryWidget(context, ref, units);
   }
 
-  List<ChartSeries<DateValue, DateTime>> _createDataSet(
+  List<CartesianSeries<DateValue, DateTime>> _createDataSet(
       WidgetRef ref, List<SummaryActivity> activities) {
     final List<DateValue> heartrateData = [];
     SummaryActivity? activity;
@@ -80,7 +80,7 @@ class AllStatsScreenTabHeartSummary extends AllStatsTabLayout {
       }
     }
 
-    return <ChartSeries<DateValue, DateTime>>[
+    return <CartesianSeries<DateValue, DateTime>>[
       LineSeries<DateValue, DateTime>(
           animationDuration: 1500,
           dataSource: heartrateData,

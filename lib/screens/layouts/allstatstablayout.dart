@@ -14,6 +14,9 @@ abstract class AllStatsTabLayout extends ConsumerWidget {
         ref.read(dateActivityFiltersProvider);
     final Map<String, String> units = Conversions.units(ref);
 
+    // Call didChangeDependencies to allow subclasses to perform initialization
+    didChangeDependencies(context, ref, filteredActivities);
+
     return Column(
         mainAxisSize: MainAxisSize.max,
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -26,6 +29,12 @@ abstract class AllStatsTabLayout extends ConsumerWidget {
           )),
           buildChartSummaryWidget(context, ref, units),
         ]);
+  }
+
+  // This method can be overridden by subclasses to perform initialization
+  // when the widget's dependencies change
+  void didChangeDependencies(BuildContext context, WidgetRef ref, List<SummaryActivity> filteredActivities) {
+    // Default implementation does nothing
   }
 
   SfCartesianChart buildChart(WidgetRef ref, Map<String, String> units,

@@ -12,6 +12,14 @@ if (localPropertiesFile.exists()) {
     }
 }
 
+def keystoreProperties = new Properties()
+def keystorePropertiesFile = rootProject.file('key.properties')
+if (keystorePropertiesFile.exists()) {
+    keystorePropertiesFile.withReader('UTF-8') { reader ->
+        keystoreProperties.load(reader)
+    }
+}
+
 def flutterRoot = localProperties.getProperty('flutter.sdk')
 if (flutterRoot == null) {
     throw new IllegalStateException("Flutter SDK not found. Define location with flutter.sdk in the local.properties file.")
@@ -35,7 +43,7 @@ if (flutterVersionName == null) {
 
 android {
     namespace "com.motleycoder.zwiftdataviewer"
-    compileSdkVersion 34
+    compileSdkVersion 35
 
     compileOptions {
         sourceCompatibility JavaVersion.VERSION_17
@@ -61,10 +69,17 @@ android {
 
     signingConfigs {
         release {
-            storeFile file("../keystore/release-keystore.jks")
-            storePassword System.getenv("KEYSTORE_PASSWORD") ?: "keystore_password"
-            keyAlias System.getenv("KEY_ALIAS") ?: "release"
-            keyPassword System.getenv("KEY_PASSWORD") ?: "key_password"
+            if (keystorePropertiesFile.exists()) {
+                storeFile file(keystoreProperties['storeFile'])
+                storePassword keystoreProperties['storePassword']
+                keyAlias keystoreProperties['keyAlias']
+                keyPassword keystoreProperties['keyPassword']
+            } else {
+                storeFile file("../keystore/release-keystore.jks")
+                storePassword System.getenv("KEYSTORE_PASSWORD") ?: "keystore_password"
+                keyAlias System.getenv("KEY_ALIAS") ?: "release"
+                keyPassword System.getenv("KEY_PASSWORD") ?: "key_password"
+            }
         }
     }
     

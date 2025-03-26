@@ -66,7 +66,7 @@ class AllStatsScreenTabWattsSummary extends AllStatsTabLayout {
     return getChartPointShortSummaryWidget(context, ref, units);
   }
 
-  List<ChartSeries<DateValue, DateTime>> _createDataSet(
+  List<CartesianSeries<DateValue, DateTime>> _createDataSet(
       WidgetRef ref, List<SummaryActivity> activities) {
     final List<DateValue> wattsData = [];
     SummaryActivity? activity;
@@ -76,7 +76,7 @@ class AllStatsScreenTabWattsSummary extends AllStatsTabLayout {
       wattsData.add(DateValue(activity.startDate, activity.averageWatts));
     }
 
-    return <ChartSeries<DateValue, DateTime>>[
+    return <CartesianSeries<DateValue, DateTime>>[
       LineSeries<DateValue, DateTime>(
           animationDuration: 1500,
           dataSource: wattsData,
