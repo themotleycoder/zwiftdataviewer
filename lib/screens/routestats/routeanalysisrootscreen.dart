@@ -65,7 +65,7 @@ class _RouteAnalysisScreenState extends ConsumerState<RouteAnalysisScreen>
           children: const <Widget>[
             RouteAnalysisProfileChartScreen(),
             RouteAnalysisWattsDataView(),
-            RouteAnalysisTimeDataView(),
+            RouteAnalysisPowerTimePieChartScreen(), // Fixed class name
           ],
         ),
       ))

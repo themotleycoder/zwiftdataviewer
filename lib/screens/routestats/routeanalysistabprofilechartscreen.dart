@@ -73,6 +73,7 @@ class DisplayChart extends ConsumerWidget {
             return SfCartesianChart(
               tooltipBehavior: null,
               plotAreaBorderWidth: 0,
+              // Optimize legend rendering
               legend: const Legend(
                 isVisible: true,
                 overflowMode: LegendItemOverflowMode.wrap,
@@ -82,24 +83,29 @@ class DisplayChart extends ConsumerWidget {
                 title: AxisTitle(text: 'Distance (${units['distance']!})'),
                 majorGridLines: const MajorGridLines(width: 0),
                 minimum: 0,
+                // Reduce the number of labels to improve performance
+                interval: 5,
               ),
-              primaryYAxis: NumericAxis(
+              primaryYAxis: const NumericAxis(
                 labelFormat: ' ',
-                axisLine: const AxisLine(width: 0),
-                majorTickLines: const MajorTickLines(color: Colors.transparent),
+                axisLine: AxisLine(width: 0),
+                majorTickLines: MajorTickLines(color: Colors.transparent),
               ),
+              // Optimize trackball behavior
               trackballBehavior: TrackballBehavior(
                 enable: true,
                 tooltipSettings: const InteractiveTooltip(enable: false),
                 markerSettings: const TrackballMarkerSettings(
                   markerVisibility: TrackballVisibilityMode.visible,
-                  height: 10,
-                  width: 10,
+                  height: 8, // Reduced from 10
+                  width: 8, // Reduced from 10
                   borderWidth: 1,
                 ),
-                hideDelay: 3000,
+                // Reduce hide delay to improve performance
+                hideDelay: 1000, // Reduced from 3000
                 activationMode: ActivationMode.singleTap,
-                shouldAlwaysShow: true,
+                // Don't always show trackball to reduce rendering overhead
+                shouldAlwaysShow: false, // Changed from true
               ),
               series: _createDataSet(ref, streams.streams ?? []),
               onTrackballPositionChanging: (TrackballArgs args) {
@@ -134,33 +140,34 @@ class DisplayChart extends ConsumerWidget {
 
   List<XyDataSeries<DistanceValue, num>> _createDataSet(
       WidgetRef ref, List<CombinedStreams> streams) {
+    // Optimize data processing by sampling data points
+    // This reduces the number of points to render while maintaining visual quality
+    final int length = streams.length;
+    final int sampleRate = length > 500 ? 3 : (length > 200 ? 2 : 1);
+    
     final List<DistanceValue> elevationData = [];
     final List<DistanceValue> heartrateData = [];
     final List<DistanceValue> wattsData = [];
-    // final List<DistanceValue> cadenceData = [];
-    // final List<DistanceValue> gradeData = [];
-    // SegmentEffort segment;
+    
     double distance = 0.0;
     CombinedStreams? col;
-    final int length = streams.length;
-    for (int x = 0; x < length; x++) {
+    
+    for (int x = 0; x < length; x += sampleRate) {
       col = streams[x];
       distance = Conversions.metersToDistance(ref, col.distance);
       var h = Conversions.metersToHeight(ref, col.altitude);
       elevationData.add(DistanceValue(distance, h.toDouble()));
       heartrateData.add(DistanceValue(distance, col.heartrate.toDouble()));
       wattsData.add(DistanceValue(distance, col.watts.toDouble()));
-
-      // cadenceData.add(DistanceValue(distance, col.cadence.toDouble()));
-      // gradeData.add(DistanceValue(distance, col.gradeSmooth.toDouble()));
     }
 
     return <XyDataSeries<DistanceValue, num>>[
       SplineAreaSeries<DistanceValue, num>(
-          animationDuration: 1500,
+          // Reduce animation duration to improve performance
+          animationDuration: 300, // Reduced from 1500
           dataSource: elevationData,
           color: zdvMidGreen,
-          opacity: 1,
+          opacity: 0.8, // Reduced from 1
           name: 'Elevation',
           xValueMapper: (DistanceValue elevation, _) => elevation.distance,
           yValueMapper: (DistanceValue elevation, _) => elevation.value,
@@ -168,22 +175,24 @@ class DisplayChart extends ConsumerWidget {
           enableTooltip: false,
           markerSettings: const MarkerSettings(isVisible: false)),
       SplineSeries<DistanceValue, num>(
-          animationDuration: 1500,
+          // Reduce animation duration to improve performance
+          animationDuration: 300, // Reduced from 1500
           dataSource: wattsData,
           xValueMapper: (DistanceValue watts, _) => watts.distance,
           yValueMapper: (DistanceValue watts, _) => watts.value / 10,
           width: 1,
-          opacity: 0.8,
+          opacity: 0.7, // Reduced from 0.8
           color: zdvMidBlue,
           name: 'Watts',
           dataLabelSettings: const DataLabelSettings(isVisible: false),
           enableTooltip: false,
           markerSettings: const MarkerSettings(isVisible: false)),
       SplineSeries<DistanceValue, num>(
-          animationDuration: 1500,
+          // Reduce animation duration to improve performance
+          animationDuration: 300, // Reduced from 1500
           dataSource: heartrateData,
           width: 1,
-          opacity: 0.8,
+          opacity: 0.7, // Reduced from 0.8
           color: zdvRed,
           name: 'Heart Rate',
           xValueMapper: (DistanceValue heartrate, _) => heartrate.distance,

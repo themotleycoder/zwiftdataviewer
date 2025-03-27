@@ -1,3 +1,4 @@
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_strava_api/models/summary_activity.dart';
@@ -22,7 +23,9 @@ class AllStatsScreenTabScatter extends AllStatsTabLayout {
         
         // Only select a new activity if no activity is currently selected (id == 0)
         if (currentActivity.id == 0) {
-          print('No activity selected, selecting the most recent one');
+          if (kDebugMode) {
+            print('No activity selected, selecting the most recent one');
+          }
           // Sort activities by date (most recent first)
           final sortedActivities = List<SummaryActivity>.from(filteredActivities)
             ..sort((a, b) => b.startDateLocal.compareTo(a.startDateLocal));
@@ -37,8 +40,19 @@ class AllStatsScreenTabScatter extends AllStatsTabLayout {
   @override
   SfCartesianChart buildChart(
       WidgetRef ref, units, List<SummaryActivity> filteredActivities) {
+    // Limit the number of activities to improve performance
+    const maxActivitiesToShow = 500;
+    List<SummaryActivity> limitedActivities = filteredActivities;
+    
+    if (filteredActivities.length > maxActivitiesToShow) {
+      // Sort by date (most recent first) and take the most recent activities
+      limitedActivities = List<SummaryActivity>.from(filteredActivities)
+        ..sort((a, b) => b.startDateLocal.compareTo(a.startDateLocal))
+        ..take(maxActivitiesToShow).toList();
+    }
+    
     final Map<int, List<SummaryActivity>> result =
-        groupActivitiesByYear(filteredActivities);
+        groupActivitiesByYear(limitedActivities);
 
     final chartSeries = ChartsData.getScatterSeries(ref, units, result);
 
@@ -46,13 +60,24 @@ class AllStatsScreenTabScatter extends AllStatsTabLayout {
       primaryXAxis: NumericAxis(
         labelFormat: '{value}',
         title: AxisTitle(text: 'Distance (${units['distance']!})'),
+        // Reduce the number of labels to improve performance
+        interval: 20, // Increased from 10 to further reduce X-axis ticks
+        // Remove X-axis gridlines
+        majorGridLines: const MajorGridLines(width: 0),
       ),
       primaryYAxis: NumericAxis(
-        majorGridLines: const MajorGridLines(width: 0.5),
+        // Remove Y-axis gridlines
+        majorGridLines: const MajorGridLines(width: 0),
         opposedPosition: false,
         labelFormat: '{value}',
         minimum: 0,
         title: AxisTitle(text: 'Elevation (${units['height']!})'),
+        // Increase interval to reduce the number of Y-axis ticks
+        interval: 250, // Increased from 100 to show fewer tick labels
+        // Customize tick lines to be less prominent
+        majorTickLines: const MajorTickLines(size: 4, width: 1),
+        // Limit the maximum number of labels
+        maximumLabels: 5, // This helps ensure we don't get too many labels
       ),
       series: chartSeries,
       // The onSelectionChanged callback is now handled in the ScatterSeries.onPointTap
@@ -62,19 +87,23 @@ class AllStatsScreenTabScatter extends AllStatsTabLayout {
         position: LegendPosition.top,
         borderWidth: 1,
       ),
-      // Enable zooming and panning
+      // Optimize zooming and panning
       zoomPanBehavior: ZoomPanBehavior(
-        // Enable both zooming and panning
+        // Enable only essential zoom features
         enablePinching: true,
         enablePanning: true,
-        enableDoubleTapZooming: true,
-        enableSelectionZooming: true,
-        enableMouseWheelZooming: true,
+        // Disable more resource-intensive zoom features
+        enableDoubleTapZooming: false,
+        enableSelectionZooming: false,
+        enableMouseWheelZooming: false,
         zoomMode: ZoomMode.xy, // Zoom in both directions
       ),
-      // Add tooltip for better user experience
+      // Optimize tooltip behavior
       tooltipBehavior: TooltipBehavior(
         enable: true,
+        // Disable animation for better performance
+        animationDuration: 0,
+        duration: 1500,
         format: 'Distance: point.x ${units['distance']!}\nElevation: point.y ${units['height']!}',
       ),
     );

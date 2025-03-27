@@ -1,3 +1,4 @@
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_strava_api/models/summary_activity.dart';
@@ -25,6 +26,8 @@ class ChartsData {
           yValueMapper: (YearlyTotals stats, _) =>
               (stats.distance ?? 0 / 1000).roundToDouble(),
           name: 'Distance',
+          // Reduce animation duration for better performance
+          animationDuration: 300,
           color: zdvMidBlue),
       ColumnSeries<YearlyTotals, String>(
           dataSource: chartData,
@@ -33,6 +36,8 @@ class ChartsData {
           yValueMapper: (YearlyTotals stats, _) =>
               (stats.elevation ?? 0 / 1000).roundToDouble(),
           name: 'Elevation',
+          // Reduce animation duration for better performance
+          animationDuration: 300,
           color: zdvMidGreen)
     ];
   }
@@ -84,6 +89,17 @@ class ChartsData {
     final Map<int, Color> colors = generateColor(years);
 
     for (int key in colors.keys) {
+      // Limit the number of points per year to improve performance
+      const maxPointsPerYear = 200;
+      List<SummaryActivity> yearActivities = activities[key]!;
+      
+      if (yearActivities.length > maxPointsPerYear) {
+        // Sort by date (most recent first) and take the most recent activities
+        yearActivities = List<SummaryActivity>.from(yearActivities)
+          ..sort((a, b) => b.startDateLocal.compareTo(a.startDateLocal))
+          ..take(maxPointsPerYear).toList();
+      }
+      
       chartSeries.add(ScatterSeries<SummaryActivity, double>(
         name: key.toString().substring(2),
         color: colors[key],
@@ -95,14 +111,17 @@ class ChartsData {
             Conversions.metersToDistance(ref, (stats.distance).roundToDouble()),
         yValueMapper: (SummaryActivity stats, _) => Conversions.metersToHeight(
             ref, (stats.totalElevationGain).roundToDouble()),
-        dataSource: activities[key]!,
-        // Increase marker size for better visibility and tap target
+        dataSource: yearActivities,
+        // Reduce animation duration for better performance
+        animationDuration: 300,
+        // Optimize marker settings for better performance
         markerSettings: const MarkerSettings(
           isVisible: true,
-          height: 10,
-          width: 10,
+          height: 8, // Reduced from 10
+          width: 8, // Reduced from 10
+          shape: DataMarkerType.circle, // Use simpler shape
         ),
-        // Improve selection behavior with visual feedback
+        // Optimize selection behavior
         selectionBehavior: SelectionBehavior(
           enable: true,
           // Increase selection tolerance radius
@@ -118,10 +137,12 @@ class ChartsData {
           // Get the index of the tapped data point
           final int pointIndex = details.pointIndex!;
           // Get the corresponding SummaryActivity object and update the provider
-          final selectedActivity = activities[key]![pointIndex];
+          final selectedActivity = yearActivities[pointIndex];
           
           // Debug print to verify the selected activity
-          print('Selected activity: ${selectedActivity.name}, ID: ${selectedActivity.id}');
+          if (kDebugMode) {
+            print('Selected activity: ${selectedActivity.name}, ID: ${selectedActivity.id}');
+          }
           
           // Update the provider with the selected activity
           ref.read(selectedActivityProvider.notifier).selectActivity(selectedActivity);

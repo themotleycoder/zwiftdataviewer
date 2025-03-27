@@ -68,8 +68,14 @@ class DisplayChart extends ConsumerWidget {
             }
 
             return SfCartesianChart(
-              primaryXAxis: NumericAxis(isVisible: false),
-              primaryYAxis: NumericAxis(
+              // Optimize rendering by disabling unnecessary features
+              enableAxisAnimation: false,
+              primaryXAxis: const NumericAxis(
+                isVisible: false,
+                // Reduce the number of labels to improve performance
+                interval: 2,
+              ),
+              primaryYAxis: const NumericAxis(
                 plotBands: <PlotBand>[
                   PlotBand(
                     start: ftp,
@@ -114,27 +120,23 @@ class DisplayChart extends ConsumerWidget {
   List<CartesianSeries<LapSummaryObject, int>> _createDataSet(
       BuildContext context, List<LapSummaryObject> lapSummaryObjData) {
     return [
-      // LineSeries<LapSummaryObject, int>(
-      //     dataSource: lapSummaryObjData,
-      //     xValueMapper: (LapSummaryObject totals, _) => totals.count,
-      //     yValueMapper: (LapSummaryObject totals, _) => ftp,
-      //     selectionBehavior: SelectionBehavior(
-      //       enable: false,
-      //     ),
-      //     enableTooltip: false,
-      //     name: 'FTP'),
       ColumnSeries<LapSummaryObject, int>(
         dataSource: lapSummaryObjData,
-        // yAxisName: 'yAxis1',
         xValueMapper: (LapSummaryObject totals, _) => totals.count,
         yValueMapper: (LapSummaryObject totals, _) =>
             (totals.watts).roundToDouble(),
         pointColorMapper: (LapSummaryObject totals, _) => totals.color,
         name: 'Power',
+        // Reduce animation duration to improve performance
+        animationDuration: 300,
         selectionBehavior: SelectionBehavior(
           enable: true,
           unselectedOpacity: 0.5,
         ),
+        // Optimize rendering by using simpler border radius
+        borderRadius: BorderRadius.zero,
+        // Reduce spacing between columns to improve performance
+        spacing: 0.1,
       ),
     ];
   }

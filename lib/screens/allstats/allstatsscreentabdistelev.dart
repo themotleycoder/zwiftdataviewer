@@ -35,8 +35,8 @@ class AllStatsScreenTabDistElev extends AllStatsTabLayout {
           title: AxisTitle(text: 'Elevation (${units['height']!})'),
         )
       ],
-      primaryXAxis: CategoryAxis(
-        majorGridLines: const MajorGridLines(width: 0.5),
+      primaryXAxis: const CategoryAxis(
+        majorGridLines: MajorGridLines(width: 0.5),
       ),
       primaryYAxis: NumericAxis(
         majorGridLines: const MajorGridLines(width: 0),

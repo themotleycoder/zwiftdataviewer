@@ -1,3 +1,4 @@
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_strava_api/models/summary_activity.dart';
@@ -15,7 +16,9 @@ Container getChartPointShortSummaryWidget(
   final SummaryActivity selectedActivity = ref.watch(selectedActivityProvider);
   
   // Debug print to verify the selected activity in the widget
-  print('Widget displaying activity: ${selectedActivity.name}, ID: ${selectedActivity.id}');
+  if (kDebugMode) {
+    print('Widget displaying activity: ${selectedActivity.name}, ID: ${selectedActivity.id}');
+  }
 
   return Container(
     padding: const EdgeInsets.fromLTRB(0, 0, 0, 16),
