@@ -45,55 +45,74 @@ class PrefetchImageDemo extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final AsyncValue<List<String>> imagesUrls = ref.watch(
-        activityPhotoUrlsProvider(
-            ref.watch(photoActivitiesProvider).value ?? []));
-
+    // Watch the photoActivitiesProvider with error handling
+    final photoActivitiesAsync = ref.watch(photoActivitiesProvider);
+    
+    // Handle the photoActivitiesProvider states
     return Container(
       color: Colors.white,
       margin: const EdgeInsets.fromLTRB(0, 0, 0, 0),
       padding: const EdgeInsets.fromLTRB(0, 0, 0, 0),
-      child: imagesUrls.when(
-        data: (data) {
-          if (data.isEmpty) {
+      child: photoActivitiesAsync.when(
+        data: (photoActivities) {
+          // If we have photo activities, try to get the URLs
+          if (photoActivities.isEmpty) {
             return Center(
-              child: UIHelpers.buildEmptyStateWidget(
-                'No photos available for this activity',
-                icon: Icons.photo_library,
-              ),
+              child: Image.asset('assets/zwiftdatalogo.png'),
             );
           }
+          
+          // Watch the activityPhotoUrlsProvider with the photo activities
+          final imagesUrlsAsync = ref.watch(activityPhotoUrlsProvider(photoActivities));
+          
+          // Handle the activityPhotoUrlsProvider states
+          return imagesUrlsAsync.when(
+            data: (data) {
+              if (data.isEmpty) {
+                return Center(
+                  child: Image.asset('assets/zwiftdatalogo.png'),
+                );
+              }
 
-          return LayoutBuilder(
-            builder: (BuildContext context, BoxConstraints constraints) {
-              return SimpleCarousel(
-                itemCount: data.length,
-                height: constraints.maxHeight,
-                autoPlay: data.length > 1,
-                clipBehavior: Clip.antiAlias,
-                itemBuilder: (context, index) {
-                  return Center(
-                    child: FadeInImage.assetNetwork(
-                      placeholder: 'assets/zwiftdatalogo.png',
-                      image: data[index],
-                      imageErrorBuilder: (context, error, stackTrace) {
-                        debugPrint('Error loading image: $error');
-                        return Image.asset('assets/zwiftdatalogo.png');
-                      },
-                      fadeInDuration: const Duration(milliseconds: 200),
-                    ),
+              return LayoutBuilder(
+                builder: (BuildContext context, BoxConstraints constraints) {
+                  return SimpleCarousel(
+                    itemCount: data.length,
+                    height: constraints.maxHeight,
+                    autoPlay: data.length > 1,
+                    clipBehavior: Clip.antiAlias,
+                    itemBuilder: (context, index) {
+                      return Center(
+                        child: FadeInImage.assetNetwork(
+                          placeholder: 'assets/zwiftdatalogo.png',
+                          image: data[index],
+                          imageErrorBuilder: (context, error, stackTrace) {
+                            debugPrint('Error loading image: $error');
+                            return Image.asset('assets/zwiftdatalogo.png');
+                          },
+                          fadeInDuration: const Duration(milliseconds: 200),
+                        ),
+                      );
+                    },
                   );
                 },
               );
             },
+            error: (Object error, StackTrace stackTrace) {
+              debugPrint('Error loading photo URLs: $error');
+              return Center(
+                child: Image.asset('assets/zwiftdatalogo.png'),
+              );
+            },
+            loading: () {
+              return UIHelpers.buildLoadingIndicator();
+            },
           );
         },
         error: (Object error, StackTrace stackTrace) {
-          debugPrint('Error loading photos: $error');
-          return UIHelpers.buildErrorWidget(
-            'Failed to load activity photos',
-            () => ref.refresh(activityPhotoUrlsProvider(
-                ref.watch(photoActivitiesProvider).value ?? [])),
+          debugPrint('Error loading activity photos: $error');
+          return Center(
+            child: Image.asset('assets/zwiftdatalogo.png'),
           );
         },
         loading: () {

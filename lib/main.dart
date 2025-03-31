@@ -32,27 +32,37 @@ Future<void> main() async {
     final Strava strava = Strava(globals.isInDebug, clientSecret);
     const prompt = 'auto';
 
-    isAuthOk = await strava.oauth(
-        clientId,
-        'activity:write,activity:read_all,profile:read_all,profile:write',
-        clientSecret,
-        prompt);
+    try {
+      isAuthOk = await strava.oauth(
+          clientId,
+          'activity:write,activity:read_all,profile:read_all',
+          clientSecret,
+          prompt);
 
-    if (isAuthOk) {
-      Token storedToken = await strava.getStoredToken();
-      return storedToken;
+      if (isAuthOk) {
+        Token storedToken = await strava.getStoredToken();
+        return storedToken;
+      }
+    } catch (e) {
+      if (kDebugMode) {
+        print('OAuth error: $e');
+      }
+      // Continue with null token, the UI will handle this case
     }
 
     return null;
   }
 
   try {
-    await getClient();
+    final token = await getClient();
+    if (token == null && kDebugMode) {
+      print('No valid token obtained. Authentication will be required.');
+    }
   } catch (e) {
     if (kDebugMode) {
       print('Failed to authenticate with Strava: $e');
     }
-    // Handle authentication failure gracefully
+    // The app will continue and handle authentication in the UI
   }
 
   runApp(ProviderScope(

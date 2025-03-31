@@ -1,6 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_strava_api/models/summary_activity.dart';
+import 'package:flutter_strava_api/strava.dart';
+import 'package:flutter_strava_api/globals.dart' as globals;
+import 'package:flutter_strava_api/models/token.dart';
 import 'package:intl/intl.dart';
 import 'package:zwiftdataviewer/screens/ridedetailscreen.dart';
 import 'package:zwiftdataviewer/utils/constants.dart' as constants;
@@ -10,9 +13,52 @@ import '../providers/activities_provider.dart';
 import '../providers/activity_select_provider.dart';
 import '../providers/tabs_provider.dart';
 import '../utils/conversions.dart';
+import '../secrets.dart';
 
 class ActivitiesListView extends ConsumerWidget {
   const ActivitiesListView({super.key});
+
+  /// Attempts to re-authenticate with Strava
+  Future<void> _reAuthenticate(BuildContext context) async {
+    try {
+      // Create a new Strava instance
+      final Strava strava = Strava(globals.isInDebug, clientSecret);
+      const prompt = 'force'; // Force re-authentication
+      
+      // Attempt to authenticate
+      final bool isAuthOk = await strava.oauth(
+          clientId,
+          'activity:write,activity:read_all,profile:read_all,profile:write',
+          clientSecret,
+          prompt);
+      
+      if (isAuthOk) {
+        // Authentication successful
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(
+            content: Text('Successfully connected to Strava'),
+            backgroundColor: zdvMidBlue,
+          ),
+        );
+      } else {
+        // Authentication failed
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(
+            content: Text('Failed to connect to Strava. Please try again.'),
+            backgroundColor: Colors.red,
+          ),
+        );
+      }
+    } catch (e) {
+      // Handle any exceptions
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text('Error connecting to Strava: ${e.toString()}'),
+          backgroundColor: Colors.red,
+        ),
+      );
+    }
+  }
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
@@ -23,12 +69,14 @@ class ActivitiesListView extends ConsumerWidget {
 
     return Container(
       child: activitiesList.when(data: (activities) {
+        // Create a reversed copy of the activities list to display oldest first
+        final reversedActivities = activities.reversed.toList();
         return Container(
             margin: const EdgeInsets.fromLTRB(0, 8, 0, 8),
             child: ListView.separated(
-              itemCount: activities.length,
+              itemCount: reversedActivities.length,
               itemBuilder: (context, index) {
-                final activity = activities[index];
+                final activity = reversedActivities[index];
                 return Container(
                   padding: const EdgeInsets.fromLTRB(8.0, 0, 8.0, 0),
                   child: Center(
@@ -94,26 +142,42 @@ class ActivitiesListView extends ConsumerWidget {
               ),
               const SizedBox(height: 16),
               Text(
-                'Error loading activities',
+                error.toString().contains('No access token available')
+                    ? 'Authentication Required'
+                    : 'Error loading activities',
                 style: constants.headerFontStyle,
                 textAlign: TextAlign.center,
               ),
               const SizedBox(height: 8),
               Text(
-                error.toString().contains('ClientException')
-                    ? 'Network connection issue. Please check your internet connection.'
-                    : 'An error occurred while loading activities.',
+                error.toString().contains('No access token available')
+                    ? 'Please authenticate with Strava to view your activities.'
+                    : error.toString().contains('ClientException')
+                        ? 'Network connection issue. Please check your internet connection.'
+                        : 'An error occurred while loading activities.',
                 textAlign: TextAlign.center,
                 style: const TextStyle(color: Colors.grey),
               ),
               const SizedBox(height: 16),
               ElevatedButton.icon(
-                onPressed: () {
+                onPressed: () async {
+                  if (error.toString().contains('No access token available')) {
+                    // Attempt to re-authenticate with Strava
+                    await _reAuthenticate(context);
+                  }
                   // Refresh the activities provider
                   ref.refresh(stravaActivitiesProvider);
                 },
-                icon: const Icon(Icons.refresh),
-                label: const Text('Retry'),
+                icon: Icon(
+                  error.toString().contains('No access token available')
+                      ? Icons.login
+                      : Icons.refresh,
+                ),
+                label: Text(
+                  error.toString().contains('No access token available')
+                      ? 'Connect to Strava'
+                      : 'Retry',
+                ),
                 style: ElevatedButton.styleFrom(
                   backgroundColor: zdvMidBlue,
                   foregroundColor: Colors.white,

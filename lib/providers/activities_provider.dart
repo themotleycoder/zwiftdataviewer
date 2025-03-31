@@ -10,6 +10,7 @@ import 'package:flutter_strava_api/models/summary_activity.dart';
 import 'package:http/http.dart' as http;
 import 'package:path_provider/path_provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:connectivity_plus/connectivity_plus.dart';
 
 /// Provider for Strava activities
 ///
@@ -56,6 +57,18 @@ Future<List<SummaryActivity>> fetchStravaActivities() async {
     // Set timestamp for API request
     if (lastActivityDate != null) {
       afterTimestamp = lastActivityDate.millisecondsSinceEpoch ~/ 1000;
+    }
+
+    // Check connectivity before attempting to fetch new activities
+    bool hasConnectivity = await _checkConnectivity();
+    if (!hasConnectivity) {
+      debugPrint('No internet connectivity detected, using cached data only');
+      if (cachedActivities.isNotEmpty) {
+        debugPrint('Returning ${cachedActivities.length} cached activities due to no connectivity');
+        return cachedActivities;
+      } else {
+        throw Exception('No internet connection and no cached activities available');
+      }
     }
 
     // Fetch new activities
@@ -134,22 +147,53 @@ Future<List<SummaryActivity>> fetchStravaActivities() async {
     }
 
     // Return activities sorted by date (newest first)
-    return allActivities.reversed.toList();
+    return allActivities;
   } catch (e) {
     debugPrint('Error in fetchStravaActivities: $e');
     // If there's an error but we have cached data, return it
     if (cachedActivities.isNotEmpty) {
       debugPrint('Returning ${cachedActivities.length} cached activities');
-      return cachedActivities.reversed.toList();
+      return cachedActivities;
     }
     rethrow; // Otherwise rethrow the error
+  }
+}
+
+/// Check if the device has internet connectivity
+///
+/// Returns true if the device has internet connectivity, false otherwise.
+/// This checks both WiFi and mobile data connections.
+Future<bool> _checkConnectivity() async {
+  try {
+    final connectivityResult = await Connectivity().checkConnectivity();
+    if (connectivityResult == ConnectivityResult.none) {
+      debugPrint('No internet connectivity detected');
+      return false;
+    }
+    
+    // Additional check: try to actually reach a reliable host
+    try {
+      final result = await InternetAddress.lookup('google.com');
+      if (result.isNotEmpty && result[0].rawAddress.isNotEmpty) {
+        return true;
+      }
+    } on SocketException catch (_) {
+      debugPrint('Cannot reach internet despite connectivity status');
+      return false;
+    }
+    
+    return false;
+  } catch (e) {
+    debugPrint('Error checking connectivity: $e');
+    return false;
   }
 }
 
 /// Retry an HTTP request with exponential backoff
 ///
 /// This function will retry the HTTP request up to [maxRetries] times
-/// with exponential backoff between retries.
+/// with exponential backoff between retries. It also checks for internet
+/// connectivity before each retry.
 Future<http.Response> _retryHttpRequest(
   Future<http.Response> Function() requestFn, {
   int maxRetries = 3,
@@ -159,6 +203,14 @@ Future<http.Response> _retryHttpRequest(
   
   while (true) {
     try {
+      // Check connectivity before making the request
+      bool hasConnectivity = await _checkConnectivity();
+      if (!hasConnectivity) {
+        throw SocketException(
+          'No internet connection available. Please check your network settings.',
+        );
+      }
+      
       return await requestFn();
     } catch (e) {
       retryCount++;
@@ -167,8 +219,24 @@ Future<http.Response> _retryHttpRequest(
         rethrow;
       }
       
+      // Provide more specific error messages based on error type
+      String errorMessage = 'Network error';
+      if (e is SocketException) {
+        if (e.message.contains('Failed host lookup')) {
+          errorMessage = 'DNS resolution failed. Cannot reach Strava servers.';
+        } else if (e.osError == 7) {
+          errorMessage = 'No internet connection available.';
+        } else {
+          errorMessage = 'Connection error: ${e.message}';
+        }
+      } else if (e is TimeoutException) {
+        errorMessage = 'Request timed out. Server may be slow or unreachable.';
+      } else if (e is http.ClientException) {
+        errorMessage = 'HTTP client error: ${e.message}';
+      }
+      
       // Log the error and retry after delay
-      debugPrint('Network error (attempt $retryCount/$maxRetries): $e');
+      debugPrint('Network error (attempt $retryCount/$maxRetries): $errorMessage - $e');
       debugPrint('Retrying after ${delay.inSeconds} seconds...');
       
       await Future.delayed(delay);
