@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:flutter_strava_api/models/activity.dart';
 import 'package:zwiftdataviewer/providers/activity_detail_provider.dart';
 import 'package:zwiftdataviewer/providers/activity_photos_provider.dart';
 import 'package:zwiftdataviewer/providers/activity_select_provider.dart';
@@ -133,6 +134,29 @@ class RenderRouteDetails extends ConsumerWidget {
   /// @param key An optional key for this widget
   const RenderRouteDetails({super.key});
 
+  /// Calculates the total elevation gain from the activity details.
+  ///
+  /// This method tries to calculate the total elevation gain from the laps data
+  /// if available, or falls back to the totalElevationGain property.
+  double _calculateTotalElevationGain(DetailedActivity activityDetails) {
+    // If laps data is available, sum up the elevation gain from each lap
+    if (activityDetails.laps != null && activityDetails.laps!.isNotEmpty) {
+      double totalGain = 0;
+      for (var lap in activityDetails.laps!) {
+        if (lap.totalElevationGain != null) {
+          totalGain += lap.totalElevationGain!;
+        }
+      }
+      // If we calculated a non-zero value from laps, return it
+      if (totalGain > 0) {
+        return totalGain;
+      }
+    }
+    
+    // Fall back to the totalElevationGain property
+    return activityDetails.totalElevationGain ?? 0;
+  }
+
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final Map<String, String> units = Conversions.units(ref);
@@ -164,7 +188,7 @@ class RenderRouteDetails extends ConsumerWidget {
               IconDataObject(
                 'Elevation',
                 Conversions.metersToHeight(
-                        ref, activityDetails.totalElevationGain ?? 0)
+                        ref, _calculateTotalElevationGain(activityDetails))
                     .toStringAsFixed(0),
                 Icons.filter_hdr,
                 units: units['height'],

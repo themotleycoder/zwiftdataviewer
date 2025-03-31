@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:zwiftdataviewer/appkeys.dart';
 import 'package:zwiftdataviewer/providers/activity_detail_provider.dart';
+import 'package:zwiftdataviewer/providers/activity_select_provider.dart';
 import 'package:zwiftdataviewer/providers/tabs_provider.dart';
 import 'package:zwiftdataviewer/screens/layouts/mainlayout.dart';
 import 'package:zwiftdataviewer/screens/routedetailscreen.dart';
@@ -24,10 +25,11 @@ class DetailScreen extends MainLayout {
 
   @override
   buildAppBar(BuildContext context, WidgetRef ref) {
-    final activityDetail = ref.watch(stravaActivityDetailsProvider);
-
+    // Watch the selected activity provider to get the current activity name
+    final selectedActivity = ref.watch(selectedActivityProvider);
+    
     return UIHelpers.buildAppBar(
-      '${activityDetail.name}',
+      '${selectedActivity.name}',
       leading: IconButton(
         icon: const Icon(Icons.arrow_back, color: Colors.black),
         onPressed: () => Navigator.pop(context),

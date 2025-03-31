@@ -18,11 +18,15 @@ import 'activity_select_provider.dart';
 final stravaActivityDetailsProvider =
     StateNotifierProvider<StravaActivityDetailsNotifier, DetailedActivity>(
         (ref) {
-  var activityId = ref.watch(selectedActivityProvider).id;
+  // Watch the selected activity to rebuild this provider when it changes
+  final selectedActivity = ref.watch(selectedActivityProvider);
+  final activityId = selectedActivity.id;
   final accessToken = globals.token.accessToken;
+  
   if (accessToken == null) {
     throw Exception('No access token available');
   }
+  
   return StravaActivityDetailsNotifier(accessToken, activityId);
 });
 
@@ -33,10 +37,12 @@ final stravaActivityDetailsProvider =
 class StravaActivityDetailsNotifier extends StateNotifier<DetailedActivity> {
   final String _baseUrl = 'https://www.strava.com/api/v3';
   final String _accessToken;
+  int _currentActivityId = 0;
 
   StravaActivityDetailsNotifier(this._accessToken, int activityId)
       : super(DetailedActivity()) {
     if (activityId > 0) {
+      _currentActivityId = activityId;
       loadActivityDetails(activityId);
     }
   }

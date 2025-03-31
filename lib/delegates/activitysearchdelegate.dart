@@ -1,8 +1,11 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_strava_api/globals.dart' as globals;
 import 'package:flutter_strava_api/models/summary_activity.dart';
 import 'package:flutter_strava_api/strava.dart';
 import 'package:intl/intl.dart';
+import 'package:zwiftdataviewer/providers/activity_select_provider.dart';
+import 'package:zwiftdataviewer/providers/tabs_provider.dart';
 import 'package:zwiftdataviewer/secrets.dart';
 import 'package:zwiftdataviewer/utils/constants.dart' as constants;
 
@@ -103,18 +106,16 @@ class ActivitySearch extends SearchDelegate<SummaryActivity> {
                         color: zdvmMidBlue[100],
                       ),
                       onTap: () {
+                        // Set the selected activity before navigating
+                        final container = ProviderScope.containerOf(context);
+                        container.read(detailTabsNotifier.notifier).setIndex(0);
+                        container.read(selectedActivityProvider.notifier).selectActivity(summaryActivity);
+                        
                         Navigator.push(
                           context,
                           MaterialPageRoute(
                             builder: (_) {
-                              return const DetailScreen(
-                                  // id: summaryActivity.id ?? -1,
-                                  // strava: strava,
-                                  // onRemove: () {
-                                  //   Navigator.pop(context);
-                                  //   onRemove(context, todo);
-                                  // },
-                                  );
+                              return const DetailScreen();
                             },
                           ),
                         );
