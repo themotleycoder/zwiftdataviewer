@@ -111,12 +111,21 @@ class DisplayChart extends ConsumerWidget {
               onTrackballPositionChanging: (TrackballArgs args) {
                 final dataPointIndex = args.chartPointInfo.dataPointIndex ?? 0;
                 if (streams.streams != null &&
-                    dataPointIndex >= 0 &&
-                    dataPointIndex < streams.streams!.length) {
-                  var combinedStreams = streams.streams![dataPointIndex];
-                  ref
-                      .read(combinedStreamSelectNotifier.notifier)
-                      .selectStream(combinedStreams);
+                    dataPointIndex >= 0) {
+                  // Calculate the actual index in the original data based on the sample rate
+                  final int length = streams.streams!.length;
+                  final int sampleRate = length > 500 ? 3 : (length > 200 ? 2 : 1);
+                  
+                  // Multiply by sample rate to get the corresponding index in the original data
+                  final int originalDataIndex = dataPointIndex * sampleRate;
+                  
+                  // Ensure we don't go out of bounds
+                  if (originalDataIndex < streams.streams!.length) {
+                    var combinedStreams = streams.streams![originalDataIndex];
+                    ref
+                        .read(combinedStreamSelectNotifier.notifier)
+                        .selectStream(combinedStreams);
+                  }
                 }
               },
             );
