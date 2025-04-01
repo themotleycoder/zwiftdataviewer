@@ -11,10 +11,12 @@ import 'package:http/http.dart' as http;
 import 'package:path_provider/path_provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:connectivity_plus/connectivity_plus.dart';
+import 'package:zwiftdataviewer/utils/database/database_init.dart';
+import 'package:zwiftdataviewer/utils/database/services/activity_service.dart';
 
 /// Provider for Strava activities
 ///
-/// This provider fetches activities from Strava API and caches them locally.
+/// This provider fetches activities from Strava API and stores them in the SQLite database.
 /// It returns a list of SummaryActivity objects sorted by date (newest first).
 final stravaActivitiesProvider =
     FutureProvider<List<SummaryActivity>>((ref) async {
@@ -27,11 +29,59 @@ final stravaActivitiesProvider =
   }
 });
 
-/// Fetches Strava activities from API or cache
+/// Provider for database activities
 ///
-/// This function first checks for cached activities, then fetches new activities
+/// This provider fetches activities from the SQLite database.
+/// It returns a list of SummaryActivity objects sorted by date (newest first).
+final databaseActivitiesProvider =
+    FutureProvider.family<List<SummaryActivity>, DateRange>((ref, dateRange) async {
+  try {
+    final activityService = DatabaseInit.activityService;
+    final activities = await activityService.loadActivities(
+      dateRange.before.millisecondsSinceEpoch ~/ 1000,
+      dateRange.after.millisecondsSinceEpoch ~/ 1000,
+    );
+    return activities?.whereType<SummaryActivity>().toList() ?? [];
+  } catch (e, stackTrace) {
+    debugPrint('Error in databaseActivitiesProvider: $e');
+    debugPrint(stackTrace.toString());
+    return [];
+  }
+});
+
+/// Date range for querying activities
+class DateRange {
+  final DateTime before;
+  final DateTime after;
+
+  DateRange({
+    required this.before,
+    required this.after,
+  });
+
+  /// Creates a date range for the last 90 days
+  factory DateRange.last90Days() {
+    final now = DateTime.now();
+    return DateRange(
+      before: now,
+      after: now.subtract(const Duration(days: 90)),
+    );
+  }
+
+  /// Creates a date range for all time
+  factory DateRange.allTime() {
+    return DateRange(
+      before: DateTime.now(),
+      after: DateTime(2015, 1, 1), // Default: Jan 1, 2015
+    );
+  }
+}
+
+/// Fetches Strava activities from API and stores them in the database
+///
+/// This function first checks for activities in the database, then fetches new activities
 /// from the Strava API that occurred after the last known activity date.
-/// It filters for VirtualRide activities only and combines with cached activities.
+/// It filters for VirtualRide activities only and stores them in the database.
 /// Implements retry logic for network errors.
 Future<List<SummaryActivity>> fetchStravaActivities() async {
   const String baseUrl = 'https://www.strava.com/api/v3';
@@ -123,7 +173,28 @@ Future<List<SummaryActivity>> fetchStravaActivities() async {
       }
     }
 
-    // Combine and save activities
+    // Store fetched activities in the database
+    if (fetchedActivities.isNotEmpty) {
+      try {
+        // Get the activity service from DatabaseInit
+        final activityService = DatabaseInit.activityService;
+        
+        // Save activities to the database
+        await activityService.saveActivities(fetchedActivities);
+        
+        // Update last activity date
+        if (fetchedActivities.isNotEmpty) {
+          await saveLastActivityDate(fetchedActivities.first.startDate);
+        }
+        
+        debugPrint('Saved ${fetchedActivities.length} activities to database');
+      } catch (e) {
+        debugPrint('Error saving activities to database: $e');
+        // Continue even if saving to database fails
+      }
+    }
+
+    // Combine cached and fetched activities
     List<SummaryActivity> allActivities = [
       ...cachedActivities,
       ...fetchedActivities
@@ -136,17 +207,19 @@ Future<List<SummaryActivity>> fetchStravaActivities() async {
     }
     allActivities = uniqueActivities.values.toList();
 
+    // Sort activities by date (newest first)
+    allActivities.sort((a, b) => b.startDate.compareTo(a.startDate));
+
+    // Also save to cache file for backward compatibility
     if (allActivities.isNotEmpty) {
       try {
         await cacheFile.writeAsString(jsonEncode(allActivities));
-        await saveLastActivityDate(allActivities.last.startDate);
       } catch (e) {
-        debugPrint('Error saving cache: $e');
+        debugPrint('Error saving cache file: $e');
         // Continue even if saving cache fails
       }
     }
 
-    // Return activities sorted by date (newest first)
     return allActivities;
   } catch (e) {
     debugPrint('Error in fetchStravaActivities: $e');

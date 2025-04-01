@@ -8,6 +8,7 @@ import 'package:flutter_strava_api/globals.dart' as globals;
 import 'package:flutter_strava_api/models/activity.dart';
 import 'package:http/http.dart' as http;
 import 'package:path_provider/path_provider.dart';
+import 'package:zwiftdataviewer/utils/database/database_init.dart';
 
 import 'activity_select_provider.dart';
 
@@ -49,40 +50,163 @@ class StravaActivityDetailsNotifier extends StateNotifier<DetailedActivity> {
 
   /// Loads detailed activity information
   ///
-  /// This method first checks the cache for the activity details. If not found,
-  /// it fetches the details from the Strava API and caches them.
+  /// This method first checks the database for the activity details.
+  /// If not found in the database, it checks the cache.
+  /// If not found in the cache, it fetches from the Strava API and saves to both database and cache.
   Future<void> loadActivityDetails(int activityId) async {
     if (activityId <= 0) return;
 
     try {
-      // Check cache first
-      final cacheFile = await _getCacheFile();
-      if (cacheFile.existsSync()) {
-        final cachedData = await cacheFile.readAsString();
-        final List activityDetails = jsonDecode(cachedData);
-        for (var activityDetail in activityDetails) {
-          if (activityDetail['id'].toString() == activityId.toString()) {
-            state = DetailedActivity.fromJson(activityDetail);
-            return;
+      // First check the database
+      DetailedActivity? dbActivityDetail;
+      try {
+        final activityService = DatabaseInit.activityService;
+        dbActivityDetail = await activityService.loadActivityDetail(activityId);
+        
+        if (dbActivityDetail != null) {
+          if (kDebugMode) {
+            print('Activity detail loaded from database: $activityId');
           }
+          state = dbActivityDetail;
+          return;
         }
+      } catch (dbError) {
+        // If database access fails, continue to cache/API
+        if (kDebugMode) {
+          print('Error accessing database for activity $activityId: $dbError');
+        }
+        // Don't rethrow, continue to cache/API
       }
 
-      // Fetch from API if not in cache
-      final url = Uri.parse('$_baseUrl/activities/$activityId');
-      final response = await http.get(
-        url,
-        headers: {'Authorization': 'Bearer $_accessToken'},
-      );
+      // Check cache if not found in database
+      try {
+        final cacheFile = await _getCacheFile();
+        if (cacheFile.existsSync()) {
+          try {
+            final cachedData = await cacheFile.readAsString();
+            if (cachedData.isNotEmpty) {
+              try {
+                final List activityDetails = jsonDecode(cachedData);
+                for (var activityDetail in activityDetails) {
+                  if (activityDetail != null && 
+                      activityDetail is Map<String, dynamic> && 
+                      activityDetail.containsKey('id') && 
+                      activityDetail['id'].toString() == activityId.toString()) {
+                    try {
+                      state = DetailedActivity.fromJson(activityDetail);
+                      
+                      // Save to database for future use
+                      try {
+                        final activityService = DatabaseInit.activityService;
+                        await activityService.saveActivityDetail(state);
+                        if (kDebugMode) {
+                          print('Cached activity detail saved to database: $activityId');
+                        }
+                      } catch (e) {
+                        if (kDebugMode) {
+                          print('Error saving cached activity detail to database: $e');
+                        }
+                        // Continue even if saving to database fails
+                      }
+                      
+                      return;
+                    } catch (parseError) {
+                      if (kDebugMode) {
+                        print('Error parsing cached activity detail: $parseError');
+                      }
+                      // Continue to next cached activity or API if parsing fails
+                    }
+                  }
+                }
+              } catch (jsonError) {
+                if (kDebugMode) {
+                  print('Error decoding cached data: $jsonError');
+                }
+                // Continue to API if JSON decoding fails
+              }
+            }
+          } catch (readError) {
+            if (kDebugMode) {
+              print('Error reading cache file: $readError');
+            }
+            // Continue to API if reading cache fails
+          }
+        }
+      } catch (cacheError) {
+        if (kDebugMode) {
+          print('Error accessing cache: $cacheError');
+        }
+        // Continue to API if cache access fails
+      }
 
-      if (response.statusCode == 200) {
-        final DetailedActivity activityDetail =
-            DetailedActivity.fromJson(json.decode(response.body));
-        state = activityDetail;
-        await _saveActivityDetailToCache(json.decode(response.body));
-      } else {
-        throw Exception(
-            'Failed to load activity details: ${response.statusCode}');
+      // Fetch from API if not in database or cache
+      try {
+        if (kDebugMode) {
+          print('Fetching activity detail from API: $activityId');
+        }
+        
+        final url = Uri.parse('$_baseUrl/activities/$activityId');
+        final response = await http.get(
+          url,
+          headers: {'Authorization': 'Bearer $_accessToken'},
+        );
+
+        if (response.statusCode == 200) {
+          try {
+            final responseBody = response.body;
+            if (responseBody.isEmpty) {
+              throw Exception('Empty response body');
+            }
+            
+            final dynamic jsonData = json.decode(responseBody);
+            if (jsonData == null || jsonData is! Map<String, dynamic>) {
+              throw Exception('Invalid JSON response: not a map');
+            }
+            
+            final DetailedActivity activityDetail = DetailedActivity.fromJson(jsonData);
+            state = activityDetail;
+            
+            // Save to database
+            try {
+              final activityService = DatabaseInit.activityService;
+              await activityService.saveActivityDetail(activityDetail);
+              if (kDebugMode) {
+                print('Activity detail saved to database: $activityId');
+              }
+            } catch (dbSaveError) {
+              if (kDebugMode) {
+                print('Error saving activity detail to database: $dbSaveError');
+              }
+              // Continue even if saving to database fails
+            }
+              
+            // Also save to cache for backward compatibility
+            try {
+              await _saveActivityDetailToCache(jsonData);
+            } catch (cacheSaveError) {
+              if (kDebugMode) {
+                print('Error saving activity detail to cache: $cacheSaveError');
+              }
+              // Continue even if saving to cache fails
+            }
+          } catch (parseError) {
+            if (kDebugMode) {
+              print('Error parsing API response: $parseError');
+            }
+            throw Exception('Failed to parse activity details: $parseError');
+          }
+        } else {
+          if (kDebugMode) {
+            print('API error: ${response.statusCode} - ${response.body}');
+          }
+          throw Exception(
+              'Failed to load activity details: ${response.statusCode}');
+        }
+      } catch (apiError) {
+        if (kDebugMode) {
+          print('Error fetching from API: $apiError');
+        }
+        throw apiError; // Rethrow to be caught by the outer try-catch
       }
     } catch (e) {
       // If we already have some data, keep it

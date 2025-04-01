@@ -4,9 +4,10 @@ import 'package:flutter_strava_api/globals.dart' as globals;
 import 'package:flutter_strava_api/globals.dart';
 import 'package:flutter_strava_api/models/activity.dart';
 import 'package:flutter_strava_api/strava.dart';
-import 'package:path_provider/path_provider.dart';
 
 import '../secrets.dart';
+import '../utils/database/database_init.dart';
+import '../utils/database/services/activity_service.dart';
 import '../utils/repository/filerepository.dart';
 import '../utils/repository/webrepository.dart';
 import 'activity_select_provider.dart';
@@ -19,10 +20,8 @@ final photoActivitiesProvider =
     FutureProvider.autoDispose<List<PhotoActivity>>((ref) async {
   try {
     final FileRepository fileRepository = FileRepository();
-    final cacheDir = await getApplicationDocumentsDirectory();
-    final cache = Cache(cacheDir.path);
     final WebRepository webRepository =
-        WebRepository(strava: Strava(isInDebug, clientSecret), cache: cache);
+        WebRepository(strava: Strava(isInDebug, clientSecret), activityService: DatabaseInit.activityService);
     final activityId = ref.read(selectedActivityProvider).id;
 
     if (activityId <= 0) {
@@ -51,27 +50,56 @@ final activityPhotoUrlsProvider = FutureProvider.autoDispose
   final List<String> imagesUrls = [];
 
   try {
-    for (PhotoActivity image in photos) {
-      if (image.urls == null) continue;
+    if (photos.isEmpty) {
+      if (kDebugMode) {
+        print('No photos provided to activityPhotoUrlsProvider');
+      }
+      return imagesUrls;
+    }
 
-      // Try to get the highest resolution available
-      String str = image.urls!['1800'] ??
-          image.urls!['1000'] ??
-          image.urls!['600'] ??
-          image.urls!['200'] ??
-          image.urls!['100'] ??
-          image.urls!['50'] ??
-          image.urls!['25'] ??
-          image.urls!['10'] ??
-          image.urls!['5'] ??
-          image.urls!['3'] ??
-          image.urls!['2'] ??
-          image.urls!['1'] ??
-          image.urls!['0'] ??
-          '';
+    for (int i = 0; i < photos.length; i++) {
+      try {
+        final PhotoActivity image = photos[i];
+        
+        // Skip photos with null or empty URLs
+        if (image.urls == null || image.urls!.isEmpty) {
+          if (kDebugMode) {
+            print('Photo at index $i has null or empty URLs');
+          }
+          continue;
+        }
 
-      if (str.isNotEmpty) {
-        imagesUrls.add(str);
+        // Try to get the highest resolution available
+        final Map<dynamic, dynamic> rawUrls = image.urls!;
+        
+        // List of resolutions to try, from highest to lowest
+        final resolutions = ['1800', '1000', '600', '200', '100', '50', '25', '10', '5', '3', '2', '1', '0'];
+        
+        String? photoUrl;
+        for (final resolution in resolutions) {
+          if (rawUrls.containsKey(resolution) && 
+              rawUrls[resolution] != null && 
+              rawUrls[resolution] is String && 
+              rawUrls[resolution].isNotEmpty) {
+            photoUrl = rawUrls[resolution] as String;
+            break;
+          }
+        }
+
+        if (photoUrl != null && photoUrl.isNotEmpty) {
+          imagesUrls.add(photoUrl);
+        } else {
+          if (kDebugMode) {
+            print('No valid URL found for photo at index $i');
+          }
+        }
+      } catch (e) {
+        if (kDebugMode) {
+          print('Error processing photo at index $i: $e');
+          print('Photo data: ${photos[i].urls}');
+        }
+        // Continue with other photos
+        continue;
       }
     }
   } catch (e) {

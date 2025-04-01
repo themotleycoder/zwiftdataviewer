@@ -4,9 +4,10 @@ import 'package:flutter_strava_api/api/streams.dart';
 import 'package:flutter_strava_api/globals.dart' as globals;
 import 'package:flutter_strava_api/globals.dart';
 import 'package:flutter_strava_api/strava.dart';
-import 'package:path_provider/path_provider.dart';
 
 import '../secrets.dart';
+import '../utils/database/database_init.dart';
+import '../utils/database/services/activity_service.dart';
 import '../utils/repository/filerepository.dart';
 import '../utils/repository/webrepository.dart';
 
@@ -23,10 +24,8 @@ final streamsProvider = FutureProvider.autoDispose
 
   try {
     final FileRepository fileRepository = FileRepository();
-    final cacheDir = await getApplicationDocumentsDirectory();
-    final cache = Cache(cacheDir.path);
     final WebRepository webRepository =
-        WebRepository(strava: Strava(isInDebug, clientSecret), cache: cache);
+        WebRepository(strava: Strava(isInDebug, clientSecret), activityService: DatabaseInit.activityService);
 
     if (globals.isInDebug) {
       return await fileRepository.loadStreams(id);

@@ -11,6 +11,7 @@ import 'package:zwiftdataviewer/screens/calendars/allcalendarsrootscreen.dart';
 import 'package:zwiftdataviewer/screens/homescreen.dart';
 import 'package:zwiftdataviewer/screens/routesscreen.dart';
 import 'package:zwiftdataviewer/screens/settingscreen.dart';
+import 'package:zwiftdataviewer/utils/database/database_init.dart';
 import 'package:zwiftdataviewer/utils/theme.dart';
 
 import 'secrets.dart';
@@ -25,6 +26,36 @@ Future<void> main() async {
 
   // Initialize secrets
   await Secrets.initialize();
+
+  // Initialize database
+  try {
+    await DatabaseInit.initialize();
+    if (kDebugMode) {
+      print('Database initialized successfully');
+      
+      // Check database status
+      final status = await DatabaseInit.checkDatabaseStatus();
+      print('Database status:');
+      print('- File exists: ${status['file_exists']}');
+      print('- File size: ${status['file_size']} bytes');
+      
+      if (status['file_exists']) {
+        print('- Version: ${status['version']['version']}');
+        print('- Last updated: ${status['version']['last_updated']}');
+        print('- Tables: ${status['tables'].join(', ')}');
+        print('- Row counts:');
+        final counts = status['row_counts'] as Map<String, int>;
+        counts.forEach((table, count) {
+          print('  - $table: $count rows');
+        });
+      }
+    }
+  } catch (e) {
+    if (kDebugMode) {
+      print('Error initializing database: $e');
+    }
+    // Continue even if database initialization fails
+  }
 
   Future<Token?> getClient() async {
     bool isAuthOk = false;

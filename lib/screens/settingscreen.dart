@@ -1,198 +1,288 @@
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:zwiftdataviewer/appkeys.dart';
 import 'package:zwiftdataviewer/providers/config_provider.dart';
+import 'package:zwiftdataviewer/utils/constants.dart' as constants;
 import 'package:zwiftdataviewer/utils/constants.dart';
+import 'package:zwiftdataviewer/utils/database/database_init.dart';
 import 'package:zwiftdataviewer/utils/repository/filerepository.dart';
 import 'package:zwiftdataviewer/utils/theme.dart';
 
-/// A screen that displays application settings.
-///
-/// This screen allows the user to configure various settings such as FTP,
-/// measurement units, and refresh data.
-
 class SettingsScreen extends ConsumerWidget {
-  /// Creates a SettingsScreen instance.
-  ///
-  /// @param key An optional key for this widget
   const SettingsScreen({super.key});
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final configData = ref.watch(configProvider);
+    ConfigData configData = ConfigData();
+
+    configData = ref.watch(configProvider);
 
     return Container(
-      padding: const EdgeInsets.all(8.0),
-      alignment: Alignment.center,
-      child: SingleChildScrollView(
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.stretch,
-          children: [
-            // FTP Setting
-            createCard(
+        padding: const EdgeInsets.all(8.0),
+        alignment: Alignment.center,
+        child: Column(children: [
+          createCard(
               'FTP',
               Expanded(
-                child: Container(
-                  margin: const EdgeInsets.fromLTRB(0, 0, 16, 0),
-                  padding: const EdgeInsets.fromLTRB(0, 0, 0, 0),
-                  child: TextField(
+                  child: Container(
+                margin: const EdgeInsets.fromLTRB(0, 0, 16, 0),
+                padding: const EdgeInsets.fromLTRB(0, 0, 0, 0),
+                child: TextField(
                     textAlign: TextAlign.right,
                     keyboardType: TextInputType.number,
                     decoration: InputDecoration(
                       hintText: configData.ftp?.toString() ?? '0',
                       border: InputBorder.none,
-                      contentPadding: const EdgeInsets.symmetric(vertical: 8.0),
                     ),
                     onSubmitted: (value) {
-                      if (value.isNotEmpty) {
-                        final updatedConfig = configData.copyWith(
-                          ftp: double.tryParse(value) ?? configData.ftp,
-                        );
-                        ref
-                            .read(configProvider.notifier)
-                            .setConfig(updatedConfig);
-                      }
+                      configData.ftp = double.parse(value);
+                      ref.read(configProvider.notifier).setConfig(configData);
+
+                      // setState(() {
+                      //   _configData!.ftp = int.parse(value);
+                      //   print(_configData!.ftp);
+                      // });
+                      // Provider.of<ConfigDataModel>(context, listen: false)
+                      //     .configData = _configData;
                     },
                     inputFormatters: <TextInputFormatter>[
                       FilteringTextInputFormatter.digitsOnly
-                    ],
-                  ),
-                ),
-              ),
-              tooltip: 'Your Functional Threshold Power in watts',
+                    ]),
+                // ],
+              ))),
+          createCard(
+            'Metric',
+            Switch(
+              value: configData.isMetric!,
+              onChanged: (value) {
+                configData.isMetric = value;
+                ref.read(configProvider.notifier).setConfig(configData);
+                // setState(() {
+                //   _configData!.isMetric = value;
+                //   print(_configData!.isMetric);
+                // });
+                // Provider.of<ConfigDataModel>(context, listen: false)
+                //     .configData = _configData;
+              },
+              activeTrackColor: zdvmLgtBlue,
+              activeColor: zdvmMidBlue[100],
             ),
-            // Metric/Imperial Setting
-            createCard(
-              'Metric',
-              Switch(
-                value: configData.isMetric ?? true,
-                onChanged: (value) {
-                  final updatedConfig = configData.copyWith(
-                    isMetric: value,
-                  );
-                  ref.read(configProvider.notifier).setConfig(updatedConfig);
-                },
-                activeTrackColor: zdvmLgtBlue,
-                activeColor: zdvmMidBlue[100],
-              ),
-              tooltip: 'Toggle between metric (km) and imperial (miles) units',
-            ),
-            // Strava API Info
-            Card(
-              elevation: defaultCardElevation,
-              margin: const EdgeInsets.symmetric(vertical: 4.0),
-              child: Padding(
-                padding: const EdgeInsets.all(16.0),
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Text(
-                      'Strava API',
-                      style: headerTextStyle,
-                    ),
-                    const SizedBox(height: 8),
-                    const Text(
-                      'This app uses the Strava API to fetch your Zwift activities. '
-                      'The API credentials are configured by the app developer.',
-                      style: TextStyle(fontSize: 14),
-                    ),
-                  ],
-                ),
-              ),
-            ),
-            // Refresh Route Data
-            createCard(
+          ),
+          createCard(
               'Refresh Route Data',
               IconButton(
-                key: AppKeys.refreshButton,
-                tooltip: 'Refresh route data from Zwift',
-                icon: const Icon(Icons.refresh),
-                color: zdvmMidBlue[100],
-                onPressed: () {
-                  refreshRouteData();
-                  ScaffoldMessenger.of(context).showSnackBar(
-                    const SnackBar(
-                      content: Text('Route data refresh started'),
-                      duration: Duration(seconds: 2),
-                    ),
-                  );
-                },
-              ),
-              tooltip: 'Update route data from Zwift servers',
-            ),
-            // Refresh Calendar Data
-            createCard(
+                  key: AppKeys.refreshButton,
+                  tooltip: 'refresh',
+                  icon: const Icon(Icons.refresh),
+                  color: zdvmMidBlue[100],
+                  onPressed: () => refreshRouteData())),
+          createCard(
               'Refresh Calendars Data',
               IconButton(
-                key: const Key('refreshCalendarButton'),
-                tooltip: 'Refresh calendar data from Zwift',
-                icon: const Icon(Icons.refresh),
-                color: zdvmMidBlue[100],
-                onPressed: () {
-                  refreshCalendarData();
-                  ScaffoldMessenger.of(context).showSnackBar(
-                    const SnackBar(
-                      content: Text('Calendar data refresh started'),
-                      duration: Duration(seconds: 2),
-                    ),
-                  );
-                },
-              ),
-              tooltip:
-                  'Update world and climb calendar data from Zwift servers',
-            ),
-          ],
-        ),
-      ),
-    );
+                  key: AppKeys.refreshButton,
+                  tooltip: 'refresh',
+                  icon: const Icon(Icons.refresh),
+                  color: zdvmMidBlue[100],
+                  onPressed: () => refreshCalendarData())),
+          createCard(
+              'Database Status',
+              TextButton(
+                  child: const Text('Check Status', style: TextStyle(color: zdvOrange)),
+                  onPressed: () => checkDatabaseStatus(context))),
+          createCard(
+              'Reset Database',
+              TextButton(
+                  child: const Text('Reset', style: TextStyle(color: Colors.red)),
+                  onPressed: () => showResetDatabaseDialog(context))),
+          createCard(
+              'Reset Activity Photos',
+              TextButton(
+                  child: const Text('Reset Photos', style: TextStyle(color: Colors.orange)),
+                  onPressed: () => showResetPhotosDialog(context))),
+        ]));
   }
 
-  /// Refreshes route data from Zwift.
-  ///
-  /// This method triggers a scrape of route data from Zwift servers.
-  void refreshRouteData() {
+  refreshRouteData() {
     FileRepository().scrapeRouteData();
   }
 
-  /// Refreshes calendar data from Zwift.
-  ///
-  /// This method triggers a scrape of world and climb calendar data from Zwift servers.
-  void refreshCalendarData() {
+  refreshCalendarData() {
     FileRepository().scrapeWorldCalendarData();
     FileRepository().scrapeClimbCalendarData();
   }
-
-  /// Creates a card with a label and a widget.
-  ///
-  /// @param label The label text for the card
-  /// @param widget The widget to display in the card
-  /// @param tooltip Optional tooltip for the card
-  /// @return A Card widget
-  Card createCard(String label, Widget widget, {String? tooltip}) {
-    final cardContent = Row(
-      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-      children: [
-        Container(
-          margin: const EdgeInsets.fromLTRB(16.0, 8.0, 16.0, 8.0),
-          child: Text(
-            label,
-            style: headerTextStyle,
+  
+  Future<void> checkDatabaseStatus(BuildContext context) async {
+    try {
+      final status = await DatabaseInit.checkDatabaseStatus();
+      
+      // ignore: use_build_context_synchronously
+      showDialog(
+        context: context,
+        builder: (context) => AlertDialog(
+          title: const Text('Database Status'),
+          content: SingleChildScrollView(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                Text('File exists: ${status['file_exists']}'),
+                Text('File size: ${status['file_size']} bytes'),
+                if (status['file_exists']) ...[
+                  const SizedBox(height: 8),
+                  Text('Version: ${status['version']['version']}'),
+                  Text('Last updated: ${status['version']['last_updated']}'),
+                  const SizedBox(height: 8),
+                  const Text('Tables:'),
+                  ...((status['tables'] as List).map((table) => Padding(
+                    padding: const EdgeInsets.only(left: 16),
+                    child: Text('- $table'),
+                  ))),
+                  const SizedBox(height: 8),
+                  const Text('Row counts:'),
+                  ...(status['row_counts'] as Map<String, int>).entries.map((entry) => Padding(
+                    padding: const EdgeInsets.only(left: 16),
+                    child: Text('- ${entry.key}: ${entry.value} rows'),
+                  )),
+                ],
+              ],
+            ),
           ),
+          actions: [
+            TextButton(
+              onPressed: () => Navigator.of(context).pop(),
+              child: const Text('Close'),
+            ),
+          ],
         ),
-        widget
-      ],
+      );
+    } catch (e) {
+      if (kDebugMode) {
+        print('Error checking database status: $e');
+      }
+      // ignore: use_build_context_synchronously
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text('Error checking database status: $e'),
+          backgroundColor: Colors.red,
+        ),
+      );
+    }
+  }
+  
+  Future<void> showResetDatabaseDialog(BuildContext context) async {
+    showDialog(
+      context: context,
+      builder: (context) => AlertDialog(
+        title: const Text('Reset Database'),
+        content: const Text(
+          'This will delete all data in the database and recreate it. '
+          'This action cannot be undone. Are you sure you want to continue?'
+        ),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.of(context).pop(),
+            child: const Text('Cancel'),
+          ),
+          TextButton(
+            onPressed: () async {
+              Navigator.of(context).pop();
+              await resetDatabase(context);
+            },
+            child: const Text('Reset', style: TextStyle(color: Colors.red)),
+          ),
+        ],
+      ),
     );
+  }
+  
+  Future<void> resetDatabase(BuildContext context) async {
+    try {
+      await DatabaseInit.resetDatabase();
+      // ignore: use_build_context_synchronously
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(
+          content: Text('Database reset successfully'),
+          backgroundColor: Colors.green,
+        ),
+      );
+    } catch (e) {
+      if (kDebugMode) {
+        print('Error resetting database: $e');
+      }
+      // ignore: use_build_context_synchronously
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text('Error resetting database: $e'),
+          backgroundColor: Colors.red,
+        ),
+      );
+    }
+  }
+  
+  Future<void> showResetPhotosDialog(BuildContext context) async {
+    showDialog(
+      context: context,
+      builder: (context) => AlertDialog(
+        title: const Text('Reset Activity Photos'),
+        content: const Text(
+          'This will delete all activity photos from the database. '
+          'The app will need to re-download photos when viewing activities. '
+          'This action cannot be undone. Are you sure you want to continue?'
+        ),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.of(context).pop(),
+            child: const Text('Cancel'),
+          ),
+          TextButton(
+            onPressed: () async {
+              Navigator.of(context).pop();
+              await resetActivityPhotos(context);
+            },
+            child: const Text('Reset Photos', style: TextStyle(color: Colors.orange)),
+          ),
+        ],
+      ),
+    );
+  }
+  
+  Future<void> resetActivityPhotos(BuildContext context) async {
+    try {
+      await DatabaseInit.resetActivityPhotosTable();
+      
+      // ignore: use_build_context_synchronously
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(
+          content: Text('Activity photos reset successfully'),
+          backgroundColor: Colors.green,
+        ),
+      );
+    } catch (e) {
+      if (kDebugMode) {
+        print('Error resetting activity photos: $e');
+      }
+      // ignore: use_build_context_synchronously
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text('Error resetting activity photos: $e'),
+          backgroundColor: Colors.red,
+        ),
+      );
+    }
+  }
 
+  Card createCard(String label, Widget widget) {
     return Card(
-      elevation: defaultCardElevation,
-      margin: const EdgeInsets.symmetric(vertical: 4.0),
-      child: tooltip != null
-          ? Tooltip(
-              message: tooltip,
-              child: cardContent,
-            )
-          : cardContent,
-    );
+        elevation: defaultCardElevation,
+        child:
+            Row(mainAxisAlignment: MainAxisAlignment.spaceBetween, children: [
+          Container(
+            margin: const EdgeInsets.fromLTRB(16.0, 8.0, 16.0, 8.0),
+            child: Text(label, style: constants.headerTextStyle),
+          ),
+          widget
+        ]));
   }
 }

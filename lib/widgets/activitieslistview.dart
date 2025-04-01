@@ -15,6 +15,27 @@ import '../providers/tabs_provider.dart';
 import '../utils/conversions.dart';
 import '../secrets.dart';
 
+/// Combined provider that merges Strava API and database activities
+final combinedActivitiesProvider = FutureProvider<List<SummaryActivity>>((ref) async {
+  // First try to get activities from the database
+  final dbActivities = await ref.watch(
+    databaseActivitiesProvider(DateRange.allTime()).future,
+  );
+  
+  // If we have database activities, return them immediately
+  if (dbActivities.isNotEmpty) {
+    return dbActivities;
+  }
+  
+  // Otherwise, try to fetch from Strava API
+  try {
+    return await ref.watch(stravaActivitiesProvider.future);
+  } catch (e) {
+    // If both fail, return an empty list
+    return [];
+  }
+});
+
 class ActivitiesListView extends ConsumerWidget {
   const ActivitiesListView({super.key});
 
@@ -64,19 +85,19 @@ class ActivitiesListView extends ConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     final Map<String, String> units = Conversions.units(ref);
 
+    // Use the combined provider that merges Strava API and database activities
     final AsyncValue<List<SummaryActivity>> activitiesList =
-        ref.watch(stravaActivitiesProvider);
+        ref.watch(combinedActivitiesProvider);
 
     return Container(
       child: activitiesList.when(data: (activities) {
-        // Create a reversed copy of the activities list to display oldest first
-        final reversedActivities = activities.reversed.toList();
+        // Use activities directly (already sorted newest first)
         return Container(
             margin: const EdgeInsets.fromLTRB(0, 8, 0, 8),
             child: ListView.separated(
-              itemCount: reversedActivities.length,
+              itemCount: activities.length,
               itemBuilder: (context, index) {
-                final activity = reversedActivities[index];
+                final activity = activities[index];
                 return Container(
                   padding: const EdgeInsets.fromLTRB(8.0, 0, 8.0, 0),
                   child: Center(
@@ -165,8 +186,10 @@ class ActivitiesListView extends ConsumerWidget {
                     // Attempt to re-authenticate with Strava
                     await _reAuthenticate(context);
                   }
-                  // Refresh the activities provider
+                  // Refresh both providers
                   ref.refresh(stravaActivitiesProvider);
+                  ref.refresh(databaseActivitiesProvider(DateRange.allTime()));
+                  ref.refresh(combinedActivitiesProvider);
                 },
                 icon: Icon(
                   error.toString().contains('No access token available')
