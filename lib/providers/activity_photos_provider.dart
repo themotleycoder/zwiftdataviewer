@@ -7,15 +7,14 @@ import 'package:flutter_strava_api/strava.dart';
 
 import '../secrets.dart';
 import '../utils/database/database_init.dart';
-import '../utils/database/services/activity_service.dart';
 import '../utils/repository/filerepository.dart';
 import '../utils/repository/webrepository.dart';
 import 'activity_select_provider.dart';
 
-/// Provider for activity photos
-///
-/// This provider fetches photos associated with the currently selected activity.
-/// It uses either the file repository (in debug mode) or the web repository.
+// Provider for activity photos
+//
+// This provider fetches photos associated with the currently selected activity.
+// It uses either the file repository (in debug mode) or the web repository.
 final photoActivitiesProvider =
     FutureProvider.autoDispose<List<PhotoActivity>>((ref) async {
   try {
@@ -41,10 +40,10 @@ final photoActivitiesProvider =
   }
 });
 
-/// Provider for activity photo URLs
-///
-/// This provider extracts the best available URL for each photo in the list.
-/// It tries to get the highest resolution available.
+// Provider for activity photo URLs
+//
+// This provider extracts the best available URL for each photo in the list.
+// It tries to get the highest resolution available.
 final activityPhotoUrlsProvider = FutureProvider.autoDispose
     .family<List<String>, List<PhotoActivity>>((ref, photos) async {
   final List<String> imagesUrls = [];

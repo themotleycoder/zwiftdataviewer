@@ -2,6 +2,7 @@ import 'dart:async';
 import 'dart:convert';
 import 'dart:io';
 
+import 'package:connectivity_plus/connectivity_plus.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_strava_api/globals.dart' as globals;
@@ -10,14 +11,12 @@ import 'package:flutter_strava_api/models/summary_activity.dart';
 import 'package:http/http.dart' as http;
 import 'package:path_provider/path_provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
-import 'package:connectivity_plus/connectivity_plus.dart';
 import 'package:zwiftdataviewer/utils/database/database_init.dart';
-import 'package:zwiftdataviewer/utils/database/services/activity_service.dart';
 
-/// Provider for Strava activities
-///
-/// This provider fetches activities from Strava API and stores them in the SQLite database.
-/// It returns a list of SummaryActivity objects sorted by date (newest first).
+// Provider for Strava activities
+//
+// This provider fetches activities from Strava API and stores them in the SQLite database.
+// It returns a list of SummaryActivity objects sorted by date (newest first).
 final stravaActivitiesProvider =
     FutureProvider<List<SummaryActivity>>((ref) async {
   try {
@@ -29,10 +28,10 @@ final stravaActivitiesProvider =
   }
 });
 
-/// Provider for database activities
-///
-/// This provider fetches activities from the SQLite database.
-/// It returns a list of SummaryActivity objects sorted by date (newest first).
+// Provider for database activities
+//
+// This provider fetches activities from the SQLite database.
+// It returns a list of SummaryActivity objects sorted by date (newest first).
 final databaseActivitiesProvider =
     FutureProvider.family<List<SummaryActivity>, DateRange>((ref, dateRange) async {
   try {
@@ -49,7 +48,7 @@ final databaseActivitiesProvider =
   }
 });
 
-/// Date range for querying activities
+// Date range for querying activities
 class DateRange {
   final DateTime before;
   final DateTime after;
@@ -59,7 +58,7 @@ class DateRange {
     required this.after,
   });
 
-  /// Creates a date range for the last 90 days
+  // Creates a date range for the last 90 days
   factory DateRange.last90Days() {
     final now = DateTime.now();
     return DateRange(
@@ -68,7 +67,7 @@ class DateRange {
     );
   }
 
-  /// Creates a date range for all time
+  // Creates a date range for all time
   factory DateRange.allTime() {
     return DateRange(
       before: DateTime.now(),
@@ -77,12 +76,12 @@ class DateRange {
   }
 }
 
-/// Fetches Strava activities from API and stores them in the database
-///
-/// This function first checks for activities in the database, then fetches new activities
-/// from the Strava API that occurred after the last known activity date.
-/// It filters for VirtualRide activities only and stores them in the database.
-/// Implements retry logic for network errors.
+// Fetches Strava activities from API and stores them in the database
+//
+// This function first checks for activities in the database, then fetches new activities
+// from the Strava API that occurred after the last known activity date.
+// It filters for VirtualRide activities only and stores them in the database.
+// Implements retry logic for network errors.
 Future<List<SummaryActivity>> fetchStravaActivities() async {
   const String baseUrl = 'https://www.strava.com/api/v3';
   DateTime? lastActivityDate = await getLastActivityDate();
@@ -232,10 +231,10 @@ Future<List<SummaryActivity>> fetchStravaActivities() async {
   }
 }
 
-/// Check if the device has internet connectivity
-///
-/// Returns true if the device has internet connectivity, false otherwise.
-/// This checks both WiFi and mobile data connections.
+// Check if the device has internet connectivity
+//
+// Returns true if the device has internet connectivity, false otherwise.
+// This checks both WiFi and mobile data connections.
 Future<bool> _checkConnectivity() async {
   try {
     final connectivityResult = await Connectivity().checkConnectivity();
@@ -262,11 +261,11 @@ Future<bool> _checkConnectivity() async {
   }
 }
 
-/// Retry an HTTP request with exponential backoff
-///
-/// This function will retry the HTTP request up to [maxRetries] times
-/// with exponential backoff between retries. It also checks for internet
-/// connectivity before each retry.
+// Retry an HTTP request with exponential backoff
+//
+// This function will retry the HTTP request up to [maxRetries] times
+// with exponential backoff between retries. It also checks for internet
+// connectivity before each retry.
 Future<http.Response> _retryHttpRequest(
   Future<http.Response> Function() requestFn, {
   int maxRetries = 3,
@@ -319,19 +318,19 @@ Future<http.Response> _retryHttpRequest(
   }
 }
 
-/// Gets the cache file for storing activities
+// Gets the cache file for storing activities
 Future<File> _getCacheFile() async {
   final directory = await getApplicationDocumentsDirectory();
   return File('${directory.path}/strava_activities_cache.json');
 }
 
-/// Saves the date of the most recent activity
+// Saves the date of the most recent activity
 Future<void> saveLastActivityDate(DateTime date) async {
   final prefs = await SharedPreferences.getInstance();
   await prefs.setInt('lastActivityDate', date.millisecondsSinceEpoch);
 }
 
-/// Gets the date of the most recent activity
+// Gets the date of the most recent activity
 Future<DateTime?> getLastActivityDate() async {
   final prefs = await SharedPreferences.getInstance();
   final milliseconds = prefs.getInt('lastActivityDate');

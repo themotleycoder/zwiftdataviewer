@@ -12,10 +12,10 @@ import 'package:zwiftdataviewer/utils/database/database_init.dart';
 
 import 'activity_select_provider.dart';
 
-/// Provider for detailed activity information
-///
-/// This provider fetches and manages detailed information about the currently
-/// selected activity. It uses the Strava API and local caching.
+// Provider for detailed activity information
+//
+// This provider fetches and manages detailed information about the currently
+// selected activity. It uses the Strava API and local caching.
 final stravaActivityDetailsProvider =
     StateNotifierProvider<StravaActivityDetailsNotifier, DetailedActivity>(
         (ref) {
@@ -31,10 +31,10 @@ final stravaActivityDetailsProvider =
   return StravaActivityDetailsNotifier(accessToken, activityId);
 });
 
-/// Notifier for detailed activity information
-///
-/// This class manages the state of a detailed activity, including fetching
-/// from the API and caching.
+// Notifier for detailed activity information
+//
+// This class manages the state of a detailed activity, including fetching
+// from the API and caching.
 class StravaActivityDetailsNotifier extends StateNotifier<DetailedActivity> {
   final String _baseUrl = 'https://www.strava.com/api/v3';
   final String _accessToken;
@@ -48,11 +48,11 @@ class StravaActivityDetailsNotifier extends StateNotifier<DetailedActivity> {
     }
   }
 
-  /// Loads detailed activity information
-  ///
-  /// This method first checks the database for the activity details.
-  /// If not found in the database, it checks the cache.
-  /// If not found in the cache, it fetches from the Strava API and saves to both database and cache.
+  // Loads detailed activity information
+  //
+  // This method first checks the database for the activity details.
+  // If not found in the database, it checks the cache.
+  // If not found in the cache, it fetches from the Strava API and saves to both database and cache.
   Future<void> loadActivityDetails(int activityId) async {
     if (activityId <= 0) return;
 
@@ -220,13 +220,13 @@ class StravaActivityDetailsNotifier extends StateNotifier<DetailedActivity> {
     }
   }
 
-  /// Gets the cache file for storing activity details
+  // Gets the cache file for storing activity details
   Future<File> _getCacheFile() async {
     final directory = await getApplicationDocumentsDirectory();
     return File('${directory.path}/strava_activity_details_cache.json');
   }
 
-  /// Saves activity details to the cache
+  // Saves activity details to the cache
   Future<void> _saveActivityDetailToCache(
       Map<String, dynamic> activityDetail) async {
     try {
@@ -263,34 +263,34 @@ class StravaActivityDetailsNotifier extends StateNotifier<DetailedActivity> {
   }
 }
 
-/// Provider for the current activity detail
-///
-/// This provider is used to store and access the current activity detail
-/// throughout the app.
+// Provider for the current activity detail
+//
+// This provider is used to store and access the current activity detail
+// throughout the app.
 final activityDetailProvider =
     StateNotifierProvider<ActivityDetailNotifier, DetailedActivity>((ref) {
   return ActivityDetailNotifier();
 });
 
-/// Notifier for activity detail
-///
-/// This class manages the state of the current activity detail.
+// Notifier for activity detail
+//
+// This class manages the state of the current activity detail.
 class ActivityDetailNotifier extends StateNotifier<DetailedActivity> {
   ActivityDetailNotifier() : super(DetailedActivity());
 
-  /// Gets the current activity detail
+  // Gets the current activity detail
   DetailedActivity get activityDetail => state;
 
-  /// Sets the current activity detail
+  // Sets the current activity detail
   void setActivityDetail(DetailedActivity activityDetail) {
     state = activityDetail;
   }
 }
 
-/// Represents a lap summary
-///
-/// This class contains summary information about a lap, including distance,
-/// time, altitude, cadence, watts, and speed.
+// Represents a lap summary
+//
+// This class contains summary information about a lap, including distance,
+// time, altitude, cadence, watts, and speed.
 class LapSummaryObject {
   final int lap;
   int count = 0;

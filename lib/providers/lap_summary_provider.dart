@@ -7,10 +7,10 @@ import '../utils/theme.dart';
 import 'activity_detail_provider.dart';
 import 'config_provider.dart';
 
-/// Provider for lap summary objects
-///
-/// This provider creates a list of lap summary objects from a detailed activity.
-/// It uses the user's FTP setting to determine the color coding for power zones.
+// Provider for lap summary objects
+//
+// This provider creates a list of lap summary objects from a detailed activity.
+// It uses the user's FTP setting to determine the color coding for power zones.
 final lapsProvider = FutureProvider.autoDispose
     .family<List<LapSummaryObject>, DetailedActivity>((ref, activity) async {
   try {
@@ -41,14 +41,14 @@ final lapsProvider = FutureProvider.autoDispose
   }
 });
 
-/// Determines the color for a power value based on FTP zones
-///
-/// This function returns a color that represents the power zone
-/// for the given watts value relative to the user's FTP.
-///
-/// @param watts The power value in watts
-/// @param ftp The user's Functional Threshold Power
-/// @return A color representing the power zone
+// Determines the color for a power value based on FTP zones
+//
+// This function returns a color that represents the power zone
+// for the given watts value relative to the user's FTP.
+//
+// @param watts The power value in watts
+// @param ftp The user's Functional Threshold Power
+// @return A color representing the power zone
 Color getColorForWatts(double watts, double ftp) {
   if (ftp <= 0) return Colors.grey; // Avoid division by zero
 

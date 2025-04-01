@@ -1,13 +1,14 @@
 import 'dart:async';
+import 'dart:io';
+
 import 'package:flutter/foundation.dart';
+import 'package:path/path.dart';
 import 'package:path_provider/path_provider.dart';
+import 'package:sqflite/sqflite.dart';
 import 'package:zwiftdataviewer/utils/database/database_helper.dart';
 import 'package:zwiftdataviewer/utils/database/services/activity_service.dart';
-import 'dart:io';
-import 'package:path/path.dart';
-import 'package:sqflite/sqflite.dart';
 
-/// Initializes the SQLite database and provides access to database services.
+// Initializes the SQLite database and provides access to database services.
 class DatabaseInit {
   static final DatabaseInit _instance = DatabaseInit._internal();
   static bool _initialized = false;
@@ -20,8 +21,8 @@ class DatabaseInit {
 
   DatabaseInit._internal();
 
-  /// Initializes the database and services.
-  /// Must be called before using any database services.
+  // Initializes the database and services.
+  // Must be called before using any database services.
   static Future<void> initialize() async {
     if (_initialized) return;
 
@@ -69,8 +70,8 @@ class DatabaseInit {
     }
   }
   
-  /// Resets the database by deleting it and recreating it.
-  /// Use with caution as this will delete all data.
+  // Resets the database by deleting it and recreating it.
+  // Use with caution as this will delete all data.
   static Future<void> resetDatabase() async {
     if (!_initialized) {
       throw StateError('Database not initialized');
@@ -106,7 +107,7 @@ class DatabaseInit {
     }
   }
 
-  /// Cleans up old cache files (older than 7 days)
+  // Cleans up old cache files (older than 7 days)
   static Future<void> cleanupOldCache() async {
     try {
       final cacheDir = Directory(_cacheDir);
@@ -138,13 +139,13 @@ class DatabaseInit {
     }
   }
 
-  /// Returns the cache directory path for backward compatibility
+  // Returns the cache directory path for backward compatibility
   static String get cacheDir => _cacheDir;
 
-  /// Checks if the database has been initialized
+  // Checks if the database has been initialized
   static bool get isInitialized => _initialized;
   
-  /// Checks the database status and returns information about it
+  // Checks the database status and returns information about it
   static Future<Map<String, dynamic>> checkDatabaseStatus() async {
     final result = <String, dynamic>{};
     
@@ -183,7 +184,7 @@ class DatabaseInit {
     }
   }
   
-  /// Reset the activity photos table
+  // Reset the activity photos table
   static Future<void> resetActivityPhotosTable() async {
     try {
       final dbHelper = DatabaseHelper();

@@ -12,8 +12,8 @@ import 'conversions.dart';
 class ChartsData {
   static
 
-      /// Returns the list of chart series which need to
-      /// render on the multiple axes chart.
+      // Returns the list of chart series which need to
+      // render on the multiple axes chart.
       List<CartesianSeries<YearlyTotals, String>> getMultipleAxisColumnSeries(
           WidgetRef ref,
           Map<String, String> units,
@@ -44,7 +44,7 @@ class ChartsData {
 
   static List<YearlyTotals> generateChartData(WidgetRef ref,
       Map<String, String> units, List<SummaryActivity> activities) {
-    /// Create series list with multiple series
+    // Create series list with multiple series
     final Map<String, double> distances = {};
     final Map<String, double> elevations = {};
     // const String totalName = "Total";

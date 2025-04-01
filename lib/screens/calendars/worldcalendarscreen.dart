@@ -11,10 +11,10 @@ import 'package:zwiftdataviewer/utils/ui_helpers.dart';
 import 'package:zwiftdataviewer/utils/worldsconfig.dart';
 import 'package:zwiftdataviewer/widgets/worldeventscalendarwidget.dart';
 
-/// A screen that displays a calendar of Zwift world events.
-///
-/// This screen shows a calendar with the scheduled Zwift worlds for each day,
-/// and a list of world events for the selected day.
+// A screen that displays a calendar of Zwift world events.
+//
+// This screen shows a calendar with the scheduled Zwift worlds for each day,
+// and a list of world events for the selected day.
 class WorldCalendarScreen extends ConsumerStatefulWidget {
   const WorldCalendarScreen({super.key});
 
@@ -60,15 +60,15 @@ class _WorldCalendarScreenState extends ConsumerState<WorldCalendarScreen> {
   }
 }
 
-/// Builds a list of world event cards for the selected day.
-///
-/// This function creates a list of cards, each representing a world event
-/// for the selected day. Each card displays the world name and an icon,
-/// and tapping on a card navigates to the world detail screen.
-///
-/// @param ref The WidgetRef used to access providers
-/// @param context The BuildContext for navigation
-/// @return A ListView containing the world event cards
+// Builds a list of world event cards for the selected day.
+//
+// This function creates a list of cards, each representing a world event
+// for the selected day. Each card displays the world name and an icon,
+// and tapping on a card navigates to the world detail screen.
+//
+// @param ref The WidgetRef used to access providers
+// @param context The BuildContext for navigation
+// @return A ListView containing the world event cards
 Widget _buildEventList(WidgetRef ref, BuildContext context) {
   final List<WorldData> selectedEvents = ref.watch(worldEventsForDayProvider);
   final List<Widget> list = selectedEvents
@@ -95,12 +95,12 @@ Widget _buildEventList(WidgetRef ref, BuildContext context) {
   );
 }
 
-/// Builds a card for a world event.
-///
-/// @param world The WorldData for the card
-/// @param ref The WidgetRef used to access providers
-/// @param context The BuildContext for navigation
-/// @return A Card widget for the world
+// Builds a card for a world event.
+//
+// @param world The WorldData for the card
+// @param ref The WidgetRef used to access providers
+// @param context The BuildContext for navigation
+// @return A Card widget for the world
 Widget _buildWorldCard(WorldData world, WidgetRef ref, BuildContext context) {
   final worldName = allWorldsConfig[world.id]?.name ?? 'Unknown World';
 
@@ -125,11 +125,11 @@ Widget _buildWorldCard(WorldData world, WidgetRef ref, BuildContext context) {
   );
 }
 
-/// Builds a card specifically for Watopia.
-///
-/// @param ref The WidgetRef used to access providers
-/// @param context The BuildContext for navigation
-/// @return A Card widget for Watopia
+// Builds a card specifically for Watopia.
+//
+// @param ref The WidgetRef used to access providers
+// @param context The BuildContext for navigation
+// @return A Card widget for Watopia
 Widget _buildWatopiaCard(WidgetRef ref, BuildContext context) {
   return Card(
     color: Colors.white,
@@ -152,11 +152,11 @@ Widget _buildWatopiaCard(WidgetRef ref, BuildContext context) {
   );
 }
 
-/// Navigates to the world detail screen for the specified world.
-///
-/// @param worldId The ID of the world to show details for
-/// @param ref The WidgetRef used to access providers
-/// @param context The BuildContext for navigation
+// Navigates to the world detail screen for the specified world.
+//
+// @param worldId The ID of the world to show details for
+// @param ref The WidgetRef used to access providers
+// @param context The BuildContext for navigation
 void _navigateToWorldDetail(int worldId, WidgetRef ref, BuildContext context) {
   final worldData = allWorldsConfig[worldId];
   if (worldData != null) {

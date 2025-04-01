@@ -5,14 +5,14 @@
   Feel free to improve the web_scraper library.
 */
 
-/// Validation Class containing all functions related to URL validation.
+// Validation Class containing all functions related to URL validation.
 class Validation {
   static final _ipv6 =
       RegExp(r'^::|^::1|^([a-fA-F0-9]{1,4}::?){1,7}([a-fA-F0-9]{1,4})$');
   static final _ipv4Maybe =
       RegExp(r'^(\d?\d?\d)\.(\d?\d?\d)\.(\d?\d?\d)\.(\d?\d?\d)$');
 
-  /// The isBaseURL function checks the base URLs like https://pub.dev.
+  // The isBaseURL function checks the base URLs like https://pub.dev.
   ValidationReturn isBaseURL(String str) {
     // Protocols supported for web scraping includes http & https.
     const protocols = ['http', 'https'];
@@ -40,7 +40,7 @@ class Validation {
   }
 
   // Remove unnecessary '/' after domain.
-  // Ex.: 'google.com////' will become 'google.com'.
+  // Ex.: 'google.com///' will become 'google.com'.
   // Ex.: 'google.com//search//' will become 'google.com/search'.
   String _removeUnnecessarySlash(String str) {
     var s = str.split('/');
@@ -119,8 +119,8 @@ class Validation {
   }
 }
 
-/// ValidationReturn class provides the result of validation
-/// including [isCorrect] and [description] for more details.
+// ValidationReturn class provides the result of validation
+// including [isCorrect] and [description] for more details.
 class ValidationReturn {
   bool isCorrect;
   String description;

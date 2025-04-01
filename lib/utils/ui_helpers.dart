@@ -1,13 +1,13 @@
 import 'package:flutter/material.dart';
 import 'package:zwiftdataviewer/utils/theme.dart';
 
-/// Utility class providing standardized UI elements for consistent appearance
-/// across the application.
+// Utility class providing standardized UI elements for consistent appearance
+// across the application.
 class UIHelpers {
-  /// Creates a standardized loading widget with an optional key.
-  ///
-  /// @param key Optional key for the widget
-  /// @return A centered CircularProgressIndicator
+  // Creates a standardized loading widget with an optional key.
+  //
+  // @param key Optional key for the widget
+  // @return A centered CircularProgressIndicator
   static Widget buildLoadingIndicator({Key? key}) {
     return Center(
       child: CircularProgressIndicator(
@@ -17,11 +17,11 @@ class UIHelpers {
     );
   }
 
-  /// Creates a standardized error widget with a retry option.
-  ///
-  /// @param message The error message to display
-  /// @param onRetry Callback function when the retry button is pressed
-  /// @return A widget displaying the error message and a retry button
+  // Creates a standardized error widget with a retry option.
+  //
+  // @param message The error message to display
+  // @param onRetry Callback function when the retry button is pressed
+  // @return A widget displaying the error message and a retry button
   static Widget buildErrorWidget(String message, VoidCallback onRetry) {
     return Center(
       child: Column(
@@ -48,11 +48,11 @@ class UIHelpers {
     );
   }
 
-  /// Creates a standardized empty state widget.
-  ///
-  /// @param message The message to display
-  /// @param icon Optional icon to display
-  /// @return A widget displaying the empty state message and icon
+  // Creates a standardized empty state widget.
+  //
+  // @param message The message to display
+  // @param icon Optional icon to display
+  // @return A widget displaying the empty state message and icon
   static Widget buildEmptyStateWidget(String message, {IconData? icon}) {
     return Center(
       child: Column(
@@ -74,12 +74,12 @@ class UIHelpers {
     );
   }
 
-  /// Creates a standardized app bar with a title and optional actions.
-  ///
-  /// @param title The title of the app bar
-  /// @param actions Optional list of action widgets
-  /// @param leading Optional leading widget
-  /// @return An AppBar widget
+  // Creates a standardized app bar with a title and optional actions.
+  //
+  // @param title The title of the app bar
+  // @param actions Optional list of action widgets
+  // @param leading Optional leading widget
+  // @return An AppBar widget
   static AppBar buildAppBar(
     String title, {
     List<Widget>? actions,

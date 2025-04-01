@@ -7,26 +7,26 @@ import 'package:zwiftdataviewer/screens/allstats/allstatsscreentabscatter.dart';
 import 'package:zwiftdataviewer/screens/allstats/allstatsscreentabwattssummary.dart';
 import 'package:zwiftdataviewer/utils/theme.dart';
 
-/// A screen that displays various statistics tabs.
-///
-/// This screen serves as a container for different statistics views,
-/// allowing the user to switch between them using a tab bar.
+// A screen that displays various statistics tabs.
+//
+// This screen serves as a container for different statistics views,
+// allowing the user to switch between them using a tab bar.
 class AllStatsRootScreen extends ConsumerStatefulWidget {
-  /// Creates an AllStatsRootScreen instance.
-  ///
-  /// @param key An optional key for this widget
+  // Creates an AllStatsRootScreen instance.
+  //
+  // @param key An optional key for this widget
   const AllStatsRootScreen({super.key});
 
   @override
   ConsumerState<AllStatsRootScreen> createState() => _AllStatsRootScreenState();
 }
 
-/// The state for the AllStatsRootScreen.
-///
-/// This state manages the tab controller and builds the tab bar and tab views.
+// The state for the AllStatsRootScreen.
+//
+// This state manages the tab controller and builds the tab bar and tab views.
 class _AllStatsRootScreenState extends ConsumerState<AllStatsRootScreen>
     with TickerProviderStateMixin {
-  /// The tab controller for managing the tabs.
+  // The tab controller for managing the tabs.
   late final TabController _tabController;
 
   @override

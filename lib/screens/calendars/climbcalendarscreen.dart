@@ -12,14 +12,14 @@ import 'package:zwiftdataviewer/utils/theme.dart';
 import 'package:zwiftdataviewer/utils/ui_helpers.dart';
 import 'package:zwiftdataviewer/widgets/climbeventscalendarwidget.dart';
 
-/// A screen that displays a calendar of Zwift climb events.
-///
-/// This screen shows a calendar with the scheduled Zwift climbs for each day,
-/// and a list of climb events for the selected day.
+// A screen that displays a calendar of Zwift climb events.
+//
+// This screen shows a calendar with the scheduled Zwift climbs for each day,
+// and a list of climb events for the selected day.
 class ClimbCalendarScreen extends ConsumerWidget {
-  /// Creates a ClimbCalendarScreen instance.
-  ///
-  /// @param key An optional key for this widget
+  // Creates a ClimbCalendarScreen instance.
+  //
+  // @param key An optional key for this widget
   const ClimbCalendarScreen({super.key});
 
   @override
@@ -48,15 +48,15 @@ class ClimbCalendarScreen extends ConsumerWidget {
   }
 }
 
-/// Builds a list of climb event cards for the selected day.
-///
-/// This function creates a list of cards, each representing a climb event
-/// for the selected day. Each card displays the climb name and an icon,
-/// and tapping on a card opens the climb details in a WebView within the app.
-///
-/// @param ref The WidgetRef used to access providers
-/// @param context The BuildContext for navigation
-/// @return A ListView containing the climb event cards
+// Builds a list of climb event cards for the selected day.
+//
+// This function creates a list of cards, each representing a climb event
+// for the selected day. Each card displays the climb name and an icon,
+// and tapping on a card opens the climb details in a WebView within the app.
+//
+// @param ref The WidgetRef used to access providers
+// @param context The BuildContext for navigation
+// @return A ListView containing the climb event cards
 Widget _buildEventList(WidgetRef ref, BuildContext context) {
   final List<ClimbData> selectedEvents = ref.watch(climbEventsForDayProvider);
 
@@ -78,12 +78,12 @@ Widget _buildEventList(WidgetRef ref, BuildContext context) {
   );
 }
 
-/// Builds a card for a climb event.
-///
-/// @param climb The ClimbData for the card
-/// @param ref The WidgetRef used to access providers
-/// @param context The BuildContext for navigation
-/// @return A Card widget for the climb
+// Builds a card for a climb event.
+//
+// @param climb The ClimbData for the card
+// @param ref The WidgetRef used to access providers
+// @param context The BuildContext for navigation
+// @return A Card widget for the climb
 Widget _buildClimbCard(ClimbData climb, WidgetRef ref, BuildContext context) {
   // First try to get the climb from allClimbsConfig using the ID
   final configClimb = allClimbsConfig[climb.id];
@@ -144,12 +144,12 @@ Widget _buildClimbCard(ClimbData climb, WidgetRef ref, BuildContext context) {
   );
 }
 
-/// Launches a URL in the default browser or in-app browser.
-///
-/// This function parses the URL and launches it using the platform's default behavior.
-/// If the URL cannot be launched, an error is thrown.
-///
-/// @param url The URL to launch
+// Launches a URL in the default browser or in-app browser.
+//
+// This function parses the URL and launches it using the platform's default behavior.
+// If the URL cannot be launched, an error is thrown.
+//
+// @param url The URL to launch
 Future<void> launchMyUrl(String url) async {
   try {
     // Parse the URL directly

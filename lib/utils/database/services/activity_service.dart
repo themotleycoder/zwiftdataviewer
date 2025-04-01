@@ -1,4 +1,5 @@
 import 'dart:async';
+
 import 'package:flutter/foundation.dart';
 import 'package:flutter_strava_api/api/streams.dart';
 import 'package:flutter_strava_api/models/activity.dart';

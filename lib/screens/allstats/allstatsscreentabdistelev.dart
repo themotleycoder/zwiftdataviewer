@@ -24,7 +24,7 @@ class AllStatsScreenTabDistElev extends AllStatsTabLayout {
     return SfCartesianChart(
       legend: Legend(isVisible: !isCardView),
 
-      /// API for multiple axis. It can returns the various axis to the chart.
+      // API for multiple axis. It can returns the various axis to the chart.
       axes: <ChartAxis>[
         NumericAxis(
           opposedPosition: true,

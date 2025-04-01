@@ -90,12 +90,7 @@ class RouteSectionDetailScreen extends ConsumerWidget {
 
     return ListView.separated(
       itemCount: segmentEfforts.length,
-      separatorBuilder: (BuildContext context, int index) => Container(
-          // padding: EdgeInsets.all(5.0),
-          // child: Center(),
-          // color: Colors.white,
-          // margin: EdgeInsets.all(1.0),
-          ),
+      separatorBuilder: (BuildContext context, int index) => Container(),
       itemBuilder: (BuildContext context, int index) {
         final SegmentEffort effort = segmentEfforts![index];
         return Container(

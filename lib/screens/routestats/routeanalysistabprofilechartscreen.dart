@@ -12,14 +12,14 @@ import 'package:zwiftdataviewer/utils/theme.dart';
 import 'package:zwiftdataviewer/utils/ui_helpers.dart';
 import 'package:zwiftdataviewer/widgets/iconitemwidgets.dart';
 
-/// A screen that displays the elevation profile chart for a route.
-///
-/// This screen shows a chart with elevation, heart rate, and power data
-/// plotted against distance.
+// A screen that displays the elevation profile chart for a route.
+//
+// This screen shows a chart with elevation, heart rate, and power data
+// plotted against distance.
 class RouteAnalysisProfileChartScreen extends RouteAnalysisTabLayout {
-  /// Creates a RouteAnalysisProfileChartScreen instance.
-  ///
-  /// @param key An optional key for this widget
+  // Creates a RouteAnalysisProfileChartScreen instance.
+  //
+  // @param key An optional key for this widget
   const RouteAnalysisProfileChartScreen({super.key});
 
   @override
@@ -33,14 +33,14 @@ class RouteAnalysisProfileChartScreen extends RouteAnalysisTabLayout {
   }
 }
 
-/// A widget that displays a chart with elevation, heart rate, and power data.
-///
-/// This widget fetches stream data for the selected activity and displays
-/// it in a chart with multiple series.
+// A widget that displays a chart with elevation, heart rate, and power data.
+//
+// This widget fetches stream data for the selected activity and displays
+// it in a chart with multiple series.
 class DisplayChart extends ConsumerWidget {
-  /// Creates a DisplayChart instance.
-  ///
-  /// @param key An optional key for this widget
+  // Creates a DisplayChart instance.
+  //
+  // @param key An optional key for this widget
   const DisplayChart({super.key});
 
   @override
@@ -213,14 +213,14 @@ class DisplayChart extends ConsumerWidget {
   }
 }
 
-/// A widget that displays detailed metrics for the selected point on the chart.
-///
-/// This widget shows distance, elevation, heart rate, power, cadence, and grade
-/// data for the point selected on the chart.
+// A widget that displays detailed metrics for the selected point on the chart.
+//
+// This widget shows distance, elevation, heart rate, power, cadence, and grade
+// data for the point selected on the chart.
 class ProfileDataView extends ConsumerWidget {
-  /// Creates a ProfileDataView instance.
-  ///
-  /// @param key An optional key for this widget
+  // Creates a ProfileDataView instance.
+  //
+  // @param key An optional key for this widget
   const ProfileDataView({super.key});
 
   @override

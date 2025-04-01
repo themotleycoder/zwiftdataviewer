@@ -11,14 +11,14 @@ import 'package:zwiftdataviewer/utils/theme.dart';
 import 'package:zwiftdataviewer/utils/ui_helpers.dart';
 import 'package:zwiftdataviewer/widgets/shortdataanalysis.dart';
 
-/// A screen that displays power data analysis for a route.
-///
-/// This screen shows a column chart with power data for each lap,
-/// along with a summary of the selected lap.
+// A screen that displays power data analysis for a route.
+//
+// This screen shows a column chart with power data for each lap,
+// along with a summary of the selected lap.
 class RouteAnalysisWattsDataView extends RouteAnalysisTabLayout {
-  /// Creates a RouteAnalysisWattsDataView instance.
-  ///
-  /// @param key An optional key for this widget
+  // Creates a RouteAnalysisWattsDataView instance.
+  //
+  // @param key An optional key for this widget
   const RouteAnalysisWattsDataView({super.key});
 
   @override
@@ -32,14 +32,14 @@ class RouteAnalysisWattsDataView extends RouteAnalysisTabLayout {
   }
 }
 
-/// A widget that displays a column chart with power data for each lap.
-///
-/// This widget fetches lap data for the selected activity and displays
-/// it in a column chart, with a line indicating the FTP threshold.
+// A widget that displays a column chart with power data for each lap.
+//
+// This widget fetches lap data for the selected activity and displays
+// it in a column chart, with a line indicating the FTP threshold.
 class DisplayChart extends ConsumerWidget {
-  /// Creates a DisplayChart instance.
-  ///
-  /// @param key An optional key for this widget
+  // Creates a DisplayChart instance.
+  //
+  // @param key An optional key for this widget
   const DisplayChart({super.key});
 
   @override

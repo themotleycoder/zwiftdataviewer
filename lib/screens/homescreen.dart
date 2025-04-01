@@ -14,23 +14,23 @@ import 'package:zwiftdataviewer/utils/ui_helpers.dart';
 import 'package:zwiftdataviewer/widgets/filterdatebutton.dart';
 import 'package:zwiftdataviewer/widgets/filterroutebutton.dart';
 
-/// A class representing the home screen of the application.
-///
-/// This screen serves as the main entry point of the application and provides
-/// navigation to different sections through a bottom navigation bar.
+// A class representing the home screen of the application.
+//
+// This screen serves as the main entry point of the application and provides
+// navigation to different sections through a bottom navigation bar.
 
 class HomeScreen extends MainLayout {
-  /// Creates a HomeScreen instance.
-  ///
-  /// @param key An optional key for this widget
+  // Creates a HomeScreen instance.
+  //
+  // @param key An optional key for this widget
   const HomeScreen({super.key});
 
-  /// Gets the action buttons for the app bar based on the current tab.
-  ///
-  /// @param context The BuildContext
-  /// @param ref The WidgetRef
-  /// @param activityData The list of summary activities
-  /// @return A list of action widgets for the app bar
+  // Gets the action buttons for the app bar based on the current tab.
+  //
+  // @param context The BuildContext
+  // @param ref The WidgetRef
+  // @param activityData The list of summary activities
+  // @return A list of action widgets for the app bar
   List<Widget> getActions(
       BuildContext context, WidgetRef ref, List<SummaryActivity> activityData) {
     List<Widget> actions = [];

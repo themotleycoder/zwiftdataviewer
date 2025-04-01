@@ -3,10 +3,10 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:zwiftdataviewer/models/routedata.dart';
 import 'package:zwiftdataviewer/utils/repository/filerepository.dart';
 
-/// Provider for route data
-///
-/// This provider fetches route data from the file repository.
-/// It contains information about all available routes in Zwift.
+// Provider for route data
+//
+// This provider fetches route data from the file repository.
+// It contains information about all available routes in Zwift.
 final routeDataProvider =
     FutureProvider<Map<int, List<RouteData>>>((ref) async {
   try {
@@ -23,10 +23,10 @@ final routeDataProvider =
   }
 });
 
-/// Loads route data from the file repository
-///
-/// This function fetches route data from the file repository.
-/// It's extracted as a separate function to allow for reuse.
+// Loads route data from the file repository
+//
+// This function fetches route data from the file repository.
+// It's extracted as a separate function to allow for reuse.
 Future<Map<int, List<RouteData>>> loadRouteDataFromFile() async {
   try {
     FileRepository repository = FileRepository();

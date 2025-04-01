@@ -7,14 +7,14 @@ import 'package:zwiftdataviewer/utils/theme.dart';
 import 'package:zwiftdataviewer/utils/ui_helpers.dart';
 import 'package:zwiftdataviewer/widgets/routedetailtilewidget.dart';
 
-/// A screen that displays a list of Zwift routes.
-///
-/// This screen shows a filterable list of Zwift routes, with each route
-/// displayed as an expandable tile with details.
+// A screen that displays a list of Zwift routes.
+//
+// This screen shows a filterable list of Zwift routes, with each route
+// displayed as an expandable tile with details.
 class RoutesScreen extends ConsumerWidget {
-  /// Creates a RoutesScreen instance.
-  ///
-  /// @param key An optional key for this widget
+  // Creates a RoutesScreen instance.
+  //
+  // @param key An optional key for this widget
   const RoutesScreen() : super(key: AppKeys.worldDetailsScreen);
 
   @override

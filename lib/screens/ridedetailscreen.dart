@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:zwiftdataviewer/appkeys.dart';
-import 'package:zwiftdataviewer/providers/activity_detail_provider.dart';
 import 'package:zwiftdataviewer/providers/activity_select_provider.dart';
 import 'package:zwiftdataviewer/providers/tabs_provider.dart';
 import 'package:zwiftdataviewer/screens/layouts/mainlayout.dart';
@@ -12,15 +11,15 @@ import 'package:zwiftdataviewer/utils/constants.dart';
 import 'package:zwiftdataviewer/utils/theme.dart';
 import 'package:zwiftdataviewer/utils/ui_helpers.dart';
 
-/// A screen that displays detailed information about a ride.
-///
-/// This screen shows various details about a selected ride, including
-/// route information, analysis, and sections. It uses a bottom navigation
-/// bar to switch between different views of the ride data.
+// A screen that displays detailed information about a ride.
+//
+// This screen shows various details about a selected ride, including
+// route information, analysis, and sections. It uses a bottom navigation
+// bar to switch between different views of the ride data.
 class DetailScreen extends MainLayout {
-  /// Creates a DetailScreen instance.
-  ///
-  /// @param key An optional key for this widget
+  // Creates a DetailScreen instance.
+  //
+  // @param key An optional key for this widget
   const DetailScreen({super.key});
 
   @override

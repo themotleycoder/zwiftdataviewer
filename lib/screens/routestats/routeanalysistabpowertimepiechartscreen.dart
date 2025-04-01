@@ -10,14 +10,14 @@ import 'package:zwiftdataviewer/utils/theme.dart';
 import 'package:zwiftdataviewer/utils/ui_helpers.dart';
 import 'package:zwiftdataviewer/widgets/shortdataanalysis.dart';
 
-/// A screen that displays power time distribution for a route.
-///
-/// This screen shows a pie chart with power time distribution data,
-/// along with a summary of the selected lap.
+// A screen that displays power time distribution for a route.
+//
+// This screen shows a pie chart with power time distribution data,
+// along with a summary of the selected lap.
 class RouteAnalysisPowerTimePieChartScreen extends RouteAnalysisTabLayout {
-  /// Creates a RouteAnalysisPowerTimePieChartScreen instance.
-  ///
-  /// @param key An optional key for this widget
+  // Creates a RouteAnalysisPowerTimePieChartScreen instance.
+  //
+  // @param key An optional key for this widget
   const RouteAnalysisPowerTimePieChartScreen({super.key});
 
   @override
@@ -31,15 +31,15 @@ class RouteAnalysisPowerTimePieChartScreen extends RouteAnalysisTabLayout {
   }
 }
 
-/// A widget that displays a pie chart with power time distribution data.
-///
-/// This widget fetches lap data for the selected activity and displays
-/// it in a pie chart, showing the distribution of time spent in different
-/// power zones.
+// A widget that displays a pie chart with power time distribution data.
+//
+// This widget fetches lap data for the selected activity and displays
+// it in a pie chart, showing the distribution of time spent in different
+// power zones.
 class DisplayChart extends ConsumerWidget {
-  /// Creates a DisplayChart instance.
-  ///
-  /// @param key An optional key for this widget
+  // Creates a DisplayChart instance.
+  //
+  // @param key An optional key for this widget
   const DisplayChart({super.key});
 
   @override
@@ -160,7 +160,7 @@ class DisplayChart extends ConsumerWidget {
   }
 }
 
-/// Data class for power zone information.
+// Data class for power zone information.
 class PowerZoneData {
   final String zoneName;
   final double lowerBound;

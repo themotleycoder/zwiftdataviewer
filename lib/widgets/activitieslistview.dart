@@ -1,9 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:flutter_strava_api/globals.dart' as globals;
 import 'package:flutter_strava_api/models/summary_activity.dart';
 import 'package:flutter_strava_api/strava.dart';
-import 'package:flutter_strava_api/globals.dart' as globals;
-import 'package:flutter_strava_api/models/token.dart';
 import 'package:intl/intl.dart';
 import 'package:zwiftdataviewer/screens/ridedetailscreen.dart';
 import 'package:zwiftdataviewer/utils/constants.dart' as constants;
@@ -12,10 +11,10 @@ import 'package:zwiftdataviewer/utils/theme.dart';
 import '../providers/activities_provider.dart';
 import '../providers/activity_select_provider.dart';
 import '../providers/tabs_provider.dart';
-import '../utils/conversions.dart';
 import '../secrets.dart';
+import '../utils/conversions.dart';
 
-/// Combined provider that merges Strava API and database activities
+// Combined provider that merges Strava API and database activities
 final combinedActivitiesProvider = FutureProvider<List<SummaryActivity>>((ref) async {
   // First try to get activities from the database
   final dbActivities = await ref.watch(
@@ -39,7 +38,7 @@ final combinedActivitiesProvider = FutureProvider<List<SummaryActivity>>((ref) a
 class ActivitiesListView extends ConsumerWidget {
   const ActivitiesListView({super.key});
 
-  /// Attempts to re-authenticate with Strava
+  // Attempts to re-authenticate with Strava
   Future<void> _reAuthenticate(BuildContext context) async {
     try {
       // Create a new Strava instance

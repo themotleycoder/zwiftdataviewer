@@ -9,14 +9,14 @@ import 'package:zwiftdataviewer/utils/simple_carousel.dart';
 import 'package:zwiftdataviewer/utils/ui_helpers.dart';
 import 'package:zwiftdataviewer/widgets/iconitemwidgets.dart';
 
-/// A screen that displays details about a Zwift route or activity.
-///
-/// This screen shows information about a selected route or activity,
-/// including photos and key metrics like distance, elevation, time, etc.
+// A screen that displays details about a Zwift route or activity.
+//
+// This screen shows information about a selected route or activity,
+// including photos and key metrics like distance, elevation, time, etc.
 class RouteDetailScreen extends ConsumerWidget {
-  /// Creates a RouteDetailScreen instance.
-  ///
-  /// @param key An optional key for this widget
+  // Creates a RouteDetailScreen instance.
+  //
+  // @param key An optional key for this widget
   const RouteDetailScreen({super.key});
 
   @override
@@ -35,13 +35,13 @@ class RouteDetailScreen extends ConsumerWidget {
   }
 }
 
-/// A widget that displays a carousel of activity photos.
-///
-/// This widget fetches and displays photos associated with the selected activity.
+// A widget that displays a carousel of activity photos.
+//
+// This widget fetches and displays photos associated with the selected activity.
 class PrefetchImageDemo extends ConsumerWidget {
-  /// Creates a PrefetchImageDemo instance.
-  ///
-  /// @param key An optional key for this widget
+  // Creates a PrefetchImageDemo instance.
+  //
+  // @param key An optional key for this widget
   const PrefetchImageDemo({super.key});
 
   @override
@@ -124,20 +124,20 @@ class PrefetchImageDemo extends ConsumerWidget {
   }
 }
 
-/// A widget that displays detailed metrics about a route or activity.
-///
-/// This widget shows key metrics like distance, elevation, time, heart rate,
-/// power, and speed for the selected activity.
+// A widget that displays detailed metrics about a route or activity.
+//
+// This widget shows key metrics like distance, elevation, time, heart rate,
+// power, and speed for the selected activity.
 class RenderRouteDetails extends ConsumerWidget {
-  /// Creates a RenderRouteDetails instance.
-  ///
-  /// @param key An optional key for this widget
+  // Creates a RenderRouteDetails instance.
+  //
+  // @param key An optional key for this widget
   const RenderRouteDetails({super.key});
 
-  /// Calculates the total elevation gain from the activity details.
-  ///
-  /// This method tries to calculate the total elevation gain from the laps data
-  /// if available, or falls back to the totalElevationGain property.
+  // Calculates the total elevation gain from the activity details.
+  //
+  // This method tries to calculate the total elevation gain from the laps data
+  // if available, or falls back to the totalElevationGain property.
   double _calculateTotalElevationGain(DetailedActivity activityDetails) {
     // If laps data is available, sum up the elevation gain from each lap
     if (activityDetails.laps != null && activityDetails.laps!.isNotEmpty) {

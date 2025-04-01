@@ -9,14 +9,14 @@ import 'package:zwiftdataviewer/screens/layouts/detailscreenlayout.dart';
 import 'package:zwiftdataviewer/utils/ui_helpers.dart';
 import 'package:zwiftdataviewer/widgets/routedetailtilewidget.dart';
 
-/// A screen that displays details about a Zwift world.
-///
-/// This screen shows information about a selected Zwift world,
-/// including a list of routes available in that world.
+// A screen that displays details about a Zwift world.
+//
+// This screen shows information about a selected Zwift world,
+// including a list of routes available in that world.
 class WorldDetailScreen extends DetailScreenLayout {
-  /// Creates a WorldDetailScreen instance.
-  ///
-  /// @param key An optional key for this widget
+  // Creates a WorldDetailScreen instance.
+  //
+  // @param key An optional key for this widget
   const WorldDetailScreen() : super(key: AppKeys.worldDetailsScreen);
 
   @override

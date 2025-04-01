@@ -453,7 +453,7 @@ class FileRepository
     return routes;
   }
 
-  /// World Calendar Portal Methods
+  // World Calendar Portal Methods
 
   @override
   Future<Map<DateTime, List<WorldData>>> loadWorldCalendarData() async {
@@ -628,7 +628,7 @@ class FileRepository
     return worlds;
   }
 
-  /// Climb Calendar Portal Methods
+  // Climb Calendar Portal Methods
 
   Future<Map<DateTime, List<ClimbData>>> loadClimbCalendarData() async {
     Map<DateTime, List<ClimbData>> calendarData = {};
