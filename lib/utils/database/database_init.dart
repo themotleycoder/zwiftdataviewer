@@ -7,6 +7,7 @@ import 'package:path_provider/path_provider.dart';
 import 'package:sqflite/sqflite.dart';
 import 'package:zwiftdataviewer/utils/database/database_helper.dart';
 import 'package:zwiftdataviewer/utils/database/services/activity_service.dart';
+import 'package:zwiftdataviewer/utils/database/services/segment_effort_service.dart';
 
 // Initializes the SQLite database and provides access to database services.
 class DatabaseInit {
@@ -14,6 +15,7 @@ class DatabaseInit {
   static bool _initialized = false;
   
   static late final ActivityService activityService;
+  static late final SegmentEffortService segmentEffortService;
   static late final String _cacheDir;
 
   // Singleton pattern
@@ -52,8 +54,9 @@ class DatabaseInit {
         await cacheDir.create(recursive: true);
       }
       
-      // Initialize activity service
+      // Initialize services
       activityService = ActivityService();
+      segmentEffortService = SegmentEffortService();
       
       _initialized = true;
       if (kDebugMode) {

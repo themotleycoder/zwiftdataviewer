@@ -8,7 +8,7 @@ import 'package:sqflite/sqflite.dart';
 class DatabaseHelper {
   static final DatabaseHelper _instance = DatabaseHelper._internal();
   static Database? _database;
-  static const int _currentVersion = 3; // Incremented version number
+  static const int _currentVersion = 4; // Incremented version number
 
   // Singleton pattern
   factory DatabaseHelper() => _instance;
@@ -138,6 +138,33 @@ class DatabaseHelper {
       )
     ''');
 
+    await db.execute('''
+      CREATE TABLE segment_efforts (
+        id INTEGER PRIMARY KEY AUTOINCREMENT,
+        activity_id INTEGER,
+        segment_id INTEGER,
+        segment_name TEXT,
+        elapsed_time INTEGER,
+        moving_time INTEGER,
+        start_date TEXT,
+        start_date_local TEXT,
+        distance REAL,
+        start_index INTEGER,
+        end_index INTEGER,
+        average_watts REAL,
+        average_cadence REAL,
+        average_heartrate REAL,
+        max_heartrate REAL,
+        pr_rank INTEGER,
+        hidden INTEGER,
+        elevation_difference REAL,
+        average_grade REAL,
+        climb_category INTEGER,
+        json_data TEXT,
+        FOREIGN KEY (activity_id) REFERENCES activities (id) ON DELETE CASCADE
+      )
+    ''');
+
     // Create indexes for faster queries
     await _createIndexes(db);
   }
@@ -161,6 +188,13 @@ class DatabaseHelper {
     
     // Index for activity photos unique_id
     await db.execute('CREATE INDEX idx_activity_photos_unique_id ON activity_photos(unique_id)');
+    
+    // Indexes for segment efforts
+    await db.execute('CREATE INDEX idx_segment_efforts_activity_id ON segment_efforts(activity_id)');
+    await db.execute('CREATE INDEX idx_segment_efforts_segment_id ON segment_efforts(segment_id)');
+    await db.execute('CREATE INDEX idx_segment_efforts_segment_name ON segment_efforts(segment_name)');
+    await db.execute('CREATE INDEX idx_segment_efforts_elapsed_time ON segment_efforts(elapsed_time)');
+    await db.execute('CREATE INDEX idx_segment_efforts_start_date ON segment_efforts(start_date)');
   }
 
   Future<void> _onUpgrade(Database db, int oldVersion, int newVersion) async {
@@ -269,6 +303,70 @@ class DatabaseHelper {
         } catch (e) {
           if (kDebugMode) {
             print('Error during migration to version 3: $e');
+          }
+          // Continue with other migrations even if this one fails
+        }
+      }
+      
+      if (oldVersion < 4) {
+        // Migration to version 4 - Add segment_efforts table
+        try {
+          // Create segment_efforts table
+          await db.execute('''
+            CREATE TABLE IF NOT EXISTS segment_efforts (
+              id INTEGER PRIMARY KEY AUTOINCREMENT,
+              activity_id INTEGER,
+              segment_id INTEGER,
+              segment_name TEXT,
+              elapsed_time INTEGER,
+              moving_time INTEGER,
+              start_date TEXT,
+              start_date_local TEXT,
+              distance REAL,
+              start_index INTEGER,
+              end_index INTEGER,
+              average_watts REAL,
+              average_cadence REAL,
+              average_heartrate REAL,
+              max_heartrate REAL,
+              pr_rank INTEGER,
+              hidden INTEGER,
+              elevation_difference REAL,
+              average_grade REAL,
+              climb_category INTEGER,
+              json_data TEXT,
+              FOREIGN KEY (activity_id) REFERENCES activities (id) ON DELETE CASCADE
+            )
+          ''');
+          
+          if (kDebugMode) {
+            print('Created segment_efforts table');
+          }
+          
+          // Create indexes for segment_efforts table
+          await db.execute('CREATE INDEX IF NOT EXISTS idx_segment_efforts_activity_id ON segment_efforts(activity_id)');
+          await db.execute('CREATE INDEX IF NOT EXISTS idx_segment_efforts_segment_id ON segment_efforts(segment_id)');
+          await db.execute('CREATE INDEX IF NOT EXISTS idx_segment_efforts_segment_name ON segment_efforts(segment_name)');
+          await db.execute('CREATE INDEX IF NOT EXISTS idx_segment_efforts_elapsed_time ON segment_efforts(elapsed_time)');
+          await db.execute('CREATE INDEX IF NOT EXISTS idx_segment_efforts_start_date ON segment_efforts(start_date)');
+          
+          if (kDebugMode) {
+            print('Created indexes for segment_efforts table');
+          }
+          
+          // Update version record
+          await db.update('db_version', {
+            'version': 4,
+            'last_updated': DateTime.now().toIso8601String(),
+            'description': 'Added segment_efforts table'
+          }, where: 'id = 1');
+          
+          if (kDebugMode) {
+            print('Migration to version 4 completed successfully');
+          }
+        } catch (e) {
+          if (kDebugMode) {
+            print('Error during migration to version 4: $e');
           }
           // Continue with other migrations even if this one fails
         }

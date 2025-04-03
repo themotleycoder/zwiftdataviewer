@@ -3,10 +3,11 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:zwiftdataviewer/screens/allstats/allstatsrootscreen.dart';
 import 'package:zwiftdataviewer/screens/calendars/allcalendarsrootscreen.dart';
 import 'package:zwiftdataviewer/screens/routesscreen.dart';
+import 'package:zwiftdataviewer/screens/segments/segments_screen.dart';
 import 'package:zwiftdataviewer/screens/settingscreen.dart';
 import 'package:zwiftdataviewer/widgets/activitieslistview.dart';
 
-enum HomeScreenTab { activities, stats, routes, calendar, settings }
+enum HomeScreenTab { activities, stats, routes, calendar, segments, settings }
 
 class HomeTabsNotifier extends StateNotifier<int> {
   HomeTabsNotifier() : super(0);
@@ -30,6 +31,8 @@ class HomeTabsNotifier extends StateNotifier<int> {
       case 3:
         return const AllCalendarsRootScreen();
       case 4:
+        return const SegmentsScreen();
+      case 5:
         return const SettingsScreen();
       case 0:
       default:

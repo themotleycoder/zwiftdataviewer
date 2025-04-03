@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_strava_api/models/segmentEffort.dart';
+import 'package:zwiftdataviewer/screens/segments/segment_detail_screen.dart';
 import 'package:zwiftdataviewer/utils/constants.dart' as constants;
 import 'package:zwiftdataviewer/utils/conversions.dart';
 import 'package:zwiftdataviewer/utils/theme.dart';
@@ -97,6 +98,20 @@ class RouteSectionDetailScreen extends ConsumerWidget {
           padding: const EdgeInsets.fromLTRB(0, 0, 0, 0),
           child: Center(
               child: InkWell(
+            onTap: () {
+              // Navigate to the segment detail screen
+              Navigator.push(
+                context,
+                MaterialPageRoute(
+                  builder: (_) {
+                    return SegmentDetailScreen(
+                      segmentId: effort.segment?.id ?? 0,
+                      segmentName: effort.segment?.name ?? '',
+                    );
+                  },
+                ),
+              );
+            },
             child: Card(
                 color: Colors.white,
                 elevation: defaultCardElevation,
@@ -105,27 +120,10 @@ class RouteSectionDetailScreen extends ConsumerWidget {
                   title: Text(segmentEfforts[index].segment!.name ?? '',
                       style: constants.headerFontStyle),
                   subtitle: createSubTitle(ref, segmentEfforts[index], units),
-                  // trailing: Icon(
-                  //   Icons.arrow_forward_ios,
-                  //   color: Constants.zdvMidBlue[100],
-                  // ),
-                  // onTap: () {
-                  //   Navigator.push(
-                  //     context,
-                  //     MaterialPageRoute(
-                  //       builder: (_) {
-                  //         return DetailScreen(
-                  //           id: _activities[index].id,
-                  //           // onRemove: () {
-                  //           //   Navigator.pop(context);
-                  //           //   onRemove(context, todo);
-                  //           // },
-                  //         );
-                  //       },
-                  //     ),
-                  //   );
-                  // },
-                  // onItemClick(_activities[index], context);
+                  trailing: Icon(
+                    Icons.arrow_forward_ios,
+                    color: zdvMidBlue,
+                  ),
                 )),
           )),
           // margin: EdgeInsets.all(1.0),

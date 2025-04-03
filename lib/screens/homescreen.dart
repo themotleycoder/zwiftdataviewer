@@ -6,6 +6,7 @@ import 'package:zwiftdataviewer/delegates/activitysearchdelegate.dart';
 import 'package:zwiftdataviewer/models/routedata.dart';
 import 'package:zwiftdataviewer/providers/activities_provider.dart';
 import 'package:zwiftdataviewer/providers/routedataprovider.dart';
+import 'package:zwiftdataviewer/providers/segment_count_provider.dart';
 import 'package:zwiftdataviewer/providers/tabs_provider.dart';
 import 'package:zwiftdataviewer/screens/layouts/mainlayout.dart';
 import 'package:zwiftdataviewer/utils/constants.dart';
@@ -99,6 +100,9 @@ class HomeScreen extends MainLayout {
 
     final AsyncValue<Map<int, List<RouteData>>> routeDataState =
         ref.watch(routeDataProvider);
+        
+    final AsyncValue<int> segmentCountState =
+        ref.watch(segmentCountProvider);
 
     return BottomNavigationBar(
       elevation: cardElevation,
@@ -171,6 +175,28 @@ class HomeScreen extends MainLayout {
         const BottomNavigationBarItem(
           icon: Icon(Icons.calendar_today, key: AppKeys.calendarTab),
           label: 'Calendars',
+        ),
+        segmentCountState.when(
+          data: (count) => BottomNavigationBarItem(
+            icon: Badge(
+              backgroundColor: zdvmYellow[100],
+              label: Text(count.toString()),
+              child: const Icon(Icons.landscape, key: AppKeys.segmentsTab),
+            ),
+            label: 'Segments',
+          ),
+          loading: () => const BottomNavigationBarItem(
+            icon: Icon(Icons.landscape, key: AppKeys.segmentsTab),
+            label: 'Segments',
+          ),
+          error: (Object error, StackTrace stackTrace) {
+            // Log error for debugging
+            debugPrint('Error loading segment count: $error');
+            return const BottomNavigationBarItem(
+              icon: Icon(Icons.landscape, key: AppKeys.segmentsTab),
+              label: 'Segments',
+            );
+          },
         ),
         const BottomNavigationBarItem(
           icon: Icon(Icons.settings, key: AppKeys.settingsTab),

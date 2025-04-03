@@ -4,4 +4,6 @@ class AppRoutes {
   static const settings = '/settings';
   static const calendar = '/calendar';
   static const allroutes = '/allroutes';
+  static const segments = '/segments';
+  static const detail = '/detail';
 }

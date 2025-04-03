@@ -9,7 +9,9 @@ import 'package:zwiftdataviewer/routes.dart';
 import 'package:zwiftdataviewer/screens/allstats/allstatsrootscreen.dart';
 import 'package:zwiftdataviewer/screens/calendars/allcalendarsrootscreen.dart';
 import 'package:zwiftdataviewer/screens/homescreen.dart';
+import 'package:zwiftdataviewer/screens/ridedetailscreen.dart';
 import 'package:zwiftdataviewer/screens/routesscreen.dart';
+import 'package:zwiftdataviewer/screens/segments/segments_screen.dart';
 import 'package:zwiftdataviewer/screens/settingscreen.dart';
 import 'package:zwiftdataviewer/utils/database/database_init.dart';
 import 'package:zwiftdataviewer/utils/theme.dart';
@@ -112,6 +114,8 @@ Future<void> main() async {
       AppRoutes.allroutes: (context) => const RoutesScreen(),
       AppRoutes.calendar: (context) => const AllCalendarsRootScreen(),
       AppRoutes.settings: (context) => const SettingsScreen(),
+      AppRoutes.segments: (context) => const SegmentsScreen(),
+      AppRoutes.detail: (context) => const DetailScreen(),
     },
   )));
 }

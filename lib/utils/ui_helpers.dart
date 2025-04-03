@@ -4,6 +4,24 @@ import 'package:zwiftdataviewer/utils/theme.dart';
 // Utility class providing standardized UI elements for consistent appearance
 // across the application.
 class UIHelpers {
+  // Formats a duration in seconds to a human-readable string (MM:SS or HH:MM:SS).
+  //
+  // @param seconds The duration in seconds
+  // @return A formatted string representation of the duration
+  static String formatDuration(int seconds) {
+    final Duration duration = Duration(seconds: seconds);
+    
+    final int hours = duration.inHours;
+    final int minutes = duration.inMinutes.remainder(60);
+    final int remainingSeconds = duration.inSeconds.remainder(60);
+    
+    if (hours > 0) {
+      return '$hours:${minutes.toString().padLeft(2, '0')}:${remainingSeconds.toString().padLeft(2, '0')}';
+    } else {
+      return '${minutes.toString().padLeft(2, '0')}:${remainingSeconds.toString().padLeft(2, '0')}';
+    }
+  }
+  
   // Creates a standardized loading widget with an optional key.
   //
   // @param key Optional key for the widget

@@ -6,6 +6,7 @@ import 'package:flutter_strava_api/models/activity.dart';
 import 'package:flutter_strava_api/models/summary_activity.dart';
 import 'package:sqflite/sqflite.dart';
 import 'package:zwiftdataviewer/utils/database/database_helper.dart';
+import 'package:zwiftdataviewer/utils/database/database_init.dart';
 import 'package:zwiftdataviewer/utils/database/models/activity_model.dart';
 import 'package:zwiftdataviewer/utils/repository/activitesrepository.dart';
 import 'package:zwiftdataviewer/utils/repository/streamsrepository.dart';
@@ -59,6 +60,25 @@ class ActivityService implements ActivitiesRepository, StreamsRepository {
       activityDetailModel.toMap(),
       conflictAlgorithm: ConflictAlgorithm.replace,
     );
+    
+    // Extract and save segment efforts if available
+    if (activity.segmentEfforts != null && activity.segmentEfforts!.isNotEmpty) {
+      try {
+        await DatabaseInit.segmentEffortService.saveSegmentEfforts(
+          activity.id!,
+          activity.segmentEfforts!,
+        );
+        
+        if (kDebugMode) {
+          print('Saved ${activity.segmentEfforts!.length} segment efforts for activity ${activity.id}');
+        }
+      } catch (e) {
+        if (kDebugMode) {
+          print('Error saving segment efforts for activity ${activity.id}: $e');
+        }
+        // Continue even if saving segment efforts fails
+      }
+    }
   }
 
   // Activity Photos
