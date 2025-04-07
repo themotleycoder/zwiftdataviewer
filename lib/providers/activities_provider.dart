@@ -9,7 +9,6 @@ import 'package:flutter_strava_api/globals.dart' as globals;
 import 'package:flutter_strava_api/models/activity.dart';
 import 'package:flutter_strava_api/models/summary_activity.dart';
 import 'package:http/http.dart' as http;
-import 'package:path_provider/path_provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:zwiftdataviewer/utils/database/database_init.dart';
 
@@ -78,15 +77,13 @@ class DateRange {
 
 // Fetches Strava activities from API and stores them in the database
 //
-// This function first checks for activities in the database, then fetches new activities
-// from the Strava API that occurred after the last known activity date.
+// This function fetches activities from the Strava API that occurred after the last known activity date.
 // It filters for VirtualRide activities only and stores them in the database.
 // Implements retry logic for network errors.
 Future<List<SummaryActivity>> fetchStravaActivities() async {
   const String baseUrl = 'https://www.strava.com/api/v3';
   DateTime? lastActivityDate = await getLastActivityDate();
   int afterTimestamp = 1420070400; // Default: Jan 1, 2015
-  List<SummaryActivity> cachedActivities = [];
   final accessToken = globals.token.accessToken;
 
   if (accessToken == null) {
@@ -94,33 +91,18 @@ Future<List<SummaryActivity>> fetchStravaActivities() async {
   }
 
   try {
-    // Load cached activities
-    final cacheFile = await _getCacheFile();
-    if (cacheFile.existsSync()) {
-      final cacheData = await cacheFile.readAsString();
-      cachedActivities = List.from(jsonDecode(cacheData))
-          .map((activity) => SummaryActivity.fromJson(activity))
-          .toList();
-    }
-
     // Set timestamp for API request
     if (lastActivityDate != null) {
       afterTimestamp = lastActivityDate.millisecondsSinceEpoch ~/ 1000;
     }
 
-    // Check connectivity before attempting to fetch new activities
+    // Check connectivity before attempting to fetch activities
     bool hasConnectivity = await _checkConnectivity();
     if (!hasConnectivity) {
-      debugPrint('No internet connectivity detected, using cached data only');
-      if (cachedActivities.isNotEmpty) {
-        debugPrint('Returning ${cachedActivities.length} cached activities due to no connectivity');
-        return cachedActivities;
-      } else {
-        throw Exception('No internet connection and no cached activities available');
-      }
+      throw Exception('No internet connection available. Please check your network settings.');
     }
 
-    // Fetch new activities
+    // Fetch activities
     List<SummaryActivity> fetchedActivities = [];
     int page = 1;
     int perPage = 50;
@@ -166,7 +148,7 @@ Future<List<SummaryActivity>> fetchStravaActivities() async {
           debugPrint('Using partial results (${fetchedActivities.length} activities)');
           hasMorePages = false;
         } else {
-          // If we haven't fetched any activities yet, rethrow to use cached data
+          // If we haven't fetched any activities yet, rethrow
           rethrow;
         }
       }
@@ -193,41 +175,13 @@ Future<List<SummaryActivity>> fetchStravaActivities() async {
       }
     }
 
-    // Combine cached and fetched activities
-    List<SummaryActivity> allActivities = [
-      ...cachedActivities,
-      ...fetchedActivities
-    ];
-
-    // Remove duplicates (in case we're re-fetching some activities)
-    final Map<String, SummaryActivity> uniqueActivities = {};
-    for (var activity in allActivities) {
-      uniqueActivities[activity.id.toString()] = activity;
-    }
-    allActivities = uniqueActivities.values.toList();
-
     // Sort activities by date (newest first)
-    allActivities.sort((a, b) => b.startDate.compareTo(a.startDate));
+    fetchedActivities.sort((a, b) => b.startDate.compareTo(a.startDate));
 
-    // Also save to cache file for backward compatibility
-    if (allActivities.isNotEmpty) {
-      try {
-        await cacheFile.writeAsString(jsonEncode(allActivities));
-      } catch (e) {
-        debugPrint('Error saving cache file: $e');
-        // Continue even if saving cache fails
-      }
-    }
-
-    return allActivities;
+    return fetchedActivities;
   } catch (e) {
     debugPrint('Error in fetchStravaActivities: $e');
-    // If there's an error but we have cached data, return it
-    if (cachedActivities.isNotEmpty) {
-      debugPrint('Returning ${cachedActivities.length} cached activities');
-      return cachedActivities;
-    }
-    rethrow; // Otherwise rethrow the error
+    rethrow;
   }
 }
 
@@ -316,12 +270,6 @@ Future<http.Response> _retryHttpRequest(
       delay *= 2;
     }
   }
-}
-
-// Gets the cache file for storing activities
-Future<File> _getCacheFile() async {
-  final directory = await getApplicationDocumentsDirectory();
-  return File('${directory.path}/strava_activities_cache.json');
 }
 
 // Saves the date of the most recent activity

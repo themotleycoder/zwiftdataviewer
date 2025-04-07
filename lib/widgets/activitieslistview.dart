@@ -13,6 +13,22 @@ import '../providers/activity_select_provider.dart';
 import '../providers/tabs_provider.dart';
 import '../secrets.dart';
 import '../utils/conversions.dart';
+import '../utils/database/database_init.dart';
+
+// Fetches activities from Strava API since a specific date
+Future<List<SummaryActivity>> fetchStravaActivitiesSinceDate(DateTime sinceDate) async {
+  try {
+    // Save the provided date as the last activity date
+    // This will be used by fetchStravaActivities to determine the 'after' timestamp
+    await saveLastActivityDate(sinceDate);
+    
+    // Now call fetchStravaActivities which will use the saved date
+    return await fetchStravaActivities();
+  } catch (e) {
+    debugPrint('Error fetching Strava activities since date: $e');
+    return [];
+  }
+}
 
 // Combined provider that merges Strava API and database activities
 final combinedActivitiesProvider = FutureProvider<List<SummaryActivity>>((ref) async {
@@ -21,12 +37,59 @@ final combinedActivitiesProvider = FutureProvider<List<SummaryActivity>>((ref) a
     databaseActivitiesProvider(DateRange.allTime()).future,
   );
   
-  // If we have database activities, return them immediately
+  // If we have database activities
   if (dbActivities.isNotEmpty) {
-    return dbActivities;
+    try {
+      // Find the most recent activity date
+      final mostRecentActivity = dbActivities.first; // Activities are already sorted newest first
+      final mostRecentDate = mostRecentActivity.startDate;
+      
+      debugPrint('Most recent activity date: $mostRecentDate');
+      
+      // Fetch any new activities from Strava API since that date
+      final newActivities = await fetchStravaActivitiesSinceDate(mostRecentDate);
+      
+      if (newActivities.isNotEmpty) {
+        debugPrint('Fetched ${newActivities.length} new activities from Strava API');
+        
+        // Save new activities to the database
+        // Note: fetchStravaActivities already saves activities to the database,
+        // but we'll make sure they're saved here as well
+        try {
+          final activityService = DatabaseInit.activityService;
+          await activityService.saveActivities(newActivities);
+          debugPrint('Saved ${newActivities.length} new activities to database');
+        } catch (e) {
+          debugPrint('Error saving new activities to database: $e');
+          // Continue even if saving to database fails
+        }
+        
+        // Combine both sets of activities
+        final allActivities = [...newActivities, ...dbActivities];
+        
+        // Remove duplicates (in case we're re-fetching some activities)
+        final Map<String, SummaryActivity> uniqueActivities = {};
+        for (var activity in allActivities) {
+          uniqueActivities[activity.id.toString()] = activity;
+        }
+        
+        // Convert back to list and sort by date (newest first)
+        final result = uniqueActivities.values.toList();
+        result.sort((a, b) => b.startDate.compareTo(a.startDate));
+        
+        return result;
+      }
+      
+      // If no new activities, return database activities
+      return dbActivities;
+    } catch (e) {
+      debugPrint('Error fetching new activities: $e');
+      // If there's an error fetching new activities, return database activities
+      return dbActivities;
+    }
   }
   
-  // Otherwise, try to fetch from Strava API
+  // If no database activities, try to fetch from Strava API
   try {
     return await ref.watch(stravaActivitiesProvider.future);
   } catch (e) {
