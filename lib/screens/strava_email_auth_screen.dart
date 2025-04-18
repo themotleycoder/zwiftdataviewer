@@ -1,12 +1,11 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_strava_api/api/email_auth.dart';
 import 'package:flutter_strava_api/globals.dart' as globals;
 import 'package:flutter_strava_api/models/token.dart';
-import 'package:flutter_strava_api/strava.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:url_launcher/url_launcher.dart';
 import 'package:zwiftdataviewer/secrets.dart';
 import 'package:zwiftdataviewer/utils/theme.dart';
-import 'package:flutter_strava_api/api/email_auth.dart';
 
 /// A screen for handling Strava's email code verification authentication flow
 class StravaEmailAuthScreen extends StatefulWidget {
@@ -217,6 +216,11 @@ class _StravaEmailAuthScreenState extends State<StravaEmailAuthScreen> {
             // Verify button
             ElevatedButton(
               onPressed: _isLoading || _isSuccess ? null : _verifyCode,
+              style: ElevatedButton.styleFrom(
+                backgroundColor: zdvOrange,
+                foregroundColor: Colors.white,
+                padding: const EdgeInsets.symmetric(vertical: 12),
+              ),
               child: _isLoading
                   ? const SizedBox(
                       height: 20,
@@ -236,11 +240,6 @@ class _StravaEmailAuthScreenState extends State<StravaEmailAuthScreen> {
                           ],
                         )
                       : const Text('Verify Code'),
-              style: ElevatedButton.styleFrom(
-                backgroundColor: zdvOrange,
-                foregroundColor: Colors.white,
-                padding: const EdgeInsets.symmetric(vertical: 12),
-              ),
             ),
             
             const SizedBox(height: 16),

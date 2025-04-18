@@ -48,7 +48,9 @@ Future<void> main() async {
         print('- Row counts:');
         final counts = status['row_counts'] as Map<String, int>;
         counts.forEach((table, count) {
-          print('  - $table: $count rows');
+          if (kDebugMode) {
+            print('  - $table: $count rows');
+          }
         });
       }
     }

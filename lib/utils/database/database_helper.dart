@@ -459,7 +459,7 @@ class DatabaseHelper {
     if (await file.exists()) {
       final size = await file.length();
       if (kDebugMode) {
-        print('Database file size: ${size} bytes');
+        print('Database file size: $size bytes');
       }
       return size;
     }

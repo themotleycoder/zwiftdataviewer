@@ -26,14 +26,14 @@ class ShortDataAnalysis extends ConsumerWidget {
         child: ListView(
             // padding: const EdgeInsets.all(8.0),
             children: <Widget>[
-              IconHeaderDataRow([
+              iconHeaderDataRow([
                 IconDataObject(
                     'Time', Conversions.secondsToTime(time), Icons.timer),
                 IconDataObject(
                     'Avg', watts.toStringAsFixed(1), Icons.electric_bolt,
                     units: 'w')
               ]),
-              IconHeaderDataRow([
+              iconHeaderDataRow([
                 IconDataObject(
                     'Avg', cadence.toStringAsFixed(0), Icons.autorenew,
                     units: 'rpm'),
@@ -41,7 +41,7 @@ class ShortDataAnalysis extends ConsumerWidget {
                     Conversions.mpsToMph(speed).toStringAsFixed(1), Icons.speed,
                     units: units['speed'])
               ]),
-              IconHeaderDataRow([
+              iconHeaderDataRow([
                 IconDataObject(
                     'Distance',
                     Conversions.metersToDistance(ref, distance)
@@ -77,20 +77,20 @@ class ShortDataAnalysisForPieLapSummary extends ConsumerWidget {
     return Expanded(
         flex: 1,
         child: ListView(children: <Widget>[
-          IconHeaderDataRow([
+          iconHeaderDataRow([
             IconDataObject(
                 'Time', Conversions.secondsToTime(time), Icons.timer),
             IconDataObject('Avg', watts.toStringAsFixed(1), Icons.filter_hdr,
                 units: 'w')
           ]),
-          IconHeaderDataRow([
+          iconHeaderDataRow([
             IconDataObject('Avg', cadence.toStringAsFixed(0), Icons.autorenew,
                 units: 'rpm'),
             IconDataObject('Avg',
                 Conversions.mpsToMph(speed).toStringAsFixed(1), Icons.speed,
                 units: units['speed'])
           ]),
-          IconHeaderDataRow([
+          iconHeaderDataRow([
             IconDataObject(
                 'Distance',
                 Conversions.metersToDistance(ref, distance).toStringAsFixed(1),

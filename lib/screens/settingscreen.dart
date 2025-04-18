@@ -87,36 +87,36 @@ class SettingsScreen extends ConsumerWidget {
                   icon: const Icon(Icons.refresh),
                   color: zdvmMidBlue[100],
                   onPressed: () => refreshCalendarData())),
-          createCard(
-              'Database Status',
-              TextButton(
-                  child: const Text('Check Status', style: TextStyle(color: zdvOrange)),
-                  onPressed: () => checkDatabaseStatus(context))),
-          createCard(
-              'Reset Database',
-              TextButton(
-                  child: const Text('Reset', style: TextStyle(color: Colors.red)),
-                  onPressed: () => showResetDatabaseDialog(context))),
-          createCard(
-              'Reset Activity Photos',
-              TextButton(
-                  child: const Text('Reset Photos', style: TextStyle(color: Colors.orange)),
-                  onPressed: () => showResetPhotosDialog(context))),
-          createCard(
-              'Strava API Status',
-              TextButton(
-                  child: const Text('Check Status', style: TextStyle(color: zdvOrange)),
-                  onPressed: () => checkStravaApiStatus(context))),
-          createCard(
-              'Strava Email Auth',
-              TextButton(
-                  child: const Text('Use Email Code', style: TextStyle(color: zdvOrange)),
-                  onPressed: () => authenticateWithEmailCode(context))),
-          createCard(
-              'Reset Strava Auth',
-              TextButton(
-                  child: const Text('Reset Auth', style: TextStyle(color: Colors.red)),
-                  onPressed: () => showResetStravaAuthDialog(context))),
+          // createCard(
+          //     'Database Status',
+          //     TextButton(
+          //         child: const Text('Check Status', style: TextStyle(color: zdvOrange)),
+          //         onPressed: () => checkDatabaseStatus(context))),
+          // createCard(
+          //     'Reset Database',
+          //     TextButton(
+          //         child: const Text('Reset', style: TextStyle(color: Colors.red)),
+          //         onPressed: () => showResetDatabaseDialog(context))),
+          // createCard(
+          //     'Reset Activity Photos',
+          //     TextButton(
+          //         child: const Text('Reset Photos', style: TextStyle(color: Colors.orange)),
+          //         onPressed: () => showResetPhotosDialog(context))),
+          // createCard(
+          //     'Strava API Status',
+          //     TextButton(
+          //         child: const Text('Check Status', style: TextStyle(color: zdvOrange)),
+          //         onPressed: () => checkStravaApiStatus(context))),
+          // createCard(
+          //     'Strava Email Auth',
+          //     TextButton(
+          //         child: const Text('Use Email Code', style: TextStyle(color: zdvOrange)),
+          //         onPressed: () => authenticateWithEmailCode(context))),
+          // createCard(
+          //     'Reset Strava Auth',
+          //     TextButton(
+          //         child: const Text('Reset Auth', style: TextStyle(color: Colors.red)),
+          //         onPressed: () => showResetStravaAuthDialog(context))),
         ]));
   }
 

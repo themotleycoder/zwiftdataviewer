@@ -62,7 +62,7 @@ final Map<String, int> climbLookupByName = {
   'Trollstigen': 27,
 };
 
-enum climbType {
+enum ClimbType {
   basiconly,
   eventonly,
 }

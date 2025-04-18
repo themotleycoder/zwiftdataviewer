@@ -343,7 +343,7 @@ class ActivityModel {
       if (kDebugMode) {
         print('Validation error: $e');
       }
-      throw e; // Re-throw the error after logging
+      rethrow; // Re-throw the error after logging
     }
   }
 
@@ -585,9 +585,6 @@ class ActivityPhotoModel {
       
       // Ensure photo.toJson() returns a valid Map
       final photoJson = photo.toJson();
-      if (photoJson == null) {
-        throw ArgumentError('Photo JSON cannot be null');
-      }
       
       // Extract uniqueId if available
       String? uniqueId;
@@ -614,7 +611,7 @@ class ActivityPhotoModel {
         print('Activity ID: $activityId, Photo: ${photo.toString()}');
       }
       // Rethrow the error to be handled by the caller
-      throw e;
+      rethrow;
     }
   }
 

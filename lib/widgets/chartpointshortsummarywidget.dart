@@ -75,7 +75,7 @@ Container getChartPointShortSummaryWidget(
                   ])),
             ],
           ),
-          IconHeaderDataRow([
+          iconHeaderDataRow([
             IconDataObject(
                 'Distance',
                 Conversions.metersToDistance(ref, selectedActivity.distance)
@@ -90,7 +90,7 @@ Container getChartPointShortSummaryWidget(
                 Icons.filter_hdr,
                 units: units['height']),
           ]),
-          IconHeaderDataRow([
+          iconHeaderDataRow([
             IconDataObject(
                 'Time',
                 Conversions.secondsToTime(selectedActivity.elapsedTime),

@@ -13,7 +13,7 @@ class SegmentsScreen extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final uniqueSegmentsAsync = ref.watch(uniqueSegmentsProvider);
-    final Map<String, String> units = Conversions.units(ref);
+    Conversions.units(ref);
 
     return Scaffold(
       appBar: UIHelpers.buildAppBar('Segments'),

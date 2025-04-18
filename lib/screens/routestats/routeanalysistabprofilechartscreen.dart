@@ -236,7 +236,7 @@ class ProfileDataView extends ConsumerWidget {
             child: ListView(
                 // padding: const EdgeInsets.all(8.0),
                 children: <Widget>[
-                  IconHeaderDataRow([
+                  iconHeaderDataRow([
                     IconDataObject(
                         'Distance',
                         Conversions.metersToDistance(
@@ -251,7 +251,7 @@ class ProfileDataView extends ConsumerWidget {
                         Icons.filter_hdr,
                         units: units['height'])
                   ]),
-                  IconHeaderDataRow([
+                  iconHeaderDataRow([
                     IconDataObject('Heartrate',
                         (selectedSeries.heartrate).toString(), Icons.favorite,
                         units: 'bpm'),
@@ -259,7 +259,7 @@ class ProfileDataView extends ConsumerWidget {
                         Icons.electric_bolt,
                         units: 'w')
                   ]),
-                  IconHeaderDataRow([
+                  iconHeaderDataRow([
                     IconDataObject('Cadence',
                         (selectedSeries.cadence).toString(), Icons.autorenew,
                         units: 'rpm'),

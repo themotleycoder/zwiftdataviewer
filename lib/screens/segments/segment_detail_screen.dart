@@ -29,7 +29,7 @@ class SegmentDetailScreen extends ConsumerWidget {
     
     final segmentEffortsAsync = ref.watch(segmentEffortsProvider);
     final statisticsAsync = ref.watch(segmentEffortsStatisticsProvider(segmentId));
-    final Map<String, String> units = Conversions.units(ref);
+    Conversions.units(ref);
 
     return Scaffold(
       appBar: UIHelpers.buildAppBar(

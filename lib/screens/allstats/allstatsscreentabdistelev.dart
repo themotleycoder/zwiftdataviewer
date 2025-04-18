@@ -70,50 +70,50 @@ class AllStatsScreenTabDistElev extends AllStatsTabLayout {
       child: ListView(
         shrinkWrap: true,
         children: <Widget>[
-          IconHeaderDataRow([
+          iconHeaderDataRow([
             IconDataObject(
                 'Total',
                 Conversions.metersToDistance(
-                        ref, summaryData[stats.StatsType.TotalDistance]!)
+                        ref, summaryData[stats.StatsType.totalDistance]!)
                     .toStringAsFixed(1),
                 Icons.route,
                 units: units['distance']),
             IconDataObject(
                 'Total',
                 Conversions.metersToHeight(
-                        ref, summaryData[stats.StatsType.TotalElevation]!)
+                        ref, summaryData[stats.StatsType.totalElevation]!)
                     .toStringAsFixed(1),
                 Icons.filter_hdr,
                 units: units['height']),
           ]),
-          IconHeaderDataRow([
+          iconHeaderDataRow([
             IconDataObject(
                 'Average',
                 Conversions.metersToDistance(
-                        ref, summaryData[stats.StatsType.AvgDistance]!)
+                        ref, summaryData[stats.StatsType.avgDistance]!)
                     .toStringAsFixed(1),
                 Icons.route,
                 units: units['distance']),
             IconDataObject(
                 'Average',
                 Conversions.metersToHeight(
-                        ref, summaryData[stats.StatsType.AvgElevation]!)
+                        ref, summaryData[stats.StatsType.avgElevation]!)
                     .toStringAsFixed(1),
                 Icons.filter_hdr,
                 units: units['height']),
           ]),
-          IconHeaderDataRow([
+          iconHeaderDataRow([
             IconDataObject(
                 'Longest',
                 Conversions.metersToDistance(
-                        ref, summaryData[stats.StatsType.LongestDistance]!)
+                        ref, summaryData[stats.StatsType.longestDistance]!)
                     .toStringAsFixed(1),
                 Icons.route,
                 units: units['distance']),
             IconDataObject(
                 'Highest',
                 Conversions.metersToHeight(
-                        ref, summaryData[stats.StatsType.HighestElevation]!)
+                        ref, summaryData[stats.StatsType.highestElevation]!)
                     .toStringAsFixed(1),
                 Icons.filter_hdr,
                 units: units['height'])

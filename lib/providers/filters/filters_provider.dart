@@ -1,7 +1,8 @@
+import 'package:flutter/foundation.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_strava_api/models/summary_activity.dart';
-import 'package:zwiftdataviewer/providers/activities_provider.dart';
 import 'package:zwiftdataviewer/utils/worldsconfig.dart';
+import 'package:zwiftdataviewer/widgets/activitieslistview.dart';
 
 enum DateFilter { all, month, week, year }
 
@@ -22,18 +23,20 @@ final dateFiltersProvider =
 final dateActivityFiltersProvider = Provider<List<SummaryActivity>>((ref) {
   DateTime startDate;
 
+  // Use combinedActivitiesProvider instead of stravaActivitiesProvider
   final AsyncValue<List<SummaryActivity>> activitiesList =
-      ref.watch(stravaActivitiesProvider);
-  var activities = [];
+      ref.watch(combinedActivitiesProvider);
+  var activities = <SummaryActivity>[];
   activitiesList.when(
     data: (a) {
       activities = a;
     },
     loading: () {},
-    error: (error, stackTrace) {},
+    error: (error, stackTrace) {
+      debugPrint('Error in dateActivityFiltersProvider: $error');
+    },
   );
 
-  // var activities = ref.read(stravaActivitiesProvider);
   var dateFilters = ref.watch(dateFiltersProvider);
   return activities
       .where((activity) {

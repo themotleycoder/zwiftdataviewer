@@ -51,7 +51,7 @@ Widget singleDataHeaderLineItem(String dataPoint) {
   // ));
 }
 
-Widget ColumnStackedDataHeaderLineItem(
+Widget columnStackedDataHeaderLineItem(
     List<String> labels, List<String> dataPoints) {
   return Container(
       // height: 80,

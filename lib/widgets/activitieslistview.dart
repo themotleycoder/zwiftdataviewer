@@ -1,8 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:flutter_strava_api/globals.dart' as globals;
 import 'package:flutter_strava_api/models/summary_activity.dart';
-import 'package:flutter_strava_api/strava.dart';
 import 'package:intl/intl.dart';
 import 'package:zwiftdataviewer/screens/ridedetailscreen.dart';
 import 'package:zwiftdataviewer/utils/constants.dart' as constants;
@@ -12,7 +10,6 @@ import 'package:zwiftdataviewer/utils/theme.dart';
 import '../providers/activities_provider.dart';
 import '../providers/activity_select_provider.dart';
 import '../providers/tabs_provider.dart';
-import '../secrets.dart';
 import '../utils/conversions.dart';
 import '../utils/database/database_init.dart';
 

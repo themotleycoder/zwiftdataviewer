@@ -120,7 +120,7 @@ class RouteSectionDetailScreen extends ConsumerWidget {
                   title: Text(segmentEfforts[index].segment!.name ?? '',
                       style: constants.headerFontStyle),
                   subtitle: createSubTitle(ref, segmentEfforts[index], units),
-                  trailing: Icon(
+                  trailing: const Icon(
                     Icons.arrow_forward_ios,
                     color: zdvMidBlue,
                   ),

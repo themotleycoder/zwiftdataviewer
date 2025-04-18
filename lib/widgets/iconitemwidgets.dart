@@ -13,17 +13,17 @@ class IconDataObject {
   IconDataObject(this.title, this.data, this.icon, {this.units});
 }
 
-Widget IconHeaderDataRow(List<IconDataObject> dataObjects) {
+Widget iconHeaderDataRow(List<IconDataObject> dataObjects) {
   return Row(
       mainAxisAlignment: MainAxisAlignment.spaceEvenly,
       children: List.generate(dataObjects.length, (index) {
-        return IconHeaderData(dataObjects[index].title, dataObjects[index].data,
+        return iconHeaderData(dataObjects[index].title, dataObjects[index].data,
             dataObjects[index].icon,
             units: dataObjects[index].units);
       })); //);
 }
 
-Widget IconHeaderData(String title, String data, IconData icon,
+Widget iconHeaderData(String title, String data, IconData icon,
     {String? units}) {
   return layoutTile(Row(
     mainAxisAlignment: MainAxisAlignment.start,

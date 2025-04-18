@@ -4,8 +4,6 @@ import 'package:flutter_strava_api/models/summary_activity.dart';
 import 'package:zwiftdataviewer/appkeys.dart';
 import 'package:zwiftdataviewer/delegates/activitysearchdelegate.dart';
 import 'package:zwiftdataviewer/models/routedata.dart';
-import 'package:zwiftdataviewer/providers/activities_provider.dart';
-import 'package:zwiftdataviewer/widgets/activitieslistview.dart';
 import 'package:zwiftdataviewer/providers/routedataprovider.dart';
 import 'package:zwiftdataviewer/providers/segment_count_provider.dart';
 import 'package:zwiftdataviewer/providers/tabs_provider.dart';
@@ -13,6 +11,7 @@ import 'package:zwiftdataviewer/screens/layouts/mainlayout.dart';
 import 'package:zwiftdataviewer/utils/constants.dart';
 import 'package:zwiftdataviewer/utils/theme.dart';
 import 'package:zwiftdataviewer/utils/ui_helpers.dart';
+import 'package:zwiftdataviewer/widgets/activitieslistview.dart';
 import 'package:zwiftdataviewer/widgets/filterdatebutton.dart';
 import 'package:zwiftdataviewer/widgets/filterroutebutton.dart';
 

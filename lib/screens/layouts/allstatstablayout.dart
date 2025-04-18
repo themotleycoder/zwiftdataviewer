@@ -10,12 +10,27 @@ abstract class AllStatsTabLayout extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
+    // Use watch instead of read to ensure the widget rebuilds when data changes
     final List<SummaryActivity> filteredActivities =
-        ref.read(dateActivityFiltersProvider);
+        ref.watch(dateActivityFiltersProvider);
     final Map<String, String> units = Conversions.units(ref);
 
     // Call didChangeDependencies to allow subclasses to perform initialization
     didChangeDependencies(context, ref, filteredActivities);
+
+    // Show a loading indicator if the list is empty
+    if (filteredActivities.isEmpty) {
+      return const Center(
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            CircularProgressIndicator(),
+            SizedBox(height: 16),
+            Text('Loading activity data...'),
+          ],
+        ),
+      );
+    }
 
     return Column(
         mainAxisSize: MainAxisSize.max,

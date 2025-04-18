@@ -56,7 +56,7 @@ class SegmentEffortService {
           [segmentId]
         );
         final count = Sqflite.firstIntValue(segmentCheck) ?? 0;
-        print('Database query confirms ${count} segment efforts for segment ID: $segmentId');
+        print('Database query confirms $count segment efforts for segment ID: $segmentId');
         
         // Check total segment efforts in the database
         final totalCheck = await db.rawQuery('SELECT COUNT(*) as count FROM segment_efforts');
@@ -211,7 +211,9 @@ class SegmentEffortService {
             }
             
             if (kDebugMode && i < 3) {  // Log details for first few efforts
-              print('Saved segment effort ${effort.id} (segment ${effort.segment!.id}) for activity $activityId with DB ID $id');
+              if (kDebugMode) {
+                print('Saved segment effort ${effort.id} (segment ${effort.segment!.id}) for activity $activityId with DB ID $id');
+              }
             }
           } catch (e) {
             errorCount++;

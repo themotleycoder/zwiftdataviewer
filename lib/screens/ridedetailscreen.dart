@@ -28,7 +28,7 @@ class DetailScreen extends MainLayout {
     final selectedActivity = ref.watch(selectedActivityProvider);
     
     return UIHelpers.buildAppBar(
-      '${selectedActivity.name}',
+      selectedActivity.name,
       leading: IconButton(
         icon: const Icon(Icons.arrow_back, color: Colors.black),
         onPressed: () => Navigator.pop(context),

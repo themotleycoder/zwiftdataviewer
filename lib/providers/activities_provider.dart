@@ -92,7 +92,7 @@ Future<List<SummaryActivity>> fetchStravaActivities() async {
 
   try {
     // Check if token is valid
-    if (accessToken == null || accessToken.isEmpty) {
+    if (accessToken.isEmpty) {
       throw Exception('No valid Strava access token available. Please authenticate with Strava.');
     }
     
@@ -237,7 +237,7 @@ Future<http.Response> _retryHttpRequest(
       // Check connectivity before making the request
       bool hasConnectivity = await _checkConnectivity();
       if (!hasConnectivity) {
-        throw SocketException(
+        throw const SocketException(
           'No internet connection available. Please check your network settings.',
         );
       }

@@ -38,12 +38,10 @@ final stravaActivityDetailsProvider =
 class StravaActivityDetailsNotifier extends StateNotifier<DetailedActivity> {
   final String _baseUrl = 'https://www.strava.com/api/v3';
   final String _accessToken;
-  int _currentActivityId = 0;
 
   StravaActivityDetailsNotifier(this._accessToken, int activityId)
       : super(DetailedActivity()) {
     if (activityId > 0) {
-      _currentActivityId = activityId;
       loadActivityDetails(activityId);
     }
   }
@@ -206,7 +204,7 @@ class StravaActivityDetailsNotifier extends StateNotifier<DetailedActivity> {
         if (kDebugMode) {
           print('Error fetching from API: $apiError');
         }
-        throw apiError; // Rethrow to be caught by the outer try-catch
+        rethrow; // Rethrow to be caught by the outer try-catch
       }
     } catch (e) {
       // If we already have some data, keep it

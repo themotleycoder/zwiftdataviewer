@@ -177,7 +177,7 @@ class RenderRouteDetails extends ConsumerWidget {
         child: ListView(
           children: <Widget>[
             // Distance and Elevation
-            IconHeaderDataRow([
+            iconHeaderDataRow([
               IconDataObject(
                 'Distance',
                 Conversions.metersToDistance(ref, activityDetails.distance ?? 0)
@@ -196,7 +196,7 @@ class RenderRouteDetails extends ConsumerWidget {
             ]),
 
             // Time and Calories
-            IconHeaderDataRow([
+            iconHeaderDataRow([
               IconDataObject(
                 'Time',
                 Conversions.secondsToTime(activityDetails.elapsedTime ?? 0),
@@ -210,7 +210,7 @@ class RenderRouteDetails extends ConsumerWidget {
             ]),
 
             // Heart Rate
-            IconHeaderDataRow([
+            iconHeaderDataRow([
               IconDataObject(
                 'Avg HR',
                 (activityDetails.averageHeartrate ?? 0).toString(),
@@ -226,7 +226,7 @@ class RenderRouteDetails extends ConsumerWidget {
             ]),
 
             // Power
-            IconHeaderDataRow([
+            iconHeaderDataRow([
               IconDataObject(
                 'Avg Power',
                 (activityDetails.averageWatts ?? 0).toStringAsFixed(0),
@@ -242,7 +242,7 @@ class RenderRouteDetails extends ConsumerWidget {
             ]),
 
             // Speed
-            IconHeaderDataRow([
+            iconHeaderDataRow([
               IconDataObject(
                 'Avg Speed',
                 Conversions.mpsToMph(activityDetails.averageSpeed ?? 0.0)
