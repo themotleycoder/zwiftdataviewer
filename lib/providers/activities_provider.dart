@@ -91,6 +91,11 @@ Future<List<SummaryActivity>> fetchStravaActivities() async {
   }
 
   try {
+    // Check if token is valid
+    if (accessToken == null || accessToken.isEmpty) {
+      throw Exception('No valid Strava access token available. Please authenticate with Strava.');
+    }
+    
     // Set timestamp for API request
     if (lastActivityDate != null) {
       afterTimestamp = lastActivityDate.millisecondsSinceEpoch ~/ 1000;
@@ -237,7 +242,23 @@ Future<http.Response> _retryHttpRequest(
         );
       }
       
-      return await requestFn();
+      final response = await requestFn();
+      
+      // Handle HTTP status codes
+      if (response.statusCode == 401) {
+        // Unauthorized - token expired or invalid
+        throw Exception('Strava authentication expired. Please re-authenticate.');
+      } else if (response.statusCode == 403) {
+        // Forbidden - likely API access revoked or rate limited
+        debugPrint('Strava API returned 403 Forbidden: ${response.body}');
+        if (response.body.contains('Request blocked')) {
+          throw Exception('Strava API request blocked. This may be due to API rate limiting or changes in Strava\'s API policies.');
+        } else {
+          throw Exception('Strava API access denied (403 Forbidden). Your API access may have been revoked or rate limited.');
+        }
+      }
+      
+      return response;
     } catch (e) {
       retryCount++;
       if (retryCount >= maxRetries) {
@@ -259,6 +280,8 @@ Future<http.Response> _retryHttpRequest(
         errorMessage = 'Request timed out. Server may be slow or unreachable.';
       } else if (e is http.ClientException) {
         errorMessage = 'HTTP client error: ${e.message}';
+      } else if (e.toString().contains('403')) {
+        errorMessage = 'Strava API access denied. Your API credentials may need to be updated.';
       }
       
       // Log the error and retry after delay

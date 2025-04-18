@@ -8,6 +8,7 @@ import 'package:zwiftdataviewer/utils/constants.dart' as constants;
 import 'package:zwiftdataviewer/utils/constants.dart';
 import 'package:zwiftdataviewer/utils/database/database_init.dart';
 import 'package:zwiftdataviewer/utils/repository/filerepository.dart';
+import 'package:zwiftdataviewer/utils/strava_api_helper.dart';
 import 'package:zwiftdataviewer/utils/theme.dart';
 
 class SettingsScreen extends ConsumerWidget {
@@ -101,6 +102,21 @@ class SettingsScreen extends ConsumerWidget {
               TextButton(
                   child: const Text('Reset Photos', style: TextStyle(color: Colors.orange)),
                   onPressed: () => showResetPhotosDialog(context))),
+          createCard(
+              'Strava API Status',
+              TextButton(
+                  child: const Text('Check Status', style: TextStyle(color: zdvOrange)),
+                  onPressed: () => checkStravaApiStatus(context))),
+          createCard(
+              'Strava Email Auth',
+              TextButton(
+                  child: const Text('Use Email Code', style: TextStyle(color: zdvOrange)),
+                  onPressed: () => authenticateWithEmailCode(context))),
+          createCard(
+              'Reset Strava Auth',
+              TextButton(
+                  child: const Text('Reset Auth', style: TextStyle(color: Colors.red)),
+                  onPressed: () => showResetStravaAuthDialog(context))),
         ]));
   }
 
@@ -267,6 +283,226 @@ class SettingsScreen extends ConsumerWidget {
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
           content: Text('Error resetting activity photos: $e'),
+          backgroundColor: Colors.red,
+        ),
+      );
+    }
+  }
+  
+  Future<void> checkStravaApiStatus(BuildContext context) async {
+    try {
+      // Show loading indicator
+      showDialog(
+        context: context,
+        barrierDismissible: false,
+        builder: (context) => const Center(
+          child: CircularProgressIndicator(),
+        ),
+      );
+      
+      // Get API status
+      final status = await StravaApiHelper.checkApiStatus();
+      
+      // Close loading indicator
+      Navigator.of(context).pop();
+      
+      // Get troubleshooting steps
+      final steps = StravaApiHelper.getTroubleshootingSteps(status);
+      
+      // Show status dialog
+      // ignore: use_build_context_synchronously
+      showDialog(
+        context: context,
+        builder: (context) => AlertDialog(
+          title: const Text('Strava API Status'),
+          content: SingleChildScrollView(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                const Text('API Status:', style: TextStyle(fontWeight: FontWeight.bold)),
+                const SizedBox(height: 8),
+                Text('Has token: ${status['has_token']}'),
+                Text('Token expired: ${status['token_expired']}'),
+                Text('Has refresh token: ${status['has_refresh_token']}'),
+                if (status['token_expiry'] != null)
+                  Text('Token expires: ${status['token_expiry']}'),
+                Text('Client ID set: ${status['client_id_set']}'),
+                Text('Client secret set: ${status['client_secret_set']}'),
+                Text('Internet connectivity: ${status['connectivity']}'),
+                Text('Can reach Strava: ${status['can_reach_strava']}'),
+                
+                const SizedBox(height: 16),
+                const Text('Troubleshooting Steps:', style: TextStyle(fontWeight: FontWeight.bold)),
+                const SizedBox(height: 8),
+                ...steps.map((step) => Padding(
+                  padding: const EdgeInsets.only(bottom: 8),
+                  child: Text('• $step'),
+                )),
+                
+                if (status['has_token'] && status['token_expired'] && status['has_refresh_token'])
+                  Padding(
+                    padding: const EdgeInsets.only(top: 16),
+                    child: ElevatedButton(
+                      onPressed: () async {
+                        Navigator.of(context).pop();
+                        await refreshStravaToken(context);
+                      },
+                      child: const Text('Refresh Token'),
+                    ),
+                  ),
+              ],
+            ),
+          ),
+          actions: [
+            TextButton(
+              onPressed: () => Navigator.of(context).pop(),
+              child: const Text('Close'),
+            ),
+          ],
+        ),
+      );
+    } catch (e) {
+      // Close loading indicator if it's showing
+      if (Navigator.of(context).canPop()) {
+        Navigator.of(context).pop();
+      }
+      
+      if (kDebugMode) {
+        print('Error checking Strava API status: $e');
+      }
+      
+      // ignore: use_build_context_synchronously
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text('Error checking Strava API status: $e'),
+          backgroundColor: Colors.red,
+        ),
+      );
+    }
+  }
+  
+  Future<void> refreshStravaToken(BuildContext context) async {
+    try {
+      // Show loading indicator
+      showDialog(
+        context: context,
+        barrierDismissible: false,
+        builder: (context) => const Center(
+          child: CircularProgressIndicator(),
+        ),
+      );
+      
+      // Attempt to refresh the token
+      final success = await StravaApiHelper.refreshToken();
+      
+      // Close loading indicator
+      Navigator.of(context).pop();
+      
+      // Show result
+      // ignore: use_build_context_synchronously
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text(success 
+            ? 'Strava token refreshed successfully' 
+            : 'Failed to refresh Strava token'),
+          backgroundColor: success ? Colors.green : Colors.red,
+        ),
+      );
+    } catch (e) {
+      // Close loading indicator if it's showing
+      if (Navigator.of(context).canPop()) {
+        Navigator.of(context).pop();
+      }
+      
+      if (kDebugMode) {
+        print('Error refreshing Strava token: $e');
+      }
+      
+      // ignore: use_build_context_synchronously
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text('Error refreshing Strava token: $e'),
+          backgroundColor: Colors.red,
+        ),
+      );
+    }
+  }
+  
+  Future<void> showResetStravaAuthDialog(BuildContext context) async {
+    showDialog(
+      context: context,
+      builder: (context) => AlertDialog(
+        title: const Text('Reset Strava Authentication'),
+        content: const Text(
+          'This will clear all Strava authentication tokens. '
+          'You will need to re-authenticate with Strava the next time you use the app. '
+          'This action cannot be undone. Are you sure you want to continue?'
+        ),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.of(context).pop(),
+            child: const Text('Cancel'),
+          ),
+          TextButton(
+            onPressed: () async {
+              Navigator.of(context).pop();
+              await resetStravaAuth(context);
+            },
+            child: const Text('Reset Auth', style: TextStyle(color: Colors.red)),
+          ),
+        ],
+      ),
+    );
+  }
+  
+  Future<void> resetStravaAuth(BuildContext context) async {
+    try {
+      await StravaApiHelper.clearTokens();
+      
+      // ignore: use_build_context_synchronously
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(
+          content: Text('Strava authentication reset successfully'),
+          backgroundColor: Colors.green,
+        ),
+      );
+    } catch (e) {
+      if (kDebugMode) {
+        print('Error resetting Strava authentication: $e');
+      }
+      
+      // ignore: use_build_context_synchronously
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text('Error resetting Strava authentication: $e'),
+          backgroundColor: Colors.red,
+        ),
+      );
+    }
+  }
+  
+  Future<void> authenticateWithEmailCode(BuildContext context) async {
+    try {
+      final success = await StravaApiHelper.authenticateWithEmailCode(context);
+      
+      // Show result
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text(success 
+            ? 'Successfully authenticated with Strava' 
+            : 'Failed to authenticate with Strava'),
+          backgroundColor: success ? Colors.green : Colors.red,
+        ),
+      );
+    } catch (e) {
+      if (kDebugMode) {
+        print('Error in email authentication: $e');
+      }
+      
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text('Error in email authentication: $e'),
           backgroundColor: Colors.red,
         ),
       );

@@ -66,19 +66,51 @@ Future<void> main() async {
     const prompt = 'auto';
 
     try {
-      isAuthOk = await strava.oauth(
-          clientId,
-          'activity:write,activity:read_all,profile:read_all',
-          clientSecret,
-          prompt);
+      // Check if we have a stored token first
+      Token storedToken = await strava.getStoredToken();
+      
+      // If token exists but is expired, try to refresh it
+      if (storedToken.refreshToken != null) {
+        if (kDebugMode) {
+          print('Attempting to use stored token or refresh if needed');
+        }
+        
+        // The oauth method will automatically refresh if needed
+        isAuthOk = await strava.oauth(
+            clientId,
+            'activity:write,activity:read_all,profile:read_all',
+            clientSecret,
+            prompt);
+            
+        if (isAuthOk) {
+          storedToken = await strava.getStoredToken();
+          if (kDebugMode) {
+            print('Successfully authenticated with Strava');
+          }
+          return storedToken;
+        }
+      } else {
+        // No refresh token, need to do full auth
+        if (kDebugMode) {
+          print('No refresh token available, need full authentication');
+        }
+        
+        isAuthOk = await strava.oauth(
+            clientId,
+            'activity:write,activity:read_all,profile:read_all',
+            clientSecret,
+            prompt);
 
-      if (isAuthOk) {
-        Token storedToken = await strava.getStoredToken();
-        return storedToken;
+        if (isAuthOk) {
+          storedToken = await strava.getStoredToken();
+          return storedToken;
+        }
       }
     } catch (e) {
       if (kDebugMode) {
         print('OAuth error: $e');
+        print('If you\'re seeing 403 Forbidden errors, your Strava API credentials may need to be updated.');
+        print('Visit https://www.strava.com/settings/api to check your API application status.');
       }
       // Continue with null token, the UI will handle this case
     }
@@ -88,12 +120,21 @@ Future<void> main() async {
 
   try {
     final token = await getClient();
-    if (token == null && kDebugMode) {
-      print('No valid token obtained. Authentication will be required.');
+    if (token == null) {
+      if (kDebugMode) {
+        print('No valid token obtained. Authentication will be required.');
+        print('Please check your Strava API credentials in secrets.dart');
+      }
+    } else {
+      if (kDebugMode) {
+        print('Successfully authenticated with Strava');
+        print('Token expires at: ${DateTime.fromMillisecondsSinceEpoch(token.expiresAt! * 1000)}');
+      }
     }
   } catch (e) {
     if (kDebugMode) {
       print('Failed to authenticate with Strava: $e');
+      print('Check your internet connection and Strava API credentials');
     }
     // The app will continue and handle authentication in the UI
   }
@@ -111,7 +152,7 @@ Future<void> main() async {
     routes: {
       AppRoutes.home: (context) => const HomeScreen(),
       AppRoutes.allStats: (context) => const AllStatsRootScreen(),
-      AppRoutes.allroutes: (context) => const RoutesScreen(),
+      AppRoutes.allRoutes: (context) => const RoutesScreen(),
       AppRoutes.calendar: (context) => const AllCalendarsRootScreen(),
       AppRoutes.settings: (context) => const SettingsScreen(),
       AppRoutes.segments: (context) => const SegmentsScreen(),

@@ -5,6 +5,7 @@ import 'package:zwiftdataviewer/appkeys.dart';
 import 'package:zwiftdataviewer/delegates/activitysearchdelegate.dart';
 import 'package:zwiftdataviewer/models/routedata.dart';
 import 'package:zwiftdataviewer/providers/activities_provider.dart';
+import 'package:zwiftdataviewer/widgets/activitieslistview.dart';
 import 'package:zwiftdataviewer/providers/routedataprovider.dart';
 import 'package:zwiftdataviewer/providers/segment_count_provider.dart';
 import 'package:zwiftdataviewer/providers/tabs_provider.dart';
@@ -66,7 +67,7 @@ class HomeScreen extends MainLayout {
   @override
   buildAppBar(BuildContext context, WidgetRef ref) {
     final AsyncValue<List<SummaryActivity>> activityList =
-        ref.watch(stravaActivitiesProvider);
+        ref.watch(combinedActivitiesProvider);
 
     return activityList.when(
       data: (activityData) => UIHelpers.buildAppBar(
@@ -96,7 +97,7 @@ class HomeScreen extends MainLayout {
   @override
   buildBottomNavigationBar(BuildContext context, WidgetRef ref) {
     final AsyncValue<List<SummaryActivity>> activityList =
-        ref.watch(stravaActivitiesProvider);
+        ref.watch(combinedActivitiesProvider);
 
     final AsyncValue<Map<int, List<RouteData>>> routeDataState =
         ref.watch(routeDataProvider);

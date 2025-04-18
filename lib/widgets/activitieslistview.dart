@@ -6,6 +6,7 @@ import 'package:flutter_strava_api/strava.dart';
 import 'package:intl/intl.dart';
 import 'package:zwiftdataviewer/screens/ridedetailscreen.dart';
 import 'package:zwiftdataviewer/utils/constants.dart' as constants;
+import 'package:zwiftdataviewer/utils/strava_api_helper.dart';
 import 'package:zwiftdataviewer/utils/theme.dart';
 
 import '../providers/activities_provider.dart';
@@ -100,20 +101,44 @@ final combinedActivitiesProvider = FutureProvider<List<SummaryActivity>>((ref) a
 
 class ActivitiesListView extends ConsumerWidget {
   const ActivitiesListView({super.key});
+  
+  // Returns an appropriate error title based on the error message
+  String _getErrorTitle(String errorMessage) {
+    if (errorMessage.contains('No access token available')) {
+      return 'Authentication Required';
+    } else if (errorMessage.contains('403')) {
+      return 'Strava API Access Denied';
+    } else if (errorMessage.contains('Request blocked')) {
+      return 'Strava API Request Blocked';
+    } else if (errorMessage.contains('ClientException')) {
+      return 'Network Connection Issue';
+    } else {
+      return 'Error Loading Activities';
+    }
+  }
+  
+  // Returns a detailed error message based on the error type
+  String _getErrorMessage(String errorMessage) {
+    if (errorMessage.contains('No access token available')) {
+      return 'Please authenticate with Strava to view your activities.';
+    } else if (errorMessage.contains('403')) {
+      return 'Your Strava API access may have been revoked or expired. Please check your API credentials in Settings > Strava API Status.';
+    } else if (errorMessage.contains('Request blocked')) {
+      return 'Strava is blocking API requests. This may be due to rate limiting or changes in Strava\'s API policies. Try again later or check Settings > Strava API Status.';
+    } else if (errorMessage.contains('ClientException')) {
+      return 'Network connection issue. Please check your internet connection.';
+    } else if (errorMessage.contains('token expired')) {
+      return 'Your Strava authentication has expired. Please reconnect to Strava.';
+    } else {
+      return 'An error occurred while loading activities. Check Settings > Strava API Status for troubleshooting.';
+    }
+  }
 
-  // Attempts to re-authenticate with Strava
+  // Attempts to re-authenticate with Strava using the email code method
   Future<void> _reAuthenticate(BuildContext context) async {
     try {
-      // Create a new Strava instance
-      final Strava strava = Strava(globals.isInDebug, clientSecret);
-      const prompt = 'force'; // Force re-authentication
-      
-      // Attempt to authenticate
-      final bool isAuthOk = await strava.oauth(
-          clientId,
-          'activity:write,activity:read_all,profile:read_all,profile:write',
-          clientSecret,
-          prompt);
+      // Use the new email authentication method
+      final bool isAuthOk = await StravaApiHelper.authenticateWithEmailCode(context);
       
       if (isAuthOk) {
         // Authentication successful
@@ -225,48 +250,70 @@ class ActivitiesListView extends ConsumerWidget {
               ),
               const SizedBox(height: 16),
               Text(
-                error.toString().contains('No access token available')
-                    ? 'Authentication Required'
-                    : 'Error loading activities',
+                _getErrorTitle(error.toString()),
                 style: constants.headerFontStyle,
                 textAlign: TextAlign.center,
               ),
               const SizedBox(height: 8),
               Text(
-                error.toString().contains('No access token available')
-                    ? 'Please authenticate with Strava to view your activities.'
-                    : error.toString().contains('ClientException')
-                        ? 'Network connection issue. Please check your internet connection.'
-                        : 'An error occurred while loading activities.',
+                _getErrorMessage(error.toString()),
                 textAlign: TextAlign.center,
                 style: const TextStyle(color: Colors.grey),
               ),
               const SizedBox(height: 16),
-              ElevatedButton.icon(
-                onPressed: () async {
-                  if (error.toString().contains('No access token available')) {
-                    // Attempt to re-authenticate with Strava
-                    await _reAuthenticate(context);
-                  }
-                  // Refresh both providers
-                  ref.refresh(stravaActivitiesProvider);
-                  ref.refresh(databaseActivitiesProvider(DateRange.allTime()));
-                  ref.refresh(combinedActivitiesProvider);
-                },
-                icon: Icon(
-                  error.toString().contains('No access token available')
-                      ? Icons.login
-                      : Icons.refresh,
-                ),
-                label: Text(
-                  error.toString().contains('No access token available')
-                      ? 'Connect to Strava'
-                      : 'Retry',
-                ),
-                style: ElevatedButton.styleFrom(
-                  backgroundColor: zdvMidBlue,
-                  foregroundColor: Colors.white,
-                ),
+              Row(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  ElevatedButton.icon(
+                    onPressed: () async {
+                      if (error.toString().contains('No access token available') ||
+                          error.toString().contains('token expired')) {
+                        // Attempt to re-authenticate with Strava
+                        await _reAuthenticate(context);
+                      }
+                      // Refresh both providers
+                      ref.refresh(stravaActivitiesProvider);
+                      ref.refresh(databaseActivitiesProvider(DateRange.allTime()));
+                      ref.refresh(combinedActivitiesProvider);
+                    },
+                    icon: Icon(
+                      error.toString().contains('No access token available') ||
+                              error.toString().contains('token expired')
+                          ? Icons.login
+                          : Icons.refresh,
+                    ),
+                    label: Text(
+                      error.toString().contains('No access token available') ||
+                              error.toString().contains('token expired')
+                          ? 'Connect to Strava'
+                          : 'Retry',
+                    ),
+                    style: ElevatedButton.styleFrom(
+                      backgroundColor: zdvMidBlue,
+                      foregroundColor: Colors.white,
+                    ),
+                  ),
+                  
+                  // Show troubleshooting button for API-related errors
+                  if (error.toString().contains('403') ||
+                      error.toString().contains('Request blocked') ||
+                      error.toString().contains('API access denied'))
+                    Padding(
+                      padding: const EdgeInsets.only(left: 8.0),
+                      child: ElevatedButton.icon(
+                        onPressed: () {
+                          // Navigate to settings screen and select the Strava API tab
+                          ref.read(homeTabsNotifier.notifier).setIndex(5); // Settings tab
+                        },
+                        icon: const Icon(Icons.build),
+                        label: const Text('Troubleshoot'),
+                        style: ElevatedButton.styleFrom(
+                          backgroundColor: zdvOrange,
+                          foregroundColor: Colors.white,
+                        ),
+                      ),
+                    ),
+                ],
               ),
             ],
           ),
