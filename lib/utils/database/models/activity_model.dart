@@ -355,62 +355,153 @@ class ActivityModel {
 
   // Convert a Map from the database to an ActivityModel
   factory ActivityModel.fromMap(Map<String, dynamic> map) {
-    return ActivityModel(
-      id: map['id'],
-      resourceState: map['resource_state'],
-      athleteId: map['athlete_id'],
-      name: map['name'],
-      distance: map['distance'],
-      movingTime: map['moving_time'],
-      elapsedTime: map['elapsed_time'],
-      totalElevationGain: map['total_elevation_gain'],
-      type: map['type'],
-      sportType: map['sport_type'],
-      startDate: map['start_date'],
-      startDateLocal: map['start_date_local'],
-      timezone: map['timezone'],
-      utcOffset: map['utc_offset'],
-      locationCity: map['location_city'],
-      locationState: map['location_state'],
-      locationCountry: map['location_country'],
-      achievementCount: map['achievement_count'],
-      kudosCount: map['kudos_count'],
-      commentCount: map['comment_count'],
-      athleteCount: map['athlete_count'],
-      photoCount: map['photo_count'],
-      trainer: map['trainer'] == 1,
-      commute: map['commute'] == 1,
-      manual: map['manual'] == 1,
-      private: map['private'] == 1,
-      visibility: map['visibility'],
-      flagged: map['flagged'] == 1,
-      gearId: map['gear_id'],
-      startLatlng: map['start_latlng'],
-      endLatlng: map['end_latlng'],
-      averageSpeed: map['average_speed'],
-      maxSpeed: map['max_speed'],
-      averageCadence: map['average_cadence'],
-      averageWatts: map['average_watts'],
-      maxWatts: map['max_watts'],
-      weightedAverageWatts: map['weighted_average_watts'],
-      kilojoules: map['kilojoules'],
-      deviceWatts: map['device_watts'] == 1,
-      hasHeartrate: map['has_heartrate'] == 1,
-      averageHeartrate: map['average_heartrate'],
-      maxHeartrate: map['max_heartrate'],
-      heartrateOptOut: map['heartrate_opt_out'] == 1,
-      displayHideHeartrateOption: map['display_hide_heartrate_option'] == 1,
-      elevHigh: map['elev_high'],
-      elevLow: map['elev_low'],
-      uploadId: map['upload_id'],
-      uploadIdStr: map['upload_id_str'],
-      externalId: map['external_id'],
-      fromAcceptedTag: map['from_accepted_tag'] == 1,
-      prCount: map['pr_count'],
-      totalPhotoCount: map['total_photo_count'],
-      hasKudoed: map['has_kudoed'] == 1,
-      jsonData: map['json_data'],
-    );
+    try {
+      // Convert numeric fields to the correct type
+      // This handles cases where the database returns integers for fields that should be doubles
+      double toDouble(dynamic value) {
+        if (value == null) return 0.0;
+        if (value is double) return value;
+        if (value is int) return value.toDouble();
+        if (value is String) return double.tryParse(value) ?? 0.0;
+        return 0.0;
+      }
+
+      int toInt(dynamic value) {
+        if (value == null) return 0;
+        if (value is int) return value;
+        if (value is double) return value.toInt();
+        if (value is String) return int.tryParse(value) ?? 0;
+        return 0;
+      }
+
+      bool toBool(dynamic value) {
+        if (value == null) return false;
+        if (value is bool) return value;
+        if (value is int) return value == 1;
+        if (value is String) return value.toLowerCase() == 'true';
+        return false;
+      }
+
+      return ActivityModel(
+        id: toInt(map['id']),
+        resourceState: toInt(map['resource_state']),
+        athleteId: toInt(map['athlete_id']),
+        name: map['name'] ?? 'Unknown',
+        distance: toDouble(map['distance']),
+        movingTime: toInt(map['moving_time']),
+        elapsedTime: toInt(map['elapsed_time']),
+        totalElevationGain: toDouble(map['total_elevation_gain']),
+        type: map['type'] ?? 'Unknown',
+        sportType: map['sport_type'] ?? 'Unknown',
+        startDate: map['start_date'] ?? DateTime.now().toIso8601String(),
+        startDateLocal: map['start_date_local'] ?? DateTime.now().toIso8601String(),
+        timezone: map['timezone'] ?? 'UTC',
+        utcOffset: toDouble(map['utc_offset']),
+        locationCity: map['location_city'],
+        locationState: map['location_state'],
+        locationCountry: map['location_country'] ?? 'Unknown',
+        achievementCount: toInt(map['achievement_count']),
+        kudosCount: toInt(map['kudos_count']),
+        commentCount: toInt(map['comment_count']),
+        athleteCount: toInt(map['athlete_count']),
+        photoCount: toInt(map['photo_count']),
+        trainer: toBool(map['trainer']),
+        commute: toBool(map['commute']),
+        manual: toBool(map['manual']),
+        private: toBool(map['private']),
+        visibility: map['visibility'] ?? 'private',
+        flagged: toBool(map['flagged']),
+        gearId: map['gear_id'],
+        startLatlng: map['start_latlng'] ?? '{"lat":0,"lng":0}',
+        endLatlng: map['end_latlng'] ?? '{"lat":0,"lng":0}',
+        averageSpeed: toDouble(map['average_speed']),
+        maxSpeed: toDouble(map['max_speed']),
+        averageCadence: toDouble(map['average_cadence']),
+        averageWatts: toDouble(map['average_watts']),
+        maxWatts: toInt(map['max_watts']),
+        weightedAverageWatts: toInt(map['weighted_average_watts']),
+        kilojoules: toDouble(map['kilojoules']),
+        deviceWatts: toBool(map['device_watts']),
+        hasHeartrate: toBool(map['has_heartrate']),
+        averageHeartrate: toDouble(map['average_heartrate']),
+        maxHeartrate: toDouble(map['max_heartrate']),
+        heartrateOptOut: toBool(map['heartrate_opt_out']),
+        displayHideHeartrateOption: toBool(map['display_hide_heartrate_option']),
+        elevHigh: toDouble(map['elev_high']),
+        elevLow: toDouble(map['elev_low']),
+        uploadId: toInt(map['upload_id']),
+        uploadIdStr: map['upload_id_str'] ?? '0',
+        externalId: map['external_id'] ?? 'unknown',
+        fromAcceptedTag: toBool(map['from_accepted_tag']),
+        prCount: toInt(map['pr_count']),
+        totalPhotoCount: toInt(map['total_photo_count']),
+        hasKudoed: toBool(map['has_kudoed']),
+        jsonData: map['json_data'] ?? '{}',
+      );
+    } catch (e) {
+      if (kDebugMode) {
+        print('Error creating ActivityModel from map: $e');
+        print('Map: $map');
+      }
+      
+      // Create a minimal valid model to avoid database errors
+      return ActivityModel(
+        id: map['id'] ?? 0,
+        resourceState: 1,
+        athleteId: map['athlete_id'] ?? 0,
+        name: 'Error Activity',
+        distance: 0,
+        movingTime: 0,
+        elapsedTime: 0,
+        totalElevationGain: 0,
+        type: 'Unknown',
+        sportType: 'Unknown',
+        startDate: DateTime.now().toIso8601String(),
+        startDateLocal: DateTime.now().toIso8601String(),
+        timezone: 'UTC',
+        utcOffset: 0,
+        locationCity: null,
+        locationState: null,
+        locationCountry: 'Unknown',
+        achievementCount: 0,
+        kudosCount: 0,
+        commentCount: 0,
+        athleteCount: 0,
+        photoCount: 0,
+        trainer: false,
+        commute: false,
+        manual: false,
+        private: false,
+        visibility: 'private',
+        flagged: false,
+        gearId: null,
+        startLatlng: '{"lat":0,"lng":0}',
+        endLatlng: '{"lat":0,"lng":0}',
+        averageSpeed: 0,
+        maxSpeed: 0,
+        averageCadence: 0,
+        averageWatts: 0,
+        maxWatts: 0,
+        weightedAverageWatts: 0,
+        kilojoules: 0,
+        deviceWatts: false,
+        hasHeartrate: false,
+        averageHeartrate: 0,
+        maxHeartrate: 0,
+        heartrateOptOut: false,
+        displayHideHeartrateOption: false,
+        elevHigh: 0,
+        elevLow: 0,
+        uploadId: 0,
+        uploadIdStr: '0',
+        externalId: 'unknown',
+        fromAcceptedTag: false,
+        prCount: 0,
+        totalPhotoCount: 0,
+        hasKudoed: false,
+        jsonData: '{}',
+      );
+    }
   }
 
   // Convert an ActivityModel to a Map for the database

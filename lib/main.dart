@@ -14,6 +14,9 @@ import 'package:zwiftdataviewer/screens/routesscreen.dart';
 import 'package:zwiftdataviewer/screens/segments/segments_screen.dart';
 import 'package:zwiftdataviewer/screens/settingscreen.dart';
 import 'package:zwiftdataviewer/utils/database/database_init.dart';
+import 'package:zwiftdataviewer/utils/repository/hybrid_activities_repository.dart';
+import 'package:zwiftdataviewer/utils/supabase/supabase_auth_service.dart';
+import 'package:zwiftdataviewer/utils/supabase/supabase_config.dart';
 import 'package:zwiftdataviewer/utils/theme.dart';
 
 import 'secrets.dart';
@@ -59,6 +62,27 @@ Future<void> main() async {
       print('Error initializing database: $e');
     }
     // Continue even if database initialization fails
+  }
+  
+  // Initialize Supabase
+  try {
+    await SupabaseConfig.initialize();
+    if (kDebugMode) {
+      print('Supabase initialized successfully');
+    }
+    
+    // Initialize hybrid repository
+    final hybridRepo = HybridActivitiesRepository();
+    if (kDebugMode) {
+      print('Hybrid repository initialized');
+      print('Supabase enabled: ${hybridRepo.isSupabaseEnabled}');
+      print('Online: ${hybridRepo.isOnline}');
+    }
+  } catch (e) {
+    if (kDebugMode) {
+      print('Error initializing Supabase: $e');
+    }
+    // Continue even if Supabase initialization fails
   }
 
   Future<Token?> getClient() async {
@@ -131,6 +155,33 @@ Future<void> main() async {
       if (kDebugMode) {
         print('Successfully authenticated with Strava');
         print('Token expires at: ${DateTime.fromMillisecondsSinceEpoch(token.expiresAt! * 1000)}');
+      }
+      
+      // Try to authenticate with Supabase using Strava token
+      try {
+        final supabaseAuthService = SupabaseAuthService();
+        
+        // Get athlete ID from Strava API
+        final strava = Strava(globals.isInDebug, clientSecret);
+        final athlete = await strava.getLoggedInAthlete();
+        final athleteId = athlete?.id ?? 0;
+        
+        if (athleteId > 0) {
+          await supabaseAuthService.signInWithStravaToken(token, athleteId);
+          if (kDebugMode) {
+            print('Successfully authenticated with Supabase using Strava token');
+            print('Athlete ID: $athleteId');
+          }
+        } else {
+          if (kDebugMode) {
+            print('No athlete ID available for Supabase authentication');
+          }
+        }
+      } catch (e) {
+        if (kDebugMode) {
+          print('Error authenticating with Supabase: $e');
+        }
+        // Continue even if Supabase authentication fails
       }
     }
   } catch (e) {

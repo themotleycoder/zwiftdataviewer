@@ -9,6 +9,7 @@ import 'package:flutter_strava_api/models/activity.dart';
 import 'package:http/http.dart' as http;
 import 'package:path_provider/path_provider.dart';
 import 'package:zwiftdataviewer/utils/database/database_init.dart';
+import 'package:zwiftdataviewer/utils/repository/hybrid_activities_repository.dart';
 
 import 'activity_select_provider.dart';
 
@@ -55,11 +56,11 @@ class StravaActivityDetailsNotifier extends StateNotifier<DetailedActivity> {
     if (activityId <= 0) return;
 
     try {
-      // First check the database
+      // First check the database (using hybrid repository)
       DetailedActivity? dbActivityDetail;
       try {
-        final activityService = DatabaseInit.activityService;
-        dbActivityDetail = await activityService.loadActivityDetail(activityId);
+        final hybridRepo = HybridActivitiesRepository();
+        dbActivityDetail = await hybridRepo.loadActivityDetail(activityId);
         
         if (dbActivityDetail != null) {
           if (kDebugMode) {
@@ -93,10 +94,10 @@ class StravaActivityDetailsNotifier extends StateNotifier<DetailedActivity> {
                     try {
                       state = DetailedActivity.fromJson(activityDetail);
                       
-                      // Save to database for future use
+                      // Save to database for future use (using hybrid repository)
                       try {
-                        final activityService = DatabaseInit.activityService;
-                        await activityService.saveActivityDetail(state);
+                        final hybridRepo = HybridActivitiesRepository();
+                        await hybridRepo.saveActivityDetail(state);
                         if (kDebugMode) {
                           print('Cached activity detail saved to database: $activityId');
                         }
@@ -164,10 +165,10 @@ class StravaActivityDetailsNotifier extends StateNotifier<DetailedActivity> {
             final DetailedActivity activityDetail = DetailedActivity.fromJson(jsonData);
             state = activityDetail;
             
-            // Save to database
+            // Save to database (using hybrid repository)
             try {
-              final activityService = DatabaseInit.activityService;
-              await activityService.saveActivityDetail(activityDetail);
+              final hybridRepo = HybridActivitiesRepository();
+              await hybridRepo.saveActivityDetail(activityDetail);
               if (kDebugMode) {
                 print('Activity detail saved to database: $activityId');
               }

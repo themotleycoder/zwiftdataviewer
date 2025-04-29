@@ -11,6 +11,7 @@ import 'package:flutter_strava_api/models/summary_activity.dart';
 import 'package:http/http.dart' as http;
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:zwiftdataviewer/utils/database/database_init.dart';
+import 'package:zwiftdataviewer/utils/repository/hybrid_activities_repository.dart';
 
 // Provider for Strava activities
 //
@@ -29,13 +30,13 @@ final stravaActivitiesProvider =
 
 // Provider for database activities
 //
-// This provider fetches activities from the SQLite database.
+// This provider fetches activities from the database (Supabase when online, SQLite when offline).
 // It returns a list of SummaryActivity objects sorted by date (newest first).
 final databaseActivitiesProvider =
     FutureProvider.family<List<SummaryActivity>, DateRange>((ref, dateRange) async {
   try {
-    final activityService = DatabaseInit.activityService;
-    final activities = await activityService.loadActivities(
+    final hybridRepo = HybridActivitiesRepository();
+    final activities = await hybridRepo.loadActivities(
       dateRange.before.millisecondsSinceEpoch ~/ 1000,
       dateRange.after.millisecondsSinceEpoch ~/ 1000,
     );
@@ -162,11 +163,11 @@ Future<List<SummaryActivity>> fetchStravaActivities() async {
     // Store fetched activities in the database
     if (fetchedActivities.isNotEmpty) {
       try {
-        // Get the activity service from DatabaseInit
-        final activityService = DatabaseInit.activityService;
+        // Use the hybrid repository to save activities
+        final hybridRepo = HybridActivitiesRepository();
         
-        // Save activities to the database
-        await activityService.saveActivities(fetchedActivities);
+        // Save activities to the database (both SQLite and Supabase if online)
+        await hybridRepo.saveActivities(fetchedActivities);
         
         // Update last activity date
         if (fetchedActivities.isNotEmpty) {

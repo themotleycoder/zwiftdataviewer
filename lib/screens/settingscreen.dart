@@ -2,122 +2,357 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:zwiftdataviewer/appkeys.dart';
-import 'package:zwiftdataviewer/providers/config_provider.dart';
-import 'package:zwiftdataviewer/utils/constants.dart' as constants;
-import 'package:zwiftdataviewer/utils/constants.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import 'package:zwiftdataviewer/utils/database/database_init.dart';
 import 'package:zwiftdataviewer/utils/repository/filerepository.dart';
-import 'package:zwiftdataviewer/utils/strava_api_helper.dart';
+import 'package:zwiftdataviewer/utils/repository/hybrid_activities_repository.dart';
+import 'package:zwiftdataviewer/utils/supabase/database_sync_service.dart';
+import 'package:zwiftdataviewer/utils/supabase/supabase_auth_service.dart';
 import 'package:zwiftdataviewer/utils/theme.dart';
 
-class SettingsScreen extends ConsumerWidget {
+// Provider for Supabase enabled state
+final supabaseEnabledProvider = StateProvider<bool>((ref) => true);
+
+class SettingsScreen extends ConsumerStatefulWidget {
   const SettingsScreen({super.key});
 
   @override
-  Widget build(BuildContext context, WidgetRef ref) {
-    ConfigData configData = ConfigData();
+  ConsumerState<SettingsScreen> createState() => _SettingsScreenState();
+}
 
-    configData = ref.watch(configProvider);
+class _SettingsScreenState extends ConsumerState<SettingsScreen> {
+  bool _isMetric = true;
+  int _ftp = 0;
+  bool _isSupabaseEnabled = true;
+  bool _isSyncing = false;
+  SyncState _syncState = SyncState.idle;
 
+  @override
+  void initState() {
+    super.initState();
+    _loadSettings();
+    _checkSupabaseStatus();
+  }
+
+  Future<void> _loadSettings() async {
+    final prefs = await SharedPreferences.getInstance();
+    setState(() {
+      _isMetric = prefs.getBool('isMetric') ?? true;
+      _ftp = prefs.getInt('ftp') ?? 0;
+      _isSupabaseEnabled = prefs.getBool('supabaseEnabled') ?? true;
+    });
+  }
+
+  Future<void> _saveSettings() async {
+    final prefs = await SharedPreferences.getInstance();
+    await prefs.setBool('isMetric', _isMetric);
+    await prefs.setInt('ftp', _ftp);
+    await prefs.setBool('supabaseEnabled', _isSupabaseEnabled);
+  }
+
+  Future<void> _checkSupabaseStatus() async {
+    try {
+      final hybridRepo = HybridActivitiesRepository();
+      setState(() {
+        _isSupabaseEnabled = hybridRepo.isSupabaseEnabled;
+        _isSyncing = hybridRepo.syncService.isSyncing;
+        _syncState = hybridRepo.syncService.currentState;
+      });
+
+      // Listen for sync state changes
+      hybridRepo.syncService.syncStateChanges.listen((state) {
+        if (mounted) {
+          setState(() {
+            _syncState = state;
+            _isSyncing = hybridRepo.syncService.isSyncing;
+          });
+        }
+      });
+    } catch (e) {
+      if (kDebugMode) {
+        print('Error checking Supabase status: $e');
+      }
+    }
+  }
+
+  @override
+  Widget build(BuildContext context) {
     return Container(
-        padding: const EdgeInsets.all(8.0),
-        alignment: Alignment.center,
-        child: Column(children: [
+      padding: const EdgeInsets.all(8.0),
+      alignment: Alignment.center,
+      child: Column(
+        children: [
           createCard(
-              'FTP',
-              Expanded(
-                  child: Container(
+            'FTP',
+            Expanded(
+              child: Container(
                 margin: const EdgeInsets.fromLTRB(0, 0, 16, 0),
                 padding: const EdgeInsets.fromLTRB(0, 0, 0, 0),
                 child: TextField(
-                    textAlign: TextAlign.right,
-                    keyboardType: TextInputType.number,
-                    decoration: InputDecoration(
-                      hintText: configData.ftp?.toString() ?? '0',
-                      border: InputBorder.none,
-                    ),
-                    onSubmitted: (value) {
-                      configData.ftp = double.parse(value);
-                      ref.read(configProvider.notifier).setConfig(configData);
-
-                      // setState(() {
-                      //   _configData!.ftp = int.parse(value);
-                      //   print(_configData!.ftp);
-                      // });
-                      // Provider.of<ConfigDataModel>(context, listen: false)
-                      //     .configData = _configData;
-                    },
-                    inputFormatters: <TextInputFormatter>[
-                      FilteringTextInputFormatter.digitsOnly
-                    ]),
-                // ],
-              ))),
+                  textAlign: TextAlign.right,
+                  keyboardType: TextInputType.number,
+                  decoration: InputDecoration(
+                    hintText: _ftp.toString(),
+                    border: InputBorder.none,
+                  ),
+                  onSubmitted: (value) {
+                    setState(() {
+                      _ftp = int.tryParse(value) ?? 0;
+                    });
+                    _saveSettings();
+                  },
+                  inputFormatters: <TextInputFormatter>[
+                    FilteringTextInputFormatter.digitsOnly
+                  ],
+                ),
+              ),
+            ),
+          ),
           createCard(
             'Metric',
             Switch(
-              value: configData.isMetric!,
+              value: _isMetric,
               onChanged: (value) {
-                configData.isMetric = value;
-                ref.read(configProvider.notifier).setConfig(configData);
-                // setState(() {
-                //   _configData!.isMetric = value;
-                //   print(_configData!.isMetric);
-                // });
-                // Provider.of<ConfigDataModel>(context, listen: false)
-                //     .configData = _configData;
+                setState(() {
+                  _isMetric = value;
+                });
+                _saveSettings();
               },
               activeTrackColor: zdvmLgtBlue,
               activeColor: zdvmMidBlue[100],
             ),
           ),
           createCard(
-              'Refresh Route Data',
-              IconButton(
-                  key: AppKeys.refreshButton,
-                  tooltip: 'refresh',
-                  icon: const Icon(Icons.refresh),
-                  color: zdvmMidBlue[100],
-                  onPressed: () => refreshRouteData())),
+            'Use Supabase',
+            Column(
+              crossAxisAlignment: CrossAxisAlignment.end,
+              children: [
+                Switch(
+                  value: _isSupabaseEnabled,
+                  onChanged: (value) async {
+                    final hybridRepo = HybridActivitiesRepository();
+                    await hybridRepo.setSupabaseEnabled(value);
+                    
+                    setState(() {
+                      _isSupabaseEnabled = value;
+                    });
+                    _saveSettings();
+                    
+                    if (value) {
+                      // If enabling Supabase, check if we need to perform initial migration
+                      final authService = SupabaseAuthService();
+                      final isAuthenticated = await authService.isAuthenticated();
+                      if (isAuthenticated) {
+                        // Show migration dialog
+                        // ignore: use_build_context_synchronously
+                        showDialog(
+                          context: context,
+                          builder: (context) => AlertDialog(
+                            title: const Text('Migrate Data to Supabase?'),
+                            content: const Text(
+                              'Would you like to migrate your existing data to Supabase? '
+                              'This will allow you to access your data from multiple devices.'
+                            ),
+                            actions: [
+                              TextButton(
+                                onPressed: () {
+                                  Navigator.of(context).pop();
+                                },
+                                child: const Text('Skip'),
+                              ),
+                              TextButton(
+                                onPressed: () async {
+                                  Navigator.of(context).pop();
+                                  await _performInitialMigration();
+                                },
+                                child: const Text('Migrate'),
+                              ),
+                            ],
+                          ),
+                        );
+                      }
+                    }
+                  },
+                  activeTrackColor: zdvmLgtBlue,
+                  activeColor: zdvmMidBlue[100],
+                ),
+                if (_isSyncing)
+                  Padding(
+                    padding: const EdgeInsets.only(right: 16.0),
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.end,
+                      children: [
+                        const SizedBox(height: 4),
+                        Text(_getSyncStateText(), style: const TextStyle(fontSize: 12)),
+                        const SizedBox(height: 4),
+                        const LinearProgressIndicator(),
+                      ],
+                    ),
+                  ),
+              ],
+            ),
+          ),
+          if (_isSupabaseEnabled)
+            createCard(
+              'Sync Data',
+              Row(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  IconButton(
+                    tooltip: 'Sync to Supabase',
+                    icon: const Icon(Icons.cloud_upload),
+                    color: zdvmMidBlue[100],
+                    onPressed: _isSyncing ? null : () => _syncToSupabase(),
+                  ),
+                  IconButton(
+                    tooltip: 'Sync from Supabase',
+                    icon: const Icon(Icons.cloud_download),
+                    color: zdvmMidBlue[100],
+                    onPressed: _isSyncing ? null : () => _syncFromSupabase(),
+                  ),
+                ],
+              ),
+            ),
           createCard(
-              'Refresh Calendars Data',
-              IconButton(
-                  key: AppKeys.refreshButton,
-                  tooltip: 'refresh',
-                  icon: const Icon(Icons.refresh),
-                  color: zdvmMidBlue[100],
-                  onPressed: () => refreshCalendarData())),
-          // createCard(
-          //     'Database Status',
-          //     TextButton(
-          //         child: const Text('Check Status', style: TextStyle(color: zdvOrange)),
-          //         onPressed: () => checkDatabaseStatus(context))),
-          // createCard(
-          //     'Reset Database',
-          //     TextButton(
-          //         child: const Text('Reset', style: TextStyle(color: Colors.red)),
-          //         onPressed: () => showResetDatabaseDialog(context))),
-          // createCard(
-          //     'Reset Activity Photos',
-          //     TextButton(
-          //         child: const Text('Reset Photos', style: TextStyle(color: Colors.orange)),
-          //         onPressed: () => showResetPhotosDialog(context))),
-          // createCard(
-          //     'Strava API Status',
-          //     TextButton(
-          //         child: const Text('Check Status', style: TextStyle(color: zdvOrange)),
-          //         onPressed: () => checkStravaApiStatus(context))),
-          // createCard(
-          //     'Strava Email Auth',
-          //     TextButton(
-          //         child: const Text('Use Email Code', style: TextStyle(color: zdvOrange)),
-          //         onPressed: () => authenticateWithEmailCode(context))),
-          // createCard(
-          //     'Reset Strava Auth',
-          //     TextButton(
-          //         child: const Text('Reset Auth', style: TextStyle(color: Colors.red)),
-          //         onPressed: () => showResetStravaAuthDialog(context))),
-        ]));
+            'Refresh Route Data',
+            IconButton(
+              tooltip: 'refresh',
+              icon: const Icon(Icons.refresh),
+              color: zdvmMidBlue[100],
+              onPressed: () => refreshRouteData(),
+            ),
+          ),
+          createCard(
+            'Refresh Calendars Data',
+            IconButton(
+              tooltip: 'refresh',
+              icon: const Icon(Icons.refresh),
+              color: zdvmMidBlue[100],
+              onPressed: () => refreshCalendarData(),
+            ),
+          ),
+          createCard(
+            'Database Status',
+            TextButton(
+              child: const Text('Check Status', style: TextStyle(color: zdvOrange)),
+              onPressed: () => checkDatabaseStatus(context),
+            ),
+          ),
+          createCard(
+            'Reset Database',
+            TextButton(
+              child: const Text('Reset', style: TextStyle(color: Colors.red)),
+              onPressed: () => showResetDatabaseDialog(context),
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  String _getSyncStateText() {
+    switch (_syncState) {
+      case SyncState.migrating:
+        return 'Migrating data...';
+      case SyncState.syncingToSupabase:
+        return 'Syncing to Supabase...';
+      case SyncState.syncingFromSupabase:
+        return 'Syncing from Supabase...';
+      case SyncState.completed:
+        return 'Sync completed';
+      case SyncState.error:
+        return 'Sync error';
+      case SyncState.idle:
+      default:
+        return 'Idle';
+    }
+  }
+
+  Future<void> _performInitialMigration() async {
+    try {
+      final syncService = DatabaseSyncService();
+      await syncService.performInitialMigration();
+      
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(
+            content: Text('Data migration completed'),
+            backgroundColor: Colors.green,
+          ),
+        );
+      }
+    } catch (e) {
+      if (kDebugMode) {
+        print('Error performing initial migration: $e');
+      }
+      
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text('Error migrating data: $e'),
+            backgroundColor: Colors.red,
+          ),
+        );
+      }
+    }
+  }
+
+  Future<void> _syncToSupabase() async {
+    try {
+      final syncService = DatabaseSyncService();
+      await syncService.syncToSupabase();
+      
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(
+            content: Text('Data synced to Supabase'),
+            backgroundColor: Colors.green,
+          ),
+        );
+      }
+    } catch (e) {
+      if (kDebugMode) {
+        print('Error syncing to Supabase: $e');
+      }
+      
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text('Error syncing to Supabase: $e'),
+            backgroundColor: Colors.red,
+          ),
+        );
+      }
+    }
+  }
+
+  Future<void> _syncFromSupabase() async {
+    try {
+      final syncService = DatabaseSyncService();
+      await syncService.syncFromSupabase();
+      
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(
+            content: Text('Data synced from Supabase'),
+            backgroundColor: Colors.green,
+          ),
+        );
+      }
+    } catch (e) {
+      if (kDebugMode) {
+        print('Error syncing from Supabase: $e');
+      }
+      
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text('Error syncing from Supabase: $e'),
+            backgroundColor: Colors.red,
+          ),
+        );
+      }
+    }
   }
 
   refreshRouteData() {
@@ -236,289 +471,26 @@ class SettingsScreen extends ConsumerWidget {
       );
     }
   }
-  
-  Future<void> showResetPhotosDialog(BuildContext context) async {
-    showDialog(
-      context: context,
-      builder: (context) => AlertDialog(
-        title: const Text('Reset Activity Photos'),
-        content: const Text(
-          'This will delete all activity photos from the database. '
-          'The app will need to re-download photos when viewing activities. '
-          'This action cannot be undone. Are you sure you want to continue?'
-        ),
-        actions: [
-          TextButton(
-            onPressed: () => Navigator.of(context).pop(),
-            child: const Text('Cancel'),
-          ),
-          TextButton(
-            onPressed: () async {
-              Navigator.of(context).pop();
-              await resetActivityPhotos(context);
-            },
-            child: const Text('Reset Photos', style: TextStyle(color: Colors.orange)),
-          ),
-        ],
-      ),
-    );
-  }
-  
-  Future<void> resetActivityPhotos(BuildContext context) async {
-    try {
-      await DatabaseInit.resetActivityPhotosTable();
-      
-      // ignore: use_build_context_synchronously
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(
-          content: Text('Activity photos reset successfully'),
-          backgroundColor: Colors.green,
-        ),
-      );
-    } catch (e) {
-      if (kDebugMode) {
-        print('Error resetting activity photos: $e');
-      }
-      // ignore: use_build_context_synchronously
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(
-          content: Text('Error resetting activity photos: $e'),
-          backgroundColor: Colors.red,
-        ),
-      );
-    }
-  }
-  
-  Future<void> checkStravaApiStatus(BuildContext context) async {
-    try {
-      // Show loading indicator
-      showDialog(
-        context: context,
-        barrierDismissible: false,
-        builder: (context) => const Center(
-          child: CircularProgressIndicator(),
-        ),
-      );
-      
-      // Get API status
-      final status = await StravaApiHelper.checkApiStatus();
-      
-      // Close loading indicator
-      Navigator.of(context).pop();
-      
-      // Get troubleshooting steps
-      final steps = StravaApiHelper.getTroubleshootingSteps(status);
-      
-      // Show status dialog
-      // ignore: use_build_context_synchronously
-      showDialog(
-        context: context,
-        builder: (context) => AlertDialog(
-          title: const Text('Strava API Status'),
-          content: SingleChildScrollView(
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              mainAxisSize: MainAxisSize.min,
-              children: [
-                const Text('API Status:', style: TextStyle(fontWeight: FontWeight.bold)),
-                const SizedBox(height: 8),
-                Text('Has token: ${status['has_token']}'),
-                Text('Token expired: ${status['token_expired']}'),
-                Text('Has refresh token: ${status['has_refresh_token']}'),
-                if (status['token_expiry'] != null)
-                  Text('Token expires: ${status['token_expiry']}'),
-                Text('Client ID set: ${status['client_id_set']}'),
-                Text('Client secret set: ${status['client_secret_set']}'),
-                Text('Internet connectivity: ${status['connectivity']}'),
-                Text('Can reach Strava: ${status['can_reach_strava']}'),
-                
-                const SizedBox(height: 16),
-                const Text('Troubleshooting Steps:', style: TextStyle(fontWeight: FontWeight.bold)),
-                const SizedBox(height: 8),
-                ...steps.map((step) => Padding(
-                  padding: const EdgeInsets.only(bottom: 8),
-                  child: Text('• $step'),
-                )),
-                
-                if (status['has_token'] && status['token_expired'] && status['has_refresh_token'])
-                  Padding(
-                    padding: const EdgeInsets.only(top: 16),
-                    child: ElevatedButton(
-                      onPressed: () async {
-                        Navigator.of(context).pop();
-                        await refreshStravaToken(context);
-                      },
-                      child: const Text('Refresh Token'),
-                    ),
-                  ),
-              ],
-            ),
-          ),
-          actions: [
-            TextButton(
-              onPressed: () => Navigator.of(context).pop(),
-              child: const Text('Close'),
-            ),
-          ],
-        ),
-      );
-    } catch (e) {
-      // Close loading indicator if it's showing
-      if (Navigator.of(context).canPop()) {
-        Navigator.of(context).pop();
-      }
-      
-      if (kDebugMode) {
-        print('Error checking Strava API status: $e');
-      }
-      
-      // ignore: use_build_context_synchronously
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(
-          content: Text('Error checking Strava API status: $e'),
-          backgroundColor: Colors.red,
-        ),
-      );
-    }
-  }
-  
-  Future<void> refreshStravaToken(BuildContext context) async {
-    try {
-      // Show loading indicator
-      showDialog(
-        context: context,
-        barrierDismissible: false,
-        builder: (context) => const Center(
-          child: CircularProgressIndicator(),
-        ),
-      );
-      
-      // Attempt to refresh the token
-      final success = await StravaApiHelper.refreshToken();
-      
-      // Close loading indicator
-      Navigator.of(context).pop();
-      
-      // Show result
-      // ignore: use_build_context_synchronously
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(
-          content: Text(success 
-            ? 'Strava token refreshed successfully' 
-            : 'Failed to refresh Strava token'),
-          backgroundColor: success ? Colors.green : Colors.red,
-        ),
-      );
-    } catch (e) {
-      // Close loading indicator if it's showing
-      if (Navigator.of(context).canPop()) {
-        Navigator.of(context).pop();
-      }
-      
-      if (kDebugMode) {
-        print('Error refreshing Strava token: $e');
-      }
-      
-      // ignore: use_build_context_synchronously
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(
-          content: Text('Error refreshing Strava token: $e'),
-          backgroundColor: Colors.red,
-        ),
-      );
-    }
-  }
-  
-  Future<void> showResetStravaAuthDialog(BuildContext context) async {
-    showDialog(
-      context: context,
-      builder: (context) => AlertDialog(
-        title: const Text('Reset Strava Authentication'),
-        content: const Text(
-          'This will clear all Strava authentication tokens. '
-          'You will need to re-authenticate with Strava the next time you use the app. '
-          'This action cannot be undone. Are you sure you want to continue?'
-        ),
-        actions: [
-          TextButton(
-            onPressed: () => Navigator.of(context).pop(),
-            child: const Text('Cancel'),
-          ),
-          TextButton(
-            onPressed: () async {
-              Navigator.of(context).pop();
-              await resetStravaAuth(context);
-            },
-            child: const Text('Reset Auth', style: TextStyle(color: Colors.red)),
-          ),
-        ],
-      ),
-    );
-  }
-  
-  Future<void> resetStravaAuth(BuildContext context) async {
-    try {
-      await StravaApiHelper.clearTokens();
-      
-      // ignore: use_build_context_synchronously
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(
-          content: Text('Strava authentication reset successfully'),
-          backgroundColor: Colors.green,
-        ),
-      );
-    } catch (e) {
-      if (kDebugMode) {
-        print('Error resetting Strava authentication: $e');
-      }
-      
-      // ignore: use_build_context_synchronously
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(
-          content: Text('Error resetting Strava authentication: $e'),
-          backgroundColor: Colors.red,
-        ),
-      );
-    }
-  }
-  
-  Future<void> authenticateWithEmailCode(BuildContext context) async {
-    try {
-      final success = await StravaApiHelper.authenticateWithEmailCode(context);
-      
-      // Show result
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(
-          content: Text(success 
-            ? 'Successfully authenticated with Strava' 
-            : 'Failed to authenticate with Strava'),
-          backgroundColor: success ? Colors.green : Colors.red,
-        ),
-      );
-    } catch (e) {
-      if (kDebugMode) {
-        print('Error in email authentication: $e');
-      }
-      
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(
-          content: Text('Error in email authentication: $e'),
-          backgroundColor: Colors.red,
-        ),
-      );
-    }
-  }
 
   Card createCard(String label, Widget widget) {
     return Card(
-        elevation: defaultCardElevation,
-        child:
-            Row(mainAxisAlignment: MainAxisAlignment.spaceBetween, children: [
+      elevation: 2.0,
+      child: Row(
+        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+        children: [
           Container(
             margin: const EdgeInsets.fromLTRB(16.0, 8.0, 16.0, 8.0),
-            child: Text(label, style: constants.headerTextStyle),
+            child: Text(
+              label,
+              style: const TextStyle(
+                fontSize: 16,
+                fontWeight: FontWeight.bold,
+              ),
+            ),
           ),
           widget
-        ]));
+        ],
+      ),
+    );
   }
 }
