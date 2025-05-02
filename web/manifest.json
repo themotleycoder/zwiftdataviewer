@@ -1,11 +1,11 @@
 {
-    "name": "marvinui",
-    "short_name": "marvinui",
+    "name": "ZwiftDataViewer",
+    "short_name": "ZwiftDataViewer",
     "start_url": ".",
     "display": "standalone",
     "background_color": "#0175C2",
     "theme_color": "#0175C2",
-    "description": "A new Flutter project.",
+    "description": "Zwift Data Viewer",
     "orientation": "portrait-primary",
     "prefer_related_applications": false,
     "icons": [

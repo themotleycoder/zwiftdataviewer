@@ -10,7 +10,6 @@ import 'package:flutter_strava_api/models/activity.dart';
 import 'package:flutter_strava_api/models/summary_activity.dart';
 import 'package:http/http.dart' as http;
 import 'package:shared_preferences/shared_preferences.dart';
-import 'package:zwiftdataviewer/utils/database/database_init.dart';
 import 'package:zwiftdataviewer/utils/repository/hybrid_activities_repository.dart';
 
 // Provider for Strava activities

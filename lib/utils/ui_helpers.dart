@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:zwiftdataviewer/utils/theme.dart';
+import 'package:zwiftdataviewer/widgets/connectivity_status_widget.dart';
 
 // Utility class providing standardized UI elements for consistent appearance
 // across the application.
@@ -103,6 +105,16 @@ class UIHelpers {
     List<Widget>? actions,
     Widget? leading,
   }) {
+    // Create a combined list of actions with the connectivity status widget
+    final List<Widget> combinedActions = [
+      // Add the connectivity status widget
+      const ConnectivityStatusWidget(),
+      const SizedBox(width: 8),
+      
+      // Add the original actions
+      if (actions != null) ...actions,
+    ];
+    
     return AppBar(
       title: Text(
         title,
@@ -113,7 +125,7 @@ class UIHelpers {
       ),
       backgroundColor: Colors.white,
       elevation: 0.0,
-      actions: actions,
+      actions: combinedActions,
       leading: leading,
     );
   }

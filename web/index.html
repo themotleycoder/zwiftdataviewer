@@ -18,12 +18,12 @@
 
   <meta charset="UTF-8">
   <meta content="IE=Edge" http-equiv="X-UA-Compatible">
-  <meta name="description" content="A new Flutter project.">
+  <meta name="description" content="Zwift Data Viewer">
 
   <!-- iOS meta tags & icons -->
   <meta name="apple-mobile-web-app-capable" content="yes">
   <meta name="apple-mobile-web-app-status-bar-style" content="black">
-  <meta name="apple-mobile-web-app-title" content="marvinui">
+  <meta name="apple-mobile-web-app-title" content="Zwift Data Viewer">
   <meta name="google-signin-client_id" content="820393848100-v4tdiv4mq8fontuspl7k7o4nhj1vlmo5.apps.googleusercontent.com">
 
   <link rel="apple-touch-icon" href="icons/Icon-192.png">
@@ -31,7 +31,7 @@
   <!-- Favicon -->
   <link rel="icon" type="image/png" href="favicon.png"/>
 
-  <title>Marvin Dashboard</title>
+  <title>Zwift Data Viewer</title>
   <link rel="manifest" href="manifest.json">
 
   <script>
@@ -43,6 +43,38 @@
 </head>
 <body>
   <script>
+    // Handle Strava OAuth redirect
+    function getParameterByName(name, url) {
+      if (!url) url = window.location.href;
+      name = name.replace(/[\[\]]/g, '\\$&');
+      var regex = new RegExp('[?&]' + name + '(=([^&#]*)|&|#|$)'),
+          results = regex.exec(url);
+      if (!results) return null;
+      if (!results[2]) return '';
+      return decodeURIComponent(results[2].replace(/\+/g, ' '));
+    }
+
+    // Check if this is a redirect from Strava OAuth
+    var code = getParameterByName('code');
+    var error = getParameterByName('error');
+    
+    // Store the code in localStorage so Flutter can access it
+    if (code) {
+      localStorage.setItem('strava_auth_code', code);
+      console.log('Strava auth code received:', code);
+      
+      // Remove the code from the URL to prevent issues with reloads
+      var newUrl = window.location.href.split('?')[0];
+      window.history.replaceState({}, document.title, newUrl);
+    } else if (error) {
+      console.error('Strava auth error:', error);
+      localStorage.setItem('strava_auth_error', error);
+      
+      // Remove the error from the URL
+      var newUrl = window.location.href.split('?')[0];
+      window.history.replaceState({}, document.title, newUrl);
+    }
+
     window.addEventListener('load', function(ev) {
       // Download main.dart.js
       _flutter.loader.loadEntrypoint({

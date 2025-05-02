@@ -2,11 +2,9 @@ import 'dart:async';
 
 import 'package:connectivity_plus/connectivity_plus.dart';
 import 'package:flutter/foundation.dart';
-import 'package:flutter_strava_api/models/activity.dart';
-import 'package:flutter_strava_api/models/segmentEffort.dart';
 import 'package:flutter_strava_api/models/summary_activity.dart';
-import 'package:zwiftdataviewer/models/extended_segment_effort.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:zwiftdataviewer/models/extended_segment_effort.dart';
 import 'package:zwiftdataviewer/utils/database/database_helper.dart';
 import 'package:zwiftdataviewer/utils/database/database_init.dart';
 import 'package:zwiftdataviewer/utils/database/services/activity_service.dart';
@@ -16,8 +14,9 @@ import 'package:zwiftdataviewer/utils/supabase/supabase_database_service.dart';
 
 /// Service for synchronizing data between SQLite and Supabase
 ///
-/// This service provides methods for migrating data from SQLite to Supabase,
-/// syncing data between SQLite and Supabase, and handling offline/online transitions.
+/// This service implements a unidirectional data flow where Supabase is the source of truth
+/// and SQLite acts as a local cache. It provides methods for syncing data from Supabase to SQLite
+/// and handling offline/online transitions.
 class DatabaseSyncService {
   static final DatabaseSyncService _instance = DatabaseSyncService._internal();
   final SupabaseDatabaseService _supabaseService = SupabaseDatabaseService();
@@ -115,9 +114,9 @@ class DatabaseSyncService {
     _syncStateController.add(state);
   }
 
-  /// Performs the initial migration from SQLite to Supabase
+  /// Performs the initial migration to populate SQLite from Supabase
   ///
-  /// This method migrates all data from SQLite to Supabase.
+  /// This method fetches all data from Supabase and caches it in SQLite.
   /// It should be called once when the user first enables Supabase.
   Future<void> performInitialMigration() async {
     if (_isSyncing) {
@@ -138,52 +137,11 @@ class DatabaseSyncService {
       }
 
       if (kDebugMode) {
-        print('Starting initial migration from SQLite to Supabase');
+        print('Starting initial migration from Supabase to SQLite');
       }
 
-      // Get all activities from SQLite
-      final activities = await _sqliteActivityService.loadActivities(
-        DateTime.now().millisecondsSinceEpoch ~/ 1000,
-        DateTime(2015, 1, 1).millisecondsSinceEpoch ~/ 1000,
-      );
-
-      if (activities == null || activities.isEmpty) {
-        if (kDebugMode) {
-          print('No activities to migrate');
-        }
-        _setSyncState(SyncState.completed);
-        _isSyncing = false;
-        return;
-      }
-
-      final validActivities = activities.whereType<SummaryActivity>().toList();
-      if (kDebugMode) {
-        print('Migrating ${validActivities.length} activities');
-      }
-
-      // Migrate activities in chunks to avoid memory issues
-      const chunkSize = 50;
-      for (var i = 0; i < validActivities.length; i += chunkSize) {
-        final end = (i + chunkSize < validActivities.length) ? i + chunkSize : validActivities.length;
-        final chunk = validActivities.sublist(i, end);
-
-        // Update progress
-        _setSyncState(SyncState.migrating);
-        if (kDebugMode) {
-          print('Migrating activities ${i + 1}-$end of ${validActivities.length}');
-        }
-
-        // Save activities to Supabase
-        await _supabaseService.saveActivities(chunk);
-
-        // Migrate activity details, photos, streams, and segment efforts for each activity
-        for (var activity in chunk) {
-          await _migrateActivityDetails(activity.id);
-        }
-      }
-
-      // Update last sync time
-      await _updateLastSyncTime();
+      // Sync from Supabase to SQLite
+      await syncFromSupabase();
 
       if (kDebugMode) {
         print('Initial migration completed successfully');
@@ -199,48 +157,10 @@ class DatabaseSyncService {
     }
   }
 
-  /// Migrates activity details from SQLite to Supabase
-  ///
-  /// This method migrates activity details, photos, streams, and segment efforts
-  /// for the specified activity from SQLite to Supabase.
-  Future<void> _migrateActivityDetails(int activityId) async {
-    try {
-      // Migrate activity details
-      final activityDetail = await _sqliteActivityService.loadActivityDetail(activityId);
-      if (activityDetail != null) {
-        await _supabaseService.saveActivityDetail(activityDetail);
-      }
-
-      // Migrate activity photos
-      final photos = await _sqliteActivityService.loadActivityPhotos(activityId);
-      if (photos.isNotEmpty) {
-        await _supabaseService.saveActivityPhotos(activityId, photos);
-      }
-
-      // Migrate activity streams
-      final streams = await _sqliteActivityService.loadStreams(activityId);
-      if (streams.streams?.isNotEmpty == true) {
-        await _supabaseService.saveStreams(activityId, streams);
-      }
-
-      // Migrate segment efforts
-      final segmentEfforts = await _sqliteSegmentEffortService.getSegmentEffortsForActivity(activityId);
-      if (segmentEfforts.isNotEmpty) {
-        final efforts = segmentEfforts.map((e) => e.effort).toList();
-        await _supabaseService.saveSegmentEfforts(activityId, efforts);
-      }
-    } catch (e) {
-      if (kDebugMode) {
-        print('Error migrating details for activity $activityId: $e');
-      }
-      // Continue with other activities even if one fails
-    }
-  }
-
   /// Syncs data from SQLite to Supabase
   ///
-  /// This method syncs data from SQLite to Supabase.
-  /// It should be called when the device comes online or when new data is added to SQLite.
+  /// This method syncs any pending changes from SQLite to Supabase.
+  /// It should be called when the device comes online after being offline.
   Future<void> syncToSupabase() async {
     if (_isSyncing) {
       if (kDebugMode) {
@@ -263,6 +183,9 @@ class DatabaseSyncService {
         print('Starting sync from SQLite to Supabase');
       }
 
+      // In a unidirectional data flow, we would only sync changes that were made offline
+      // For now, we'll just sync all recent activities to ensure consistency
+      
       // Get last sync time
       final prefs = await SharedPreferences.getInstance();
       final lastSyncTime = prefs.getInt('last_sync_time');
@@ -307,7 +230,7 @@ class DatabaseSyncService {
 
         // Sync activity details, photos, streams, and segment efforts for each activity
         for (var activity in chunk) {
-          await _migrateActivityDetails(activity.id);
+          await _syncActivityDetailsToSupabase(activity.id);
         }
       }
 
@@ -327,11 +250,50 @@ class DatabaseSyncService {
       _isSyncing = false;
     }
   }
+  
+  /// Syncs activity details from SQLite to Supabase
+  ///
+  /// This method syncs activity details, photos, streams, and segment efforts
+  /// for the specified activity from SQLite to Supabase.
+  Future<void> _syncActivityDetailsToSupabase(int activityId) async {
+    try {
+      // Sync activity details
+      final activityDetail = await _sqliteActivityService.loadActivityDetail(activityId);
+      if (activityDetail != null) {
+        await _supabaseService.saveActivityDetail(activityDetail);
+      }
+
+      // Sync activity photos
+      final photos = await _sqliteActivityService.loadActivityPhotos(activityId);
+      if (photos.isNotEmpty) {
+        await _supabaseService.saveActivityPhotos(activityId, photos);
+      }
+
+      // Sync activity streams
+      final streams = await _sqliteActivityService.loadStreams(activityId);
+      if (streams.streams?.isNotEmpty == true) {
+        await _supabaseService.saveStreams(activityId, streams);
+      }
+
+      // Sync segment efforts
+      final segmentEfforts = await _sqliteSegmentEffortService.getSegmentEffortsForActivity(activityId);
+      if (segmentEfforts.isNotEmpty) {
+        final efforts = segmentEfforts.map((e) => e.effort).toList();
+        await _supabaseService.saveSegmentEfforts(activityId, efforts);
+      }
+    } catch (e) {
+      if (kDebugMode) {
+        print('Error syncing details for activity $activityId to Supabase: $e');
+      }
+      // Continue with other activities even if one fails
+    }
+  }
 
   /// Syncs data from Supabase to SQLite
   ///
-  /// This method syncs data from Supabase to SQLite.
-  /// It should be called when the app starts or when new data is added to Supabase.
+  /// This method fetches data from Supabase and caches it in SQLite.
+  /// It should be called when the app starts, when new data is added to Supabase,
+  /// or when the device comes online after being offline.
   Future<void> syncFromSupabase() async {
     if (_isSyncing) {
       if (kDebugMode) {
@@ -477,13 +439,13 @@ enum SyncState {
   /// No synchronization is in progress
   idle,
 
-  /// Initial migration from SQLite to Supabase is in progress
+  /// Initial migration is in progress
   migrating,
 
-  /// Synchronizing data from SQLite to Supabase
+  /// Synchronizing pending changes from SQLite to Supabase
   syncingToSupabase,
 
-  /// Synchronizing data from Supabase to SQLite
+  /// Synchronizing data from Supabase to SQLite cache
   syncingFromSupabase,
 
   /// Synchronization completed successfully

@@ -34,7 +34,7 @@ final Map<String, int> worldLookupByName = {
   'Gravel Mountain': 14,
 };
 
-enum routeType {
+enum RouteType {
   basiconly,
   eventonly,
 }

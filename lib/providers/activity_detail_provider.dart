@@ -8,7 +8,6 @@ import 'package:flutter_strava_api/globals.dart' as globals;
 import 'package:flutter_strava_api/models/activity.dart';
 import 'package:http/http.dart' as http;
 import 'package:path_provider/path_provider.dart';
-import 'package:zwiftdataviewer/utils/database/database_init.dart';
 import 'package:zwiftdataviewer/utils/repository/hybrid_activities_repository.dart';
 
 import 'activity_select_provider.dart';

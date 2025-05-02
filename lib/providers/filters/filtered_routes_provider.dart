@@ -77,16 +77,16 @@ final allRoutesProvider = FutureProvider<List<RouteData>>((ref) async {
   return await filterByUserRoutesProvider(ref);
 });
 
-class RouteFilterNotifier extends StateNotifier<routeType> {
-  RouteFilterNotifier() : super(routeType.basiconly);
+class RouteFilterNotifier extends StateNotifier<RouteType> {
+  RouteFilterNotifier() : super(RouteType.basiconly);
 
-  set filter(routeType filter) {
+  set filter(RouteType filter) {
     state = filter;
   }
 
-  routeType get filter => state;
+  RouteType get filter => state;
 }
 
 final routeFilterProvider =
-    StateNotifierProvider<RouteFilterNotifier, routeType>(
+    StateNotifierProvider<RouteFilterNotifier, RouteType>(
         (ref) => RouteFilterNotifier());

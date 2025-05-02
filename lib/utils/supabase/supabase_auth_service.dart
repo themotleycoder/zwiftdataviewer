@@ -1,10 +1,9 @@
 import 'dart:async';
-import 'dart:convert';
 
 import 'package:flutter/foundation.dart';
 import 'package:flutter_strava_api/globals.dart' as globals;
 import 'package:flutter_strava_api/models/token.dart';
-import 'package:http/http.dart' as http;
+import 'package:shared_preferences/shared_preferences.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 import 'package:zwiftdataviewer/utils/supabase/supabase_config.dart';
 
@@ -47,16 +46,20 @@ class SupabaseAuthService {
         throw Exception('Strava access token is null or empty');
       }
 
+      if (kDebugMode) {
+        print('Attempting to sign in with Strava token for athlete ID: $athleteId');
+      }
+
       // For simplicity in this implementation, we're using the Strava token directly
       // In a production environment, you would typically have a secure backend service
       // that would exchange the Strava token for a Supabase JWT
       
       // Sign in with custom token (in a real implementation, this would be a JWT)
       // Use a fixed email and password for the existing Supabase user
-      final email = 'jdm@duck.com';
+      const email = 'jdm@duck.com';
       // Use a fixed password that was set when the user was created
       // In a production environment, you would use a more secure method
-      final password = 'mypassword'; // Replace with the actual password
+      const password = 'mypassword'; // Replace with the actual password
       
       try {
         // Try to sign in first
@@ -79,8 +82,12 @@ class SupabaseAuthService {
           ),
         );
         
+        // Save authentication info to SharedPreferences for persistence
+        await _saveAuthInfo(email, password, athleteId, stravaToken.accessToken!);
+        
         if (kDebugMode) {
           print('Updated user metadata with Strava athlete ID: $athleteId');
+          print('Saved authentication info to SharedPreferences');
         }
         
         _authStateController.add(true);
@@ -100,8 +107,12 @@ class SupabaseAuthService {
             },
           );
           
+          // Save authentication info to SharedPreferences for persistence
+          await _saveAuthInfo(email, password, athleteId, stravaToken.accessToken!);
+          
           if (kDebugMode) {
             print('Signed up with Strava token: ${response.user?.id}');
+            print('Saved authentication info to SharedPreferences');
           }
           
           _authStateController.add(true);
@@ -118,6 +129,99 @@ class SupabaseAuthService {
       }
       _authStateController.add(false);
       rethrow;
+    }
+  }
+  
+  /// Saves authentication information to SharedPreferences
+  ///
+  /// This method saves the email, password, athlete ID, and Strava token
+  /// to SharedPreferences for persistence across app restarts and cache clearing.
+  Future<void> _saveAuthInfo(String email, String password, int athleteId, String stravaToken) async {
+    try {
+      final prefs = await SharedPreferences.getInstance();
+      await prefs.setString('supabase_email', email);
+      await prefs.setString('supabase_password', password);
+      await prefs.setInt('strava_athlete_id', athleteId);
+      await prefs.setString('strava_token', stravaToken);
+      
+      if (kDebugMode) {
+        print('Authentication info saved to SharedPreferences');
+      }
+    } catch (e) {
+      if (kDebugMode) {
+        print('Error saving authentication info to SharedPreferences: $e');
+      }
+      // Continue even if saving fails
+    }
+  }
+  
+  /// Attempts to restore authentication from SharedPreferences
+  ///
+  /// This method tries to sign in using saved credentials from SharedPreferences.
+  /// It should be called when the app starts or when authentication is needed.
+  Future<bool> tryRestoreAuth() async {
+    try {
+      // Check if we're already authenticated
+      final isAuth = await isAuthenticated();
+      if (isAuth) {
+        if (kDebugMode) {
+          print('Already authenticated with Supabase');
+        }
+        return true;
+      }
+      
+      if (kDebugMode) {
+        print('Attempting to restore authentication from SharedPreferences');
+      }
+      
+      // Get saved authentication info
+      final prefs = await SharedPreferences.getInstance();
+      final email = prefs.getString('supabase_email');
+      final password = prefs.getString('supabase_password');
+      final athleteId = prefs.getInt('strava_athlete_id');
+      final stravaToken = prefs.getString('strava_token');
+      
+      if (email == null || password == null || athleteId == null || stravaToken == null) {
+        if (kDebugMode) {
+          print('No saved authentication info found');
+        }
+        return false;
+      }
+      
+      // Try to sign in with saved credentials
+      try {
+        final response = await SupabaseConfig.client.auth.signInWithPassword(
+          email: email,
+          password: password,
+        );
+        
+        if (kDebugMode) {
+          print('Restored authentication from SharedPreferences: ${response.user?.id}');
+        }
+        
+        // Update the user's metadata with the Strava athlete ID
+        await SupabaseConfig.client.auth.updateUser(
+          UserAttributes(
+            data: {
+              'strava_athlete_id': athleteId,
+              'strava_token': stravaToken,
+            },
+          ),
+        );
+        
+        _authStateController.add(true);
+        return true;
+      } catch (e) {
+        if (kDebugMode) {
+          print('Failed to restore authentication: $e');
+        }
+        return false;
+      }
+    } catch (e) {
+      if (kDebugMode) {
+        print('Error trying to restore authentication: $e');
+      }
+      return false;
     }
   }
 
@@ -165,15 +269,6 @@ class SupabaseAuthService {
     }
   }
 
-  /// Generates a secure password from the Strava token and athlete ID
-  ///
-  /// This is a simple implementation for demonstration purposes.
-  /// In a production environment, you would use a more secure method.
-  String _generateSecurePassword(String token, String athleteId) {
-    final bytes = utf8.encode('$token:$athleteId:zwiftdataviewer');
-    final digest = base64.encode(bytes);
-    return digest.substring(0, 20); // Use first 20 chars for password
-  }
 
   /// Refreshes the Supabase session if needed
   Future<void> refreshSessionIfNeeded() async {

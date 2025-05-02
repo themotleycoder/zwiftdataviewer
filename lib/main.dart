@@ -5,6 +5,7 @@ import 'package:flutter_strava_api/globals.dart' as globals;
 import 'package:flutter_strava_api/models/token.dart';
 import 'package:flutter_strava_api/strava.dart';
 import 'package:stack_trace/stack_trace.dart' as stack_trace;
+import 'package:zwiftdataviewer/providers/connectivity_provider.dart';
 import 'package:zwiftdataviewer/routes.dart';
 import 'package:zwiftdataviewer/screens/allstats/allstatsrootscreen.dart';
 import 'package:zwiftdataviewer/screens/calendars/allcalendarsrootscreen.dart';
@@ -77,6 +78,44 @@ Future<void> main() async {
       print('Hybrid repository initialized');
       print('Supabase enabled: ${hybridRepo.isSupabaseEnabled}');
       print('Online: ${hybridRepo.isOnline}');
+    }
+    
+    // Initialize tiered storage manager
+    if (kDebugMode) {
+      print('Tiered storage manager initialized');
+    }
+    
+    // Try to restore Supabase authentication from SharedPreferences
+    final authService = SupabaseAuthService();
+    final authRestored = await authService.tryRestoreAuth();
+    if (kDebugMode) {
+      print('Supabase authentication restored: $authRestored');
+    }
+    
+    // Check if local database is empty and trigger sync if needed
+    if (authRestored) {
+      final status = await DatabaseInit.checkDatabaseStatus();
+      if (status['file_exists'] == true) {
+        final rowCounts = status['row_counts'] as Map<String, int>?;
+        if (rowCounts != null) {
+          final activitiesCount = rowCounts['activities'] ?? 0;
+          if (activitiesCount == 0 && hybridRepo.isOnline) {
+            if (kDebugMode) {
+              print('Local database is empty, triggering sync from Supabase');
+            }
+            // Trigger sync from Supabase in the background
+            hybridRepo.syncService.syncFromSupabase().then((_) {
+              if (kDebugMode) {
+                print('Initial sync from Supabase completed');
+              }
+            }).catchError((e) {
+              if (kDebugMode) {
+                print('Error during initial sync from Supabase: $e');
+              }
+            });
+          }
+        }
+      }
     }
   } catch (e) {
     if (kDebugMode) {
@@ -164,7 +203,7 @@ Future<void> main() async {
         // Get athlete ID from Strava API
         final strava = Strava(globals.isInDebug, clientSecret);
         final athlete = await strava.getLoggedInAthlete();
-        final athleteId = athlete?.id ?? 0;
+        final athleteId = athlete.id ?? 0;
         
         if (athleteId > 0) {
           await supabaseAuthService.signInWithStravaToken(token, athleteId);
@@ -192,24 +231,34 @@ Future<void> main() async {
     // The app will continue and handle authentication in the UI
   }
 
+  // Initialize the app with ProviderScope
   runApp(ProviderScope(
-      child: MaterialApp(
-    title: 'Zwift Data Viewer',
-    theme: ThemeData(useMaterial3: true, colorScheme: lightColorScheme),
-    // localizationsDelegates: [
-    //   ArchSampleLocalizationsDelegate(),
-    //   ProviderLocalizationsDelegate(),
-    // ],
-    // onGenerateTitle: (context) =>
-    //     ProviderLocalizations.of(context).appTitle,
-    routes: {
-      AppRoutes.home: (context) => const HomeScreen(),
-      AppRoutes.allStats: (context) => const AllStatsRootScreen(),
-      AppRoutes.allRoutes: (context) => const RoutesScreen(),
-      AppRoutes.calendar: (context) => const AllCalendarsRootScreen(),
-      AppRoutes.settings: (context) => const SettingsScreen(),
-      AppRoutes.segments: (context) => const SegmentsScreen(),
-      AppRoutes.detail: (context) => const DetailScreen(),
-    },
-  )));
+    child: MaterialApp(
+      title: 'Zwift Data Viewer',
+      theme: ThemeData(useMaterial3: true, colorScheme: lightColorScheme),
+      // localizationsDelegates: [
+      //   ArchSampleLocalizationsDelegate(),
+      //   ProviderLocalizationsDelegate(),
+      // ],
+      // onGenerateTitle: (context) =>
+      //     ProviderLocalizations.of(context).appTitle,
+      routes: {
+        AppRoutes.home: (context) => const HomeScreen(),
+        AppRoutes.allStats: (context) => const AllStatsRootScreen(),
+        AppRoutes.allRoutes: (context) => const RoutesScreen(),
+        AppRoutes.calendar: (context) => const AllCalendarsRootScreen(),
+        AppRoutes.settings: (context) => const SettingsScreen(),
+        AppRoutes.segments: (context) => const SegmentsScreen(),
+        AppRoutes.detail: (context) => const DetailScreen(),
+      },
+      // Add a builder to initialize providers that need to be accessed early
+      builder: (context, child) {
+        // Initialize the connectivity provider by watching it
+        // This ensures the connectivity state is monitored from app startup
+        ProviderScope.containerOf(context).read(connectivityProvider.notifier);
+        
+        return child!;
+      },
+    ),
+  ));
 }

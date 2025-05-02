@@ -36,11 +36,28 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
 
   Future<void> _loadSettings() async {
     final prefs = await SharedPreferences.getInstance();
+    final supabaseEnabled = prefs.getBool('supabaseEnabled');
+    
     setState(() {
       _isMetric = prefs.getBool('isMetric') ?? true;
       _ftp = prefs.getInt('ftp') ?? 0;
-      _isSupabaseEnabled = prefs.getBool('supabaseEnabled') ?? true;
+      _isSupabaseEnabled = supabaseEnabled ?? true;
     });
+    
+    // Update the hybrid repository with the loaded setting
+    if (supabaseEnabled != null) {
+      try {
+        final hybridRepo = HybridActivitiesRepository();
+        await hybridRepo.setSupabaseEnabled(_isSupabaseEnabled);
+        if (kDebugMode) {
+          print('Updated HybridActivitiesRepository with Supabase enabled: $_isSupabaseEnabled');
+        }
+      } catch (e) {
+        if (kDebugMode) {
+          print('Error updating HybridActivitiesRepository with Supabase enabled: $e');
+        }
+      }
+    }
   }
 
   Future<void> _saveSettings() async {

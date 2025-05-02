@@ -18,6 +18,14 @@ import 'package:zwiftdataviewer/utils/supabase/supabase_config.dart';
 class SupabaseDatabaseService {
   static final SupabaseDatabaseService _instance = SupabaseDatabaseService._internal();
   final SupabaseAuthService _authService = SupabaseAuthService();
+  
+  // Authentication state cache
+  bool? _isAuthenticatedCache;
+  DateTime? _lastAuthCheck;
+  int? _cachedAthleteId;
+  
+  // Cache expiration duration (check auth every 5 minutes)
+  static const Duration _authCacheExpiration = Duration(minutes: 5);
 
   // Singleton pattern
   factory SupabaseDatabaseService() => _instance;
@@ -26,6 +34,64 @@ class SupabaseDatabaseService {
 
   /// Gets the Supabase client
   SupabaseClient get _client => SupabaseConfig.client;
+  
+  /// Checks if the user is authenticated with Supabase
+  /// 
+  /// This method uses a cache to reduce the number of authentication checks.
+  /// It only checks authentication if the cache is empty or expired.
+  Future<bool> _checkAuthentication() async {
+    final now = DateTime.now();
+    
+    // Use cached value if available and not expired
+    if (_isAuthenticatedCache != null && 
+        _lastAuthCheck != null &&
+        now.difference(_lastAuthCheck!) < _authCacheExpiration) {
+      return _isAuthenticatedCache!;
+    }
+    
+    // Check authentication and update cache
+    try {
+      final isAuthenticated = await _authService.isAuthenticated();
+      _isAuthenticatedCache = isAuthenticated;
+      _lastAuthCheck = now;
+      
+      // Cache athlete ID if authenticated
+      if (isAuthenticated) {
+        _cachedAthleteId = _authService.currentAthleteId;
+      }
+      
+      return isAuthenticated;
+    } catch (e) {
+      if (kDebugMode) {
+        print('Error checking authentication: $e');
+      }
+      // Clear cache on error
+      _isAuthenticatedCache = false;
+      _lastAuthCheck = now;
+      _cachedAthleteId = null;
+      return false;
+    }
+  }
+  
+  /// Gets the current athlete ID
+  /// 
+  /// This method uses a cache to reduce the number of calls to the auth service.
+  Future<int?> _getAthleteId() async {
+    // Ensure we're authenticated first
+    final isAuthenticated = await _checkAuthentication();
+    if (!isAuthenticated) {
+      return null;
+    }
+    
+    // Use cached value if available
+    if (_cachedAthleteId != null) {
+      return _cachedAthleteId;
+    }
+    
+    // Get from auth service and cache
+    _cachedAthleteId = _authService.currentAthleteId;
+    return _cachedAthleteId;
+  }
 
   /// Gets activities from Supabase
   ///
@@ -33,8 +99,8 @@ class SupabaseDatabaseService {
   /// specified dates. It returns a list of SummaryActivity objects.
   Future<List<SummaryActivity>> getActivities(int beforeDate, int afterDate) async {
     try {
-      // Ensure we're authenticated
-      final isAuthenticated = await _authService.isAuthenticated();
+      // Ensure we're authenticated using cached check
+      final isAuthenticated = await _checkAuthentication();
       if (!isAuthenticated) {
         throw Exception('Not authenticated with Supabase');
       }
@@ -43,8 +109,8 @@ class SupabaseDatabaseService {
       final beforeDateStr = DateTime.fromMillisecondsSinceEpoch(beforeDate * 1000).toIso8601String();
       final afterDateStr = DateTime.fromMillisecondsSinceEpoch(afterDate * 1000).toIso8601String();
 
-      // Get the current athlete ID
-      final athleteId = _authService.currentAthleteId;
+      // Get the current athlete ID using cached value
+      final athleteId = await _getAthleteId();
       if (athleteId == null) {
         throw Exception('No athlete ID available');
       }
@@ -89,14 +155,14 @@ class SupabaseDatabaseService {
   /// activity ID. It returns a DetailedActivity object.
   Future<DetailedActivity?> getActivityDetail(int activityId) async {
     try {
-      // Ensure we're authenticated
-      final isAuthenticated = await _authService.isAuthenticated();
+      // Ensure we're authenticated using cached check
+      final isAuthenticated = await _checkAuthentication();
       if (!isAuthenticated) {
         throw Exception('Not authenticated with Supabase');
       }
 
-      // Get the current athlete ID
-      final athleteId = _authService.currentAthleteId;
+      // Get the current athlete ID using cached value
+      final athleteId = await _getAthleteId();
       if (athleteId == null) {
         throw Exception('No athlete ID available');
       }
@@ -128,14 +194,14 @@ class SupabaseDatabaseService {
   /// activity. It also extracts and saves segment efforts if available.
   Future<void> saveActivityDetail(DetailedActivity activity) async {
     try {
-      // Ensure we're authenticated
-      final isAuthenticated = await _authService.isAuthenticated();
+      // Ensure we're authenticated using cached check
+      final isAuthenticated = await _checkAuthentication();
       if (!isAuthenticated) {
         throw Exception('Not authenticated with Supabase');
       }
 
-      // Get the current athlete ID
-      final athleteId = _authService.currentAthleteId;
+      // Get the current athlete ID using cached value
+      final athleteId = await _getAthleteId();
       if (athleteId == null) {
         throw Exception('No athlete ID available');
       }
@@ -176,14 +242,14 @@ class SupabaseDatabaseService {
   /// activity ID. It returns a list of PhotoActivity objects.
   Future<List<PhotoActivity>> getActivityPhotos(int activityId) async {
     try {
-      // Ensure we're authenticated
-      final isAuthenticated = await _authService.isAuthenticated();
+      // Ensure we're authenticated using cached check
+      final isAuthenticated = await _checkAuthentication();
       if (!isAuthenticated) {
         throw Exception('Not authenticated with Supabase');
       }
 
-      // Get the current athlete ID
-      final athleteId = _authService.currentAthleteId;
+      // Get the current athlete ID using cached value
+      final athleteId = await _getAthleteId();
       if (athleteId == null) {
         throw Exception('No athlete ID available');
       }
@@ -246,14 +312,14 @@ class SupabaseDatabaseService {
     }
 
     try {
-      // Ensure we're authenticated
-      final isAuthenticated = await _authService.isAuthenticated();
+      // Ensure we're authenticated using cached check
+      final isAuthenticated = await _checkAuthentication();
       if (!isAuthenticated) {
         throw Exception('Not authenticated with Supabase');
       }
 
-      // Get the current athlete ID
-      final athleteId = _authService.currentAthleteId;
+      // Get the current athlete ID using cached value
+      final athleteId = await _getAthleteId();
       if (athleteId == null) {
         throw Exception('No athlete ID available');
       }
@@ -330,14 +396,14 @@ class SupabaseDatabaseService {
   /// activity ID. It returns a StreamsDetailCollection object.
   Future<StreamsDetailCollection?> getStreams(int activityId) async {
     try {
-      // Ensure we're authenticated
-      final isAuthenticated = await _authService.isAuthenticated();
+      // Ensure we're authenticated using cached check
+      final isAuthenticated = await _checkAuthentication();
       if (!isAuthenticated) {
         throw Exception('Not authenticated with Supabase');
       }
 
-      // Get the current athlete ID
-      final athleteId = _authService.currentAthleteId;
+      // Get the current athlete ID using cached value
+      final athleteId = await _getAthleteId();
       if (athleteId == null) {
         throw Exception('No athlete ID available');
       }
@@ -369,14 +435,14 @@ class SupabaseDatabaseService {
   /// activity. It deletes existing streams for the activity first.
   Future<void> saveStreams(int activityId, StreamsDetailCollection streams) async {
     try {
-      // Ensure we're authenticated
-      final isAuthenticated = await _authService.isAuthenticated();
+      // Ensure we're authenticated using cached check
+      final isAuthenticated = await _checkAuthentication();
       if (!isAuthenticated) {
         throw Exception('Not authenticated with Supabase');
       }
 
-      // Get the current athlete ID
-      final athleteId = _authService.currentAthleteId;
+      // Get the current athlete ID using cached value
+      final athleteId = await _getAthleteId();
       if (athleteId == null) {
         throw Exception('No athlete ID available');
       }
@@ -409,14 +475,14 @@ class SupabaseDatabaseService {
     if (activities.isEmpty) return;
 
     try {
-      // Ensure we're authenticated
-      final isAuthenticated = await _authService.isAuthenticated();
+      // Ensure we're authenticated using cached check
+      final isAuthenticated = await _checkAuthentication();
       if (!isAuthenticated) {
         throw Exception('Not authenticated with Supabase');
       }
 
-      // Get the current athlete ID
-      final athleteId = _authService.currentAthleteId;
+      // Get the current athlete ID using cached value
+      final athleteId = await _getAthleteId();
       if (athleteId == null) {
         throw Exception('No athlete ID available');
       }
@@ -471,14 +537,14 @@ class SupabaseDatabaseService {
     }
 
     try {
-      // Ensure we're authenticated
-      final isAuthenticated = await _authService.isAuthenticated();
+      // Ensure we're authenticated using cached check
+      final isAuthenticated = await _checkAuthentication();
       if (!isAuthenticated) {
         throw Exception('Not authenticated with Supabase');
       }
 
-      // Get the current athlete ID
-      final athleteId = _authService.currentAthleteId;
+      // Get the current athlete ID using cached value
+      final athleteId = await _getAthleteId();
       if (athleteId == null) {
         throw Exception('No athlete ID available');
       }
@@ -565,7 +631,6 @@ class SupabaseDatabaseService {
             }
           }
           // Continue with other segment efforts
-          continue;
         }
       }
 
@@ -581,20 +646,21 @@ class SupabaseDatabaseService {
     }
   }
 
+
   /// Gets segment efforts for an activity from Supabase
   ///
   /// This method fetches segment efforts from Supabase for the specified
   /// activity ID. It returns a list of SegmentEffort objects.
   Future<List<SegmentEffort>> getSegmentEffortsForActivity(int activityId) async {
     try {
-      // Ensure we're authenticated
-      final isAuthenticated = await _authService.isAuthenticated();
+      // Ensure we're authenticated using cached check
+      final isAuthenticated = await _checkAuthentication();
       if (!isAuthenticated) {
         throw Exception('Not authenticated with Supabase');
       }
 
-      // Get the current athlete ID
-      final athleteId = _authService.currentAthleteId;
+      // Get the current athlete ID using cached value
+      final athleteId = await _getAthleteId();
       if (athleteId == null) {
         throw Exception('No athlete ID available');
       }
@@ -646,14 +712,14 @@ class SupabaseDatabaseService {
     if (activityIds.isEmpty) return 0;
 
     try {
-      // Ensure we're authenticated
-      final isAuthenticated = await _authService.isAuthenticated();
+      // Ensure we're authenticated using cached check
+      final isAuthenticated = await _checkAuthentication();
       if (!isAuthenticated) {
         throw Exception('Not authenticated with Supabase');
       }
 
-      // Get the current athlete ID
-      final athleteId = _authService.currentAthleteId;
+      // Get the current athlete ID using cached value
+      final athleteId = await _getAthleteId();
       if (athleteId == null) {
         throw Exception('No athlete ID available');
       }
