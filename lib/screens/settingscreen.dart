@@ -372,13 +372,84 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
     }
   }
 
-  refreshRouteData() {
-    FileRepository().scrapeRouteData();
+  Future<void> refreshRouteData() async {
+    try {
+      // Show loading indicator
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(
+            content: Text('Refreshing route data from Zwift Insider...'),
+            duration: Duration(seconds: 2),
+          ),
+        );
+      }
+      
+      // Use the DatabaseSyncService to scrape and sync route data
+      final syncService = DatabaseSyncService();
+      await syncService.refreshRouteData();
+      
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(
+            content: Text('Route data refreshed successfully'),
+            backgroundColor: Colors.green,
+          ),
+        );
+      }
+    } catch (e) {
+      if (kDebugMode) {
+        print('Error refreshing route data: $e');
+      }
+      
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text('Error refreshing route data: $e'),
+            backgroundColor: Colors.red,
+          ),
+        );
+      }
+    }
   }
 
-  refreshCalendarData() {
-    FileRepository().scrapeWorldCalendarData();
-    FileRepository().scrapeClimbCalendarData();
+  Future<void> refreshCalendarData() async {
+    try {
+      // Show loading indicator
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(
+            content: Text('Refreshing calendar data from Zwift Insider...'),
+            duration: Duration(seconds: 2),
+          ),
+        );
+      }
+      
+      // Use the DatabaseSyncService to scrape and sync calendar data
+      final syncService = DatabaseSyncService();
+      await syncService.refreshCalendarData();
+      
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(
+            content: Text('Calendar data refreshed successfully'),
+            backgroundColor: Colors.green,
+          ),
+        );
+      }
+    } catch (e) {
+      if (kDebugMode) {
+        print('Error refreshing calendar data: $e');
+      }
+      
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text('Error refreshing calendar data: $e'),
+            backgroundColor: Colors.red,
+          ),
+        );
+      }
+    }
   }
   
   Future<void> checkDatabaseStatus(BuildContext context) async {

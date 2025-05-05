@@ -24,10 +24,43 @@ This will create the following tables:
 - `zw_activity_photos`: Stores photos associated with activities
 - `zw_activity_streams`: Stores time-series data for activities
 - `zw_segment_efforts`: Stores information about segment efforts within activities
+- `zw_worlds`: Stores information about Zwift worlds
+- `zw_routes`: Stores information about Zwift routes (references worlds)
+- `zw_climbs`: Stores information about Zwift climbs (references worlds)
 
 It will also set up Row Level Security (RLS) policies to ensure that users can only access their own data.
 
-## Step 2: Configure the App
+## Step 2: Create Routes and Climbs Tables
+
+The app also requires tables to store route and climb data. You can create these tables by running the SQL migration script provided in the `routes_climbs_migration.sql` file.
+
+1. Go to your Supabase project dashboard
+2. Navigate to the SQL Editor
+3. Copy the contents of the `routes_climbs_migration.sql` file
+4. Paste the SQL into the editor
+5. Click "Run" to execute the script
+
+This will create the following additional tables:
+- `zw_worlds`: Stores information about Zwift worlds
+- `zw_routes`: Stores information about Zwift routes (with foreign key references to worlds)
+- `zw_climbs`: Stores information about Zwift climbs (with foreign key references to worlds)
+
+## Step 3: Remove Athlete ID Requirement for Routes, Worlds, and Climbs
+
+To make routes, worlds, and climbs data shared across all users (since this data is constant for all athletes), you need to run the SQL migration script provided in the `remove_athlete_id_requirement.sql` file.
+
+1. Go to your Supabase project dashboard
+2. Navigate to the SQL Editor
+3. Copy the contents of the `remove_athlete_id_requirement.sql` file
+4. Paste the SQL into the editor
+5. Click "Run" to execute the script
+
+This migration script will:
+- Make the `athlete_id` column nullable in the `zw_worlds`, `zw_routes`, and `zw_climbs` tables
+- Update the Row Level Security (RLS) policies to allow access to records with null `athlete_id` values
+- This allows for shared data that all users can access, while still maintaining user-specific data when needed
+
+## Step 4: Configure the App
 
 1. Open the app's `lib/utils/supabase/supabase_config.dart` file
 2. Update the `supabaseUrl` and `supabaseAnonKey` values with your Supabase project URL and anon key
@@ -38,14 +71,14 @@ It will also set up Row Level Security (RLS) policies to ensure that users can o
 
 You can find these values in your Supabase project dashboard under Project Settings > API.
 
-## Step 3: Enable Supabase in the App
+## Step 5: Enable Supabase in the App
 
 1. Launch the Zwift Data Viewer app
 2. Go to the Settings screen
 3. Toggle "Use Supabase" to ON
 4. If prompted, choose "Migrate" to migrate your existing data to Supabase
 
-## Step 4: Verify the Setup
+## Step 6: Verify the Setup
 
 1. In the Settings screen, tap "Sync to Supabase" to manually sync your data
 2. Check your Supabase dashboard to verify that data is being stored in the tables

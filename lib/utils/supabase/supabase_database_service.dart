@@ -7,7 +7,13 @@ import 'package:flutter_strava_api/models/activity.dart';
 import 'package:flutter_strava_api/models/segmentEffort.dart';
 import 'package:flutter_strava_api/models/summary_activity.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
+import 'package:zwiftdataviewer/models/climbdata.dart';
+import 'package:zwiftdataviewer/models/routedata.dart';
+import 'package:zwiftdataviewer/models/worlddata.dart';
 import 'package:zwiftdataviewer/utils/database/models/activity_model.dart';
+import 'package:zwiftdataviewer/utils/database/models/climb_model.dart';
+import 'package:zwiftdataviewer/utils/database/models/route_model.dart';
+import 'package:zwiftdataviewer/utils/database/models/world_model.dart';
 import 'package:zwiftdataviewer/utils/supabase/supabase_auth_service.dart';
 import 'package:zwiftdataviewer/utils/supabase/supabase_config.dart';
 
@@ -745,6 +751,392 @@ class SupabaseDatabaseService {
         print('Error deleting activities from Supabase: $e');
       }
       return 0;
+    }
+  }
+
+  /// Gets worlds from Supabase
+  ///
+  /// This method fetches all worlds from Supabase.
+  /// It returns a list of WorldData objects.
+  Future<List<WorldData>> getWorlds() async {
+    try {
+      // Ensure we're authenticated using cached check
+      final isAuthenticated = await _checkAuthentication();
+      if (!isAuthenticated) {
+        throw Exception('Not authenticated with Supabase');
+      }
+
+      // Query Supabase for worlds
+      final response = await _client
+          .from('zw_worlds')
+          .select()
+          .order('name', ascending: true);
+
+      if (response == null || response.isEmpty) {
+        return [];
+      }
+
+      // Convert response to WorldData objects
+      return List.generate(response.length, (i) {
+        try {
+          final Map<String, dynamic> worldMap = response[i];
+          return WorldModel.fromMap(worldMap).toWorldData();
+        } catch (e) {
+          if (kDebugMode) {
+            print('Error converting world at index $i: $e');
+          }
+          // Skip this world
+          return null;
+        }
+      }).whereType<WorldData>().toList();
+    } catch (e) {
+      if (kDebugMode) {
+        print('Error getting worlds from Supabase: $e');
+      }
+      return [];
+    }
+  }
+
+  /// Saves worlds to Supabase
+  ///
+  /// This method saves worlds to Supabase.
+  /// It upserts each world.
+  Future<void> saveWorlds(List<WorldData> worlds) async {
+    if (worlds.isEmpty) return;
+
+    try {
+      // Ensure we're authenticated using cached check
+      final isAuthenticated = await _checkAuthentication();
+      if (!isAuthenticated) {
+        throw Exception('Not authenticated with Supabase');
+      }
+
+      // Convert worlds to WorldModel objects
+      final List<Map<String, dynamic>> worldMaps = [];
+      for (var world in worlds) {
+        try {
+          final worldModel = WorldModel.fromWorldData(world);
+          worldMaps.add(worldModel.toMap());
+        } catch (e) {
+          if (kDebugMode) {
+            print('Error converting world ${world.id}: $e');
+          }
+          // Continue with other worlds even if one fails
+          continue;
+        }
+      }
+
+      // Save worlds to Supabase in chunks to avoid request size limits
+      const chunkSize = 50;
+      for (var i = 0; i < worldMaps.length; i += chunkSize) {
+        final end = (i + chunkSize < worldMaps.length) ? i + chunkSize : worldMaps.length;
+        final chunk = worldMaps.sublist(i, end);
+
+        await _client
+            .from('zw_worlds')
+            .upsert(chunk);
+
+        if (kDebugMode) {
+          print('Saved ${chunk.length} worlds to Supabase (${i + 1}-$end of ${worldMaps.length})');
+        }
+      }
+    } catch (e) {
+      if (kDebugMode) {
+        print('Error saving worlds to Supabase: $e');
+      }
+      rethrow;
+    }
+  }
+
+  /// Gets routes from Supabase
+  ///
+  /// This method fetches all routes from Supabase.
+  /// It returns a list of RouteData objects.
+  Future<List<RouteData>> getRoutes() async {
+    try {
+      // Ensure we're authenticated using cached check
+      final isAuthenticated = await _checkAuthentication();
+      if (!isAuthenticated) {
+        throw Exception('Not authenticated with Supabase');
+      }
+
+      // Query Supabase for routes
+      final response = await _client
+          .from('zw_routes')
+          .select('*, zw_worlds!inner(*)')
+          .order('world', ascending: true)
+          .order('route_name', ascending: true);
+
+      if (response == null || response.isEmpty) {
+        return [];
+      }
+
+      // Convert response to RouteData objects
+      return List.generate(response.length, (i) {
+        try {
+          final Map<String, dynamic> routeMap = response[i];
+          
+          // Extract the world data if available
+          Map<String, dynamic>? worldData;
+          if (routeMap.containsKey('zw_worlds') && routeMap['zw_worlds'] != null) {
+            worldData = routeMap['zw_worlds'] as Map<String, dynamic>;
+          }
+          
+          // Create the route model
+          final routeModel = RouteModel.fromMap(routeMap);
+          final routeData = routeModel.toRouteData();
+          
+          // Update the world name if we have world data
+          if (worldData != null && worldData.containsKey('name')) {
+            routeData.world = worldData['name'] as String?;
+          }
+          
+          return routeData;
+        } catch (e) {
+          if (kDebugMode) {
+            print('Error converting route at index $i: $e');
+          }
+          // Skip this route
+          return null;
+        }
+      }).whereType<RouteData>().toList();
+    } catch (e) {
+      if (kDebugMode) {
+        print('Error getting routes from Supabase: $e');
+      }
+      return [];
+    }
+  }
+
+  /// Saves routes to Supabase
+  ///
+  /// This method saves routes to Supabase.
+  /// It upserts each route after deduplicating them.
+  Future<void> saveRoutes(List<RouteData> routes) async {
+    if (routes.isEmpty) return;
+
+    try {
+      // Ensure we're authenticated using cached check
+      final isAuthenticated = await _checkAuthentication();
+      if (!isAuthenticated) {
+        throw Exception('Not authenticated with Supabase');
+      }
+
+      // Get existing worlds or create them
+      final existingWorlds = await getWorlds();
+      final worldsByName = {for (var world in existingWorlds) world.name: world};
+      
+      // Ensure all worlds exist
+      final worldsToSave = <WorldData>[];
+      for (var route in routes) {
+        if (route.world != null && !worldsByName.containsKey(route.world)) {
+          // Create a new world
+          final worldId = worldsByName.length + 1;
+          final world = WorldData(worldId, null, route.world, null);
+          worldsByName[route.world!] = world;
+          worldsToSave.add(world);
+        }
+      }
+      
+      // Save new worlds if any
+      if (worldsToSave.isNotEmpty) {
+        await saveWorlds(worldsToSave);
+      }
+
+      // Deduplicate routes based on ID only to prevent ON CONFLICT errors
+      if (kDebugMode) {
+        print('Deduplicating ${routes.length} routes before saving to Supabase');
+      }
+      
+      final Map<int, RouteData> uniqueRoutesById = {};
+      for (var route in routes) {
+        // Only add the route if we haven't seen this ID before
+        if (route.id != null && !uniqueRoutesById.containsKey(route.id)) {
+          uniqueRoutesById[route.id!] = route;
+        }
+      }
+      
+      final deduplicatedRoutes = uniqueRoutesById.values.toList();
+      if (kDebugMode) {
+        print('Deduplicated to ${deduplicatedRoutes.length} unique routes (removed ${routes.length - deduplicatedRoutes.length} duplicates)');
+      }
+
+      // Convert routes to RouteModel objects
+      final List<Map<String, dynamic>> routeMaps = [];
+      for (var route in deduplicatedRoutes) {
+        try {
+          final routeModel = RouteModel.fromRouteData(route);
+          final routeMap = routeModel.toMap();
+          
+          // Add world_id if available
+          if (route.world != null && worldsByName.containsKey(route.world)) {
+            routeMap['world_id'] = worldsByName[route.world]!.id;
+          }
+          
+          routeMaps.add(routeMap);
+        } catch (e) {
+          if (kDebugMode) {
+            print('Error converting route ${route.id}: $e');
+          }
+          // Continue with other routes even if one fails
+          continue;
+        }
+      }
+
+      // Save routes to Supabase in chunks to avoid request size limits
+      const chunkSize = 50;
+      for (var i = 0; i < routeMaps.length; i += chunkSize) {
+        final end = (i + chunkSize < routeMaps.length) ? i + chunkSize : routeMaps.length;
+        final chunk = routeMaps.sublist(i, end);
+
+        await _client
+            .from('zw_routes')
+            .upsert(chunk);
+
+        if (kDebugMode) {
+          print('Saved ${chunk.length} routes to Supabase (${i + 1}-$end of ${routeMaps.length})');
+        }
+      }
+    } catch (e) {
+      if (kDebugMode) {
+        print('Error saving routes to Supabase: $e');
+      }
+      rethrow;
+    }
+  }
+
+  /// Updates a route in Supabase
+  ///
+  /// This method updates a single route in Supabase.
+  /// It's useful for updating the completed status of a route.
+  Future<void> updateRoute(RouteData route) async {
+    try {
+      // Ensure we're authenticated using cached check
+      final isAuthenticated = await _checkAuthentication();
+      if (!isAuthenticated) {
+        throw Exception('Not authenticated with Supabase');
+      }
+
+      // Convert route to RouteModel
+      final routeModel = RouteModel.fromRouteData(route);
+
+      // Update route in Supabase
+      await _client
+          .from('zw_routes')
+          .upsert(routeModel.toMap());
+
+      if (kDebugMode) {
+        print('Updated route ${route.id} in Supabase');
+      }
+    } catch (e) {
+      if (kDebugMode) {
+        print('Error updating route in Supabase: $e');
+      }
+      rethrow;
+    }
+  }
+
+  /// Gets climbs from Supabase
+  ///
+  /// This method fetches all climbs from Supabase.
+  /// It returns a list of ClimbData objects.
+  Future<List<ClimbData>> getClimbs() async {
+    try {
+      // Ensure we're authenticated using cached check
+      final isAuthenticated = await _checkAuthentication();
+      if (!isAuthenticated) {
+        throw Exception('Not authenticated with Supabase');
+      }
+
+      // Query Supabase for climbs
+      final response = await _client
+          .from('zw_climbs')
+          .select('*, zw_worlds(*)')
+          .order('name', ascending: true);
+
+      if (response == null || response.isEmpty) {
+        return [];
+      }
+
+      // Convert response to ClimbData objects
+      return List.generate(response.length, (i) {
+        try {
+          final Map<String, dynamic> climbMap = response[i];
+          return ClimbModel.fromMap(climbMap).toClimbData();
+        } catch (e) {
+          if (kDebugMode) {
+            print('Error converting climb at index $i: $e');
+          }
+          // Skip this climb
+          return null;
+        }
+      }).whereType<ClimbData>().toList();
+    } catch (e) {
+      if (kDebugMode) {
+        print('Error getting climbs from Supabase: $e');
+      }
+      return [];
+    }
+  }
+
+  /// Saves climbs to Supabase
+  ///
+  /// This method saves climbs to Supabase.
+  /// It upserts each climb.
+  Future<void> saveClimbs(List<ClimbData> climbs) async {
+    if (climbs.isEmpty) return;
+
+    try {
+      // Ensure we're authenticated using cached check
+      final isAuthenticated = await _checkAuthentication();
+      if (!isAuthenticated) {
+        throw Exception('Not authenticated with Supabase');
+      }
+
+      // Get existing worlds
+      final existingWorlds = await getWorlds();
+      final worldsByName = {for (var world in existingWorlds) world.name: world};
+
+      // Convert climbs to ClimbModel objects
+      final List<Map<String, dynamic>> climbMaps = [];
+      for (var climb in climbs) {
+        try {
+          final climbModel = ClimbModel.fromClimbData(climb);
+          final climbMap = climbModel.toMap();
+          
+          // Add world_id if we can determine it
+          // In a real implementation, you would have a way to associate climbs with worlds
+          // For now, we'll leave it null
+          
+          climbMaps.add(climbMap);
+        } catch (e) {
+          if (kDebugMode) {
+            print('Error converting climb ${climb.id}: $e');
+          }
+          // Continue with other climbs even if one fails
+          continue;
+        }
+      }
+
+      // Save climbs to Supabase in chunks to avoid request size limits
+      const chunkSize = 50;
+      for (var i = 0; i < climbMaps.length; i += chunkSize) {
+        final end = (i + chunkSize < climbMaps.length) ? i + chunkSize : climbMaps.length;
+        final chunk = climbMaps.sublist(i, end);
+
+        await _client
+            .from('zw_climbs')
+            .upsert(chunk);
+
+        if (kDebugMode) {
+          print('Saved ${chunk.length} climbs to Supabase (${i + 1}-$end of ${climbMaps.length})');
+        }
+      }
+    } catch (e) {
+      if (kDebugMode) {
+        print('Error saving climbs to Supabase: $e');
+      }
+      rethrow;
     }
   }
 }
