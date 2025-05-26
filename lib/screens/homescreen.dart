@@ -13,7 +13,6 @@ import 'package:zwiftdataviewer/utils/theme.dart';
 import 'package:zwiftdataviewer/utils/ui_helpers.dart';
 import 'package:zwiftdataviewer/widgets/activitieslistview.dart';
 import 'package:zwiftdataviewer/widgets/filterdatebutton.dart';
-import 'package:zwiftdataviewer/widgets/filterroutebutton.dart';
 
 // A class representing the home screen of the application.
 //
@@ -51,12 +50,6 @@ class HomeScreen extends MainLayout {
     if (tabIndex == HomeScreenTab.stats.index) {
       actions.add(
         const FilterDateButton(isActive: true //tab == HomeScreenTab.stats,
-            ),
-      );
-    }
-    if (tabIndex == HomeScreenTab.routes.index) {
-      actions.add(
-        const FilterRouteButton(isActive: true //tab == HomeScreenTab.stats,
             ),
       );
     }

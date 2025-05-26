@@ -6,6 +6,7 @@ import 'package:zwiftdataviewer/providers/filters/filtered_routefilter_provider.
 import 'package:zwiftdataviewer/utils/theme.dart';
 import 'package:zwiftdataviewer/utils/ui_helpers.dart';
 import 'package:zwiftdataviewer/widgets/routedetailtilewidget.dart';
+import 'package:zwiftdataviewer/widgets/improved_route_filter_widget.dart';
 
 // A screen that displays a list of Zwift routes.
 //
@@ -27,34 +28,44 @@ class RoutesScreen extends ConsumerWidget {
           iconColor: zdvMidBlue,
           useInkWell: true,
         ),
-        child: routeDataModel.when(
-          data: (routes) {
-            if (routes.isEmpty) {
-              return UIHelpers.buildEmptyStateWidget(
-                'No routes found matching the current filters',
-                icon: Icons.route,
-              );
-            }
+        child: Column(
+          children: [
+            Flexible(
+              flex: 0,
+              child: const ImprovedRouteFilterWidget(),
+            ),
+            Expanded(
+              child: routeDataModel.when(
+                data: (routes) {
+                  if (routes.isEmpty) {
+                    return UIHelpers.buildEmptyStateWidget(
+                      'No routes found matching the current filters',
+                      icon: Icons.route,
+                    );
+                  }
 
-            return ListView.builder(
-              physics: const BouncingScrollPhysics(),
-              itemCount: routes.length,
-              itemBuilder: (BuildContext ctxt, int index) {
-                return RouteDetailTile(routes[index]);
-              },
-            );
-          },
-          error: (Object error, StackTrace stackTrace) {
-            // Log error for debugging
-            debugPrint('Error loading routes: $error');
-            return UIHelpers.buildErrorWidget(
-              'Failed to load routes',
-              () => ref.refresh(distanceRouteFiltersProvider),
-            );
-          },
-          loading: () {
-            return UIHelpers.buildLoadingIndicator();
-          },
+                  return ListView.builder(
+                    physics: const BouncingScrollPhysics(),
+                    itemCount: routes.length,
+                    itemBuilder: (BuildContext ctxt, int index) {
+                      return RouteDetailTile(routes[index]);
+                    },
+                  );
+                },
+                error: (Object error, StackTrace stackTrace) {
+                  // Log error for debugging
+                  debugPrint('Error loading routes: $error');
+                  return UIHelpers.buildErrorWidget(
+                    'Failed to load routes',
+                    () => ref.refresh(distanceRouteFiltersProvider),
+                  );
+                },
+                loading: () {
+                  return UIHelpers.buildLoadingIndicator();
+                },
+              ),
+            ),
+          ],
         ),
       ),
     );
