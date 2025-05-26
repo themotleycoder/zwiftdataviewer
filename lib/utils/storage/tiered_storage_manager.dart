@@ -171,7 +171,7 @@ class TieredStorageManager {
       final Map<int, double> activityScores = {};
       for (final activity in activities) {
         if (activity?.id != null) {
-          activityScores[activity!.id!] = _getActivityAccessScore(activity.id!);
+          activityScores[activity!.id] = _getActivityAccessScore(activity.id);
         }
       }
       
@@ -202,8 +202,8 @@ class TieredStorageManager {
           orElse: () => null,
         );
         
-        if (activity != null && activity.startDate != null) {
-          final startDate = DateTime.parse(activity.startDate!.toString());
+        if (activity != null) {
+          final startDate = DateTime.parse(activity.startDate.toString());
           if (startDate.isBefore(retentionCutoff)) {
             oldActivities.add(activityId);
           }
@@ -264,7 +264,7 @@ class TieredStorageManager {
     final Map<int, double> activityScores = {};
     for (final activity in activities) {
       if (activity?.id != null) {
-        activityScores[activity!.id!] = _getActivityAccessScore(activity.id!);
+        activityScores[activity!.id] = _getActivityAccessScore(activity.id);
       }
     }
     

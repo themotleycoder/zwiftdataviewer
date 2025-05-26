@@ -130,10 +130,6 @@ class SupabaseDatabaseService {
           .lte('start_date', beforeDateStr)
           .order('start_date', ascending: false);
 
-      if (response == null) {
-        return [];
-      }
-
       // Convert response to SummaryActivity objects
       return List.generate(response.length, (i) {
         try {
@@ -266,7 +262,7 @@ class SupabaseDatabaseService {
           .select()
           .eq('activity_id', activityId);
 
-      if (response == null || response.isEmpty) {
+      if (response.isEmpty) {
         return [];
       }
 
@@ -678,7 +674,7 @@ class SupabaseDatabaseService {
           .eq('activity_id', activityId)
           .order('start_date', ascending: true);
 
-      if (response == null || response.isEmpty) {
+      if (response.isEmpty) {
         return [];
       }
 
@@ -772,7 +768,7 @@ class SupabaseDatabaseService {
           .select()
           .order('name', ascending: true);
 
-      if (response == null || response.isEmpty) {
+      if (response.isEmpty) {
         return [];
       }
 
@@ -867,7 +863,7 @@ class SupabaseDatabaseService {
           .order('world', ascending: true)
           .order('route_name', ascending: true);
 
-      if (response == null || response.isEmpty) {
+      if (response.isEmpty) {
         return [];
       }
 
@@ -1054,7 +1050,7 @@ class SupabaseDatabaseService {
           .select('*, zw_worlds(*)')
           .order('name', ascending: true);
 
-      if (response == null || response.isEmpty) {
+      if (response.isEmpty) {
         return [];
       }
 
@@ -1094,8 +1090,6 @@ class SupabaseDatabaseService {
       }
 
       // Get existing worlds
-      final existingWorlds = await getWorlds();
-      final worldsByName = {for (var world in existingWorlds) world.name: world};
 
       // Convert climbs to ClimbModel objects
       final List<Map<String, dynamic>> climbMaps = [];

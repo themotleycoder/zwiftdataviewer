@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:zwiftdataviewer/utils/theme.dart';
 import 'package:zwiftdataviewer/widgets/connectivity_status_widget.dart';
 

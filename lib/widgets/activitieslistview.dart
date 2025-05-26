@@ -1,3 +1,4 @@
+import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_strava_api/models/summary_activity.dart';
@@ -269,8 +270,11 @@ class ActivitiesListView extends ConsumerWidget {
                         await _reAuthenticate(context);
                       }
                       // Refresh both providers
+                      // ignore: unused_result
                       ref.refresh(stravaActivitiesProvider);
+                      // ignore: unused_result
                       ref.refresh(databaseActivitiesProvider(DateRange.allTime()));
+                      // ignore: unused_result
                       ref.refresh(combinedActivitiesProvider);
                     },
                     icon: Icon(

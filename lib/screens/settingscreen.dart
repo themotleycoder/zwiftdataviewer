@@ -5,7 +5,6 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:zwiftdataviewer/providers/config_provider.dart';
 import 'package:zwiftdataviewer/utils/database/database_init.dart';
-import 'package:zwiftdataviewer/utils/repository/filerepository.dart';
 import 'package:zwiftdataviewer/utils/repository/hybrid_activities_repository.dart';
 import 'package:zwiftdataviewer/utils/supabase/database_sync_service.dart';
 import 'package:zwiftdataviewer/utils/supabase/supabase_auth_service.dart';

@@ -317,13 +317,11 @@ class DatabaseSyncService {
 
       // Get routes from Supabase
       final existingRoutes = await _supabaseService.getRoutes();
-      final existingRouteIds = existingRoutes.map((r) => r.id).toSet();
+      existingRoutes.map((r) => r.id).toSet();
 
       // Get worlds from Supabase
       final existingWorlds = await _supabaseService.getWorlds();
       final existingWorldIds = existingWorlds.map((w) => w.id).toSet();
-      final worldsById = {for (var world in existingWorlds) world.id: world};
-      final worldsByName = {for (var world in existingWorlds) world.name: world};
 
       // Create a map to hold unique routes by ID
       Map<int, RouteData> uniqueRoutes = {};
