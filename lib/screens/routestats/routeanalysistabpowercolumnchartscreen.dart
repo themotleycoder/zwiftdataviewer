@@ -4,10 +4,10 @@ import 'package:flutter_strava_api/models/activity.dart';
 import 'package:syncfusion_flutter_charts/charts.dart';
 import 'package:zwiftdataviewer/appkeys.dart';
 import 'package:zwiftdataviewer/providers/activity_detail_provider.dart';
+import 'package:zwiftdataviewer/providers/config_provider.dart';
 import 'package:zwiftdataviewer/providers/lap_select_provider.dart';
 import 'package:zwiftdataviewer/providers/lap_summary_provider.dart';
 import 'package:zwiftdataviewer/screens/layouts/routeanalysistablayout.dart';
-import 'package:zwiftdataviewer/utils/theme.dart';
 import 'package:zwiftdataviewer/utils/ui_helpers.dart';
 import 'package:zwiftdataviewer/widgets/shortdataanalysis.dart';
 
@@ -44,7 +44,8 @@ class DisplayChart extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    const double ftp = 229;
+    final config = ref.watch(configProvider);
+    final double ftp = config.ftp ?? 229.0; // Use config FTP with fallback
     final activityDetails = ref.watch(stravaActivityDetailsProvider);
 
     // Trigger loading of lap data
@@ -75,7 +76,7 @@ class DisplayChart extends ConsumerWidget {
                 // Reduce the number of labels to improve performance
                 interval: 2,
               ),
-              primaryYAxis: const NumericAxis(
+              primaryYAxis: NumericAxis(
                 plotBands: <PlotBand>[
                   PlotBand(
                     start: ftp,
@@ -139,62 +140,5 @@ class DisplayChart extends ConsumerWidget {
         spacing: 0.1,
       ),
     ];
-  }
-}
-
-class LapTotals {
-  final String lap;
-  final double watts;
-  final Color colorForWatts;
-
-  LapTotals(this.lap, this.watts, this.colorForWatts);
-}
-
-class LapSummaryProvider extends StateNotifier<List<LapSummaryObject>> {
-  LapSummaryProvider() : super([]);
-
-  get summaryData => state;
-
-  setLapSummaryObjects(List<LapSummaryObject> model) {
-    state = model;
-  }
-
-  void add(LapSummaryObject lapSummaryObject) {
-    state = [...state, lapSummaryObject];
-  }
-
-  Color getColorForWatts(double watts, double ftp) {
-    if (watts < ftp * .60) {
-      return Colors.grey;
-    } else if (watts >= ftp * .60 && watts <= ftp * .75) {
-      return zdvMidBlue;
-    } else if (watts > ftp * .75 && watts <= ftp * .89) {
-      return zdvMidGreen;
-    } else if (watts > ftp * .89 && watts <= ftp * 1.04) {
-      return zdvYellow;
-    } else if (watts > ftp * 1.04 && watts <= ftp * 1.18) {
-      return zdvOrange;
-    } else if (watts > ftp * 1.18) {
-      return zdvRed;
-    } else {
-      return Colors.grey;
-    }
-  }
-
-  void loadData(DetailedActivity detailedActivity, double currentFtp) {
-    for (var lap in detailedActivity.laps ?? []) {
-      add(LapSummaryObject(
-        0,
-        lap.lapIndex,
-        lap.distance,
-        lap.movingTime,
-        lap.totalElevationGain,
-        lap.averageCadence,
-        lap.averageWatts,
-        lap.averageSpeed,
-        getColorForWatts(lap.averageWatts, currentFtp),
-      ));
-    }
-    // notifyListeners();
   }
 }

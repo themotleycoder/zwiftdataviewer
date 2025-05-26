@@ -14,7 +14,7 @@ import 'config_provider.dart';
 final lapsProvider = FutureProvider.autoDispose
     .family<List<LapSummaryObject>, DetailedActivity>((ref, activity) async {
   try {
-    final ftp = ref.watch(configProvider).ftp ?? 0.0;
+    final ftp = ref.watch(configProvider).ftp ?? 229.0;
     List<LapSummaryObject> retValue = [];
 
     // Create a lap summary object for each lap in the activity

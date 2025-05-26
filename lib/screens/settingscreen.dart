@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:zwiftdataviewer/providers/config_provider.dart';
 import 'package:zwiftdataviewer/utils/database/database_init.dart';
 import 'package:zwiftdataviewer/utils/repository/filerepository.dart';
 import 'package:zwiftdataviewer/utils/repository/hybrid_activities_repository.dart';
@@ -38,9 +39,12 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
     final prefs = await SharedPreferences.getInstance();
     final supabaseEnabled = prefs.getBool('supabaseEnabled');
     
+    // Load FTP from config provider
+    final config = ref.read(configProvider);
+    
     setState(() {
       _isMetric = prefs.getBool('isMetric') ?? true;
-      _ftp = prefs.getInt('ftp') ?? 0;
+      _ftp = (config.ftp ?? 0).round();
       _isSupabaseEnabled = supabaseEnabled ?? true;
     });
     
@@ -63,8 +67,12 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
   Future<void> _saveSettings() async {
     final prefs = await SharedPreferences.getInstance();
     await prefs.setBool('isMetric', _isMetric);
-    await prefs.setInt('ftp', _ftp);
     await prefs.setBool('supabaseEnabled', _isSupabaseEnabled);
+    
+    // Save FTP to config provider
+    final currentConfig = ref.read(configProvider);
+    final updatedConfig = currentConfig.copyWith(ftp: _ftp.toDouble());
+    ref.read(configProvider.notifier).setConfig(updatedConfig);
   }
 
   Future<void> _checkSupabaseStatus() async {
