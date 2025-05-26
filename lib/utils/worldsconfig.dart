@@ -23,6 +23,7 @@ final Map<String, int> worldLookupByName = {
   'Richmond': 2,
   'London': 3,
   'New York': 4,
+  'NYC': 4,
   'Innsbruck': 5,
   'Bologna': 6,
   'Yorkshire': 7,
@@ -47,10 +48,10 @@ final Map<int, WorldData> allWorldsConfig = {
   3: const WorldData(
       3, GuestWorldId.london, 'London', 'https://zwiftinsider.com/london/'),
   4: const WorldData(
-      4, GuestWorldId.newyork, 'NYC', 'https://zwiftinsider.com/nyc/'),
+      4, GuestWorldId.newyork, 'New York', 'https://zwiftinsider.com/nyc/'),
   5: const WorldData(5, GuestWorldId.innsbruck, 'Innsbruck',
       'https://zwiftinsider.com/innsbruck/'),
-  6: const WorldData(6, GuestWorldId.bolognatt, 'Bologna TT',
+  6: const WorldData(6, GuestWorldId.bolognatt, 'Bologna',
       'https://zwiftinsider.com/innsbruck/'),
   7: const WorldData(7, GuestWorldId.yorkshire, 'Yorkshire',
       'https://zwiftinsider.com/yorkshire/'),

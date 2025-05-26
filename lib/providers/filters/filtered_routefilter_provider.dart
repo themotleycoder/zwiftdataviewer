@@ -22,23 +22,8 @@ final distanceFiltersNotifier =
 
 final distanceRouteFiltersProvider =
     FutureProvider<List<RouteData>>((ref) async {
-  final AsyncValue<List<RouteData>> routeDataModel =
-      ref.watch(allRoutesProvider);
-
-  var routes = [];
-  routeDataModel.when(
-    data: (data) {
-      routes = data;
-    },
-    loading: () {
-      routes = [];
-    },
-    error: (error, stackTrace) {
-      routes = [];
-    },
-  );
-
-  var routeFilters = ref.watch(distanceFiltersNotifier);
+  final List<RouteData> routes = await ref.watch(allRoutesProvider.future);
+  final RouteFilterObject routeFilters = ref.watch(distanceFiltersNotifier);
 
   return routes
       .where((route) {
@@ -52,8 +37,7 @@ final distanceRouteFiltersProvider =
                     world.name ==
                     route.world)); // Updated location-based filter
       })
-      .toList()
-      .cast<RouteData>();
+      .toList();
 });
 
 class RouteFilterObject {

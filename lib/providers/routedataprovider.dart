@@ -4,6 +4,7 @@ import 'package:zwiftdataviewer/models/routedata.dart';
 import 'package:zwiftdataviewer/utils/repository/filerepository.dart';
 import 'package:zwiftdataviewer/utils/supabase/database_sync_service.dart';
 import 'package:zwiftdataviewer/utils/supabase/supabase_database_service.dart';
+import 'package:zwiftdataviewer/utils/worldsconfig.dart';
 
 // Provider for route data
 //
@@ -55,11 +56,15 @@ Future<Map<int, List<RouteData>>> loadRouteDataFromSupabase() async {
     // Group routes by world ID
     Map<int, List<RouteData>> routesByWorld = {};
     for (var route in routes) {
-      if (route.id != null) {
-        if (!routesByWorld.containsKey(route.id)) {
-          routesByWorld[route.id!] = [];
+      if (route.world != null) {
+        // Map world name to world ID
+        int? worldId = worldLookupByName[route.world];
+        if (worldId != null) {
+          if (!routesByWorld.containsKey(worldId)) {
+            routesByWorld[worldId] = [];
+          }
+          routesByWorld[worldId]!.add(route);
         }
-        routesByWorld[route.id!]!.add(route);
       }
     }
     

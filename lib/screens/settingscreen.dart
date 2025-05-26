@@ -8,6 +8,7 @@ import 'package:zwiftdataviewer/utils/database/database_init.dart';
 import 'package:zwiftdataviewer/utils/repository/hybrid_activities_repository.dart';
 import 'package:zwiftdataviewer/utils/supabase/database_sync_service.dart';
 import 'package:zwiftdataviewer/utils/supabase/supabase_auth_service.dart';
+import 'package:zwiftdataviewer/utils/supabase/sync_state.dart';
 import 'package:zwiftdataviewer/utils/theme.dart';
 
 // Provider for Supabase enabled state
