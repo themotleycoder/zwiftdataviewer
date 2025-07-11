@@ -132,7 +132,7 @@ Future<List<SummaryActivity>> fetchStravaActivities() async {
                   .map((activity) => SummaryActivity.fromJson(activity))
                   .toList();
           final List<SummaryActivity> filteredActivities = activities
-              .where((activity) => activity.type == ActivityType.VirtualRide)
+              .where((activity) => activity.type == ActivityType.VirtualRide || activity.type == ActivityType.Ride)
               .toList();
           fetchedActivities.addAll(filteredActivities);
 
