@@ -1,2 +1,5 @@
 #include? "Pods/Target Support Files/Pods-Runner/Pods-Runner.release.xcconfig"
 #include "Generated.xcconfig"
+
+// Google Maps API Key
+GOOGLE_MAPS_API_KEY = AIzaSyDfNQ3tx5xbTm0w8f_qL4XHYOcHvyTuil4

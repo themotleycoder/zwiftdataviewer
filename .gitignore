@@ -36,6 +36,9 @@ migrate_working_dir/
 /build/
 pubspec.lock
 lib/secrets.dart
+android/local.properties
+ios/Flutter/Debug.xcconfig
+ios/Flutter/Release.xcconfig
 
 # Web related
 
