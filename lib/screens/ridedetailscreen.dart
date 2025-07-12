@@ -5,6 +5,7 @@ import 'package:zwiftdataviewer/providers/activity_select_provider.dart';
 import 'package:zwiftdataviewer/providers/tabs_provider.dart';
 import 'package:zwiftdataviewer/screens/layouts/mainlayout.dart';
 import 'package:zwiftdataviewer/screens/routedetailscreen.dart';
+import 'package:zwiftdataviewer/screens/routemapscreen.dart';
 import 'package:zwiftdataviewer/screens/routesectiondetailscreen.dart';
 import 'package:zwiftdataviewer/screens/routestats/routeanalysisrootscreen.dart';
 import 'package:zwiftdataviewer/utils/constants.dart';
@@ -41,10 +42,14 @@ class DetailScreen extends MainLayout {
   buildBody(BuildContext context, WidgetRef ref) {
     // Return the appropriate screen based on the selected tab
     final currentTabIndex = getTabIndex(ref);
+    final selectedActivity = ref.watch(selectedActivityProvider);
+    
     switch (currentTabIndex) {
       case 1:
-        return const RouteAnalysisScreen();
+        return RouteMapScreen(activityId: selectedActivity.id);
       case 2:
+        return const RouteAnalysisScreen();
+      case 3:
         return const RouteSectionDetailScreen();
       case 0:
       default:
@@ -69,6 +74,11 @@ class DetailScreen extends MainLayout {
           icon: Icon(Icons.list, key: AppKeys.activitiesTab),
           label: 'Details',
           tooltip: 'View ride details',
+        ),
+        BottomNavigationBarItem(
+          icon: Icon(Icons.map),
+          label: 'Map',
+          tooltip: 'View route map',
         ),
         BottomNavigationBarItem(
           icon: Icon(Icons.insights, key: AppKeys.analysisTab),

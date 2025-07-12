@@ -7,7 +7,7 @@ import 'package:flutter_strava_api/api/streams.dart';
 // and provides methods to update the selection.
 class CombinedStreamSelectNotifier extends StateNotifier<CombinedStreams> {
   // Creates a CombinedStreamSelectNotifier with default values.
-  CombinedStreamSelectNotifier() : super(CombinedStreams(0, 0, 0, 0, 0, 0, 0));
+  CombinedStreamSelectNotifier() : super(CombinedStreams(0, 0, 0, 0, 0, 0, 0, null));
 
   // Selects a new combined stream.
   //

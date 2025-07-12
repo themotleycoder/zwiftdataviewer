@@ -20,7 +20,7 @@ dependencies:
   shared_preferences: ^2.0.13
   connectivity_plus: ^6.1.4
   supabase_flutter: ^2.9.0
-  # google_maps_flutter: ^0.5.28+1
+  google_maps_flutter: ^2.9.0
   # Removed carousel_slider due to conflicts with Flutter's material package
   expandable: ^5.0.1
   flutter_svg: ^2.1.0

@@ -44,7 +44,7 @@ class HomeTabsNotifier extends StateNotifier<int> {
 final homeTabsNotifier =
     StateNotifierProvider<HomeTabsNotifier, int>((ref) => HomeTabsNotifier());
 
-enum ActivityDetailScreenTab { details, analysis, sections }
+enum ActivityDetailScreenTab { details, map, analysis, sections }
 
 class DetailTabsNotifier extends StateNotifier<int> {
   DetailTabsNotifier() : super(0);
