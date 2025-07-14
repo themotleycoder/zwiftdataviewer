@@ -67,7 +67,7 @@ android {
         multiDexEnabled true
         
         // Read Google Maps API key from local.properties
-        def googleMapsApiKey = localProperties.getProperty('googleMapsApiKey') ?: 'AIzaSyAdM6CUnwtN7FzqfEbZtN_RXFn089Sk7SU'
+        def googleMapsApiKey = localProperties.getProperty('googleMapsApiKey')
         manifestPlaceholders = [
             googleMapsApiKey: googleMapsApiKey,
             applicationName: "android.app.Application"
