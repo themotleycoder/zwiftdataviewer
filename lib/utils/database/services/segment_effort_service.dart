@@ -36,7 +36,7 @@ class SegmentEffortService {
     final db = await _databaseHelper.database;
     
     if (kDebugMode) {
-      print('Fetching segment efforts for segment ID: $segmentId');
+      // print('Fetching segment efforts for segment ID: $segmentId');
     }
     
     final List<Map<String, dynamic>> maps = await db.query(
@@ -47,7 +47,7 @@ class SegmentEffortService {
     );
     
     if (kDebugMode) {
-      print('Found ${maps.length} segment efforts for segment ID: $segmentId');
+      // print('Found ${maps.length} segment efforts for segment ID: $segmentId');
       
       // If no efforts found, check if the segment exists in the database
       if (maps.isEmpty) {
@@ -56,16 +56,16 @@ class SegmentEffortService {
           [segmentId]
         );
         final count = Sqflite.firstIntValue(segmentCheck) ?? 0;
-        print('Database query confirms $count segment efforts for segment ID: $segmentId');
+        // print('Database query confirms $count segment efforts for segment ID: $segmentId');
         
         // Check total segment efforts in the database
         final totalCheck = await db.rawQuery('SELECT COUNT(*) as count FROM segment_efforts');
         final totalCount = Sqflite.firstIntValue(totalCheck) ?? 0;
-        print('Total segment efforts in database: $totalCount');
+        // print('Total segment efforts in database: $totalCount');
         
         // Check if the segment_efforts table exists and has the expected schema
         final tableInfo = await db.rawQuery('PRAGMA table_info(segment_efforts)');
-        print('segment_efforts table schema: ${tableInfo.length} columns');
+        // print('segment_efforts table schema: ${tableInfo.length} columns');
       }
     }
 
@@ -183,7 +183,7 @@ class SegmentEffortService {
             // Skip efforts with null segments
             if (effort.segment == null) {
               if (kDebugMode) {
-                print('Skipping segment effort with null segment at index $i');
+                //print('Skipping segment effort with null segment at index $i');
               }
               continue;
             }
@@ -191,7 +191,7 @@ class SegmentEffortService {
             // Skip efforts with null segment IDs
             if (effort.segment!.id == null) {
               if (kDebugMode) {
-                print('Skipping segment effort with null segment ID at index $i');
+                //print('Skipping segment effort with null segment ID at index $i');
               }
               continue;
             }
@@ -212,7 +212,7 @@ class SegmentEffortService {
             
             if (kDebugMode && i < 3) {  // Log details for first few efforts
               if (kDebugMode) {
-                print('Saved segment effort ${effort.id} (segment ${effort.segment!.id}) for activity $activityId with DB ID $id');
+                //print('Saved segment effort ${effort.id} (segment ${effort.segment!.id}) for activity $activityId with DB ID $id');
               }
             }
           } catch (e) {
@@ -237,14 +237,14 @@ class SegmentEffortService {
         )) ?? 0;
         
         if (kDebugMode) {
-          print('Saved $count segment efforts to database for activity $activityId');
-          print('Success: $successCount, Errors: $errorCount');
+          //print('Saved $count segment efforts to database for activity $activityId');
+          //print('Success: $successCount, Errors: $errorCount');
           
           // Check total segment efforts in the database
           final totalCount = Sqflite.firstIntValue(await txn.rawQuery(
             'SELECT COUNT(*) FROM segment_efforts'
           )) ?? 0;
-          print('Total segment efforts in database: $totalCount');
+          //print('Total segment efforts in database: $totalCount');
         }
       } catch (e) {
         if (kDebugMode) {

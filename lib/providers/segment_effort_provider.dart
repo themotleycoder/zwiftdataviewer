@@ -22,39 +22,15 @@ final selectedSegmentIdProvider = StateProvider<int?>((ref) => null);
 final segmentEffortsProvider = FutureProvider<List<ExtendedSegmentEffort>>((ref) async {
   final segmentId = ref.watch(selectedSegmentIdProvider);
   
-  if (kDebugMode) {
-    print('Loading segment efforts for segment ID: $segmentId');
-  }
-  
   if (segmentId == null) {
-    if (kDebugMode) {
-      print('No segment ID selected, returning empty list');
-    }
     return [];
   }
   
   try {
     final efforts = await DatabaseInit.segmentEffortService.getEffortsForSegment(segmentId);
     
-    if (kDebugMode) {
-      print('Loaded ${efforts.length} segment efforts for segment $segmentId');
-      if (efforts.isEmpty) {
-        // Check if the segment exists in the database
-        final segments = await DatabaseInit.segmentEffortService.getUniqueSegments();
-        final segmentExists = segments.any((s) => s['segment_id'] == segmentId);
-        print('Segment $segmentId exists in database: $segmentExists');
-        
-        // Check total count of segment efforts
-        final count = await DatabaseInit.segmentEffortService.getSegmentEffortsCount(segmentId);
-        print('Total segment efforts count for segment $segmentId: $count');
-      }
-    }
-    
     return efforts;
   } catch (e) {
-    if (kDebugMode) {
-      print('Error loading segment efforts for segment $segmentId: $e');
-    }
     return [];
   }
 });
@@ -64,9 +40,6 @@ final segmentEffortsByNameProvider = FutureProvider.family<List<ExtendedSegmentE
   try {
     return await DatabaseInit.segmentEffortService.getEffortsForSegmentByName(segmentName);
   } catch (e) {
-    if (kDebugMode) {
-      print('Error loading segment efforts for segment name "$segmentName": $e');
-    }
     return [];
   }
 });
@@ -76,9 +49,6 @@ final activitySegmentEffortsProvider = FutureProvider.family<List<ExtendedSegmen
   try {
     return await DatabaseInit.segmentEffortService.getSegmentEffortsForActivity(activityId);
   } catch (e) {
-    if (kDebugMode) {
-      print('Error loading segment efforts for activity $activityId: $e');
-    }
     return [];
   }
 });
@@ -88,9 +58,6 @@ final bestSegmentEffortProvider = FutureProvider.family<ExtendedSegmentEffort?, 
   try {
     return await DatabaseInit.segmentEffortService.getBestEffortForSegment(segmentId);
   } catch (e) {
-    if (kDebugMode) {
-      print('Error loading best effort for segment $segmentId: $e');
-    }
     return null;
   }
 });
@@ -100,9 +67,6 @@ final segmentEffortsStatisticsProvider = FutureProvider.family<Map<String, dynam
   try {
     return await DatabaseInit.segmentEffortService.getSegmentEffortsStatistics(segmentId);
   } catch (e) {
-    if (kDebugMode) {
-      print('Error loading statistics for segment $segmentId: $e');
-    }
     return {};
   }
 });
@@ -133,9 +97,6 @@ final paginatedSegmentEffortsProvider = FutureProvider.family<List<ExtendedSegme
         orderBy: params.orderBy,
       );
     } catch (e) {
-      if (kDebugMode) {
-        print('Error loading paginated segment efforts for segment ${params.segmentId}: $e');
-      }
       return [];
     }
   }
@@ -146,9 +107,6 @@ final segmentEffortsCountProvider = FutureProvider.family<int, int>((ref, segmen
   try {
     return await DatabaseInit.segmentEffortService.getSegmentEffortsCount(segmentId);
   } catch (e) {
-    if (kDebugMode) {
-      print('Error loading count for segment $segmentId: $e');
-    }
     return 0;
   }
 });
@@ -176,9 +134,6 @@ final segmentEffortsByDateRangeProvider = FutureProvider.family<List<ExtendedSeg
         params.endDate,
       );
     } catch (e) {
-      if (kDebugMode) {
-        print('Error loading segment efforts by date range for segment ${params.segmentId}: $e');
-      }
       return [];
     }
   }

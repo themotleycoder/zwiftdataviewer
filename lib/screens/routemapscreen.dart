@@ -1,4 +1,5 @@
 import 'dart:convert';
+import 'dart:math' as math;
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart' as gmaps;
@@ -60,22 +61,51 @@ class _RouteMapScreenState extends ConsumerState<RouteMapScreen> {
     final startCoords = _parseLatLng(activity.startLatlng);
     final endCoords = _parseLatLng(activity.endLatlng);
 
-    if (startCoords == null && endCoords == null) {
+    // Check if we have polyline data even if start/end coords are null
+    bool hasPolylineData = activity.map?.summaryPolyline != null && 
+                           activity.map!.summaryPolyline!.isNotEmpty;
+
+    if (startCoords == null && endCoords == null && !hasPolylineData) {
       return _buildNoLocationView();
     }
 
-    final initialLocation = startCoords ?? endCoords!;
+    // Use first point from polyline if start/end coords are not available
+    gmaps.LatLng? initialLocation;
+    if (startCoords != null) {
+      initialLocation = gmaps.LatLng(startCoords.lat, startCoords.lng);
+    } else if (endCoords != null) {
+      initialLocation = gmaps.LatLng(endCoords.lat, endCoords.lng);
+    } else if (hasPolylineData) {
+      // Decode polyline to get first point for initial camera position
+      final polylinePoints = _decodePolyline(activity.map!.summaryPolyline!);
+      if (polylinePoints.isNotEmpty) {
+        initialLocation = polylinePoints.first;
+      }
+    }
 
+    // Fallback to a default location if nothing is available
+    initialLocation ??= const gmaps.LatLng(0.0, 0.0);
+
+    print('DEBUG: Building GoogleMap with:');
+    print('DEBUG: - Initial location: $initialLocation');
+    print('DEBUG: - Polylines: ${_polylines.length}');
+    print('DEBUG: - Markers: ${_markers.length}');
+    
     return gmaps.GoogleMap(
       initialCameraPosition: gmaps.CameraPosition(
-        target: gmaps.LatLng(initialLocation.lat, initialLocation.lng),
-        zoom: 14.0,
+        target: initialLocation,
+        zoom: 16.0,
       ),
       polylines: _polylines,
       markers: _markers,
       onMapCreated: (gmaps.GoogleMapController controller) {
+        print('DEBUG: Google Map created successfully');
         _controller = controller;
-        _fitBounds();
+        
+        // Add a delay before fitting bounds to ensure map is fully loaded
+        Future.delayed(const Duration(milliseconds: 500), () {
+          _fitBounds();
+        });
       },
       mapType: gmaps.MapType.normal,
       myLocationEnabled: false,
@@ -143,26 +173,77 @@ class _RouteMapScreenState extends ConsumerState<RouteMapScreen> {
     final startCoords = _parseLatLng(activity.startLatlng);
     final endCoords = _parseLatLng(activity.endLatlng);
 
-    // Debug: Print stream data
-    print('DEBUG: Streams data: ${streams?.streams?.length ?? 0} streams');
-    if (streams?.streams != null) {
-      print('DEBUG: First stream latlng: ${streams.streams.first.latlng}');
-    }
+    // Debug: Print activity and stream data
+    print('DEBUG: Activity map data: ${activity.map}');
+    print('DEBUG: Activity summary_polyline: ${activity.map?.summaryPolyline}');
+    print('DEBUG: Activity start_latlng: ${activity.startLatlng}');
+    print('DEBUG: Activity end_latlng: ${activity.endLatlng}');
+    print('DEBUG: Streams data type: ${streams.runtimeType}');
+    print('DEBUG: Streams data: $streams');
 
-    // Extract GPS track from streams
+    // Extract GPS track from polyline (preferred method)
     List<gmaps.LatLng> trackPoints = [];
-    if (streams?.streams != null) {
-      for (var stream in streams.streams) {
-        if (stream.latlng != null && stream.latlng!.length >= 2) {
-          trackPoints.add(gmaps.LatLng(stream.latlng![0], stream.latlng![1]));
-        }
+    
+    // Try to decode summary_polyline first
+    if (activity.map?.summaryPolyline != null && activity.map!.summaryPolyline!.isNotEmpty) {
+      print('DEBUG: Decoding summary_polyline');
+      try {
+        trackPoints = _decodePolyline(activity.map!.summaryPolyline!);
+        print('DEBUG: Decoded ${trackPoints.length} points from summary_polyline');
+      } catch (e) {
+        print('DEBUG: Error decoding polyline: $e');
       }
     }
     
-    print('DEBUG: Track points found: ${trackPoints.length}');
+    // Fallback to streams if no polyline - handle different stream data structures
+    if (trackPoints.isEmpty && streams != null) {
+      print('DEBUG: Trying to extract GPS from streams');
+      
+      // Handle different possible stream structures
+      List<dynamic>? streamsList;
+      
+      if (streams is Map && streams.containsKey('streams')) {
+        streamsList = streams['streams'];
+      } else if (streams.streams != null) {
+        streamsList = streams.streams;
+      } else if (streams is List) {
+        streamsList = streams;
+      }
+      
+      if (streamsList != null) {
+        for (var stream in streamsList) {
+          // Handle different latlng formats
+          if (stream != null) {
+            var latlng;
+            if (stream is Map) {
+              latlng = stream['latlng'];
+            } else {
+              latlng = stream.latlng;
+            }
+            
+            if (latlng != null && latlng is List && latlng.length >= 2) {
+              try {
+                double lat = (latlng[0] as num).toDouble();
+                double lng = (latlng[1] as num).toDouble();
+                if (lat != 0.0 || lng != 0.0) { // Skip null island coordinates
+                  trackPoints.add(gmaps.LatLng(lat, lng));
+                }
+              } catch (e) {
+                print('DEBUG: Error parsing latlng: $e');
+              }
+            }
+          }
+        }
+      }
+      print('DEBUG: Track points from streams: ${trackPoints.length}');
+    }
 
     // If we have track points, use them for the route
     if (trackPoints.isNotEmpty) {
+      print('DEBUG: Adding ${trackPoints.length} track points to polyline');
+      print('DEBUG: First point: ${trackPoints.first}');
+      print('DEBUG: Last point: ${trackPoints.last}');
+      
       // Add start marker at first track point
       _markers.add(
         gmaps.Marker(
@@ -198,6 +279,15 @@ class _RouteMapScreenState extends ConsumerState<RouteMapScreen> {
           width: 4,
         ),
       );
+      
+      print('DEBUG: Created polyline with ${trackPoints.length} points');
+      print('DEBUG: Polylines count: ${_polylines.length}');
+      print('DEBUG: Markers count: ${_markers.length}');
+      
+      // Trigger UI update
+      setState(() {});
+      
+      print('DEBUG: setState called to refresh map');
     } else {
       // Fallback to start/end coordinates if no track data
       if (startCoords != null) {
@@ -293,16 +383,26 @@ class _RouteMapScreenState extends ConsumerState<RouteMapScreen> {
   }
 
   void _fitBounds() {
-    if (_controller == null || _markers.isEmpty) return;
+    print('DEBUG: _fitBounds called');
+    print('DEBUG: _controller: ${_controller != null}');
+    print('DEBUG: _markers.length: ${_markers.length}');
+    
+    if (_controller == null || _markers.isEmpty) {
+      print('DEBUG: Skipping fit bounds - controller or markers missing');
+      return;
+    }
 
     if (_markers.length == 1) {
+      print('DEBUG: Only one marker, skipping bounds fit');
       return;
     }
 
     final bounds = _calculateBounds();
+    print('DEBUG: Calculated bounds: $bounds');
     _controller!.animateCamera(
       gmaps.CameraUpdate.newLatLngBounds(bounds, 100.0),
     );
+    print('DEBUG: Camera animation to bounds completed');
   }
 
   gmaps.LatLngBounds _calculateBounds() {
@@ -323,5 +423,52 @@ class _RouteMapScreenState extends ConsumerState<RouteMapScreen> {
       southwest: gmaps.LatLng(minLat, minLng),
       northeast: gmaps.LatLng(maxLat, maxLng),
     );
+  }
+
+  /// Decodes a polyline string into a list of LatLng coordinates
+  /// Uses Google's polyline algorithm: https://developers.google.com/maps/documentation/utilities/polylinealgorithm
+  List<gmaps.LatLng> _decodePolyline(String encoded) {
+    List<gmaps.LatLng> points = [];
+    int index = 0;
+    int len = encoded.length;
+    int lat = 0;
+    int lng = 0;
+
+    while (index < len) {
+      int b;
+      int shift = 0;
+      int result = 0;
+      
+      // Decode latitude
+      do {
+        b = encoded.codeUnitAt(index++) - 63;
+        result |= (b & 0x1f) << shift;
+        shift += 5;
+      } while (b >= 0x20);
+      
+      int dlat = ((result & 1) != 0 ? ~(result >> 1) : (result >> 1));
+      lat += dlat;
+
+      shift = 0;
+      result = 0;
+      
+      // Decode longitude
+      do {
+        b = encoded.codeUnitAt(index++) - 63;
+        result |= (b & 0x1f) << shift;
+        shift += 5;
+      } while (b >= 0x20);
+      
+      int dlng = ((result & 1) != 0 ? ~(result >> 1) : (result >> 1));
+      lng += dlng;
+
+      // Convert to decimal degrees
+      double latDecimal = lat / 1e5;
+      double lngDecimal = lng / 1e5;
+      
+      points.add(gmaps.LatLng(latDecimal, lngDecimal));
+    }
+
+    return points;
   }
 }

@@ -220,9 +220,6 @@ class SupabaseDatabaseService {
       if (activity.segmentEfforts != null && activity.segmentEfforts!.isNotEmpty) {
         try {
           await saveSegmentEfforts(activity.id!, activity.segmentEfforts!);
-          if (kDebugMode) {
-            print('Saved ${activity.segmentEfforts!.length} segment efforts for activity ${activity.id}');
-          }
         } catch (e) {
           if (kDebugMode) {
             print('Error saving segment efforts for activity ${activity.id}: $e');
@@ -551,9 +548,6 @@ class SupabaseDatabaseService {
         throw Exception('No athlete ID available');
       }
 
-      if (kDebugMode) {
-        print('Saving ${efforts.length} segment efforts for activity $activityId');
-      }
 
       // Delete existing segment efforts for this activity
       await _client
@@ -561,9 +555,6 @@ class SupabaseDatabaseService {
           .delete()
           .eq('activity_id', activityId);
 
-      if (kDebugMode) {
-        print('Deleted existing segment efforts for activity $activityId');
-      }
 
       // Insert new segment efforts
       int successCount = 0;
@@ -619,9 +610,6 @@ class SupabaseDatabaseService {
 
           successCount++;
 
-          if (kDebugMode && i < 3) {  // Log details for first few efforts
-            print('Saved segment effort ${effort.id} (segment ${effort.segment!.id}) for activity $activityId');
-          }
         } catch (e) {
           errorCount++;
           if (kDebugMode) {
@@ -636,10 +624,6 @@ class SupabaseDatabaseService {
         }
       }
 
-      if (kDebugMode) {
-        print('Saved $successCount segment efforts to Supabase for activity $activityId');
-        print('Success: $successCount, Errors: $errorCount');
-      }
     } catch (e) {
       if (kDebugMode) {
         print('Error saving segment efforts to Supabase: $e');

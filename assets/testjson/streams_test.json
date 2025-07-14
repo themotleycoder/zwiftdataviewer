@@ -198,7 +198,8 @@
       "heartrate": 120,
       "watts": 150,
       "cadence": 80,
-      "gradeSmooth": -3.6
+      "gradeSmooth": -3.6,
+      "latlng": [-21.73621, 166.182364]
     },
     {
       "altitude": 99.8,
@@ -206,7 +207,8 @@
       "heartrate": 121,
       "watts": 152,
       "cadence": 81,
-      "gradeSmooth": -2.2
+      "gradeSmooth": -2.2,
+      "latlng": [-21.73622, 166.182360]
     },
     {
       "altitude": 99.6,
@@ -214,7 +216,8 @@
       "heartrate": 122,
       "watts": 154,
       "cadence": 82,
-      "gradeSmooth": -1.6
+      "gradeSmooth": -1.6,
+      "latlng": [-21.73623, 166.182356]
     },
     {
       "altitude": 99.4,
@@ -222,7 +225,8 @@
       "heartrate": 123,
       "watts": 156,
       "cadence": 83,
-      "gradeSmooth": -1.4
+      "gradeSmooth": -1.4,
+      "latlng": [-21.73624, 166.182352]
     },
     {
       "altitude": 99.2,
@@ -230,7 +234,8 @@
       "heartrate": 124,
       "watts": 158,
       "cadence": 84,
-      "gradeSmooth": 1.3
+      "gradeSmooth": 1.3,
+      "latlng": [-21.73625, 166.182348]
     },
     {
       "altitude": 99.0,
@@ -238,7 +243,8 @@
       "heartrate": 125,
       "watts": 160,
       "cadence": 85,
-      "gradeSmooth": 1.2
+      "gradeSmooth": 1.2,
+      "latlng": [-21.73626, 166.182344]
     },
     {
       "altitude": 98.8,
@@ -246,7 +252,8 @@
       "heartrate": 126,
       "watts": 162,
       "cadence": 86,
-      "gradeSmooth": 1.1
+      "gradeSmooth": 1.1,
+      "latlng": [-21.73627, 166.182340]
     },
     {
       "altitude": 98.6,
@@ -254,7 +261,8 @@
       "heartrate": 127,
       "watts": 164,
       "cadence": 87,
-      "gradeSmooth": 1.1
+      "gradeSmooth": 1.1,
+      "latlng": [-21.73628, 166.182336]
     },
     {
       "altitude": 98.4,
@@ -262,7 +270,8 @@
       "heartrate": 128,
       "watts": 166,
       "cadence": 88,
-      "gradeSmooth": 0.0
+      "gradeSmooth": 0.0,
+      "latlng": [-21.73629, 166.182332]
     },
     {
       "altitude": 98.2,
@@ -270,7 +279,8 @@
       "heartrate": 129,
       "watts": 168,
       "cadence": 89,
-      "gradeSmooth": 0.0
+      "gradeSmooth": 0.0,
+      "latlng": [-21.73630, 166.182328]
     },
     {
       "altitude": 98.0,
@@ -278,7 +288,8 @@
       "heartrate": 130,
       "watts": 170,
       "cadence": 90,
-      "gradeSmooth": 0.0
+      "gradeSmooth": 0.0,
+      "latlng": [-21.73631, 166.182324]
     },
     {
       "altitude": 97.8,
@@ -286,7 +297,8 @@
       "heartrate": 131,
       "watts": 172,
       "cadence": 91,
-      "gradeSmooth": 0.0
+      "gradeSmooth": 0.0,
+      "latlng": [-21.73632, 166.182320]
     },
     {
       "altitude": 97.6,
@@ -294,7 +306,8 @@
       "heartrate": 132,
       "watts": 174,
       "cadence": 92,
-      "gradeSmooth": 0.9
+      "gradeSmooth": 0.9,
+      "latlng": [-21.73633, 166.182316]
     },
     {
       "altitude": 97.4,
@@ -302,7 +315,8 @@
       "heartrate": 133,
       "watts": 176,
       "cadence": 93,
-      "gradeSmooth": 0.9
+      "gradeSmooth": 0.9,
+      "latlng": [-21.73634, 166.182312]
     },
     {
       "altitude": 97.2,
@@ -310,7 +324,8 @@
       "heartrate": 134,
       "watts": 178,
       "cadence": 94,
-      "gradeSmooth": 0.9
+      "gradeSmooth": 0.9,
+      "latlng": [-21.73635, 166.182308]
     },
     {
       "altitude": 97.0,
@@ -318,7 +333,8 @@
       "heartrate": 135,
       "watts": 180,
       "cadence": 95,
-      "gradeSmooth": 0.9
+      "gradeSmooth": 0.9,
+      "latlng": [-21.73636, 166.182304]
     },
     {
       "altitude": 96.8,
@@ -326,7 +342,8 @@
       "heartrate": 136,
       "watts": 182,
       "cadence": 96,
-      "gradeSmooth": 0.9
+      "gradeSmooth": 0.9,
+      "latlng": [-21.73637, 166.182300]
     },
     {
       "altitude": 96.6,
@@ -334,7 +351,8 @@
       "heartrate": 137,
       "watts": 184,
       "cadence": 97,
-      "gradeSmooth": 0.9
+      "gradeSmooth": 0.9,
+      "latlng": [-21.73638, 166.182296]
     },
     {
       "altitude": 96.4,
@@ -342,7 +360,8 @@
       "heartrate": 138,
       "watts": 186,
       "cadence": 98,
-      "gradeSmooth": 0.9
+      "gradeSmooth": 0.9,
+      "latlng": [-21.73639, 166.182292]
     },
     {
       "altitude": 96.2,
@@ -350,7 +369,8 @@
       "heartrate": 139,
       "watts": 188,
       "cadence": 99,
-      "gradeSmooth": 1.8
+      "gradeSmooth": 1.8,
+      "latlng": [-21.73640, 166.182288]
     },
     {
       "altitude": 96.0,
@@ -358,7 +378,8 @@
       "heartrate": 140,
       "watts": 190,
       "cadence": 100,
-      "gradeSmooth": 0.9
+      "gradeSmooth": 0.9,
+      "latlng": [-21.73641, 166.182284]
     },
     {
       "altitude": 95.8,
@@ -366,7 +387,8 @@
       "heartrate": 141,
       "watts": 192,
       "cadence": 101,
-      "gradeSmooth": 1.7
+      "gradeSmooth": 1.7,
+      "latlng": [-21.73642, 166.182280]
     },
     {
       "altitude": 95.6,
@@ -374,7 +396,8 @@
       "heartrate": 142,
       "watts": 194,
       "cadence": 102,
-      "gradeSmooth": 1.7
+      "gradeSmooth": 1.7,
+      "latlng": [-21.73643, 166.182276]
     },
     {
       "altitude": 95.4,
@@ -382,7 +405,8 @@
       "heartrate": 143,
       "watts": 196,
       "cadence": 103,
-      "gradeSmooth": 1.7
+      "gradeSmooth": 1.7,
+      "latlng": [-21.73644, 166.182272]
     },
     {
       "altitude": 95.2,
@@ -390,7 +414,8 @@
       "heartrate": 144,
       "watts": 198,
       "cadence": 104,
-      "gradeSmooth": 1.7
+      "gradeSmooth": 1.7,
+      "latlng": [-21.73645, 166.182268]
     },
     {
       "altitude": 95.0,
@@ -398,7 +423,8 @@
       "heartrate": 145,
       "watts": 200,
       "cadence": 105,
-      "gradeSmooth": 1.6
+      "gradeSmooth": 1.6,
+      "latlng": [-21.73646, 166.182264]
     },
     {
       "altitude": 94.8,
@@ -406,7 +432,8 @@
       "heartrate": 146,
       "watts": 202,
       "cadence": 106,
-      "gradeSmooth": 1.6
+      "gradeSmooth": 1.6,
+      "latlng": [-21.73647, 166.182260]
     }
   ]
 }
