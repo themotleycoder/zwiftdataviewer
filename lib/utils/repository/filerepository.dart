@@ -194,11 +194,37 @@ class FileRepository
         RouteData route = RouteData.fromJson(obj);
         if (route.eventOnly?.toLowerCase() != 'run only' &&
             route.eventOnly?.toLowerCase() != 'run only, event only') {
-          if (!routes.containsKey(route.id)) {
-            routes[route.id!] = <RouteData>[];
+          // Group routes by world ID, not route ID
+          if (route.world != null) {
+            int? worldId = worldLookupByName[route.world];
+            if (worldId != null) {
+              if (!routes.containsKey(worldId)) {
+                routes[worldId] = <RouteData>[];
+              }
+              routes[worldId]?.add(route);
+            } else if (kDebugMode) {
+              print('loadRouteData - Unknown world name: ${route.world}');
+            }
           }
-          routes[route.id]?.add(route);
         }
+      }
+
+      // Validate the cache structure: routes should be grouped by world ID
+      // There are only ~12 Zwift worlds, so if we have > 20 keys, it's likely
+      // grouped by route ID (old bug) instead of world ID
+      if (routes.isEmpty && json.isNotEmpty) {
+        if (kDebugMode) {
+          print('loadRouteData - No routes loaded from cache, re-scraping');
+        }
+        routes = await scrapeRouteData();
+        saveRouteData(routes);
+      } else if (routes.length > 20) {
+        if (kDebugMode) {
+          print('loadRouteData - Cache has ${routes.length} top-level keys (expected ~12 worlds)');
+          print('loadRouteData - Corrupt cache detected, re-scraping route data');
+        }
+        routes = await scrapeRouteData();
+        saveRouteData(routes);
       }
     } catch (e) {
       if (kDebugMode) {
