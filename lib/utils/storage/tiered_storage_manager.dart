@@ -4,9 +4,9 @@ import 'dart:convert';
 import 'package:flutter/foundation.dart';
 import 'package:flutter_strava_api/api/streams.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:zwiftdataviewer/utils/database/database_init.dart';
 import 'package:zwiftdataviewer/utils/database/services/activity_service.dart';
 import 'package:zwiftdataviewer/utils/database/services/segment_effort_service.dart';
-import 'package:zwiftdataviewer/utils/database/database_init.dart';
 import 'package:zwiftdataviewer/utils/supabase/supabase_database_service.dart';
 
 /// Manager for tiered storage approach

@@ -197,7 +197,7 @@ Future<List<SummaryActivity>> fetchStravaActivities() async {
 Future<bool> _checkConnectivity() async {
   try {
     final connectivityResult = await Connectivity().checkConnectivity();
-    if (connectivityResult == ConnectivityResult.none) {
+    if (connectivityResult.contains(ConnectivityResult.none)) {
       debugPrint('No internet connectivity detected');
       return false;
     }
@@ -271,7 +271,7 @@ Future<http.Response> _retryHttpRequest(
       if (e is SocketException) {
         if (e.message.contains('Failed host lookup')) {
           errorMessage = 'DNS resolution failed. Cannot reach Strava servers.';
-        } else if (e.osError == 7) {
+        } else if (e.osError?.errorCode == 7) {
           errorMessage = 'No internet connection available.';
         } else {
           errorMessage = 'Connection error: ${e.message}';

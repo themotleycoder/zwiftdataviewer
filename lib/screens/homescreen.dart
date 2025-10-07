@@ -5,6 +5,7 @@ import 'package:zwiftdataviewer/appkeys.dart';
 import 'package:zwiftdataviewer/delegates/activitysearchdelegate.dart';
 import 'package:zwiftdataviewer/models/routedata.dart';
 import 'package:zwiftdataviewer/providers/routedataprovider.dart';
+import 'package:zwiftdataviewer/providers/route_recommendations_provider.dart';
 import 'package:zwiftdataviewer/providers/segment_count_provider.dart';
 import 'package:zwiftdataviewer/providers/tabs_provider.dart';
 import 'package:zwiftdataviewer/screens/layouts/mainlayout.dart';
@@ -96,6 +97,9 @@ class HomeScreen extends MainLayout {
         
     final AsyncValue<int> segmentCountState =
         ref.watch(segmentCountProvider);
+        
+    final int unviewedRecommendationsCount = 
+        ref.watch(unviewedRecommendationsCountProvider);
 
     return BottomNavigationBar(
       elevation: cardElevation,
@@ -165,6 +169,18 @@ class HomeScreen extends MainLayout {
                   icon: Icon(Icons.route, key: AppKeys.routesTab),
                   label: 'Routes',
                 )),
+        BottomNavigationBarItem(
+          icon: Badge(
+            backgroundColor: zdvOrange,
+            isLabelVisible: unviewedRecommendationsCount > 0,
+            label: Text(
+              unviewedRecommendationsCount.toString(),
+              style: const TextStyle(color: Colors.white, fontSize: 10),
+            ),
+            child: const Icon(Icons.auto_awesome),
+          ),
+          label: 'AI Routes',
+        ),
         const BottomNavigationBarItem(
           icon: Icon(Icons.calendar_today, key: AppKeys.calendarTab),
           label: 'Calendars',

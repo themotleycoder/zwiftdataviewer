@@ -11,14 +11,14 @@ class SimpleCarousel extends StatefulWidget {
   final Clip clipBehavior;
 
   const SimpleCarousel({
-    Key? key,
+    super.key,
     required this.itemCount,
     required this.itemBuilder,
     this.height,
     this.autoPlay = false,
     this.autoPlayInterval = const Duration(seconds: 4),
     this.clipBehavior = Clip.hardEdge,
-  }) : super(key: key);
+  });
 
   @override
   State<SimpleCarousel> createState() => _SimpleCarouselState();

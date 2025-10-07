@@ -9,7 +9,7 @@ import 'package:zwiftdataviewer/utils/theme.dart';
 
 /// A screen for handling Strava's email code verification authentication flow
 class StravaEmailAuthScreen extends StatefulWidget {
-  const StravaEmailAuthScreen({Key? key}) : super(key: key);
+  const StravaEmailAuthScreen({super.key});
 
   @override
   State<StravaEmailAuthScreen> createState() => _StravaEmailAuthScreenState();
@@ -70,10 +70,12 @@ class _StravaEmailAuthScreenState extends State<StravaEmailAuthScreen> {
           _isLoading = false;
           _isSuccess = true;
         });
-        
+
         // Close the screen after a short delay
         Future.delayed(const Duration(seconds: 2), () {
-          Navigator.of(context).pop(true); // Return true to indicate success
+          if (mounted) {
+            Navigator.of(context).pop(true); // Return true to indicate success
+          }
         });
       } else {
         setState(() {

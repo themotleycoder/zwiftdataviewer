@@ -1,5 +1,4 @@
 import 'dart:convert';
-import 'dart:math' as math;
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart' as gmaps;
@@ -86,10 +85,6 @@ class _RouteMapScreenState extends ConsumerState<RouteMapScreen> {
     // Fallback to a default location if nothing is available
     initialLocation ??= const gmaps.LatLng(0.0, 0.0);
 
-    print('DEBUG: Building GoogleMap with:');
-    print('DEBUG: - Initial location: $initialLocation');
-    print('DEBUG: - Polylines: ${_polylines.length}');
-    print('DEBUG: - Markers: ${_markers.length}');
     
     return gmaps.GoogleMap(
       initialCameraPosition: gmaps.CameraPosition(
@@ -99,7 +94,6 @@ class _RouteMapScreenState extends ConsumerState<RouteMapScreen> {
       polylines: _polylines,
       markers: _markers,
       onMapCreated: (gmaps.GoogleMapController controller) {
-        print('DEBUG: Google Map created successfully');
         _controller = controller;
         
         // Add a delay before fitting bounds to ensure map is fully loaded
@@ -173,31 +167,21 @@ class _RouteMapScreenState extends ConsumerState<RouteMapScreen> {
     final startCoords = _parseLatLng(activity.startLatlng);
     final endCoords = _parseLatLng(activity.endLatlng);
 
-    // Debug: Print activity and stream data
-    print('DEBUG: Activity map data: ${activity.map}');
-    print('DEBUG: Activity summary_polyline: ${activity.map?.summaryPolyline}');
-    print('DEBUG: Activity start_latlng: ${activity.startLatlng}');
-    print('DEBUG: Activity end_latlng: ${activity.endLatlng}');
-    print('DEBUG: Streams data type: ${streams.runtimeType}');
-    print('DEBUG: Streams data: $streams');
 
     // Extract GPS track from polyline (preferred method)
     List<gmaps.LatLng> trackPoints = [];
     
     // Try to decode summary_polyline first
     if (activity.map?.summaryPolyline != null && activity.map!.summaryPolyline!.isNotEmpty) {
-      print('DEBUG: Decoding summary_polyline');
       try {
         trackPoints = _decodePolyline(activity.map!.summaryPolyline!);
-        print('DEBUG: Decoded ${trackPoints.length} points from summary_polyline');
-      } catch (e) {
-        print('DEBUG: Error decoding polyline: $e');
+      } catch (_) {
+        // Ignore polyline decoding errors
       }
     }
     
     // Fallback to streams if no polyline - handle different stream data structures
     if (trackPoints.isEmpty && streams != null) {
-      print('DEBUG: Trying to extract GPS from streams');
       
       // Handle different possible stream structures
       List<dynamic>? streamsList;
@@ -214,7 +198,7 @@ class _RouteMapScreenState extends ConsumerState<RouteMapScreen> {
         for (var stream in streamsList) {
           // Handle different latlng formats
           if (stream != null) {
-            var latlng;
+            dynamic latlng;
             if (stream is Map) {
               latlng = stream['latlng'];
             } else {
@@ -228,21 +212,17 @@ class _RouteMapScreenState extends ConsumerState<RouteMapScreen> {
                 if (lat != 0.0 || lng != 0.0) { // Skip null island coordinates
                   trackPoints.add(gmaps.LatLng(lat, lng));
                 }
-              } catch (e) {
-                print('DEBUG: Error parsing latlng: $e');
+              } catch (_) {
+                // Ignore latlng parsing errors
               }
             }
           }
         }
       }
-      print('DEBUG: Track points from streams: ${trackPoints.length}');
     }
 
     // If we have track points, use them for the route
     if (trackPoints.isNotEmpty) {
-      print('DEBUG: Adding ${trackPoints.length} track points to polyline');
-      print('DEBUG: First point: ${trackPoints.first}');
-      print('DEBUG: Last point: ${trackPoints.last}');
       
       // Add start marker at first track point
       _markers.add(
@@ -280,14 +260,10 @@ class _RouteMapScreenState extends ConsumerState<RouteMapScreen> {
         ),
       );
       
-      print('DEBUG: Created polyline with ${trackPoints.length} points');
-      print('DEBUG: Polylines count: ${_polylines.length}');
-      print('DEBUG: Markers count: ${_markers.length}');
       
       // Trigger UI update
       setState(() {});
       
-      print('DEBUG: setState called to refresh map');
     } else {
       // Fallback to start/end coordinates if no track data
       if (startCoords != null) {
@@ -383,26 +359,19 @@ class _RouteMapScreenState extends ConsumerState<RouteMapScreen> {
   }
 
   void _fitBounds() {
-    print('DEBUG: _fitBounds called');
-    print('DEBUG: _controller: ${_controller != null}');
-    print('DEBUG: _markers.length: ${_markers.length}');
     
     if (_controller == null || _markers.isEmpty) {
-      print('DEBUG: Skipping fit bounds - controller or markers missing');
       return;
     }
 
     if (_markers.length == 1) {
-      print('DEBUG: Only one marker, skipping bounds fit');
       return;
     }
 
     final bounds = _calculateBounds();
-    print('DEBUG: Calculated bounds: $bounds');
     _controller!.animateCamera(
       gmaps.CameraUpdate.newLatLngBounds(bounds, 100.0),
     );
-    print('DEBUG: Camera animation to bounds completed');
   }
 
   gmaps.LatLngBounds _calculateBounds() {

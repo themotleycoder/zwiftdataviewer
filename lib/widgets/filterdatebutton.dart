@@ -7,7 +7,7 @@ import '../providers/filters/filters_provider.dart';
 class FilterDateButton extends ConsumerWidget {
   final bool isActive;
 
-  const FilterDateButton({required this.isActive, Key? key}) : super(key: key);
+  const FilterDateButton({required this.isActive, super.key});
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {

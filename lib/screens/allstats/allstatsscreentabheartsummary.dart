@@ -67,7 +67,7 @@ class AllStatsScreenTabHeartSummary extends AllStatsTabLayout {
           shouldAlwaysShow: false,
           // Add line customization
           lineType: TrackballLineType.vertical,
-          lineColor: zdvRed.withOpacity(0.7),
+          lineColor: zdvRed.withValues(alpha: 0.7),
           lineWidth: 2,
         ),
         series: _createDataSet(ref, filteredActivities),

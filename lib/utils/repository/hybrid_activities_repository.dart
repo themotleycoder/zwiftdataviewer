@@ -51,7 +51,7 @@ class HybridActivitiesRepository implements ActivitiesRepository, StreamsReposit
   Future<void> _checkConnectivity() async {
     try {
       final result = await Connectivity().checkConnectivity();
-      final initialOnlineStatus = result != ConnectivityResult.none;
+      final initialOnlineStatus = !result.contains(ConnectivityResult.none);
       
       // If we think we're online, do an additional check to verify actual internet connectivity
       if (initialOnlineStatus) {
@@ -280,7 +280,7 @@ class HybridActivitiesRepository implements ActivitiesRepository, StreamsReposit
       }
       
       // Offline mode or Supabase fetch failed: Use SQLite cache
-      final sqliteActivityDetail = await _sqliteService.loadActivityDetail(activityId);
+      final sqliteActivityDetail = await _sqliteService.getActivityDetail(activityId);
       
       if (kDebugMode) {
         print('Retrieved activity detail for ID $activityId from SQLite cache');

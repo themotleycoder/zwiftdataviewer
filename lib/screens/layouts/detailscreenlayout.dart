@@ -29,5 +29,5 @@ abstract class DetailScreenLayout extends ConsumerWidget {
 
   String getTitle(WidgetRef ref);
 
-  getChildView(WidgetRef ref);
+  Widget getChildView(WidgetRef ref);
 }

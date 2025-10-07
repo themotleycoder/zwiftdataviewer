@@ -5,7 +5,7 @@ import 'package:zwiftdataviewer/providers/world_select_provider.dart';
 import 'package:zwiftdataviewer/utils/worldsconfig.dart';
 
 Future<List<RouteData>> filterByWorldRoutesProvider(
-    FutureProviderRef<List<RouteData>> ref) async {
+    Ref ref) async {
   final routeDataModel = await ref.watch(routeDataProvider.future);
   final selectedWorld = ref.watch(selectedWorldProvider);
   final routeFilter = ref.watch(routeFilterProvider.notifier);
@@ -29,7 +29,7 @@ final routesProvider = FutureProvider<List<RouteData>>((ref) async {
 });
 
 Future<List<RouteData>> filterByUserRoutesProvider(
-    FutureProviderRef<List<RouteData>> ref) async {
+    Ref ref) async {
   final Map<int, List<RouteData>> routeDataModel = await ref.watch(routeDataProvider.future);
   
   List<RouteData> routeData = routeDataModel.values.expand((list) => list).toList();

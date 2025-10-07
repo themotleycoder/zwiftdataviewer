@@ -8,7 +8,7 @@ import 'package:sqflite/sqflite.dart';
 class DatabaseHelper {
   static final DatabaseHelper _instance = DatabaseHelper._internal();
   static Database? _database;
-  static const int _currentVersion = 4; // Incremented version number
+  static const int _currentVersion = 6; // Incremented version number for world calendar
 
   // Singleton pattern
   factory DatabaseHelper() => _instance;
@@ -369,6 +369,148 @@ class DatabaseHelper {
             print('Error during migration to version 4: $e');
           }
           // Continue with other migrations even if this one fails
+        }
+      }
+      
+      if (oldVersion < 5) {
+        // Migration to version 5 - Add route recommendations tables
+        try {
+          // Create user_route_interactions table
+          await db.execute('''
+            CREATE TABLE IF NOT EXISTS user_route_interactions (
+              id INTEGER PRIMARY KEY AUTOINCREMENT,
+              route_id INTEGER NOT NULL,
+              activity_id INTEGER NOT NULL,
+              athlete_id TEXT NOT NULL,
+              completed_at TEXT NOT NULL,
+              completion_time_seconds REAL,
+              average_power REAL,
+              average_heart_rate REAL,
+              max_power REAL,
+              max_heart_rate REAL,
+              normalized_power REAL,
+              intensity_factor REAL,
+              training_stress_score REAL,
+              average_speed REAL,
+              max_speed REAL,
+              elevation_gain REAL,
+              perceived_effort TEXT,
+              enjoyment_rating REAL,
+              was_personal_record INTEGER DEFAULT 0,
+              additional_metrics TEXT,
+              created_at TEXT DEFAULT CURRENT_TIMESTAMP,
+              updated_at TEXT DEFAULT CURRENT_TIMESTAMP,
+              UNIQUE(activity_id, route_id)
+            )
+          ''');
+
+          // Create route_recommendations table
+          await db.execute('''
+            CREATE TABLE IF NOT EXISTS route_recommendations (
+              id INTEGER PRIMARY KEY AUTOINCREMENT,
+              athlete_id TEXT NOT NULL,
+              route_id INTEGER NOT NULL,
+              confidence_score REAL NOT NULL,
+              recommendation_type TEXT NOT NULL,
+              reasoning TEXT NOT NULL,
+              scoring_factors TEXT NOT NULL,
+              generated_at TEXT NOT NULL,
+              is_viewed INTEGER DEFAULT 0,
+              is_completed INTEGER DEFAULT 0,
+              expires_at TEXT,
+              created_at TEXT DEFAULT CURRENT_TIMESTAMP,
+              updated_at TEXT DEFAULT CURRENT_TIMESTAMP,
+              UNIQUE(athlete_id, route_id, recommendation_type)
+            )
+          ''');
+
+          // Create indexes for performance
+          await db.execute('CREATE INDEX IF NOT EXISTS idx_user_route_interactions_athlete_id ON user_route_interactions(athlete_id)');
+          await db.execute('CREATE INDEX IF NOT EXISTS idx_user_route_interactions_route_id ON user_route_interactions(route_id)');
+          await db.execute('CREATE INDEX IF NOT EXISTS idx_user_route_interactions_completed_at ON user_route_interactions(completed_at)');
+          
+          await db.execute('CREATE INDEX IF NOT EXISTS idx_route_recommendations_athlete_id ON route_recommendations(athlete_id)');
+          await db.execute('CREATE INDEX IF NOT EXISTS idx_route_recommendations_route_id ON route_recommendations(route_id)');
+          await db.execute('CREATE INDEX IF NOT EXISTS idx_route_recommendations_confidence_score ON route_recommendations(confidence_score)');
+          await db.execute('CREATE INDEX IF NOT EXISTS idx_route_recommendations_generated_at ON route_recommendations(generated_at)');
+          await db.execute('CREATE INDEX IF NOT EXISTS idx_route_recommendations_expires_at ON route_recommendations(expires_at)');
+
+          if (kDebugMode) {
+            print('Created route recommendations tables and indexes');
+          }
+
+          // Update version record
+          await db.update('db_version', {
+            'version': 5,
+            'last_updated': DateTime.now().toIso8601String(),
+            'description': 'Added route recommendations and user route interactions tables'
+          }, where: 'id = 1');
+
+          if (kDebugMode) {
+            print('Migration to version 5 completed successfully');
+          }
+        } catch (e) {
+          if (kDebugMode) {
+            print('Error during migration to version 5: $e');
+          }
+          // Continue with other migrations even if this one fails
+        }
+      }
+
+      if (oldVersion < 6) {
+        // Migration to version 6 - Add world calendar and climb calendar tables
+        try {
+          // Create world_calendar table
+          await db.execute('''
+            CREATE TABLE IF NOT EXISTS world_calendar (
+              id INTEGER PRIMARY KEY AUTOINCREMENT,
+              calendar_date TEXT NOT NULL,
+              world_id INTEGER NOT NULL,
+              world_name TEXT NOT NULL,
+              world_url TEXT,
+              created_at TEXT DEFAULT CURRENT_TIMESTAMP,
+              UNIQUE(calendar_date, world_id)
+            )
+          ''');
+
+          // Create climb_calendar table
+          await db.execute('''
+            CREATE TABLE IF NOT EXISTS climb_calendar (
+              id INTEGER PRIMARY KEY AUTOINCREMENT,
+              calendar_date TEXT NOT NULL,
+              climb_id INTEGER NOT NULL,
+              climb_name TEXT NOT NULL,
+              climb_url TEXT,
+              created_at TEXT DEFAULT CURRENT_TIMESTAMP,
+              UNIQUE(calendar_date, climb_id)
+            )
+          ''');
+
+          // Create indexes for performance
+          await db.execute('CREATE INDEX IF NOT EXISTS idx_world_calendar_date ON world_calendar(calendar_date)');
+          await db.execute('CREATE INDEX IF NOT EXISTS idx_world_calendar_world_id ON world_calendar(world_id)');
+          await db.execute('CREATE INDEX IF NOT EXISTS idx_climb_calendar_date ON climb_calendar(calendar_date)');
+          await db.execute('CREATE INDEX IF NOT EXISTS idx_climb_calendar_climb_id ON climb_calendar(climb_id)');
+
+          if (kDebugMode) {
+            debugPrint('Created world_calendar and climb_calendar tables and indexes');
+          }
+
+          // Update version record
+          await db.update('db_version', {
+            'version': 6,
+            'last_updated': DateTime.now().toIso8601String(),
+            'description': 'Added world_calendar and climb_calendar tables'
+          }, where: 'id = 1');
+
+          if (kDebugMode) {
+            debugPrint('Migration to version 6 completed successfully');
+          }
+        } catch (e) {
+          if (kDebugMode) {
+            debugPrint('Error during migration to version 6: $e');
+          }
+          // Continue even if this migration fails
         }
       }
     }

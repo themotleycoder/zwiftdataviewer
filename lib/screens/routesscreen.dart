@@ -5,8 +5,8 @@ import 'package:zwiftdataviewer/appkeys.dart';
 import 'package:zwiftdataviewer/providers/filters/filtered_routefilter_provider.dart';
 import 'package:zwiftdataviewer/utils/theme.dart';
 import 'package:zwiftdataviewer/utils/ui_helpers.dart';
-import 'package:zwiftdataviewer/widgets/routedetailtilewidget.dart';
 import 'package:zwiftdataviewer/widgets/improved_route_filter_widget.dart';
+import 'package:zwiftdataviewer/widgets/routedetailtilewidget.dart';
 
 // A screen that displays a list of Zwift routes.
 //
@@ -30,9 +30,9 @@ class RoutesScreen extends ConsumerWidget {
         ),
         child: Column(
           children: [
-            Flexible(
+            const Flexible(
               flex: 0,
-              child: const ImprovedRouteFilterWidget(),
+              child: ImprovedRouteFilterWidget(),
             ),
             Expanded(
               child: routeDataModel.when(

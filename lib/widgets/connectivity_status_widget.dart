@@ -7,7 +7,7 @@ import 'package:zwiftdataviewer/providers/connectivity_provider.dart';
 /// This widget shows an indicator when the app is offline.
 /// It can be placed in the app bar or other prominent locations.
 class ConnectivityStatusWidget extends ConsumerWidget {
-  const ConnectivityStatusWidget({Key? key}) : super(key: key);
+  const ConnectivityStatusWidget({super.key});
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
@@ -57,7 +57,7 @@ class ConnectivityStatusWidget extends ConsumerWidget {
 /// This widget shows a banner at the top of the screen when the app is offline.
 /// It can be used to provide more context about the offline state.
 class ConnectivityBanner extends ConsumerWidget {
-  const ConnectivityBanner({Key? key}) : super(key: key);
+  const ConnectivityBanner({super.key});
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {

@@ -12,8 +12,7 @@ class ClimbEventsCalendarWidget extends StatelessWidget {
   final WidgetRef ref;
   final Map<DateTime, List<ClimbData>> calendarData;
 
-  const ClimbEventsCalendarWidget(this.ref, this.calendarData, {Key? key})
-      : super(key: key);
+  const ClimbEventsCalendarWidget(this.ref, this.calendarData, {super.key});
 
   @override
   Widget build(BuildContext context) {
@@ -63,7 +62,7 @@ class ClimbEventsCalendarWidget extends StatelessWidget {
         final formattedDateTime =
             DateFormat('yyyy-MM-dd HH:mm:ss').format(dateTime);
         return _getEventsForDay(ref, calendarData,
-            DateTime.parse(formattedDateTime.replaceAll('Z', '')));
+            DateTime.parse(formattedDateTime.replaceAll('Z', ''))) ?? [];
       },
       selectedDayPredicate: (day) {
         return isSameDay(ref.read(selectedClimbDayProvider), day);
@@ -71,13 +70,13 @@ class ClimbEventsCalendarWidget extends StatelessWidget {
     );
   }
 
-  _getEventsForSelectedDay(
+  void _getEventsForSelectedDay(
       WidgetRef ref, Map<DateTime, List<ClimbData>> calendarData) {
     var data = _getEventsForDay(ref, calendarData);
     ref.read(climbEventsForDayProvider.notifier).setEventsForDay(data ?? []);
   }
 
-  _getEventsForDay(WidgetRef ref, Map<DateTime, List<ClimbData>> climbData,
+  List<ClimbData>? _getEventsForDay(WidgetRef ref, Map<DateTime, List<ClimbData>> climbData,
       [DateTime? date]) {
     final DateTime selectedDay = ref.read(selectedClimbDayProvider);
     DateTime? d = date;

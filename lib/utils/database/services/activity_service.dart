@@ -47,7 +47,25 @@ class ActivityService implements ActivitiesRepository, StreamsRepository {
       return null;
     }
 
-    return ActivityDetailModel.fromMap(maps.first).toDetailedActivity();
+    // Load the base activity detail
+    final activityDetail = ActivityDetailModel.fromMap(maps.first).toDetailedActivity();
+    
+    // Load segment efforts from database and attach them to the activity detail
+    try {
+      final segmentEfforts = await DatabaseInit.segmentEffortService.getSegmentEffortsForActivity(activityId);
+      if (segmentEfforts.isNotEmpty) {
+        // Convert ExtendedSegmentEffort back to SegmentEffort for the activity detail
+        final segmentEffortList = segmentEfforts.map((extended) => extended.effort).toList();
+        activityDetail.segmentEfforts = segmentEffortList;
+      }
+    } catch (e) {
+      if (kDebugMode) {
+        print('Error loading segment efforts for activity $activityId: $e');
+      }
+      // Continue without segment efforts
+    }
+    
+    return activityDetail;
   }
 
   Future<void> saveActivityDetail(DetailedActivity activity) async {

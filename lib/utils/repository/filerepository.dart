@@ -14,6 +14,7 @@ import 'package:zwiftdataviewer/models/routedata.dart';
 import 'package:zwiftdataviewer/models/worlddata.dart';
 import 'package:zwiftdataviewer/utils/climbsconfig.dart';
 import 'package:zwiftdataviewer/utils/constants.dart' as constants;
+import 'package:zwiftdataviewer/utils/database/services/world_calendar_service.dart';
 import 'package:zwiftdataviewer/utils/repository/activitesrepository.dart';
 import 'package:zwiftdataviewer/utils/repository/configrepository.dart';
 import 'package:zwiftdataviewer/utils/repository/routerepository.dart';
@@ -73,7 +74,7 @@ class FileRepository
       }
     } catch (e) {
       if (kDebugMode) {
-        print('file load error$e.toString()');
+        debugPrint('file load error$e.toString()');
       }
     }
     return activities;
@@ -89,7 +90,7 @@ class FileRepository
       return activity;
     } catch (e) {
       if (kDebugMode) {
-        print('file load error$e');
+        debugPrint('file load error$e');
       }
       return DetailedActivity();
     }
@@ -103,7 +104,7 @@ class FileRepository
       final String jsonStr =
           await rootBundle.loadString('assets/testjson/photos_test.json');
       if (kDebugMode) {
-        print('');
+        debugPrint('');
       }
       final List<dynamic> jsonResponse = json.decode(jsonStr);
       for (Map m in jsonResponse) {
@@ -457,58 +458,56 @@ class FileRepository
 
   @override
   Future<Map<DateTime, List<WorldData>>> loadWorldCalendarData() async {
-    Map<DateTime, List<WorldData>> calendarData = {};
-    final file = await _localWorldCalendarFile;
+    final calendarService = WorldCalendarService();
+
     try {
-      final string = await file.readAsString();
-      final Map<String, dynamic> json = const JsonDecoder().convert(string);
-      json.forEach((key, worldRoute) {
-        List<WorldData> list = [];
-        for (dynamic w in worldRoute) {
-          list.add(WorldData(w['id'], null, w['name'], w['url']));
+      // Try to load from database first
+      Map<DateTime, List<WorldData>> calendarData = await calendarService.loadWorldCalendarData();
+
+      // If database is empty, scrape and save to database
+      if (calendarData.isEmpty) {
+        if (kDebugMode) {
+          debugPrint('World calendar database is empty - scraping data');
         }
-        calendarData[DateTime.parse(key)] = list;
-      });
+        calendarData = await scrapeWorldCalendarData();
+        await saveWorldCalendarData(calendarData);
+      }
+
+      return calendarData;
     } catch (e) {
       if (kDebugMode) {
-        print('file load error - scraping world calendar data');
+        debugPrint('Error loading world calendar data from database: $e');
       }
-      calendarData = await scrapeWorldCalendarData();
-      saveWorldCalendarData(calendarData);
-    }
 
-    return calendarData;
+      // Fallback to scraping if database fails
+      try {
+        final calendarData = await scrapeWorldCalendarData();
+        await saveWorldCalendarData(calendarData);
+        return calendarData;
+      } catch (scrapeError) {
+        if (kDebugMode) {
+          debugPrint('Error scraping world calendar data: $scrapeError');
+        }
+        return {};
+      }
+    }
   }
 
   @override
   Future saveWorldCalendarData(Map<DateTime, List<WorldData>> routeData) async {
-    final file = await _localWorldCalendarFile;
-    String content = '{';
-    bool hasContent = false;
-    routeData.forEach((key, worldRoute) {
-      if (hasContent) {
-        content += ',';
+    final calendarService = WorldCalendarService();
+
+    try {
+      await calendarService.saveWorldCalendarData(routeData);
+      if (kDebugMode) {
+        debugPrint('World calendar data saved to database');
       }
-
-      String dateTime = key.toString();
-
-      content += jsonEncode(dateTime);
-      content += ':[';
-
-      for (int x = 0; x < worldRoute.length; x++) {
-        Map<String, dynamic> item = worldRoute[x].toJson();
-        if (x > 0) {
-          content += ',';
-        }
-        content += jsonEncode(item);
+    } catch (e) {
+      if (kDebugMode) {
+        debugPrint('Error saving world calendar data to database: $e');
       }
-      content += ']';
-
-      hasContent = true;
-    });
-
-    content += '}';
-    file.writeAsStringSync(content);
+      rethrow;
+    }
   }
 
   @override
@@ -631,57 +630,55 @@ class FileRepository
   // Climb Calendar Portal Methods
 
   Future<Map<DateTime, List<ClimbData>>> loadClimbCalendarData() async {
-    Map<DateTime, List<ClimbData>> calendarData = {};
-    final file = await _localClimbCalendarFile;
+    final calendarService = WorldCalendarService();
+
     try {
-      final string = await file.readAsString();
-      final Map<String, dynamic> json = const JsonDecoder().convert(string);
-      json.forEach((key, climbRoute) {
-        List<ClimbData> list = [];
-        for (dynamic w in climbRoute) {
-          list.add(ClimbData(w['id'], null, w['name'], w['url']));
+      // Try to load from database first
+      Map<DateTime, List<ClimbData>> calendarData = await calendarService.loadClimbCalendarData();
+
+      // If database is empty, scrape and save to database
+      if (calendarData.isEmpty) {
+        if (kDebugMode) {
+          debugPrint('Climb calendar database is empty - scraping data');
         }
-        calendarData[DateTime.parse(key)] = list;
-      });
+        calendarData = await scrapeClimbCalendarData();
+        await saveClimbCalendarData(calendarData);
+      }
+
+      return calendarData;
     } catch (e) {
       if (kDebugMode) {
-        print('file load error - scraping climb calendar data');
+        debugPrint('Error loading climb calendar data from database: $e');
       }
-      calendarData = await scrapeClimbCalendarData();
-      saveClimbCalendarData(calendarData);
-    }
 
-    return calendarData;
+      // Fallback to scraping if database fails
+      try {
+        final calendarData = await scrapeClimbCalendarData();
+        await saveClimbCalendarData(calendarData);
+        return calendarData;
+      } catch (scrapeError) {
+        if (kDebugMode) {
+          debugPrint('Error scraping climb calendar data: $scrapeError');
+        }
+        return {};
+      }
+    }
   }
 
   Future saveClimbCalendarData(Map<DateTime, List<ClimbData>> routeData) async {
-    final file = await _localClimbCalendarFile;
-    String content = '{';
-    bool hasContent = false;
-    routeData.forEach((key, worldRoute) {
-      if (hasContent) {
-        content += ',';
+    final calendarService = WorldCalendarService();
+
+    try {
+      await calendarService.saveClimbCalendarData(routeData);
+      if (kDebugMode) {
+        debugPrint('Climb calendar data saved to database');
       }
-
-      String dateTime = key.toString();
-
-      content += jsonEncode(dateTime);
-      content += ':[';
-
-      for (int x = 0; x < worldRoute.length; x++) {
-        Map<String, dynamic> item = worldRoute[x].toJson();
-        if (x > 0) {
-          content += ',';
-        }
-        content += jsonEncode(item);
+    } catch (e) {
+      if (kDebugMode) {
+        debugPrint('Error saving climb calendar data to database: $e');
       }
-      content += ']';
-
-      hasContent = true;
-    });
-
-    content += '}';
-    file.writeAsStringSync(content);
+      rethrow;
+    }
   }
 
   Future<Map<DateTime, List<ClimbData>>> scrapeClimbCalendarData() async {

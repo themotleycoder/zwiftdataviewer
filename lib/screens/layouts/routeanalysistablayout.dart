@@ -12,7 +12,7 @@ abstract class RouteAnalysisTabLayout extends ConsumerWidget {
     ]);
   }
 
-  buildChart();
+  Widget buildChart();
 
-  buildChartDataView();
+  Widget buildChartDataView();
 }

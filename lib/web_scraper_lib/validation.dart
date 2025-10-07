@@ -16,7 +16,9 @@ class Validation {
   ValidationReturn isBaseURL(String str) {
     // Protocols supported for web scraping includes http & https.
     const protocols = ['http', 'https'];
-    var protocol, split, host;
+    String? protocol;
+    List<String> split;
+    String host;
 
     // Checking the protocol.
     split = str.split('://');

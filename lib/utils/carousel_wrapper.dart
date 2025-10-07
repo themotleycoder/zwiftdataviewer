@@ -9,11 +9,11 @@ class ZwiftCarouselSlider extends StatelessWidget {
   final ZwiftCarouselOptions options;
 
   const ZwiftCarouselSlider({
-    Key? key,
+    super.key,
     required this.itemCount,
     required this.itemBuilder,
     required this.options,
-  }) : super(key: key);
+  });
 
   @override
   Widget build(BuildContext context) {

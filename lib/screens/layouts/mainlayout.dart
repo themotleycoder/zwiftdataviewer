@@ -26,11 +26,11 @@ abstract class MainLayout extends ConsumerWidget {
 
   // String getTitle(WidgetRef ref);
 
-  buildAppBar(BuildContext context, WidgetRef ref) {}
+  PreferredSizeWidget? buildAppBar(BuildContext context, WidgetRef ref) => null;
 
-  buildBody(BuildContext context, WidgetRef ref);
+  Widget buildBody(BuildContext context, WidgetRef ref);
 
-  buildBottomNavigationBar(BuildContext context, WidgetRef ref);
+  Widget? buildBottomNavigationBar(BuildContext context, WidgetRef ref);
 
-  getTabIndex(WidgetRef ref);
+  int getTabIndex(WidgetRef ref);
 }

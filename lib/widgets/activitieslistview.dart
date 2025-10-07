@@ -137,7 +137,9 @@ class ActivitiesListView extends ConsumerWidget {
     try {
       // Use the new email authentication method
       final bool isAuthOk = await StravaApiHelper.authenticateWithEmailCode(context);
-      
+
+      if (!context.mounted) return;
+
       if (isAuthOk) {
         // Authentication successful
         ScaffoldMessenger.of(context).showSnackBar(
@@ -156,6 +158,8 @@ class ActivitiesListView extends ConsumerWidget {
         );
       }
     } catch (e) {
+      if (!context.mounted) return;
+
       // Handle any exceptions
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(

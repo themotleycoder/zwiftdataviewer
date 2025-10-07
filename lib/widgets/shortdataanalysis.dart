@@ -7,7 +7,7 @@ import '../utils/conversions.dart';
 import 'iconitemwidgets.dart';
 
 class ShortDataAnalysis extends ConsumerWidget {
-  const ShortDataAnalysis({Key? key}) : super(key: key);
+  const ShortDataAnalysis({super.key});
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {

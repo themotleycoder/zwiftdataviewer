@@ -69,7 +69,7 @@ class AllStatsScreenTabWattsSummary extends AllStatsTabLayout {
           shouldAlwaysShow: false,
           // Add line customization
           lineType: TrackballLineType.vertical,
-          lineColor: zdvMidBlue.withOpacity(0.7),
+          lineColor: zdvMidBlue.withValues(alpha: 0.7),
           lineWidth: 2,
         ),
         series: _createDataSet(ref, filteredActivities),

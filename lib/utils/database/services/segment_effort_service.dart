@@ -55,16 +55,16 @@ class SegmentEffortService {
           'SELECT COUNT(*) as count FROM segment_efforts WHERE segment_id = ?',
           [segmentId]
         );
-        final count = Sqflite.firstIntValue(segmentCheck) ?? 0;
+        Sqflite.firstIntValue(segmentCheck) ?? 0;
         // print('Database query confirms $count segment efforts for segment ID: $segmentId');
         
         // Check total segment efforts in the database
         final totalCheck = await db.rawQuery('SELECT COUNT(*) as count FROM segment_efforts');
-        final totalCount = Sqflite.firstIntValue(totalCheck) ?? 0;
+        Sqflite.firstIntValue(totalCheck) ?? 0;
         // print('Total segment efforts in database: $totalCount');
         
         // Check if the segment_efforts table exists and has the expected schema
-        final tableInfo = await db.rawQuery('PRAGMA table_info(segment_efforts)');
+        await db.rawQuery('PRAGMA table_info(segment_efforts)');
         // print('segment_efforts table schema: ${tableInfo.length} columns');
       }
     }
@@ -133,44 +133,20 @@ class SegmentEffortService {
     
     if (kDebugMode) {
       print('Saving ${efforts.length} segment efforts for activity $activityId');
-      
-      // Log some details about the first few efforts
-      final maxToLog = efforts.length > 3 ? 3 : efforts.length;
-      for (var i = 0; i < maxToLog; i++) {
-        final effort = efforts[i];
-        print('Effort $i: ID=${effort.id}, SegmentID=${effort.segment?.id}, Name=${effort.segment?.name}');
-      }
     }
     
     final db = await _databaseHelper.database;
     
-    // Check if the segment_efforts table exists
-    if (kDebugMode) {
-      final tableCheck = await db.rawQuery(
-        "SELECT name FROM sqlite_master WHERE type='table' AND name='segment_efforts'"
-      );
-      print('segment_efforts table exists: ${tableCheck.isNotEmpty}');
-      
-      if (tableCheck.isNotEmpty) {
-        // Check table schema
-        final tableInfo = await db.rawQuery('PRAGMA table_info(segment_efforts)');
-        print('segment_efforts table has ${tableInfo.length} columns');
-      }
-    }
     
     // Use a transaction for better data integrity
     await db.transaction((txn) async {
       try {
         // Delete existing segment efforts for this activity
-        final deletedCount = await txn.delete(
+        await txn.delete(
           'segment_efforts',
           where: 'activity_id = ?',
           whereArgs: [activityId],
         );
-        
-        if (kDebugMode) {
-          print('Deleted $deletedCount existing segment efforts for activity $activityId');
-        }
         
         int successCount = 0;
         int errorCount = 0;
@@ -182,17 +158,11 @@ class SegmentEffortService {
             
             // Skip efforts with null segments
             if (effort.segment == null) {
-              if (kDebugMode) {
-                //print('Skipping segment effort with null segment at index $i');
-              }
               continue;
             }
             
             // Skip efforts with null segment IDs
             if (effort.segment!.id == null) {
-              if (kDebugMode) {
-                //print('Skipping segment effort with null segment ID at index $i');
-              }
               continue;
             }
             
@@ -209,12 +179,6 @@ class SegmentEffortService {
             if (id > 0) {
               successCount++;
             }
-            
-            if (kDebugMode && i < 3) {  // Log details for first few efforts
-              if (kDebugMode) {
-                //print('Saved segment effort ${effort.id} (segment ${effort.segment!.id}) for activity $activityId with DB ID $id');
-              }
-            }
           } catch (e) {
             errorCount++;
             if (kDebugMode) {
@@ -230,21 +194,11 @@ class SegmentEffortService {
           }
         }
         
-        // Verify segment efforts were saved
-        final count = Sqflite.firstIntValue(await txn.rawQuery(
-          'SELECT COUNT(*) FROM segment_efforts WHERE activity_id = ?',
-          [activityId],
-        )) ?? 0;
-        
         if (kDebugMode) {
-          //print('Saved $count segment efforts to database for activity $activityId');
-          //print('Success: $successCount, Errors: $errorCount');
-          
-          // Check total segment efforts in the database
-          final totalCount = Sqflite.firstIntValue(await txn.rawQuery(
-            'SELECT COUNT(*) FROM segment_efforts'
-          )) ?? 0;
-          //print('Total segment efforts in database: $totalCount');
+          print('Saved $successCount segment efforts to database for activity $activityId');
+          if (errorCount > 0) {
+            print('Errors: $errorCount');
+          }
         }
       } catch (e) {
         if (kDebugMode) {

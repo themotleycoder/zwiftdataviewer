@@ -8,7 +8,7 @@ import 'package:zwiftdataviewer/utils/theme.dart';
 import 'package:zwiftdataviewer/utils/ui_helpers.dart';
 
 class SegmentsScreen extends ConsumerWidget {
-  const SegmentsScreen({Key? key}) : super(key: key);
+  const SegmentsScreen({super.key});
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {

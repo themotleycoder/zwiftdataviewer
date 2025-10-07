@@ -361,13 +361,11 @@ class SupabaseDatabaseService {
               .from('zw_activity_photos')
               .upsert(photoModel.toMap());
 
-          successCount++;
 
           if (kDebugMode) {
             print('Saved photo ${photo.id} for activity $activityId');
           }
         } catch (e) {
-          errorCount++;
           if (kDebugMode) {
             print('Error saving photo at index $i for activity $activityId: $e');
             print('Photo data: ${photos[i].toJson()}');
@@ -557,8 +555,6 @@ class SupabaseDatabaseService {
 
 
       // Insert new segment efforts
-      int successCount = 0;
-      int errorCount = 0;
 
       for (var i = 0; i < efforts.length; i++) {
         try {
@@ -608,10 +604,8 @@ class SupabaseDatabaseService {
               .from('zw_segment_efforts')
               .upsert(effortMap);
 
-          successCount++;
 
         } catch (e) {
-          errorCount++;
           if (kDebugMode) {
             print('Error saving segment effort at index $i for activity $activityId: $e');
             try {

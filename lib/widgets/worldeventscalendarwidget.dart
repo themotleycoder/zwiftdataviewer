@@ -24,8 +24,7 @@ class WorldEventsCalendarWidget extends StatelessWidget {
   // @param ref The WidgetRef used to access providers
   // @param worldData The map of dates to world events
   // @param key An optional key for this widget
-  const WorldEventsCalendarWidget(this.ref, this.worldData, {Key? key})
-      : super(key: key);
+  const WorldEventsCalendarWidget(this.ref, this.worldData, {super.key});
 
   @override
   Widget build(BuildContext context) {

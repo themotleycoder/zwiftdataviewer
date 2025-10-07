@@ -28,7 +28,7 @@ Container getChartPointShortSummaryWidget(
       curve: Curves.easeInOut,
       decoration: BoxDecoration(
         // Add subtle highlight when an activity is selected
-        color: selectedActivity.id != 0 ? Colors.blue.withOpacity(0.05) : null,
+        color: selectedActivity.id != 0 ? Colors.blue.withValues(alpha: 0.05) : null,
         borderRadius: BorderRadius.circular(8),
       ),
       child: Column(

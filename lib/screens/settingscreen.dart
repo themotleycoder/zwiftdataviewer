@@ -7,7 +7,6 @@ import 'package:zwiftdataviewer/providers/config_provider.dart';
 import 'package:zwiftdataviewer/utils/database/database_init.dart';
 import 'package:zwiftdataviewer/utils/repository/hybrid_activities_repository.dart';
 import 'package:zwiftdataviewer/utils/supabase/database_sync_service.dart';
-import 'package:zwiftdataviewer/utils/supabase/supabase_auth_service.dart';
 import 'package:zwiftdataviewer/utils/supabase/sync_state.dart';
 import 'package:zwiftdataviewer/utils/theme.dart';
 
@@ -25,7 +24,6 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
   bool _isMetric = true;
   int _ftp = 0;
   bool _isSupabaseEnabled = true;
-  bool _isSyncing = false;
   SyncState _syncState = SyncState.idle;
 
   @override
@@ -80,7 +78,6 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
       final hybridRepo = HybridActivitiesRepository();
       setState(() {
         _isSupabaseEnabled = hybridRepo.isSupabaseEnabled;
-        _isSyncing = hybridRepo.syncService.isSyncing;
         _syncState = hybridRepo.syncService.currentState;
       });
 
@@ -89,8 +86,7 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
         if (mounted) {
           setState(() {
             _syncState = state;
-            _isSyncing = hybridRepo.syncService.isSyncing;
-          });
+              });
         }
       });
     } catch (e) {
@@ -147,97 +143,97 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
               activeColor: zdvmMidBlue[100],
             ),
           ),
-          createCard(
-            'Use Supabase',
-            Column(
-              crossAxisAlignment: CrossAxisAlignment.end,
-              children: [
-                Switch(
-                  value: _isSupabaseEnabled,
-                  onChanged: (value) async {
-                    final hybridRepo = HybridActivitiesRepository();
-                    await hybridRepo.setSupabaseEnabled(value);
-                    
-                    setState(() {
-                      _isSupabaseEnabled = value;
-                    });
-                    _saveSettings();
-                    
-                    if (value) {
-                      // If enabling Supabase, check if we need to perform initial migration
-                      final authService = SupabaseAuthService();
-                      final isAuthenticated = await authService.isAuthenticated();
-                      if (isAuthenticated) {
-                        // Show migration dialog
-                        // ignore: use_build_context_synchronously
-                        showDialog(
-                          context: context,
-                          builder: (context) => AlertDialog(
-                            title: const Text('Migrate Data to Supabase?'),
-                            content: const Text(
-                              'Would you like to migrate your existing data to Supabase? '
-                              'This will allow you to access your data from multiple devices.'
-                            ),
-                            actions: [
-                              TextButton(
-                                onPressed: () {
-                                  Navigator.of(context).pop();
-                                },
-                                child: const Text('Skip'),
-                              ),
-                              TextButton(
-                                onPressed: () async {
-                                  Navigator.of(context).pop();
-                                  await _performInitialMigration();
-                                },
-                                child: const Text('Migrate'),
-                              ),
-                            ],
-                          ),
-                        );
-                      }
-                    }
-                  },
-                  activeTrackColor: zdvmLgtBlue,
-                  activeColor: zdvmMidBlue[100],
-                ),
-                if (_isSyncing)
-                  Padding(
-                    padding: const EdgeInsets.only(right: 16.0),
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.end,
-                      children: [
-                        const SizedBox(height: 4),
-                        Text(_getSyncStateText(), style: const TextStyle(fontSize: 12)),
-                        const SizedBox(height: 4),
-                        const LinearProgressIndicator(),
-                      ],
-                    ),
-                  ),
-              ],
-            ),
-          ),
-          if (_isSupabaseEnabled)
-            createCard(
-              'Sync Data',
-              Row(
-                mainAxisSize: MainAxisSize.min,
-                children: [
-                  IconButton(
-                    tooltip: 'Sync to Supabase',
-                    icon: const Icon(Icons.cloud_upload),
-                    color: zdvmMidBlue[100],
-                    onPressed: _isSyncing ? null : () => _syncToSupabase(),
-                  ),
-                  IconButton(
-                    tooltip: 'Sync from Supabase',
-                    icon: const Icon(Icons.cloud_download),
-                    color: zdvmMidBlue[100],
-                    onPressed: _isSyncing ? null : () => _syncFromSupabase(),
-                  ),
-                ],
-              ),
-            ),
+          // createCard(
+          //   'Use Supabase',
+          //   Column(
+          //     crossAxisAlignment: CrossAxisAlignment.end,
+          //     children: [
+          //       Switch(
+          //         value: _isSupabaseEnabled,
+          //         onChanged: (value) async {
+          //           final hybridRepo = HybridActivitiesRepository();
+          //           await hybridRepo.setSupabaseEnabled(value);
+          //
+          //           setState(() {
+          //             _isSupabaseEnabled = value;
+          //           });
+          //           _saveSettings();
+          //
+          //           if (value) {
+          //             // If enabling Supabase, check if we need to perform initial migration
+          //             final authService = SupabaseAuthService();
+          //             final isAuthenticated = await authService.isAuthenticated();
+          //             if (isAuthenticated) {
+          //               // Show migration dialog
+          //               // ignore: use_build_context_synchronously
+          //               showDialog(
+          //                 context: context,
+          //                 builder: (context) => AlertDialog(
+          //                   title: const Text('Migrate Data to Supabase?'),
+          //                   content: const Text(
+          //                     'Would you like to migrate your existing data to Supabase? '
+          //                     'This will allow you to access your data from multiple devices.'
+          //                   ),
+          //                   actions: [
+          //                     TextButton(
+          //                       onPressed: () {
+          //                         Navigator.of(context).pop();
+          //                       },
+          //                       child: const Text('Skip'),
+          //                     ),
+          //                     TextButton(
+          //                       onPressed: () async {
+          //                         Navigator.of(context).pop();
+          //                         await _performInitialMigration();
+          //                       },
+          //                       child: const Text('Migrate'),
+          //                     ),
+          //                   ],
+          //                 ),
+          //               );
+          //             }
+          //           }
+          //         },
+          //         activeTrackColor: zdvmLgtBlue,
+          //         activeColor: zdvmMidBlue[100],
+          //       ),
+          //       if (_isSyncing)
+          //         Padding(
+          //           padding: const EdgeInsets.only(right: 16.0),
+          //           child: Column(
+          //             crossAxisAlignment: CrossAxisAlignment.end,
+          //             children: [
+          //               const SizedBox(height: 4),
+          //               Text(_getSyncStateText(), style: const TextStyle(fontSize: 12)),
+          //               const SizedBox(height: 4),
+          //               const LinearProgressIndicator(),
+          //             ],
+          //           ),
+          //         ),
+          //     ],
+          //   ),
+          // ),
+          // if (_isSupabaseEnabled)
+          //   createCard(
+          //     'Sync Data',
+          //     Row(
+          //       mainAxisSize: MainAxisSize.min,
+          //       children: [
+          //         IconButton(
+          //           tooltip: 'Sync to Supabase',
+          //           icon: const Icon(Icons.cloud_upload),
+          //           color: zdvmMidBlue[100],
+          //           onPressed: _isSyncing ? null : () => _syncToSupabase(),
+          //         ),
+          //         IconButton(
+          //           tooltip: 'Sync from Supabase',
+          //           icon: const Icon(Icons.cloud_download),
+          //           color: zdvmMidBlue[100],
+          //           onPressed: _isSyncing ? null : () => _syncFromSupabase(),
+          //         ),
+          //       ],
+          //     ),
+          //   ),
           createCard(
             'Refresh Route Data',
             IconButton(
@@ -256,129 +252,28 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
               onPressed: () => refreshCalendarData(),
             ),
           ),
-          createCard(
-            'Database Status',
-            TextButton(
-              child: const Text('Check Status', style: TextStyle(color: zdvOrange)),
-              onPressed: () => checkDatabaseStatus(context),
-            ),
-          ),
-          createCard(
-            'Reset Database',
-            TextButton(
-              child: const Text('Reset', style: TextStyle(color: Colors.red)),
-              onPressed: () => showResetDatabaseDialog(context),
-            ),
-          ),
+          // createCard(
+          //   'Database Status',
+          //   TextButton(
+          //     child: const Text('Check Status', style: TextStyle(color: zdvOrange)),
+          //     onPressed: () => checkDatabaseStatus(context),
+          //   ),
+          // ),
+          // createCard(
+          //   'Reset Database',
+          //   TextButton(
+          //     child: const Text('Reset', style: TextStyle(color: Colors.red)),
+          //     onPressed: () => showResetDatabaseDialog(context),
+          //   ),
+          // ),
         ],
       ),
     );
   }
 
-  String _getSyncStateText() {
-    switch (_syncState) {
-      case SyncState.migrating:
-        return 'Migrating data...';
-      case SyncState.syncingToSupabase:
-        return 'Syncing to Supabase...';
-      case SyncState.syncingFromSupabase:
-        return 'Syncing from Supabase...';
-      case SyncState.completed:
-        return 'Sync completed';
-      case SyncState.error:
-        return 'Sync error';
-      case SyncState.idle:
-      default:
-        return 'Idle';
-    }
-  }
 
-  Future<void> _performInitialMigration() async {
-    try {
-      final syncService = DatabaseSyncService();
-      await syncService.performInitialMigration();
-      
-      if (mounted) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(
-            content: Text('Data migration completed'),
-            backgroundColor: Colors.green,
-          ),
-        );
-      }
-    } catch (e) {
-      if (kDebugMode) {
-        print('Error performing initial migration: $e');
-      }
-      
-      if (mounted) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(
-            content: Text('Error migrating data: $e'),
-            backgroundColor: Colors.red,
-          ),
-        );
-      }
-    }
-  }
 
-  Future<void> _syncToSupabase() async {
-    try {
-      final syncService = DatabaseSyncService();
-      await syncService.syncToSupabase();
-      
-      if (mounted) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(
-            content: Text('Data synced to Supabase'),
-            backgroundColor: Colors.green,
-          ),
-        );
-      }
-    } catch (e) {
-      if (kDebugMode) {
-        print('Error syncing to Supabase: $e');
-      }
-      
-      if (mounted) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(
-            content: Text('Error syncing to Supabase: $e'),
-            backgroundColor: Colors.red,
-          ),
-        );
-      }
-    }
-  }
 
-  Future<void> _syncFromSupabase() async {
-    try {
-      final syncService = DatabaseSyncService();
-      await syncService.syncFromSupabase();
-      
-      if (mounted) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(
-            content: Text('Data synced from Supabase'),
-            backgroundColor: Colors.green,
-          ),
-        );
-      }
-    } catch (e) {
-      if (kDebugMode) {
-        print('Error syncing from Supabase: $e');
-      }
-      
-      if (mounted) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(
-            content: Text('Error syncing from Supabase: $e'),
-            backgroundColor: Colors.red,
-          ),
-        );
-      }
-    }
-  }
 
   Future<void> refreshRouteData() async {
     try {

@@ -9,7 +9,7 @@ import 'package:zwiftdataviewer/utils/theme.dart';
 import 'package:zwiftdataviewer/utils/worldsconfig.dart';
 
 class ImprovedRouteFilterWidget extends ConsumerStatefulWidget {
-  const ImprovedRouteFilterWidget({Key? key}) : super(key: key);
+  const ImprovedRouteFilterWidget({super.key});
 
   @override
   ConsumerState<ImprovedRouteFilterWidget> createState() => _ImprovedRouteFilterWidgetState();
@@ -109,8 +109,8 @@ class _ImprovedRouteFilterWidgetState extends ConsumerState<ImprovedRouteFilterW
             filter,
             style: const TextStyle(fontSize: 12),
           ),
-          backgroundColor: zdvMidBlue.withOpacity(0.1),
-          side: BorderSide(color: zdvMidBlue.withOpacity(0.3)),
+          backgroundColor: zdvMidBlue.withValues(alpha: 0.1),
+          side: BorderSide(color: zdvMidBlue.withValues(alpha: 0.3)),
           materialTapTargetSize: MaterialTapTargetSize.shrinkWrap,
         )).toList(),
       ),
@@ -259,10 +259,10 @@ class _ImprovedRouteFilterWidgetState extends ConsumerState<ImprovedRouteFilterW
               onSelected: (selected) {
                 _toggleWorldFilter(world, selected);
               },
-              selectedColor: zdvMidBlue.withOpacity(0.2),
+              selectedColor: zdvMidBlue.withValues(alpha: 0.2),
               checkmarkColor: zdvMidBlue,
               side: BorderSide(
-                color: isSelected ? zdvMidBlue : Colors.grey.withOpacity(0.5),
+                color: isSelected ? zdvMidBlue : Colors.grey.withValues(alpha: 0.5),
               ),
             );
           }).toList(),

@@ -7,7 +7,7 @@ import 'package:zwiftdataviewer/utils/worldsconfig.dart';
 class FilterButton extends ConsumerWidget {
   final bool isActive;
 
-  const FilterButton({required this.isActive, Key? key}) : super(key: key);
+  const FilterButton({required this.isActive, super.key});
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {

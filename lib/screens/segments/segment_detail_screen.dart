@@ -12,10 +12,10 @@ class SegmentDetailScreen extends ConsumerWidget {
   final String segmentName;
 
   const SegmentDetailScreen({
-    Key? key,
+    super.key,
     required this.segmentId,
     required this.segmentName,
-  }) : super(key: key);
+  });
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
