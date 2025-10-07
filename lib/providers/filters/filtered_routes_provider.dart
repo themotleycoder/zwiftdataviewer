@@ -1,3 +1,4 @@
+import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:zwiftdataviewer/models/routedata.dart';
 import 'package:zwiftdataviewer/providers/routedataprovider.dart';
@@ -9,6 +10,11 @@ Future<List<RouteData>> filterByWorldRoutesProvider(
   final routeDataModel = await ref.watch(routeDataProvider.future);
   final selectedWorld = ref.watch(selectedWorldProvider);
   final routeFilter = ref.watch(routeFilterProvider.notifier);
+
+  // Debug logging
+  debugPrint('filterByWorldRoutesProvider - Selected World ID: ${selectedWorld.id}');
+  debugPrint('filterByWorldRoutesProvider - Available world IDs in route data: ${routeDataModel.keys.toList()}');
+  debugPrint('filterByWorldRoutesProvider - Route count for world ${selectedWorld.id}: ${routeDataModel[selectedWorld.id]?.length ?? 0}');
 
   List<RouteData> routeData = routeDataModel[selectedWorld.id] ?? [];
 

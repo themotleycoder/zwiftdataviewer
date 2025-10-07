@@ -29,7 +29,7 @@ class ClimbCalendarScreen extends ConsumerWidget {
 
     return Column(mainAxisSize: MainAxisSize.max, children: <Widget>[
       asyncClimbCalender.when(data: (Map<DateTime, List<ClimbData>> climbData) {
-        return ClimbEventsCalendarWidget(ref, climbData);
+        return ImprovedClimbCalendarWidget(climbData);
       }, error: (Object error, StackTrace stackTrace) {
         // Log error for debugging
         debugPrint('Error loading climb calendar data: $error');

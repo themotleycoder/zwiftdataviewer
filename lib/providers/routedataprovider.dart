@@ -19,21 +19,21 @@ final routeDataProvider =
   } catch (e) {
     // Log the error for debugging purposes
     if (kDebugMode) {
-      print('Error loading route data from Supabase: $e');
+      debugPrint('Error loading route data from Supabase: $e');
     }
-    
+
     try {
       // Fall back to file repository if Supabase fails
       if (kDebugMode) {
-        print('Falling back to file repository for route data');
+        debugPrint('Falling back to file repository for route data');
       }
       return await loadRouteDataFromFile();
     } catch (fallbackError) {
       // Log the fallback error
       if (kDebugMode) {
-        print('Error loading route data from file: $fallbackError');
+        debugPrint('Error loading route data from file: $fallbackError');
       }
-      
+
       // Return empty data instead of rethrowing
       // This allows the UI to show an empty state rather than an error
       return {};
@@ -49,10 +49,10 @@ Future<Map<int, List<RouteData>>> loadRouteDataFromSupabase() async {
   try {
     SupabaseDatabaseService service = SupabaseDatabaseService();
     List<RouteData> routes = await service.getRoutes();
-    
+
     // Deduplicate routes based on route name and world
     routes = _deduplicateRoutes(routes);
-    
+
     // Group routes by world ID
     Map<int, List<RouteData>> routesByWorld = {};
     for (var route in routes) {
@@ -64,14 +64,26 @@ Future<Map<int, List<RouteData>>> loadRouteDataFromSupabase() async {
             routesByWorld[worldId] = [];
           }
           routesByWorld[worldId]!.add(route);
+        } else {
+          if (kDebugMode) {
+            debugPrint('loadRouteDataFromSupabase - Unknown world name: ${route.world}');
+          }
         }
       }
     }
-    
+
+    if (kDebugMode) {
+      debugPrint('loadRouteDataFromSupabase - Grouped ${routes.length} routes into ${routesByWorld.length} worlds');
+      debugPrint('loadRouteDataFromSupabase - World IDs: ${routesByWorld.keys.toList()}');
+      for (var entry in routesByWorld.entries) {
+        debugPrint('loadRouteDataFromSupabase - World ${entry.key}: ${entry.value.length} routes');
+      }
+    }
+
     return routesByWorld;
   } catch (e) {
     if (kDebugMode) {
-      print('Error in loadRouteDataFromSupabase: $e');
+      debugPrint('Error in loadRouteDataFromSupabase: $e');
     }
     rethrow; // Let the provider handle the error
   }
@@ -84,27 +96,27 @@ Future<Map<int, List<RouteData>>> loadRouteDataFromSupabase() async {
 // Only the first occurrence of each unique route is kept.
 List<RouteData> _deduplicateRoutes(List<RouteData> routes) {
   if (routes.isEmpty) return routes;
-  
+
   if (kDebugMode) {
-    print('Deduplicating ${routes.length} routes');
+    debugPrint('Deduplicating ${routes.length} routes');
   }
-  
+
   // Use a map to track unique routes by ID
   final Map<int, RouteData> uniqueRoutesById = {};
-  
+
   for (var route in routes) {
     // Only add the route if we haven't seen this ID before and ID is not null
     if (route.id != null && !uniqueRoutesById.containsKey(route.id)) {
       uniqueRoutesById[route.id!] = route;
     }
   }
-  
+
   final result = uniqueRoutesById.values.toList();
-  
+
   if (kDebugMode) {
-    print('Deduplicated to ${result.length} unique routes (removed ${routes.length - result.length} duplicates)');
+    debugPrint('Deduplicated to ${result.length} unique routes (removed ${routes.length - result.length} duplicates)');
   }
-  
+
   return result;
 }
 
@@ -118,7 +130,7 @@ Future<Map<int, List<RouteData>>> loadRouteDataFromFile() async {
     return await repository.loadRouteData();
   } catch (e) {
     if (kDebugMode) {
-      print('Error in loadRouteDataFromFile: $e');
+      debugPrint('Error in loadRouteDataFromFile: $e');
     }
     rethrow; // Let the provider handle the error
   }
@@ -131,19 +143,19 @@ Future<Map<int, List<RouteData>>> loadRouteDataFromFile() async {
 Future<void> refreshRouteData() async {
   try {
     if (kDebugMode) {
-      print('Refreshing route data from Zwift Insider');
+      debugPrint('Refreshing route data from Zwift Insider');
     }
-    
+
     // Use the DatabaseSyncService to refresh route data
     final syncService = DatabaseSyncService();
     await syncService.refreshRouteData();
-    
+
     if (kDebugMode) {
-      print('Route data refreshed successfully');
+      debugPrint('Route data refreshed successfully');
     }
   } catch (e) {
     if (kDebugMode) {
-      print('Error refreshing route data: $e');
+      debugPrint('Error refreshing route data: $e');
     }
     rethrow;
   }

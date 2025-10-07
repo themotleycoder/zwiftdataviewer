@@ -41,7 +41,7 @@ class _WorldCalendarScreenState extends ConsumerState<WorldCalendarScreen> {
           ref.read(worldEventsForDayProvider.notifier).setEventsForDay(events);
         });
 
-        return WorldEventsCalendarWidget(ref, worldData);
+        return ImprovedWorldCalendarWidget(worldData);
       }, error: (Object error, StackTrace stackTrace) {
         // Log error for debugging
         debugPrint('Error loading world calendar data: $error');
@@ -104,17 +104,21 @@ Widget _buildEventList(WidgetRef ref, BuildContext context) {
 Widget _buildWorldCard(WorldData world, WidgetRef ref, BuildContext context) {
   final worldName = allWorldsConfig[world.id]?.name ?? 'Unknown World';
 
+  // Get the worlds for the selected day
+  final selectedEvents = ref.watch(worldEventsForDayProvider);
+  final iconColor = ImprovedWorldCalendarWidget.getColorForWorlds(selectedEvents);
+
   return Card(
     color: Colors.white,
     elevation: defaultCardElevation,
-    margin: const EdgeInsets.all(8.0),
+    margin: const EdgeInsets.all(4.0),
     semanticContainer: true,
     child: InkWell(
       borderRadius: BorderRadius.circular(4.0),
       child: ListTile(
-        leading: const Icon(Icons.map, size: 32.0, color: zdvOrange),
-        title: Text(worldName),
-        subtitle: const Text('Guest World'),
+        leading: Icon(Icons.place, size: 32.0, color: iconColor),
+        title: Text(worldName + " (Guest World)"),
+        // subtitle: const Text('Guest World'),
         trailing: Icon(
           Icons.arrow_forward_ios,
           color: zdvmMidBlue[100],
@@ -131,17 +135,23 @@ Widget _buildWorldCard(WorldData world, WidgetRef ref, BuildContext context) {
 // @param context The BuildContext for navigation
 // @return A Card widget for Watopia
 Widget _buildWatopiaCard(WidgetRef ref, BuildContext context) {
+  // Watopia gets its own teal color as it's always available
+  // const watopiaColor = Color(0xFF26A69A); // Teal from pairingColors
+
+  final selectedEvents = ref.watch(worldEventsForDayProvider);
+  final iconColor = ImprovedWorldCalendarWidget.getColorForWorlds(selectedEvents);
+
   return Card(
     color: Colors.white,
     elevation: defaultCardElevation,
-    margin: const EdgeInsets.all(8.0),
+    margin: const EdgeInsets.all(4.0),
     semanticContainer: true,
     child: InkWell(
       borderRadius: BorderRadius.circular(4.0),
       child: ListTile(
-        leading: const Icon(Icons.map, size: 32.0, color: zdvYellow),
+        leading: Icon(Icons.place, size: 32.0, color: iconColor),
         title: Text(allWorldsConfig[1]?.name ?? 'Watopia'),
-        subtitle: const Text('Always Available'),
+        // subtitle: const Text('Always Available'),
         trailing: Icon(
           Icons.arrow_forward_ios,
           color: zdvmMidBlue[100],
