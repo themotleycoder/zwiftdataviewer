@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:zwiftdataviewer/models/route_recommendation.dart';
 import 'package:zwiftdataviewer/providers/route_recommendations_provider.dart';
+import 'package:zwiftdataviewer/screens/webviewscreen.dart';
 import 'package:zwiftdataviewer/utils/theme.dart';
 import 'package:zwiftdataviewer/utils/ui_helpers.dart';
 import 'package:zwiftdataviewer/widgets/route_recommendation_card.dart';
@@ -68,7 +69,7 @@ class _RouteRecommendationsScreenState extends ConsumerState<RouteRecommendation
             ],
           ),
           const SizedBox(height: 8.0),
-          // Toggle for unviewed only
+          // Toggle for unviewed only and regenerate button
           Row(
             children: [
               Switch(
@@ -94,6 +95,15 @@ class _RouteRecommendationsScreenState extends ConsumerState<RouteRecommendation
                   fontSize: 11,
                   fontStyle: FontStyle.italic,
                 ),
+              ),
+              const SizedBox(width: 8.0),
+              // Regenerate button
+              IconButton(
+                onPressed: () => _showRegenerateDialog(context),
+                icon: const Icon(Icons.refresh),
+                tooltip: 'Regenerate recommendations',
+                color: zdvOrange,
+                iconSize: 24,
               ),
             ],
           ),
@@ -369,16 +379,32 @@ class _RouteRecommendationsScreenState extends ConsumerState<RouteRecommendation
   }
 
   void _onRecommendationTapped(RouteRecommendation recommendation) {
-    // Navigate to route details screen
-    Navigator.pushNamed(
-      context,
-      '/route-detail',
-      arguments: recommendation.routeData,
-    );
-    
-    // Mark as viewed
-    if (!recommendation.isViewed) {
-      _markAsViewed(recommendation);
+    final route = recommendation.routeData;
+
+    // Navigate to route details in browser
+    if (route != null && route.url != null) {
+      Navigator.push(
+        context,
+        MaterialPageRoute(
+          builder: (_) => WebViewScreen(
+            url: route.url!,
+            title: '${route.world}: ${route.routeName}',
+          ),
+        ),
+      );
+
+      // Mark as viewed
+      if (!recommendation.isViewed) {
+        _markAsViewed(recommendation);
+      }
+    } else {
+      // Show error if route data is missing
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(
+          content: Text('Route details not available'),
+          backgroundColor: Colors.red,
+        ),
+      );
     }
   }
 
@@ -434,6 +460,56 @@ class _RouteRecommendationsScreenState extends ConsumerState<RouteRecommendation
         );
       }
     }
+  }
+
+  void _showRegenerateDialog(BuildContext context) {
+    showDialog(
+      context: context,
+      builder: (context) => AlertDialog(
+        title: const Text('Regenerate Recommendations'),
+        content: const Column(
+          mainAxisSize: MainAxisSize.min,
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Text('Choose how to generate new recommendations:'),
+            SizedBox(height: 16.0),
+            Text(
+              '• AI Recommendations: Uses Google Gemini AI to analyze your performance',
+              style: TextStyle(fontSize: 13),
+            ),
+            SizedBox(height: 8.0),
+            Text(
+              '• From Route Data: Uses algorithmic analysis without AI',
+              style: TextStyle(fontSize: 13),
+            ),
+          ],
+        ),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.pop(context),
+            child: const Text('Cancel'),
+          ),
+          TextButton(
+            onPressed: () {
+              Navigator.pop(context);
+              _generateFromExistingRoutes();
+            },
+            child: const Text('From Route Data'),
+          ),
+          ElevatedButton(
+            onPressed: () {
+              Navigator.pop(context);
+              _generateNewRecommendations();
+            },
+            style: ElevatedButton.styleFrom(
+              backgroundColor: zdvOrange,
+              foregroundColor: Colors.white,
+            ),
+            child: const Text('AI Recommendations'),
+          ),
+        ],
+      ),
+    );
   }
 
   void _showSettingsDialog(BuildContext context) {

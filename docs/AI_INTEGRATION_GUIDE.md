@@ -69,6 +69,7 @@ Recommend 3 routes that would:
 1. Match the user's current fitness level
 2. Provide appropriate progressive challenge
 3. Encourage exploration of new worlds
+4. Ignore event only routes/worlds
 
 For each recommendation, provide:
 - Route ID and reasoning

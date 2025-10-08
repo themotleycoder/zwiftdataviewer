@@ -58,7 +58,7 @@ class GeminiAIService {
   ) {
     final buffer = StringBuffer();
     
-    buffer.writeln('You are an expert cycling coach analyzing Zwift performance data.');
+    buffer.writeln('You are an expert cycling coach analyzing cycling performance data.');
     buffer.writeln('Based on the user\'s recent route completions, recommend 3 optimal routes.');
     buffer.writeln();
     
@@ -106,30 +106,30 @@ class GeminiAIService {
     buffer.writeln();
     
     // Available routes context
-    buffer.writeln('## AVAILABLE ROUTES');
+    buffer.writeln('## AVAILABLE ROUTES (Regular Cycling Routes Only)');
+    buffer.writeln('NOTE: All routes listed are regular cycling routes. Event-only and run-only routes have been excluded.');
+    buffer.writeln();
     final routeSample = availableRoutes.take(20).toList(); // Limit for token efficiency
     for (final route in routeSample) {
       buffer.writeln('Route ${route.id}: ${route.routeName}');
       buffer.writeln('  - World: ${route.world}');
       buffer.writeln('  - Distance: ${((route.distanceMeters ?? 0) / 1000).toStringAsFixed(1)}km');
       buffer.writeln('  - Elevation: ${route.altitudeMeters?.toInt() ?? 0}m');
-      if (route.eventOnly == 'true') {
-        buffer.writeln('  - Event Only Route');
-      }
       buffer.writeln();
     }
-    
+
     if (availableRoutes.length > 20) {
       buffer.writeln('... and ${availableRoutes.length - 20} more routes available');
       buffer.writeln();
     }
-    
+
     // Request format
     buffer.writeln('## RECOMMENDATION REQUEST');
     buffer.writeln('Analyze the user\'s performance patterns and recommend exactly 3 routes that would:');
     buffer.writeln('1. Match their current fitness level and preferences');
     buffer.writeln('2. Provide appropriate challenge for continued improvement');
     buffer.writeln('3. Consider their enjoyment patterns and world exploration');
+    buffer.writeln('4. ONLY recommend from the available routes list above (no event-only or run-only routes)');
     buffer.writeln();
     buffer.writeln('RESPOND ONLY WITH VALID JSON in this exact format:');
     buffer.writeln('{');

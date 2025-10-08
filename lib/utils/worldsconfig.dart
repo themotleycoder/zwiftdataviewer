@@ -23,7 +23,6 @@ final Map<String, int> worldLookupByName = {
   'Richmond': 2,
   'London': 3,
   'New York': 4,
-  'NYC': 4,
   'Innsbruck': 5,
   'Bologna': 6,
   'Yorkshire': 7,

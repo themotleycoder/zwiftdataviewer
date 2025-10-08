@@ -21,255 +21,120 @@ class RouteRecommendationCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    
-    return Card(
-      elevation: recommendation.isViewed ? 1 : 3,
-      margin: EdgeInsets.zero,
+    final route = recommendation.routeData;
+    final distance = route != null ? (route.distanceMeters ?? 0) / 1000 : 0;
+    final elevation = route?.altitudeMeters ?? 0;
+
+    return Container(
+      padding: const EdgeInsets.fromLTRB(4.0, 0, 4.0, 0),
       child: InkWell(
         onTap: onTap,
-        borderRadius: BorderRadius.circular(8.0),
-        child: Padding(
-          padding: const EdgeInsets.all(16.0),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              _buildHeader(),
-              const SizedBox(height: 12.0),
-              _buildRouteInfo(),
-              const SizedBox(height: 12.0),
-              _buildReasoningSection(),
-              const SizedBox(height: 12.0),
-              _buildActionButtons(context),
-            ],
-          ),
-        ),
-      ),
-    );
-  }
-
-  Widget _buildHeader() {
-    return Row(
-      children: [
-        // Recommendation type icon
-        Container(
-          padding: const EdgeInsets.all(8.0),
-          decoration: BoxDecoration(
-            color: _getTypeColor().withValues(alpha: 0.1),
+        child: ListTile(
+          shape: RoundedRectangleBorder(
             borderRadius: BorderRadius.circular(8.0),
           ),
-          child: Text(
-            recommendation.recommendationIcon,
-            style: const TextStyle(fontSize: 20),
+          tileColor: recommendation.isViewed
+              ? Colors.grey[100]
+              : const Color(0xFFF5F5F5),
+          contentPadding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 8.0),
+
+          // Title: Route name
+          title: Row(
+            children: [
+              Expanded(
+                child: Text(
+                  route?.routeName ?? 'Route ${recommendation.routeId}',
+                  style: const TextStyle(
+                    fontSize: 16,
+                    fontWeight: FontWeight.bold,
+                  ),
+                  maxLines: 1,
+                  overflow: TextOverflow.ellipsis,
+                ),
+              ),
+              // Confidence badge
+              _buildConfidenceScore(),
+            ],
           ),
-        ),
-        const SizedBox(width: 12.0),
-        
-        // Route name and type
-        Expanded(
-          child: Column(
+
+          // Subtitle: Distance, elevation, world, and AI insight
+          subtitle: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
+              const SizedBox(height: 4.0),
+              // Distance, elevation, world
               Text(
-                recommendation.routeData?.routeName ?? 'Route ${recommendation.routeId}',
-                style: const TextStyle(
-                  fontSize: 16,
-                  fontWeight: FontWeight.bold,
-                ),
-                maxLines: 1,
-                overflow: TextOverflow.ellipsis,
-              ),
-              Row(
-                children: [
-                  Flexible(
-                    child: Text(
-                      recommendation.recommendationTypeDisplayName,
-                      style: TextStyle(
-                        fontSize: 12,
-                        color: _getTypeColor(),
-                        fontWeight: FontWeight.w600,
-                      ),
-                      overflow: TextOverflow.ellipsis,
-                    ),
-                  ),
-                  const SizedBox(width: 8.0),
-                  Flexible(
-                    child: Text(
-                      '• ${recommendation.routeData?.world ?? 'Unknown World'}',
-                      style: TextStyle(
-                        fontSize: 12,
-                        color: Colors.grey[600],
-                      ),
-                      overflow: TextOverflow.ellipsis,
-                    ),
-                  ),
-                ],
-              ),
-            ],
-          ),
-        ),
-        
-        // Confidence score and status indicators
-        Column(
-          crossAxisAlignment: CrossAxisAlignment.end,
-          children: [
-            _buildConfidenceScore(),
-            const SizedBox(height: 4.0),
-            Row(
-              mainAxisSize: MainAxisSize.min,
-              children: [
-                if (!recommendation.isViewed)
-                  Container(
-                    width: 8,
-                    height: 8,
-                    decoration: const BoxDecoration(
-                      color: zdvOrange,
-                      shape: BoxShape.circle,
-                    ),
-                  ),
-                if (recommendation.isCompleted)
-                  const Icon(
-                    Icons.check_circle,
-                    size: 16,
-                    color: Colors.green,
-                  ),
-              ],
-            ),
-          ],
-        ),
-      ],
-    );
-  }
-
-  Widget _buildRouteInfo() {
-    final route = recommendation.routeData;
-    if (route == null) return const SizedBox.shrink();
-
-    final distance = (route.distanceMeters ?? 0) / 1000;
-    final elevation = route.altitudeMeters ?? 0;
-
-    return Container(
-      padding: const EdgeInsets.all(12.0),
-      decoration: BoxDecoration(
-        color: Colors.grey[50],
-        borderRadius: BorderRadius.circular(8.0),
-      ),
-      child: Wrap(
-        spacing: 16.0,
-        runSpacing: 8.0,
-        children: [
-          _buildRouteMetric(
-            icon: Icons.straighten,
-            label: 'Distance',
-            value: '${distance.toStringAsFixed(1)} km',
-          ),
-          _buildRouteMetric(
-            icon: Icons.terrain,
-            label: 'Elevation',
-            value: '${elevation.toInt()} m',
-          ),
-          if (route.eventOnly == 'true')
-            Container(
-              padding: const EdgeInsets.symmetric(horizontal: 6.0, vertical: 2.0),
-              decoration: BoxDecoration(
-                color: Colors.orange[100],
-                borderRadius: BorderRadius.circular(4.0),
-              ),
-              child: Text(
-                'EVENT',
+                '${distance.toStringAsFixed(1)} km • ${elevation.toInt()}m • ${route?.world ?? 'Unknown'}',
                 style: TextStyle(
-                  fontSize: 10,
-                  fontWeight: FontWeight.bold,
-                  color: Colors.orange[800],
+                  fontSize: 13,
+                  color: Colors.grey[700],
                 ),
               ),
-            ),
-        ],
-      ),
-    );
-  }
-
-  Widget _buildRouteMetric({
-    required IconData icon,
-    required String label,
-    required String value,
-  }) {
-    return Row(
-      mainAxisSize: MainAxisSize.min,
-      children: [
-        Icon(
-          icon,
-          size: 16,
-          color: Colors.grey[600],
-        ),
-        const SizedBox(width: 4.0),
-        Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Text(
-              value,
-              style: const TextStyle(
-                fontSize: 14,
-                fontWeight: FontWeight.w600,
-              ),
-            ),
-            Text(
-              label,
-              style: TextStyle(
-                fontSize: 10,
-                color: Colors.grey[600],
-              ),
-            ),
-          ],
-        ),
-      ],
-    );
-  }
-
-  Widget _buildReasoningSection() {
-    return Container(
-      padding: const EdgeInsets.all(12.0),
-      decoration: BoxDecoration(
-        color: Colors.blue[50],
-        borderRadius: BorderRadius.circular(8.0),
-        border: Border.all(color: Colors.blue[200]!),
-      ),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Row(
-            children: [
-              const Icon(
-                Icons.psychology,
-                size: 16,
-                color: Colors.blue,
-              ),
-              const SizedBox(width: 6.0),
+              const SizedBox(height: 4.0),
+              // Recommendation type
               Text(
-                'AI Insight',
+                recommendation.recommendationTypeDisplayName,
                 style: TextStyle(
                   fontSize: 12,
-                  fontWeight: FontWeight.bold,
-                  color: Colors.blue[800],
+                  color: _getTypeColor(),
+                  fontWeight: FontWeight.w600,
                 ),
+              ),
+              const SizedBox(height: 6.0),
+              // AI reasoning (truncated)
+              Text(
+                recommendation.reasoning,
+                style: TextStyle(
+                  fontSize: 12,
+                  color: Colors.grey[600],
+                  fontStyle: FontStyle.italic,
+                ),
+                maxLines: 2,
+                overflow: TextOverflow.ellipsis,
+              ),
+              const SizedBox(height: 8.0),
+              // Action buttons row
+              _buildCompactActionButtons(context),
+            ],
+          ),
+
+          // Trailing: Status indicators
+          trailing: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            crossAxisAlignment: CrossAxisAlignment.end,
+            children: [
+              // if (!recommendation.isViewed)
+              //   Container(
+              //     width: 8,
+              //     height: 8,
+              //     decoration: const BoxDecoration(
+              //       color: zdvOrange,
+              //       shape: BoxShape.circle,
+              //     ),
+              //   ),
+              // const SizedBox(height: 4.0),
+              if (recommendation.isCompleted)
+                const Icon(
+                  Icons.check_circle,
+                  size: 20,
+                  color: Colors.green,
+                ),
+              const Spacer(),
+              const Icon(
+                Icons.arrow_forward_ios,
+                color: zdvMidBlue,
+                size: 16,
               ),
             ],
           ),
-          const SizedBox(height: 6.0),
-          Text(
-            recommendation.reasoning,
-            style: const TextStyle(
-              fontSize: 13,
-              height: 1.3,
-            ),
-          ),
-        ],
+        ),
       ),
     );
   }
 
   Widget _buildConfidenceScore() {
     final score = recommendation.confidenceScore;
-    
+
     Color color;
     if (score >= 0.8) {
       color = Colors.green;
@@ -280,10 +145,10 @@ class RouteRecommendationCard extends StatelessWidget {
     }
 
     return Container(
-      padding: const EdgeInsets.symmetric(horizontal: 8.0, vertical: 4.0),
+      padding: const EdgeInsets.symmetric(horizontal: 6.0, vertical: 2.0),
       decoration: BoxDecoration(
         color: color.withValues(alpha: 0.1),
-        borderRadius: BorderRadius.circular(12.0),
+        borderRadius: BorderRadius.circular(8.0),
         border: Border.all(color: color.withValues(alpha: 0.3)),
       ),
       child: Row(
@@ -291,14 +156,14 @@ class RouteRecommendationCard extends StatelessWidget {
         children: [
           Icon(
             Icons.stars,
-            size: 12,
+            size: 10,
             color: color,
           ),
-          const SizedBox(width: 4.0),
+          const SizedBox(width: 2.0),
           Text(
             '${(score * 100).toInt()}%',
             style: TextStyle(
-              fontSize: 11,
+              fontSize: 10,
               fontWeight: FontWeight.bold,
               color: color,
             ),
@@ -308,74 +173,39 @@ class RouteRecommendationCard extends StatelessWidget {
     );
   }
 
-  Widget _buildActionButtons(BuildContext context) {
-    return Column(
+  Widget _buildCompactActionButtons(BuildContext context) {
+    return Row(
+      mainAxisSize: MainAxisSize.min,
       children: [
-        // Freshness indicator row
-        if (recommendation.isFresh)
-          Align(
-            alignment: Alignment.centerLeft,
-            child: Container(
-              padding: const EdgeInsets.symmetric(horizontal: 6.0, vertical: 2.0),
-              decoration: BoxDecoration(
-                color: Colors.green[100],
-                borderRadius: BorderRadius.circular(4.0),
-              ),
-              child: Text(
-                'NEW',
-                style: TextStyle(
-                  fontSize: 9,
-                  fontWeight: FontWeight.bold,
-                  color: Colors.green[800],
-                ),
-              ),
-            ),
-          ),
-        
-        if (recommendation.isFresh) const SizedBox(height: 8.0),
-        
-        // Action buttons - more compact layout
-        Row(
-          children: [
-            // Compact action icons
-            if (!recommendation.isViewed && onMarkAsViewed != null)
-              IconButton(
-                onPressed: onMarkAsViewed,
-                icon: const Icon(Icons.visibility, size: 18),
-                tooltip: 'Mark as viewed',
-                iconSize: 18,
-                padding: const EdgeInsets.all(4.0),
-                constraints: const BoxConstraints(minWidth: 32, minHeight: 32),
-              ),
-            
-            if (!recommendation.isCompleted && onMarkAsCompleted != null)
-              IconButton(
-                onPressed: onMarkAsCompleted,
-                icon: const Icon(Icons.check, size: 18),
-                tooltip: 'Mark as done',
-                iconSize: 18,
-                padding: const EdgeInsets.all(4.0),
-                constraints: const BoxConstraints(minWidth: 32, minHeight: 32),
-                color: Colors.green[600],
-              ),
-            
-            const Spacer(),
-            
-            // Main action button - more compact
-            ElevatedButton.icon(
-              onPressed: onTap,
-              icon: const Icon(Icons.route, size: 16),
-              label: const Text('View'),
-              style: ElevatedButton.styleFrom(
-                backgroundColor: _getTypeColor(),
-                foregroundColor: Colors.white,
-                textStyle: const TextStyle(fontSize: 12),
-                padding: const EdgeInsets.symmetric(horizontal: 12.0, vertical: 8.0),
-                minimumSize: const Size(80, 32),
-              ),
-            ),
-          ],
-        ),
+        // // Mark as viewed button
+        // if (!recommendation.isViewed && onMarkAsViewed != null)
+        //   TextButton.icon(
+        //     onPressed: onMarkAsViewed,
+        //     icon: const Icon(Icons.visibility, size: 14),
+        //     label: const Text('Viewed', style: TextStyle(fontSize: 11)),
+        //     style: TextButton.styleFrom(
+        //       padding: const EdgeInsets.symmetric(horizontal: 8.0, vertical: 4.0),
+        //       minimumSize: Size.zero,
+        //       tapTargetSize: MaterialTapTargetSize.shrinkWrap,
+        //     ),
+        //   ),
+        //
+        // // Mark as completed button
+        // if (!recommendation.isCompleted && onMarkAsCompleted != null) ...[
+        //   if (!recommendation.isViewed && onMarkAsViewed != null)
+        //     const SizedBox(width: 4.0),
+        //   TextButton.icon(
+        //     onPressed: onMarkAsCompleted,
+        //     icon: const Icon(Icons.check, size: 14),
+        //     label: const Text('Done', style: TextStyle(fontSize: 11)),
+        //     style: TextButton.styleFrom(
+        //       foregroundColor: Colors.green[700],
+        //       padding: const EdgeInsets.symmetric(horizontal: 8.0, vertical: 4.0),
+        //       minimumSize: Size.zero,
+        //       tapTargetSize: MaterialTapTargetSize.shrinkWrap,
+        //     ),
+        //   ),
+        // ],
       ],
     );
   }

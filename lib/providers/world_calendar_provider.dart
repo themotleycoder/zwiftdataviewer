@@ -12,16 +12,26 @@ final loadWorldCalendarProvider =
     FutureProvider.autoDispose<Map<DateTime, List<WorldData>>>((ref) async {
   final FileRepository repository = FileRepository();
   try {
-    return await repository.loadWorldCalendarData();
-  } catch (e) {
-    // Log the error for debugging purposes
+    final calendarData = await repository.loadWorldCalendarData();
+
     if (kDebugMode) {
-      print('Error loading world calendar data: $e');
+      print('✓ World calendar loaded: ${calendarData.length} days with events');
+      if (calendarData.isEmpty) {
+        print('⚠️  WARNING: World calendar is empty - no scheduled worlds found');
+      }
     }
 
-    // Return empty data instead of rethrowing
-    // This allows the UI to show an empty state rather than an error
-    return {};
+    return calendarData;
+  } catch (e, stackTrace) {
+    // Log the error for debugging purposes
+    if (kDebugMode) {
+      print('❌ ERROR loading world calendar data: $e');
+      print('Stack trace: $stackTrace');
+    }
+
+    // Rethrow the error so the UI can show an error state
+    // Users should know when data fails to load
+    rethrow;
   }
 });
 

@@ -65,8 +65,6 @@ class RouteScraperService {
 
         var rows = tableContainer[0].children;
 
-        var routeId = 0;
-
         for (dynamic row in rows) {
           try {
             // Find the route name and URL from the first cell with an anchor tag
@@ -116,6 +114,15 @@ class RouteScraperService {
               if (kDebugMode) {
                 print('Unknown world: $world for route: $routeName');
               }
+            }
+
+            // Generate stable route ID from world ID and route name hash
+            // This ensures the same route always gets the same ID regardless of scraping order
+            final String routeKey = '${world}|${routeName.toLowerCase()}';
+            final int routeId = routeKey.hashCode.abs() % 1000000;
+
+            if (kDebugMode && (world == 'New York' || world == 'Bologna')) {
+              print('🔑 Route ID generation: $world | $routeName → ID: $routeId');
             }
 
             // Parse distance and altitude
@@ -229,7 +236,7 @@ class RouteScraperService {
                 routesByWorld[worldId] = <RouteData>[];
               }
               routesByWorld[worldId]?.add(route);
-              
+
               // Add world to worldsMap if not already present
               if (!worldsMap.containsKey(world) && worldId > 0) {
                 worldsMap[world] = WorldData(
@@ -240,8 +247,6 @@ class RouteScraperService {
                 );
               }
             }
-
-            routeId+=1;
 
           } catch (e) {
             if (kDebugMode) {

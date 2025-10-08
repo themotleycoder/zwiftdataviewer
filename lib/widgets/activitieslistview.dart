@@ -181,7 +181,17 @@ class ActivitiesListView extends ConsumerWidget {
     return Container(
       child: activitiesList.when(data: (activities) {
         // Use activities directly (already sorted newest first)
-        return Container(
+        return RefreshIndicator(
+          onRefresh: () async {
+            // Invalidate all activity providers to force a reload
+            ref.invalidate(databaseActivitiesProvider);
+            ref.invalidate(stravaActivitiesProvider);
+            ref.invalidate(combinedActivitiesProvider);
+
+            // Wait for the provider to reload
+            await ref.read(combinedActivitiesProvider.future);
+          },
+          child: Container(
             margin: const EdgeInsets.fromLTRB(0, 8, 0, 8),
             child: ListView.separated(
               itemCount: activities.length,
@@ -237,7 +247,9 @@ class ActivitiesListView extends ConsumerWidget {
               separatorBuilder: (context, index) => const SizedBox(
                 height: 10,
               ),
-            ));
+            ),
+          ),
+        );
       }, loading: () {
         return const Center(child: CircularProgressIndicator());
       }, error: (error, stack) {

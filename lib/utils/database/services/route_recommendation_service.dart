@@ -179,12 +179,39 @@ class RouteRecommendationService {
     final db = await _databaseHelper.database;
     final now = DateTime.now().toIso8601String();
 
+    if (kDebugMode) {
+      // Debug: Check total recommendations in DB
+      final totalMaps = await db.query('route_recommendations');
+      print('📊 Total recommendations in DB: ${totalMaps.length}');
+
+      // Debug: Check recommendations for this athlete
+      final athleteMaps = await db.query(
+        'route_recommendations',
+        where: 'athlete_id = ?',
+        whereArgs: [athleteId],
+      );
+      print('📊 Recommendations for athlete $athleteId: ${athleteMaps.length}');
+
+      // Debug: Check expired recommendations
+      final expiredMaps = await db.query(
+        'route_recommendations',
+        where: 'athlete_id = ? AND expires_at IS NOT NULL AND expires_at <= ?',
+        whereArgs: [athleteId, now],
+      );
+      print('📊 Expired recommendations: ${expiredMaps.length}');
+      print('📊 Current time: $now');
+    }
+
     final List<Map<String, dynamic>> maps = await db.query(
       'route_recommendations',
       where: 'athlete_id = ? AND (expires_at IS NULL OR expires_at > ?)',
       whereArgs: [athleteId, now],
       orderBy: 'confidence_score DESC, generated_at DESC',
     );
+
+    if (kDebugMode) {
+      print('📊 Active (non-expired) recommendations: ${maps.length}');
+    }
 
     return await _mapToRouteRecommendations(maps);
   }
@@ -343,27 +370,85 @@ class RouteRecommendationService {
 
       debugPrint('_mapToRouteRecommendations - Loaded route data for ${allRouteData.length} worlds');
 
-      // Create a flat map of route ID to RouteData for fast lookup
-      final Map<int, RouteData> routeMap = {};
-      for (final worldRoutes in allRouteData.values) {
+      // Create TWO lookup maps: one by ID (for backward compatibility) and one by composite key (world+name)
+      final Map<int, RouteData> routeMapById = {};
+      final Map<String, RouteData> routeMapByKey = {}; // Key: "world|routeName"
+      final Map<int, List<RouteData>> duplicatesByIdAll = {}; // Track ALL routes with same ID
+      int duplicateCount = 0;
+
+      // First pass: collect all routes with their IDs
+      for (final entry in allRouteData.entries) {
+        final worldRoutes = entry.value;
         for (final route in worldRoutes) {
           if (route.id != null) {
-            routeMap[route.id!] = route;
+            if (!duplicatesByIdAll.containsKey(route.id!)) {
+              duplicatesByIdAll[route.id!] = [];
+            }
+            duplicatesByIdAll[route.id!]!.add(route);
           }
         }
       }
 
-      debugPrint('_mapToRouteRecommendations - Created route map with ${routeMap.length} routes');
+      // Second pass: identify duplicates and build lookup maps
+      for (final entry in allRouteData.entries) {
+        final worldRoutes = entry.value;
+        for (final route in worldRoutes) {
+          // Add to ID map
+          if (route.id != null) {
+            if (routeMapById.containsKey(route.id!)) {
+              duplicateCount++;
+              final existing = routeMapById[route.id!]!;
+              debugPrint('⚠️  DUPLICATE route ID ${route.id}: "${existing.routeName}" (${existing.world}) REPLACED BY "${route.routeName}" (${route.world})');
+            }
+            routeMapById[route.id!] = route;
+          }
+
+          // Add to composite key map (stable identifier)
+          if (route.world != null && route.routeName != null) {
+            final compositeKey = '${route.world}|${route.routeName}';
+            routeMapByKey[compositeKey] = route;
+          }
+        }
+      }
+
+      // Log summary of duplicates
+      if (duplicateCount > 0) {
+        debugPrint('⚠️  Found $duplicateCount duplicate route IDs. Routes with same ID across worlds:');
+        for (final entry in duplicatesByIdAll.entries) {
+          if (entry.value.length > 1) {
+            final worlds = entry.value.map((r) => '${r.world}:"${r.routeName}"').join(', ');
+            debugPrint('   ID ${entry.key}: $worlds');
+          }
+        }
+      }
+
+      debugPrint('_mapToRouteRecommendations - Created route maps: ${routeMapById.length} by ID ($duplicateCount duplicates), ${routeMapByKey.length} by composite key');
 
       // Map each database record to a RouteRecommendation with populated routeData
       return maps.map((map) {
         final routeId = map['route_id'] as int;
-        final routeData = routeMap[routeId];
+
+        // Try to find route data by ID first
+        RouteData? routeData = routeMapById[routeId];
+
+        // If not found by ID, the route IDs might have changed due to re-scraping
+        // Try to match by the route ID itself if it looks like it might be a route
+        // NOTE: This is a fallback since route IDs are not stable across scraping sessions
+        if (routeData == null) {
+          // Check if any route has this as its actual ID (not the map key)
+          for (final route in routeMapByKey.values) {
+            if (route.id == routeId) {
+              routeData = route;
+              debugPrint('_mapToRouteRecommendations - Found route by matching ID field: $routeId -> ${route.routeName} (${route.world})');
+              break;
+            }
+          }
+        }
 
         if (routeData == null) {
           debugPrint('_mapToRouteRecommendations - WARNING: No route data found for route ID $routeId');
         } else {
-          debugPrint('_mapToRouteRecommendations - Found route data for ID $routeId: ${routeData.routeName}');
+          debugPrint('_mapToRouteRecommendations - ✓ Matched route ID $routeId -> "${routeData.routeName}" in ${routeData.world}');
         }
 
         return RouteRecommendation(

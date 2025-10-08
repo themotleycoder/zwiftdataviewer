@@ -204,21 +204,51 @@ class HybridActivitiesRepository implements ActivitiesRepository, StreamsReposit
       // Cache-aside pattern: Try to get from Supabase first when online
       if (await _shouldUseSupabase()) {
         try {
+          if (kDebugMode) {
+            print('🔍 Querying Supabase for activities (before: ${DateTime.fromMillisecondsSinceEpoch(beforeDate * 1000)}, after: ${DateTime.fromMillisecondsSinceEpoch(afterDate * 1000)})');
+          }
+
           final activities = await _supabaseService.getActivities(beforeDate, afterDate);
-          
+
+          if (kDebugMode) {
+            print('🔍 Supabase returned ${activities.length} activities');
+          }
+
           if (activities.isNotEmpty) {
             // Cache the results in SQLite for offline access
             await _sqliteService.saveActivities(activities);
-            
+
             // Don't optimize storage for each activity during initial load
             // This will be done lazily when activity details are requested
             if (kDebugMode) {
               print('Retrieved ${activities.length} activities from Supabase and cached in SQLite (lazy optimization)');
             }
-            
+
             return activities;
           }
-          
+
+          // If Supabase returned 0 activities but SQLite cache is also empty,
+          // try to trigger a full sync from Supabase
+          final sqliteCount = await _sqliteService.loadActivities(beforeDate, afterDate);
+          if ((sqliteCount == null || sqliteCount.isEmpty) && _isOnline) {
+            if (kDebugMode) {
+              print('🔄 Local cache is empty and Supabase returned 0 activities, triggering full sync from Supabase');
+            }
+            try {
+              await _syncService.syncFromSupabase();
+              // Reload from SQLite after sync
+              final reloadedActivities = await _sqliteService.loadActivities(beforeDate, afterDate);
+              if (kDebugMode) {
+                print('After sync, retrieved ${reloadedActivities?.length ?? 0} activities from SQLite');
+              }
+              return reloadedActivities;
+            } catch (syncError) {
+              if (kDebugMode) {
+                print('Error during automatic sync from Supabase: $syncError');
+              }
+            }
+          }
+
           if (kDebugMode) {
             print('No activities found in Supabase, checking SQLite cache');
           }
@@ -229,14 +259,14 @@ class HybridActivitiesRepository implements ActivitiesRepository, StreamsReposit
           }
         }
       }
-      
+
       // Offline mode or Supabase fetch failed: Use SQLite cache
       final sqliteActivities = await _sqliteService.loadActivities(beforeDate, afterDate);
-      
+
       if (kDebugMode) {
         print('Retrieved ${sqliteActivities?.length ?? 0} activities from SQLite cache');
       }
-      
+
       return sqliteActivities;
     } catch (e) {
       if (kDebugMode) {

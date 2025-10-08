@@ -338,11 +338,20 @@ class FileRepository
             }
 
             // Look up the world ID
-            final int id = worldLookupByName[world] ?? 0;
-            if (id == 0 && kDebugMode) {
+            final int worldId = worldLookupByName[world] ?? 0;
+            if (worldId == 0 && kDebugMode) {
               if (kDebugMode) {
                 print('Unknown world: $world for route: $routeName');
               }
+            }
+
+            // Generate stable route ID from world and route name hash
+            // This ensures the same route always gets the same ID regardless of scraping order
+            final String routeKey = '${world}|${routeName.toLowerCase()}';
+            final int id = routeKey.hashCode.abs() % 1000000;
+
+            if (kDebugMode && (world == 'New York' || world == 'Bologna')) {
+              print('🔑 Route ID generation: $world | $routeName → ID: $id');
             }
 
             // Parse distance and altitude
@@ -446,10 +455,10 @@ class FileRepository
             // Filter out run-only routes and add to the map
             if (route.eventOnly?.toLowerCase() != 'run only' &&
                 route.eventOnly?.toLowerCase() != 'run only, event only') {
-              if (!routes.containsKey(id)) {
-                routes[id] = <RouteData>[];
+              if (!routes.containsKey(worldId)) {
+                routes[worldId] = <RouteData>[];
               }
-              routes[id]?.add(route);
+              routes[worldId]?.add(route);
             }
           } catch (e) {
             if (kDebugMode) {
@@ -490,31 +499,61 @@ class FileRepository
       // Try to load from database first
       Map<DateTime, List<WorldData>> calendarData = await calendarService.loadWorldCalendarData();
 
+      if (kDebugMode) {
+        debugPrint('📅 Loaded ${calendarData.length} days from world calendar database');
+      }
+
       // If database is empty, scrape and save to database
       if (calendarData.isEmpty) {
         if (kDebugMode) {
-          debugPrint('World calendar database is empty - scraping data');
+          debugPrint('📅 World calendar database is empty - scraping fresh data from Zwift Insider...');
         }
         calendarData = await scrapeWorldCalendarData();
-        await saveWorldCalendarData(calendarData);
+
+        if (kDebugMode) {
+          debugPrint('📅 Scraped ${calendarData.length} days of world calendar data');
+        }
+
+        if (calendarData.isNotEmpty) {
+          await saveWorldCalendarData(calendarData);
+          if (kDebugMode) {
+            debugPrint('📅 Saved world calendar data to database');
+          }
+        } else {
+          if (kDebugMode) {
+            debugPrint('⚠️  Scraping returned empty calendar data');
+          }
+        }
       }
 
       return calendarData;
-    } catch (e) {
+    } catch (e, stackTrace) {
       if (kDebugMode) {
-        debugPrint('Error loading world calendar data from database: $e');
+        debugPrint('❌ Error loading world calendar data from database: $e');
+        debugPrint('Stack trace: $stackTrace');
       }
 
       // Fallback to scraping if database fails
       try {
-        final calendarData = await scrapeWorldCalendarData();
-        await saveWorldCalendarData(calendarData);
-        return calendarData;
-      } catch (scrapeError) {
         if (kDebugMode) {
-          debugPrint('Error scraping world calendar data: $scrapeError');
+          debugPrint('📅 Attempting to scrape world calendar data as fallback...');
         }
-        return {};
+        final calendarData = await scrapeWorldCalendarData();
+
+        if (kDebugMode) {
+          debugPrint('📅 Fallback scrape returned ${calendarData.length} days');
+        }
+
+        if (calendarData.isNotEmpty) {
+          await saveWorldCalendarData(calendarData);
+        }
+        return calendarData;
+      } catch (scrapeError, scrapeStack) {
+        if (kDebugMode) {
+          debugPrint('❌ Error scraping world calendar data: $scrapeError');
+          debugPrint('Stack trace: $scrapeStack');
+        }
+        rethrow; // Rethrow so UI can show error
       }
     }
   }
