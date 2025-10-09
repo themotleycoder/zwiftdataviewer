@@ -9,6 +9,7 @@ import 'package:zwiftdataviewer/providers/route_recommendations_provider.dart';
 import 'package:zwiftdataviewer/providers/segment_count_provider.dart';
 import 'package:zwiftdataviewer/providers/tabs_provider.dart';
 import 'package:zwiftdataviewer/screens/layouts/mainlayout.dart';
+import 'package:zwiftdataviewer/screens/route_recommendations_screen.dart';
 import 'package:zwiftdataviewer/utils/constants.dart';
 import 'package:zwiftdataviewer/utils/theme.dart';
 import 'package:zwiftdataviewer/utils/ui_helpers.dart';
@@ -78,6 +79,22 @@ class HomeScreen extends MainLayout {
       actions.add(
         const FilterDateButton(isActive: true //tab == HomeScreenTab.stats,
             ),
+      );
+    }
+    if (tabIndex == HomeScreenTab.recommendations.index) {
+      actions.add(
+        IconButton(
+          onPressed: () => _showFilterMenu(context, ref),
+          icon: const Icon(Icons.filter_list, color: Colors.black),
+          tooltip: 'Filter recommendations',
+        ),
+      );
+      actions.add(
+        IconButton(
+          onPressed: () => _showRegenerateDialog(context, ref),
+          icon: const Icon(Icons.refresh, color: Colors.black),
+          tooltip: 'Regenerate recommendations',
+        ),
       );
     }
     return actions;
@@ -244,5 +261,135 @@ class HomeScreen extends MainLayout {
   @override
   getTabIndex(WidgetRef ref) {
     return ref.watch(homeTabsNotifier);
+  }
+
+  void _showFilterMenu(BuildContext context, WidgetRef ref) {
+    final currentFilter = ref.read(recommendationFilterProvider);
+
+    showDialog(
+      context: context,
+      builder: (context) => AlertDialog(
+        title: const Text('Filter Recommendations'),
+        content: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: RecommendationFilter.values.map((filter) {
+            return RadioListTile<RecommendationFilter>(
+              title: Text(filter.label),
+              value: filter,
+              groupValue: currentFilter,
+              onChanged: (RecommendationFilter? value) {
+                if (value != null) {
+                  ref.read(recommendationFilterProvider.notifier).state = value;
+                  Navigator.pop(context);
+                }
+              },
+              activeColor: zdvOrange,
+            );
+          }).toList(),
+        ),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.pop(context),
+            child: const Text('Close'),
+          ),
+        ],
+      ),
+    );
+  }
+
+  void _showRegenerateDialog(BuildContext context, WidgetRef ref) {
+    showDialog(
+      context: context,
+      builder: (context) => AlertDialog(
+        title: const Text('Regenerate Recommendations'),
+        content: const Column(
+          mainAxisSize: MainAxisSize.min,
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Text('Choose how to generate new recommendations:'),
+            SizedBox(height: 16.0),
+            Text(
+              '• AI Recommendations: Uses Google Gemini AI to analyze your performance',
+              style: TextStyle(fontSize: 13),
+            ),
+            SizedBox(height: 8.0),
+            Text(
+              '• From Route Data: Uses algorithmic analysis without AI',
+              style: TextStyle(fontSize: 13),
+            ),
+          ],
+        ),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.pop(context),
+            child: const Text('Cancel'),
+          ),
+          TextButton(
+            onPressed: () {
+              Navigator.pop(context);
+              _generateFromExistingRoutes(context, ref);
+            },
+            child: const Text('From Route Data'),
+          ),
+          ElevatedButton(
+            onPressed: () {
+              Navigator.pop(context);
+              _generateNewRecommendations(context, ref);
+            },
+            style: ElevatedButton.styleFrom(
+              backgroundColor: zdvOrange,
+              foregroundColor: Colors.white,
+            ),
+            child: const Text('AI Recommendations'),
+          ),
+        ],
+      ),
+    );
+  }
+
+  void _generateNewRecommendations(BuildContext context, WidgetRef ref) async {
+    try {
+      await ref.read(routeRecommendationsProvider.notifier).generateNewRecommendations();
+      if (context.mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(
+            content: Text('AI recommendations generated!'),
+            backgroundColor: Colors.green,
+          ),
+        );
+      }
+    } catch (e) {
+      if (context.mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text('Failed to generate AI recommendations: $e'),
+            backgroundColor: Colors.red,
+          ),
+        );
+      }
+    }
+  }
+
+  void _generateFromExistingRoutes(BuildContext context, WidgetRef ref) async {
+    try {
+      await ref.read(routeRecommendationsProvider.notifier).generateRecommendationsFromAvailableRoutes();
+      if (context.mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(
+            content: Text('Route recommendations generated from your data!'),
+            backgroundColor: Colors.green,
+          ),
+        );
+      }
+    } catch (e) {
+      if (context.mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text('Failed to generate recommendations: $e'),
+            backgroundColor: Colors.red,
+          ),
+        );
+      }
+    }
   }
 }

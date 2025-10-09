@@ -21,125 +21,61 @@ class RouteRecommendationsScreen extends ConsumerStatefulWidget {
   ConsumerState<RouteRecommendationsScreen> createState() => _RouteRecommendationsScreenState();
 }
 
+enum RecommendationFilter {
+  all('All', 'all'),
+  performanceMatch('Perfect Match', 'performance_match'),
+  progressiveChallenge('Next Challenge', 'progressive_challenge'),
+  exploration('Explore', 'exploration'),
+  similarRoutes('Similar', 'similar_routes');
+
+  const RecommendationFilter(this.label, this.value);
+  final String label;
+  final String value;
+}
+
+// Provider for the selected filter
+final recommendationFilterProvider = StateProvider<RecommendationFilter>((ref) => RecommendationFilter.all);
+
 class _RouteRecommendationsScreenState extends ConsumerState<RouteRecommendationsScreen> {
-  String _selectedFilter = 'all';
   bool _showOnlyUnviewed = false;
 
   @override
   Widget build(BuildContext context) {
     final recommendationsAsync = ref.watch(routeRecommendationsProvider);
 
-    return Scaffold(
-      body: Column(
-        children: [
-          _buildFilterBar(),
-          Expanded(
-            child: recommendationsAsync.when(
-              data: (recommendations) => _buildRecommendationsList(recommendations),
-              loading: () => UIHelpers.buildLoadingIndicator(),
-              error: (error, stackTrace) => _buildErrorState(error),
-            ),
+    return Column(
+      children: [
+        Expanded(
+          child: recommendationsAsync.when(
+            data: (recommendations) => _buildRecommendationsList(recommendations),
+            loading: () => UIHelpers.buildLoadingIndicator(),
+            error: (error, stackTrace) => _buildErrorState(error),
           ),
-        ],
-      ),
-      floatingActionButton: null, // Removed to prevent overlap - buttons moved to empty state
-    );
-  }
-
-  Widget _buildFilterBar() {
-    return Container(
-      padding: const EdgeInsets.all(16.0),
-      decoration: BoxDecoration(
-        color: Colors.grey[100],
-        border: Border(
-          bottom: BorderSide(color: Colors.grey[300]!),
         ),
-      ),
-      child: Column(
-        children: [
-          // Filter chips
-          Wrap(
-            spacing: 8.0,
-            children: [
-              _buildFilterChip('All', 'all'),
-              _buildFilterChip('Perfect Match', 'performance_match'),
-              _buildFilterChip('Next Challenge', 'progressive_challenge'),
-              _buildFilterChip('Explore', 'exploration'),
-              _buildFilterChip('Similar', 'similar_routes'),
-            ],
-          ),
-          const SizedBox(height: 8.0),
-          // Toggle for unviewed only and regenerate button
-          Row(
-            children: [
-              Switch(
-                value: _showOnlyUnviewed,
-                onChanged: (value) {
-                  setState(() {
-                    _showOnlyUnviewed = value;
-                  });
-                },
-                activeColor: zdvOrange,
-              ),
-              const Expanded(
-                child: Text(
-                  'Show only new recommendations',
-                  style: TextStyle(fontSize: 14),
-                  overflow: TextOverflow.ellipsis,
-                ),
-              ),
-              Text(
-                'AI-powered',
-                style: TextStyle(
-                  color: Colors.grey[600],
-                  fontSize: 11,
-                  fontStyle: FontStyle.italic,
-                ),
-              ),
-              const SizedBox(width: 8.0),
-              // Regenerate button
-              IconButton(
-                onPressed: () => _showRegenerateDialog(context),
-                icon: const Icon(Icons.refresh),
-                tooltip: 'Regenerate recommendations',
-                color: zdvOrange,
-                iconSize: 24,
-              ),
-            ],
-          ),
-        ],
-      ),
+      ],
     );
   }
 
-  Widget _buildFilterChip(String label, String value) {
-    final isSelected = _selectedFilter == value;
-    return FilterChip(
-      label: Text(label),
-      selected: isSelected,
-      onSelected: (selected) {
-        setState(() {
-          _selectedFilter = selected ? value : 'all';
-        });
-      },
-      selectedColor: zdvOrange.withValues(alpha: 0.2),
-      checkmarkColor: zdvOrange,
-    );
+  // Public method to show regenerate dialog - can be called from parent
+  void showRegenerateDialog(BuildContext context) {
+    _showRegenerateDialog(context);
   }
 
   Widget _buildRecommendationsList(List<RouteRecommendation> allRecommendations) {
+    final selectedFilter = ref.watch(recommendationFilterProvider);
+
     // Apply filters
     var filteredRecommendations = allRecommendations.where((rec) {
       // Filter by type
-      if (_selectedFilter != 'all' && rec.recommendationType != _selectedFilter) {
+      if (selectedFilter.value != 'all' && rec.recommendationType != selectedFilter.value) {
         return false;
       }
-      
+
       // Filter by viewed status
       if (_showOnlyUnviewed && rec.isViewed) {
         return false;
       }
-      
+
       return true;
     }).toList();
 
@@ -156,7 +92,7 @@ class _RouteRecommendationsScreenState extends ConsumerState<RouteRecommendation
     return ListView(
       padding: const EdgeInsets.all(16.0),
       children: [
-        if (_selectedFilter == 'all') ...[
+        if (selectedFilter == RecommendationFilter.all) ...[
           _buildStatsCard(allRecommendations),
           const SizedBox(height: 16.0),
         ],
@@ -369,10 +305,12 @@ class _RouteRecommendationsScreenState extends ConsumerState<RouteRecommendation
   }
 
   String _getEmptyStateMessage() {
+    final selectedFilter = ref.watch(recommendationFilterProvider);
+
     if (_showOnlyUnviewed) {
       return 'No new recommendations available.\nCheck back after completing some routes!';
     }
-    if (_selectedFilter != 'all') {
+    if (selectedFilter != RecommendationFilter.all) {
       return 'No recommendations found for this category.\nTry adjusting your filters.';
     }
     return 'No recommendations available yet.\nComplete some routes to get personalized suggestions!';
