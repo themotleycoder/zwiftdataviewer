@@ -26,6 +26,32 @@ class HomeScreen extends MainLayout {
   // @param key An optional key for this widget
   const HomeScreen({super.key});
 
+  // Gets the title for the app bar based on the current tab.
+  //
+  // @param ref The WidgetRef
+  // @return The title string for the current tab
+  String getTitle(WidgetRef ref) {
+    final tabIndex = ref.watch(homeTabsNotifier);
+    switch (tabIndex) {
+      case 0: // HomeScreenTab.activities
+        return 'Activities';
+      case 1: // HomeScreenTab.stats
+        return 'Statistics';
+      case 2: // HomeScreenTab.routes
+        return 'Routes';
+      case 3: // HomeScreenTab.recommendations
+        return 'AI Routes';
+      case 4: // HomeScreenTab.calendar
+        return 'Calendars';
+      case 5: // HomeScreenTab.segments
+        return 'Segments';
+      case 6: // HomeScreenTab.settings
+        return 'Settings';
+      default:
+        return 'Zwift Data Viewer';
+    }
+  }
+
   // Gets the action buttons for the app bar based on the current tab.
   //
   // @param context The BuildContext
@@ -64,14 +90,14 @@ class HomeScreen extends MainLayout {
 
     return activityList.when(
       data: (activityData) => UIHelpers.buildAppBar(
-        'Zwift Data Viewer',
+        getTitle(ref),
         actions: getActions(context, ref, activityData),
       ),
       error: (Object error, StackTrace stackTrace) {
-        return UIHelpers.buildAppBar('Zwift Data Viewer');
+        return UIHelpers.buildAppBar(getTitle(ref));
       },
       loading: () {
-        return UIHelpers.buildAppBar('Zwift Data Viewer');
+        return UIHelpers.buildAppBar(getTitle(ref));
       },
     );
   }

@@ -16,7 +16,6 @@ class SegmentsScreen extends ConsumerWidget {
     Conversions.units(ref);
 
     return Scaffold(
-      appBar: UIHelpers.buildAppBar('Segments'),
       body: uniqueSegmentsAsync.when(
         data: (segments) {
           if (segments.isEmpty) {
