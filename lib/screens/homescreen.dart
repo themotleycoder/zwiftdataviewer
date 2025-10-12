@@ -131,88 +131,116 @@ class HomeScreen extends MainLayout {
   }
 
   @override
-  buildBottomNavigationBar(BuildContext context, WidgetRef ref) {
+  buildDrawer(BuildContext context, WidgetRef ref) {
     final AsyncValue<List<SummaryActivity>> activityList =
         ref.watch(combinedActivitiesProvider);
 
     final AsyncValue<Map<int, List<RouteData>>> routeDataState =
         ref.watch(routeDataProvider);
-        
+
     final AsyncValue<int> segmentCountState =
         ref.watch(segmentCountProvider);
-        
-    final int unviewedRecommendationsCount = 
+
+    final int unviewedRecommendationsCount =
         ref.watch(unviewedRecommendationsCountProvider);
 
-    return BottomNavigationBar(
-      elevation: cardElevation,
+    final currentIndex = getTabIndex(ref);
+
+    return NavigationDrawer(
       key: AppKeys.tabs,
-      currentIndex: getTabIndex(ref),
-      onTap: (index) => ref.read(homeTabsNotifier.notifier).setIndex(index),
-      type: BottomNavigationBarType.fixed,
-      unselectedItemColor: zdvmMidBlue[100],
-      fixedColor: zdvMidGreen,
-      items: [
+      selectedIndex: currentIndex,
+      onDestinationSelected: (index) {
+        ref.read(homeTabsNotifier.notifier).setIndex(index);
+        Navigator.pop(context); // Close drawer after selection
+      },
+      children: [
+        // Drawer header
+        DrawerHeader(
+          decoration: BoxDecoration(
+            color: zdvMidBlue,
+          ),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            mainAxisAlignment: MainAxisAlignment.end,
+            children: [
+              // const Icon(
+              //   Icons.directions_bike,
+              //   size: 48,
+              //   color: Colors.white,
+              // ),
+              const SizedBox(height: 8),
+              Text(
+                'Zwift Data Viewer',
+                style: Theme.of(context).textTheme.titleLarge?.copyWith(
+                      color: Colors.white,
+                      fontWeight: FontWeight.bold,
+                    ),
+              ),
+            ],
+          ),
+        ),
+
+        // Navigation items
         activityList.when(
-          data: (activityData) => BottomNavigationBarItem(
+          data: (activityData) => NavigationDrawerDestination(
             icon: Badge(
               backgroundColor: zdvmYellow[100],
               label: Text(activityData.length.toString()),
               child: const Icon(Icons.list, key: AppKeys.activitiesTab),
             ),
-            label: 'Activities',
+            label: const Text('Activities'),
           ),
-          loading: () => BottomNavigationBarItem(
-              icon: Badge(
-                backgroundColor: zdvmYellow[100],
-                label: const Text('0'),
-                child: const Icon(Icons.list, key: AppKeys.activitiesTab),
-              ),
-              label: 'Activities'),
+          loading: () => NavigationDrawerDestination(
+            icon: Badge(
+              backgroundColor: zdvmYellow[100],
+              label: const Text('0'),
+              child: const Icon(Icons.list, key: AppKeys.activitiesTab),
+            ),
+            label: const Text('Activities'),
+          ),
           error: (Object error, StackTrace stackTrace) {
-            // Log error for debugging
             debugPrint('Error loading activities: $error');
-            return BottomNavigationBarItem(
+            return NavigationDrawerDestination(
               icon: Badge(
                 backgroundColor: Colors.red[100],
                 label: const Icon(Icons.error_outline, size: 10, color: Colors.red),
                 child: const Icon(Icons.list, key: AppKeys.activitiesTab),
               ),
-              label: 'Activities',
+              label: const Text('Activities'),
             );
           },
         ),
-        const BottomNavigationBarItem(
+
+        const NavigationDrawerDestination(
           icon: Icon(Icons.show_chart, key: AppKeys.statsTab),
-          label: 'Statistics',
+          label: Text('Statistics'),
         ),
+
         routeDataState.when(
-            data: (routeData) => BottomNavigationBarItem(
-                  icon: Badge(
-                    backgroundColor: zdvmYellow[100],
-                    label: Text(routeData.values
-                        .fold<int>(
-                            0,
-                            (sum, list) =>
-                                sum + (list.length)) // Use null-aware operators
-                        .toString()),
-                    child: const Icon(Icons.route, key: AppKeys.routesTab),
-                  ),
-                  label: 'Routes',
-                ),
-            error: (Object error, StackTrace stackTrace) {
-              // Log error for debugging
-              debugPrint('Error loading routes: $error');
-              return const BottomNavigationBarItem(
-                icon: Icon(Icons.route, key: AppKeys.routesTab),
-                label: 'Routes',
-              );
-            },
-            loading: () => const BottomNavigationBarItem(
-                  icon: Icon(Icons.route, key: AppKeys.routesTab),
-                  label: 'Routes',
-                )),
-        BottomNavigationBarItem(
+          data: (routeData) => NavigationDrawerDestination(
+            icon: Badge(
+              backgroundColor: zdvmYellow[100],
+              label: Text(routeData.values
+                  .fold<int>(0, (sum, list) => sum + (list.length))
+                  .toString()),
+              child: const Icon(Icons.route, key: AppKeys.routesTab),
+            ),
+            label: const Text('Routes'),
+          ),
+          error: (Object error, StackTrace stackTrace) {
+            debugPrint('Error loading routes: $error');
+            return const NavigationDrawerDestination(
+              icon: Icon(Icons.route, key: AppKeys.routesTab),
+              label: Text('Routes'),
+            );
+          },
+          loading: () => const NavigationDrawerDestination(
+            icon: Icon(Icons.route, key: AppKeys.routesTab),
+            label: Text('Routes'),
+          ),
+        ),
+
+        NavigationDrawerDestination(
           icon: Badge(
             backgroundColor: zdvOrange,
             isLabelVisible: unviewedRecommendationsCount > 0,
@@ -222,37 +250,39 @@ class HomeScreen extends MainLayout {
             ),
             child: const Icon(Icons.auto_awesome),
           ),
-          label: 'AI Routes',
+          label: const Text('AI Routes'),
         ),
-        const BottomNavigationBarItem(
+
+        const NavigationDrawerDestination(
           icon: Icon(Icons.calendar_today, key: AppKeys.calendarTab),
-          label: 'Calendars',
+          label: Text('Calendars'),
         ),
+
         segmentCountState.when(
-          data: (count) => BottomNavigationBarItem(
+          data: (count) => NavigationDrawerDestination(
             icon: Badge(
               backgroundColor: zdvmYellow[100],
               label: Text(count.toString()),
               child: const Icon(Icons.landscape, key: AppKeys.segmentsTab),
             ),
-            label: 'Segments',
+            label: const Text('Segments'),
           ),
-          loading: () => const BottomNavigationBarItem(
+          loading: () => const NavigationDrawerDestination(
             icon: Icon(Icons.landscape, key: AppKeys.segmentsTab),
-            label: 'Segments',
+            label: Text('Segments'),
           ),
           error: (Object error, StackTrace stackTrace) {
-            // Log error for debugging
             debugPrint('Error loading segment count: $error');
-            return const BottomNavigationBarItem(
+            return const NavigationDrawerDestination(
               icon: Icon(Icons.landscape, key: AppKeys.segmentsTab),
-              label: 'Segments',
+              label: Text('Segments'),
             );
           },
         ),
-        const BottomNavigationBarItem(
+
+        const NavigationDrawerDestination(
           icon: Icon(Icons.settings, key: AppKeys.settingsTab),
-          label: 'Settings',
+          label: Text('Settings'),
         ),
       ],
     );

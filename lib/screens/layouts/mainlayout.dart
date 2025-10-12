@@ -9,11 +9,12 @@ abstract class MainLayout extends ConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     return Scaffold(
       appBar: buildAppBar(context, ref),
+      drawer: buildDrawer(context, ref),
       body: Column(
         children: [
           // Add connectivity banner at the top of the screen
           const ConnectivityBanner(),
-          
+
           // Main content
           Expanded(
             child: buildBody(context, ref),
@@ -30,7 +31,9 @@ abstract class MainLayout extends ConsumerWidget {
 
   Widget buildBody(BuildContext context, WidgetRef ref);
 
-  Widget? buildBottomNavigationBar(BuildContext context, WidgetRef ref);
+  Widget? buildDrawer(BuildContext context, WidgetRef ref) => null;
+
+  Widget? buildBottomNavigationBar(BuildContext context, WidgetRef ref) => null;
 
   int getTabIndex(WidgetRef ref);
 }
