@@ -113,10 +113,10 @@ class DisplayChart extends ConsumerWidget {
     final List<PowerZoneData> powerZoneData = [
       PowerZoneData('Zone 1', 0, ftp * 0.60, Colors.grey),
       PowerZoneData('Zone 2', ftp * 0.60, ftp * 0.75, zdvMidBlue),
-      PowerZoneData('Zone 3', ftp * 0.75, ftp * 0.89, zdvMidGreen),
-      PowerZoneData('Zone 4', ftp * 0.89, ftp * 1.04, zdvYellow),
-      PowerZoneData('Zone 5', ftp * 1.04, ftp * 1.18, zdvOrange),
-      PowerZoneData('Zone 6', ftp * 1.18, double.infinity, zdvRed),
+      PowerZoneData('Zone 3', ftp * 0.75, ftp * 0.90, zdvMidGreen),
+      PowerZoneData('Zone 4', ftp * 0.90, ftp * 1.05, zdvYellow),
+      PowerZoneData('Zone 5', ftp * 1.05, ftp * 1.19, zdvOrange),
+      PowerZoneData('Zone 6', ftp * 1.19, ftp * 1.80 , zdvRed),
     ];
 
     // Calculate time spent in each zone

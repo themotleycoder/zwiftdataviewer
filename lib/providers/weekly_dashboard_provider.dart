@@ -15,7 +15,7 @@ final weeklyDashboardProvider = FutureProvider<WeeklyDashboardData>((ref) async 
   final weeklyGoal = ref.watch(weeklyGoalProvider);
 
   // Get FTP from config, default to 229 if not set
-  final ftp = config.ftp ?? 229.0;
+  final ftp = config.ftp ?? 231.0;
 
   // Get start and end of current week (Monday to Sunday)
   final now = DateTime.now();
@@ -85,13 +85,15 @@ class DailyActivityData {
   final double ftp;
   final Map<int, double> powerZoneMinutes;
   final double totalMinutes;
+  final double totalDistanceMeters;
 
   DailyActivityData({
     required this.date,
     required this.activities,
     required this.ftp,
   }) : powerZoneMinutes = {},
-       totalMinutes = _calculateTotalMinutes(activities) {
+       totalMinutes = _calculateTotalMinutes(activities),
+       totalDistanceMeters = _calculateTotalDistance(activities) {
     _calculatePowerZones();
   }
 
@@ -99,6 +101,14 @@ class DailyActivityData {
     double total = 0;
     for (var activity in activities) {
       total += (activity.movingTime?.toDouble() ?? 0) / 60;
+    }
+    return total;
+  }
+
+  static double _calculateTotalDistance(List<SummaryActivity> activities) {
+    double total = 0;
+    for (var activity in activities) {
+      total += activity.distance;
     }
     return total;
   }
@@ -112,6 +122,8 @@ class DailyActivityData {
     powerZoneMinutes[5] = 0;
     powerZoneMinutes[6] = 0;
 
+    debugPrint('📊 Calculating power zones for ${activities.length} activities on ${date.toString().substring(0, 10)} (FTP: $ftp)');
+
     for (var activity in activities) {
       final movingTime = activity.movingTime?.toDouble() ?? 0;
 
@@ -122,20 +134,37 @@ class DailyActivityData {
         // Determine which zone the activity falls into
         final zone = _getZoneForWatts(avgWatts);
         powerZoneMinutes[zone] = (powerZoneMinutes[zone] ?? 0) + (movingTime / 60);
+        debugPrint('  Activity "${activity.name}": ${avgWatts}W → Zone $zone (${(movingTime / 60).toStringAsFixed(1)} min)');
       } else {
         // If no power data, distribute to Zone 1 (recovery)
         powerZoneMinutes[1] = (powerZoneMinutes[1] ?? 0) + (movingTime / 60);
+        debugPrint('  Activity "${activity.name}": NO POWER DATA → Zone 1 (${(movingTime / 60).toStringAsFixed(1)} min)');
       }
+    }
+
+    // Show final zone distribution
+    final zonesWithTime = powerZoneMinutes.entries.where((e) => e.value > 0).toList();
+    if (zonesWithTime.isNotEmpty) {
+      debugPrint('  Final zones: ${zonesWithTime.map((e) => 'Z${e.key}:${e.value.toStringAsFixed(0)}min').join(", ")}');
     }
   }
 
   int _getZoneForWatts(double watts) {
-    if (watts < ftp * 0.60) return 1;
-    if (watts < ftp * 0.75) return 2;
-    if (watts < ftp * 0.89) return 3;
-    if (watts < ftp * 1.04) return 4;
-    if (watts < ftp * 1.18) return 5;
-    return 6;
+    // Match the logic from routeanalysistabpowertimepiechartscreen.dart
+    // Zone boundaries use >= for lower bound and < for upper bound
+    if (watts < ftp * 0.60) {
+      return 1; // Zone 1: < 60%
+    } else if (watts >= ftp * 0.60 && watts < ftp * 0.75) {
+      return 2; // Zone 2: 60-75%
+    } else if (watts >= ftp * 0.75 && watts < ftp * 0.90) {
+      return 3; // Zone 3: 75-89%
+    } else if (watts >= ftp * 0.90 && watts < ftp * 1.05) {
+      return 4; // Zone 4: 89-104%
+    } else if (watts >= ftp * 1.05 && watts < ftp * 1.19) {
+      return 5; // Zone 5: 104-118%
+    } else {
+      return 6; // Zone 6: >= 118%
+    }
   }
 
   bool get isRestDay => activities.isEmpty;

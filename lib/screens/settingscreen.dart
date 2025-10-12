@@ -36,12 +36,12 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
   Future<void> _loadSettings() async {
     final prefs = await SharedPreferences.getInstance();
     final supabaseEnabled = prefs.getBool('supabaseEnabled');
-    
-    // Load FTP from config provider
+
+    // Load settings from config provider
     final config = ref.read(configProvider);
-    
+
     setState(() {
-      _isMetric = prefs.getBool('isMetric') ?? true;
+      _isMetric = config.isMetric ?? true;
       _ftp = (config.ftp ?? 0).round();
       _isSupabaseEnabled = supabaseEnabled ?? true;
     });
@@ -64,12 +64,14 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
 
   Future<void> _saveSettings() async {
     final prefs = await SharedPreferences.getInstance();
-    await prefs.setBool('isMetric', _isMetric);
     await prefs.setBool('supabaseEnabled', _isSupabaseEnabled);
-    
-    // Save FTP to config provider
+
+    // Save both FTP and isMetric to config provider
     final currentConfig = ref.read(configProvider);
-    final updatedConfig = currentConfig.copyWith(ftp: _ftp.toDouble());
+    final updatedConfig = currentConfig.copyWith(
+      ftp: _ftp.toDouble(),
+      isMetric: _isMetric,
+    );
     ref.read(configProvider.notifier).setConfig(updatedConfig);
   }
 

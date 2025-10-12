@@ -1,8 +1,10 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:zwiftdataviewer/providers/weekly_dashboard_provider.dart';
+import 'package:zwiftdataviewer/utils/conversions.dart';
 import 'package:zwiftdataviewer/utils/theme.dart';
 
-class WeeklyBarChart extends StatelessWidget {
+class WeeklyBarChart extends ConsumerWidget {
   final List<DailyActivityData> dailyData;
   final double maxHeight;
 
@@ -13,19 +15,23 @@ class WeeklyBarChart extends StatelessWidget {
   });
 
   @override
-  Widget build(BuildContext context) {
-    // Find the maximum total minutes across all days for scaling
-    double maxMinutes = 0;
+  Widget build(BuildContext context, WidgetRef ref) {
+    // Find the maximum total distance across all days for scaling
+    double maxDistance = 0;
     for (var day in dailyData) {
-      if (day.totalMinutes > maxMinutes) {
-        maxMinutes = day.totalMinutes;
+      final distance = Conversions.metersToDistance(ref, day.totalDistanceMeters);
+      if (distance > maxDistance) {
+        maxDistance = distance;
       }
     }
 
     // Ensure we have at least some height for the chart
-    if (maxMinutes == 0) {
-      maxMinutes = 60; // Default to 60 minutes
+    if (maxDistance == 0) {
+      maxDistance = 10; // Default to 10 km/mi
     }
+
+    // Get distance unit for labels
+    final units = Conversions.units(ref);
 
     return Container(
       height: maxHeight + 60, // Extra space for labels and moon icons
@@ -44,7 +50,7 @@ class WeeklyBarChart extends StatelessWidget {
                 mainAxisAlignment: MainAxisAlignment.end,
                 children: [
                   // Bar chart
-                  _buildDayBar(dayData, maxMinutes),
+                  _buildDayBar(dayData, maxDistance, ref),
                   const SizedBox(height: 8),
                   // Day label
                   Text(
@@ -64,7 +70,7 @@ class WeeklyBarChart extends StatelessWidget {
     );
   }
 
-  Widget _buildDayBar(DailyActivityData dayData, double maxMinutes) {
+  Widget _buildDayBar(DailyActivityData dayData, double maxDistance, WidgetRef ref) {
     if (dayData.isRestDay) {
       // Show moon icon for rest days
       return SizedBox(
@@ -99,27 +105,19 @@ class WeeklyBarChart extends StatelessWidget {
       );
     }
 
-    // Calculate the height for each zone segment
-    final segments = <Widget>[];
-    // Reserve space for the label below (increase to prevent overflow)
+    // Calculate bar height based on total distance
+    // Reserve space for the label below
     final availableHeight = maxHeight - 26;
+    final distance = Conversions.metersToDistance(ref, dayData.totalDistanceMeters);
+    final barHeight = (distance / maxDistance) * availableHeight;
 
-    // Build from bottom up (Zone 1 to Zone 6)
-    for (int zone = 1; zone <= 6; zone++) {
-      final zoneMinutes = dayData.powerZoneMinutes[zone] ?? 0;
-      if (zoneMinutes > 0) {
-        final segmentHeight = (zoneMinutes / maxMinutes) * availableHeight;
-        segments.add(
-          Container(
-            height: segmentHeight,
-            decoration: BoxDecoration(
-              color: dayData.getZoneColor(zone),
-              border: zone < 6 ? Border(
-                top: BorderSide(color: Colors.black.withOpacity(0.2), width: 0.5),
-              ) : null,
-            ),
-          ),
-        );
+    // Get the zone with the most time (predominant zone)
+    int predominantZone = 1;
+    double maxZoneMinutes = 0;
+    for (var entry in dayData.powerZoneMinutes.entries) {
+      if (entry.value > maxZoneMinutes) {
+        maxZoneMinutes = entry.value;
+        predominantZone = entry.key;
       }
     }
 
@@ -129,26 +127,19 @@ class WeeklyBarChart extends StatelessWidget {
         mainAxisAlignment: MainAxisAlignment.end,
         mainAxisSize: MainAxisSize.min,
         children: [
-          Flexible(
-            child: Container(
-              decoration: BoxDecoration(
-                borderRadius: BorderRadius.circular(4),
-                border: Border.all(color: zdvMidBlue.withOpacity(0.3), width: 1),
-              ),
-              child: ClipRRect(
-                borderRadius: BorderRadius.circular(3),
-                child: Column(
-                  mainAxisAlignment: MainAxisAlignment.end,
-                  mainAxisSize: MainAxisSize.min,
-                  children: segments.reversed.toList(), // Reverse to show Zone 6 on top
-                ),
-              ),
+          // Single-color bar based on predominant zone
+          Container(
+            height: barHeight,
+            decoration: BoxDecoration(
+              color: dayData.getZoneColor(predominantZone),
+              borderRadius: BorderRadius.circular(4),
+              border: Border.all(color: Colors.black.withOpacity(0.1), width: 1),
             ),
           ),
           const SizedBox(height: 4),
-          // Show total minutes as label
+          // Show total distance as label
           Text(
-            '${dayData.totalMinutes.round()}',
+            distance.toStringAsFixed(1),
             style: TextStyle(
               fontSize: 11,
               color: Colors.grey[700],

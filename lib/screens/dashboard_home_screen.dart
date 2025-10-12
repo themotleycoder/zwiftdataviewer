@@ -3,6 +3,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_strava_api/models/summary_activity.dart';
 import 'package:intl/intl.dart';
 import 'package:zwiftdataviewer/providers/activity_select_provider.dart';
+import 'package:zwiftdataviewer/providers/config_provider.dart';
 import 'package:zwiftdataviewer/providers/tabs_provider.dart';
 import 'package:zwiftdataviewer/providers/weekly_dashboard_provider.dart';
 import 'package:zwiftdataviewer/screens/homescreen.dart';
@@ -68,6 +69,16 @@ class DashboardHomeScreen extends ConsumerWidget {
   }
 
   Widget _buildWeeklyGoalSection(BuildContext context, WidgetRef ref, WeeklyDashboardData data) {
+    final units = Conversions.units(ref);
+    final distanceUnit = units['distance'] ?? 'km';
+
+    // Convert km to meters, then use metersToDistance for unit conversion
+    final goalInMeters = data.weeklyGoal * 1000;
+    final goalConverted = Conversions.metersToDistance(ref, goalInMeters);
+
+    final totalDistanceInMeters = data.totalDistance * 1000;
+    final totalDistanceConverted = Conversions.metersToDistance(ref, totalDistanceInMeters);
+
     return Container(
       margin: const EdgeInsets.all(16),
       padding: const EdgeInsets.all(20),
@@ -113,7 +124,7 @@ class DashboardHomeScreen extends ConsumerWidget {
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
               Text(
-                '${data.weeklyGoal.round()} km',
+                '${goalConverted.round()} $distanceUnit',
                 style: const TextStyle(
                   fontSize: 24,
                   fontWeight: FontWeight.bold,
@@ -151,7 +162,7 @@ class DashboardHomeScreen extends ConsumerWidget {
 
           // Current progress text
           Text(
-            '${data.totalDistance.round()}',
+            '${totalDistanceConverted.round()} $distanceUnit',
             style: const TextStyle(
               fontSize: 32,
               fontWeight: FontWeight.bold,
@@ -287,8 +298,15 @@ class DashboardHomeScreen extends ConsumerWidget {
   }
 
   void _showEditGoalDialog(BuildContext context, WidgetRef ref) {
-    final currentGoal = ref.read(weeklyGoalProvider);
-    final controller = TextEditingController(text: currentGoal.round().toString());
+    final currentGoalKm = ref.read(weeklyGoalProvider);
+    final units = Conversions.units(ref);
+    final distanceUnit = units['distance'] ?? 'km';
+    final isMetric = ref.read(configProvider).isMetric ?? true;
+
+    // Convert current goal from km to display unit
+    final currentGoalInMeters = currentGoalKm * 1000;
+    final currentGoalConverted = Conversions.metersToDistance(ref, currentGoalInMeters);
+    final controller = TextEditingController(text: currentGoalConverted.round().toString());
 
     showDialog(
       context: context,
@@ -297,9 +315,9 @@ class DashboardHomeScreen extends ConsumerWidget {
         content: TextField(
           controller: controller,
           keyboardType: TextInputType.number,
-          decoration: const InputDecoration(
-            labelText: 'Distance (km)',
-            suffixText: 'km',
+          decoration: InputDecoration(
+            labelText: 'Distance ($distanceUnit)',
+            suffixText: distanceUnit,
           ),
         ),
         actions: [
@@ -309,9 +327,18 @@ class DashboardHomeScreen extends ConsumerWidget {
           ),
           ElevatedButton(
             onPressed: () {
-              final newGoal = double.tryParse(controller.text);
-              if (newGoal != null && newGoal > 0) {
-                ref.read(weeklyGoalProvider.notifier).state = newGoal;
+              final newGoalInDisplayUnit = double.tryParse(controller.text);
+              if (newGoalInDisplayUnit != null && newGoalInDisplayUnit > 0) {
+                // Convert back to km for storage
+                double newGoalInKm;
+                if (isMetric) {
+                  // Already in km
+                  newGoalInKm = newGoalInDisplayUnit;
+                } else {
+                  // Convert miles to km
+                  newGoalInKm = newGoalInDisplayUnit * 1.60934;
+                }
+                ref.read(weeklyGoalProvider.notifier).state = newGoalInKm;
                 Navigator.pop(context);
               }
             },
