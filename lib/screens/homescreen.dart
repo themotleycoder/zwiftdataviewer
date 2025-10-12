@@ -34,19 +34,21 @@ class HomeScreen extends MainLayout {
   String getTitle(WidgetRef ref) {
     final tabIndex = ref.watch(homeTabsNotifier);
     switch (tabIndex) {
-      case 0: // HomeScreenTab.activities
+      case 0: // HomeScreenTab.dashboard
+        return 'Home';
+      case 1: // HomeScreenTab.activities
         return 'Activities';
-      case 1: // HomeScreenTab.stats
+      case 2: // HomeScreenTab.stats
         return 'Statistics';
-      case 2: // HomeScreenTab.routes
+      case 3: // HomeScreenTab.routes
         return 'Routes';
-      case 3: // HomeScreenTab.recommendations
+      case 4: // HomeScreenTab.recommendations
         return 'AI Routes';
-      case 4: // HomeScreenTab.calendar
+      case 5: // HomeScreenTab.calendar
         return 'Calendars';
-      case 5: // HomeScreenTab.segments
+      case 6: // HomeScreenTab.segments
         return 'Segments';
-      case 6: // HomeScreenTab.settings
+      case 7: // HomeScreenTab.settings
         return 'Settings';
       default:
         return 'Zwift Data Viewer';
@@ -181,6 +183,11 @@ class HomeScreen extends MainLayout {
         ),
 
         // Navigation items
+        const NavigationDrawerDestination(
+          icon: Icon(Icons.home),
+          label: Text('Home'),
+        ),
+
         activityList.when(
           data: (activityData) => NavigationDrawerDestination(
             icon: Badge(

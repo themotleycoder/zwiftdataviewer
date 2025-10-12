@@ -2,13 +2,14 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:zwiftdataviewer/screens/allstats/allstatsrootscreen.dart';
 import 'package:zwiftdataviewer/screens/calendars/allcalendarsrootscreen.dart';
+import 'package:zwiftdataviewer/screens/dashboard_home_screen.dart';
 import 'package:zwiftdataviewer/screens/route_recommendations_screen.dart';
 import 'package:zwiftdataviewer/screens/routesscreen.dart';
 import 'package:zwiftdataviewer/screens/segments/segments_screen.dart';
 import 'package:zwiftdataviewer/screens/settingscreen.dart';
 import 'package:zwiftdataviewer/widgets/activitieslistview.dart';
 
-enum HomeScreenTab { activities, stats, routes, recommendations, calendar, segments, settings }
+enum HomeScreenTab { dashboard, activities, stats, routes, recommendations, calendar, segments, settings }
 
 class HomeTabsNotifier extends StateNotifier<int> {
   HomeTabsNotifier() : super(0);
@@ -26,20 +27,22 @@ class HomeTabsNotifier extends StateNotifier<int> {
   Widget getView(int index) {
     switch (index) {
       case 1:
-        return const AllStatsRootScreen();
+        return const ActivitiesListView();
       case 2:
-        return const RoutesScreen();
+        return const AllStatsRootScreen();
       case 3:
-        return const RouteRecommendationsScreen();
+        return const RoutesScreen();
       case 4:
-        return const AllCalendarsRootScreen();
+        return const RouteRecommendationsScreen();
       case 5:
-        return const SegmentsScreen();
+        return const AllCalendarsRootScreen();
       case 6:
+        return const SegmentsScreen();
+      case 7:
         return const SettingsScreen();
       case 0:
       default:
-        return const ActivitiesListView();
+        return const DashboardHomeScreen();
     }
   }
 }
