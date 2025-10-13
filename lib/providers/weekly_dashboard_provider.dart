@@ -8,20 +8,27 @@ import 'package:zwiftdataviewer/utils/theme.dart';
 // Provider for weekly goal in kilometers
 final weeklyGoalProvider = StateProvider<double>((ref) => 155.0);
 
+// Provider for week offset (0 = current week, -1 = last week, etc.)
+final weekOffsetProvider = StateProvider<int>((ref) => 0);
+
 // Provider for calculating weekly dashboard data
 final weeklyDashboardProvider = FutureProvider<WeeklyDashboardData>((ref) async {
   final activities = await ref.watch(combinedActivitiesProvider.future);
   final config = ref.watch(configProvider);
   final weeklyGoal = ref.watch(weeklyGoalProvider);
+  final weekOffset = ref.watch(weekOffsetProvider);
 
-  // Get FTP from config, default to 229 if not set
+  // Get FTP from config, default to 231 if not set
   final ftp = config.ftp ?? 231.0;
 
-  // Get start and end of current week (Monday to Sunday)
+  // Get start and end of week based on offset (Monday to Sunday)
   final now = DateTime.now();
   final currentWeekday = now.weekday; // 1 = Monday, 7 = Sunday
-  final startOfWeek = now.subtract(Duration(days: currentWeekday - 1));
-  final monday = DateTime(startOfWeek.year, startOfWeek.month, startOfWeek.day);
+  final currentMonday = now.subtract(Duration(days: currentWeekday - 1));
+
+  // Apply week offset (each week is 7 days)
+  final targetMonday = currentMonday.add(Duration(days: weekOffset * 7));
+  final monday = DateTime(targetMonday.year, targetMonday.month, targetMonday.day);
   final sunday = monday.add(const Duration(days: 6, hours: 23, minutes: 59, seconds: 59));
 
   // Filter activities for current week
@@ -57,6 +64,8 @@ final weeklyDashboardProvider = FutureProvider<WeeklyDashboardData>((ref) async 
     weeklyGoal: weeklyGoal,
     totalDistance: totalDistance,
     recentActivities: activities.take(5).toList(),
+    weekStartDate: monday,
+    weekEndDate: sunday,
   );
 });
 
@@ -66,12 +75,16 @@ class WeeklyDashboardData {
   final double weeklyGoal;
   final double totalDistance;
   final List<SummaryActivity> recentActivities;
+  final DateTime weekStartDate;
+  final DateTime weekEndDate;
 
   WeeklyDashboardData({
     required this.dailyData,
     required this.weeklyGoal,
     required this.totalDistance,
     required this.recentActivities,
+    required this.weekStartDate,
+    required this.weekEndDate,
   });
 
   double get progress => weeklyGoal > 0 ? (totalDistance / weeklyGoal).clamp(0.0, 1.0) : 0.0;

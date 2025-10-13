@@ -51,8 +51,8 @@ class DashboardHomeScreen extends ConsumerWidget {
 
           const SizedBox(height: 16),
 
-          // Weekly Bar Chart
-          WeeklyBarChart(dailyData: data.dailyData),
+          // Weekly Bar Chart with Navigation
+          _buildWeeklyBarChartSection(context, ref, data),
 
           const SizedBox(height: 24),
 
@@ -65,6 +65,63 @@ class DashboardHomeScreen extends ConsumerWidget {
           const SizedBox(height: 16),
         ],
       ),
+    );
+  }
+
+  Widget _buildWeeklyBarChartSection(BuildContext context, WidgetRef ref, WeeklyDashboardData data) {
+    final weekOffset = ref.watch(weekOffsetProvider);
+    final isCurrentWeek = weekOffset == 0;
+
+    return Column(
+      children: [
+        // Bar chart
+        WeeklyBarChart(dailyData: data.dailyData),
+
+        const SizedBox(height: 8),
+
+        // Navigation controls
+        Padding(
+          padding: const EdgeInsets.symmetric(horizontal: 16),
+          child: Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: [
+              // Previous week button
+              IconButton(
+                icon: const Icon(Icons.arrow_back_ios),
+                iconSize: 20,
+                color: zdvMidBlue,
+                onPressed: () {
+                  ref.read(weekOffsetProvider.notifier).state = weekOffset - 1;
+                },
+                tooltip: 'Previous week',
+              ),
+
+              // Week date range
+              Text(
+                '${DateFormat('MMM d').format(data.weekStartDate)} - ${DateFormat('MMM d, yyyy').format(data.weekEndDate)}',
+                style: const TextStyle(
+                  fontSize: 14,
+                  fontWeight: FontWeight.w500,
+                  color: zdvDrkBlue,
+                ),
+              ),
+
+              // Next week button (disabled if on current week)
+              IconButton(
+                icon: const Icon(Icons.arrow_forward_ios),
+                iconSize: 20,
+                color: isCurrentWeek ? Colors.grey[400] : zdvMidBlue,
+                onPressed: isCurrentWeek
+                    ? null
+                    : () {
+                        ref.read(weekOffsetProvider.notifier).state = weekOffset + 1;
+                      },
+                tooltip: isCurrentWeek ? 'Current week' : 'Next week',
+              ),
+            ],
+          ),
+        ),
+      ],
     );
   }
 
