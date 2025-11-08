@@ -192,60 +192,63 @@ class ActivitiesListView extends ConsumerWidget {
             await ref.read(combinedActivitiesProvider.future);
           },
           child: Container(
-            margin: const EdgeInsets.fromLTRB(0, 8, 0, 8),
+            margin: const EdgeInsets.all(16),
+            decoration: BoxDecoration(
+              color: constants.tileBackgroundColor,
+              borderRadius: BorderRadius.circular(12),
+            ),
             child: ListView.separated(
               itemCount: activities.length,
               itemBuilder: (context, index) {
                 final activity = activities[index];
-                return Container(
-                  padding: const EdgeInsets.fromLTRB(8.0, 0, 8.0, 0),
-                  child: Center(
-                    child: InkWell(
-                        child: ListTile(
-                      shape: RoundedRectangleBorder(
-                        borderRadius:
-                            BorderRadius.circular(constants.roundedCornerSize),
-                      ),
-                      tileColor: constants.tileBackgroundColor,
-                      leading: const Icon(Icons.directions_bike,
-                          size: 32.0, color: zdvOrange),
-                      title: Text(activity.name,
-                          overflow: TextOverflow.ellipsis,
-                          maxLines: 2,
-                          style: constants.headerFontStyle),
-                      subtitle: Text(
-                          "${Conversions.metersToDistance(ref, activity.distance).toStringAsFixed(1)} ${units['distance']} ${DateFormat.yMd().format(activity.startDateLocal)}"),
-                      trailing: const Icon(
-                        Icons.arrow_forward_ios,
-                        color: zdvMidBlue,
-                      ),
-                      onTap: () {
-                        ref.read(detailTabsNotifier.notifier).setIndex(0);
-                        ref
-                            .read(selectedActivityProvider.notifier)
-                            .selectActivity(activity);
-                        Navigator.push(
-                          context,
-                          MaterialPageRoute(
-                            builder: (_) {
-                              return const DetailScreen(
-                                  // id: activities[index].id ?? -1,
-                                  // strava: strava,
-                                  // onRemove: () {
-                                  //   Navigator.pop(context);
-                                  //   onRemove(context, todo);
-                                  // },
-                                  );
-                            },
-                          ),
-                        );
-                      },
-                    )),
+                return ListTile(
+                  contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+                  leading: CircleAvatar(
+                    backgroundColor: zdvMidBlue,
+                    child: Text(
+                      activity.name.substring(0, 2).toUpperCase(),
+                      style: const TextStyle(color: Colors.white, fontSize: 14, fontWeight: FontWeight.bold),
+                    ),
                   ),
+                  title: Text(
+                    activity.name,
+                    style: const TextStyle(
+                      color: zdvDrkBlue,
+                      fontWeight: FontWeight.w600,
+                      fontSize: 15,
+                    ),
+                    maxLines: 1,
+                    overflow: TextOverflow.ellipsis,
+                  ),
+                  subtitle: Row(
+                    children: [
+                      Text(
+                        '${Conversions.metersToDistance(ref, activity.distance).toStringAsFixed(1)} ${units['distance']}',
+                        style: TextStyle(color: Colors.grey[700], fontSize: 13),
+                      ),
+                      const SizedBox(width: 12),
+                      Text(
+                        DateFormat('MMM d').format(activity.startDateLocal),
+                        style: TextStyle(color: Colors.grey[600], fontSize: 12),
+                      ),
+                    ],
+                  ),
+                  trailing: const Icon(Icons.arrow_forward_ios, color: zdvMidBlue, size: 16),
+                  onTap: () {
+                    ref.read(detailTabsNotifier.notifier).setIndex(0);
+                    ref.read(selectedActivityProvider.notifier).selectActivity(activity);
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                        builder: (_) => const DetailScreen(),
+                      ),
+                    );
+                  },
                 );
               },
-              separatorBuilder: (context, index) => const SizedBox(
-                height: 10,
+              separatorBuilder: (context, index) => Divider(
+                height: 1,
+                color: Colors.grey[300],
               ),
             ),
           ),

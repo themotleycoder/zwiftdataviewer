@@ -11,9 +11,11 @@ import 'package:zwiftdataviewer/models/climbdata.dart';
 import 'package:zwiftdataviewer/models/routedata.dart';
 import 'package:zwiftdataviewer/models/worlddata.dart';
 import 'package:zwiftdataviewer/utils/database/models/activity_model.dart';
+import 'package:zwiftdataviewer/models/climb_analysis.dart';
 import 'package:zwiftdataviewer/utils/database/models/climb_model.dart';
 import 'package:zwiftdataviewer/utils/database/models/route_model.dart';
 import 'package:zwiftdataviewer/utils/database/models/world_model.dart';
+import 'package:zwiftdataviewer/utils/database/models/climb_analysis_model.dart';
 import 'package:zwiftdataviewer/utils/supabase/supabase_auth_service.dart';
 import 'package:zwiftdataviewer/utils/supabase/supabase_config.dart';
 
@@ -684,6 +686,164 @@ class SupabaseDatabaseService {
     }
   }
 
+  /// Saves segment efforts by segment ID to Supabase
+  ///
+  /// This method saves all efforts for a specific segment to Supabase.
+  /// It replaces existing efforts for the segment with the new data.
+  /// Used when fetching all personal segment efforts for a KOM.
+  Future<void> saveSegmentEffortsBySegmentId(
+    int segmentId,
+    List<SegmentEffort> efforts,
+  ) async {
+    if (efforts.isEmpty) {
+      if (kDebugMode) {
+        print('No segment efforts to save for segment $segmentId');
+      }
+      return;
+    }
+
+    try {
+      // Ensure we're authenticated using cached check
+      final isAuthenticated = await _checkAuthentication();
+      if (!isAuthenticated) {
+        throw Exception('Not authenticated with Supabase');
+      }
+
+      // Get the current athlete ID using cached value
+      final athleteId = await _getAthleteId();
+      if (athleteId == null) {
+        throw Exception('No athlete ID available');
+      }
+
+      // Delete existing segment efforts for this segment
+      await _client
+          .from('zw_segment_efforts')
+          .delete()
+          .eq('segment_id', segmentId);
+
+      // Insert new segment efforts
+      for (var i = 0; i < efforts.length; i++) {
+        try {
+          final effort = efforts[i];
+
+          // Skip efforts with null segments
+          if (effort.segment == null || effort.segment!.id == null) {
+            if (kDebugMode) {
+              print('Skipping segment effort with null segment at index $i');
+            }
+            continue;
+          }
+
+          // Get activity ID
+          final activityId = effort.activity?.id;
+          if (activityId == null) {
+            if (kDebugMode) {
+              print('Skipping segment effort with null activity ID at index $i');
+            }
+            continue;
+          }
+
+          // Create the segment effort map
+          final Map<String, dynamic> effortMap = {
+            'activity_id': activityId,
+            'segment_id': effort.segment!.id,
+            'segment_name': effort.segment!.name,
+            'elapsed_time': effort.elapsedTime,
+            'moving_time': effort.movingTime,
+            'start_date': effort.startDate,
+            'start_date_local': effort.startDateLocal,
+            'distance': effort.distance,
+            'start_index': effort.startIndex,
+            'end_index': effort.endIndex,
+            'average_watts': effort.averageWatts,
+            'average_cadence': effort.averageCadence,
+            'average_heartrate': effort.averageHeartrate,
+            'max_heartrate': effort.maxHeartrate,
+            'pr_rank': effort.prRank,
+            'hidden': effort.hidden == true ? 1 : 0,
+            'json_data': jsonEncode(effort.toJson()),
+          };
+
+          // Insert the segment effort (upsert to handle conflicts)
+          await _client.from('zw_segment_efforts').upsert(effortMap);
+        } catch (e) {
+          if (kDebugMode) {
+            print(
+                'Error saving segment effort at index $i for segment $segmentId: $e');
+          }
+          // Continue with other segment efforts
+        }
+      }
+
+      if (kDebugMode) {
+        print('Saved ${efforts.length} efforts for segment $segmentId to Supabase');
+      }
+    } catch (e) {
+      if (kDebugMode) {
+        print('Error saving segment efforts by segment ID to Supabase: $e');
+      }
+      rethrow;
+    }
+  }
+
+  /// Gets all segment efforts for a specific segment from Supabase
+  ///
+  /// This method fetches all segment efforts from Supabase for the specified
+  /// segment ID. It returns a list of SegmentEffort objects.
+  Future<List<SegmentEffort>> getSegmentEffortsForSegment(int segmentId) async {
+    try {
+      // Ensure we're authenticated using cached check
+      final isAuthenticated = await _checkAuthentication();
+      if (!isAuthenticated) {
+        throw Exception('Not authenticated with Supabase');
+      }
+
+      // Get the current athlete ID using cached value
+      final athleteId = await _getAthleteId();
+      if (athleteId == null) {
+        throw Exception('No athlete ID available');
+      }
+
+      // Query Supabase for segment efforts
+      final response = await _client
+          .from('zw_segment_efforts')
+          .select()
+          .eq('segment_id', segmentId)
+          .order('start_date', ascending: false);
+
+      if (response.isEmpty) {
+        return [];
+      }
+
+      // Convert response to SegmentEffort objects
+      final List<SegmentEffort> efforts = [];
+      for (var i = 0; i < response.length; i++) {
+        try {
+          final Map<String, dynamic> effortMap = response[i];
+          if (effortMap['json_data'] != null) {
+            final Map<String, dynamic> jsonData =
+                jsonDecode(effortMap['json_data']);
+            final effort = SegmentEffort.fromJson(jsonData);
+            efforts.add(effort);
+          }
+        } catch (e) {
+          if (kDebugMode) {
+            print('Error converting segment effort at index $i: $e');
+          }
+          // Skip this effort
+          continue;
+        }
+      }
+
+      return efforts;
+    } catch (e) {
+      if (kDebugMode) {
+        print('Error getting segment efforts for segment from Supabase: $e');
+      }
+      return [];
+    }
+  }
+
   /// Deletes activities from Supabase
   ///
   /// This method deletes activities from Supabase with the specified IDs.
@@ -1107,6 +1267,128 @@ class SupabaseDatabaseService {
     } catch (e) {
       if (kDebugMode) {
         print('Error saving climbs to Supabase: $e');
+      }
+      rethrow;
+    }
+  }
+
+  /// Gets climb analysis for an activity from Supabase
+  ///
+  /// This method retrieves climb analysis for the specified activity.
+  /// Returns null if no analysis is found or if not authenticated.
+  Future<ActivityClimbAnalysis?> getClimbAnalysis(int activityId) async {
+    try {
+      // Ensure we're authenticated using cached check
+      final isAuthenticated = await _checkAuthentication();
+      if (!isAuthenticated) {
+        if (kDebugMode) {
+          print('Not authenticated with Supabase');
+        }
+        return null;
+      }
+
+      // Get the current athlete ID using cached value
+      final athleteId = await _getAthleteId();
+      if (athleteId == null) {
+        if (kDebugMode) {
+          print('No athlete ID available');
+        }
+        return null;
+      }
+
+      // Query climb analysis from Supabase
+      final response = await _client
+          .from('zw_climb_analysis')
+          .select()
+          .eq('activity_id', activityId)
+          .eq('strava_athlete_id', athleteId)
+          .maybeSingle();
+
+      if (response == null) {
+        return null;
+      }
+
+      // Convert response to ActivityClimbAnalysis object
+      return ClimbAnalysisModel.fromMap(response).toActivityClimbAnalysis();
+    } catch (e) {
+      if (kDebugMode) {
+        print('Error getting climb analysis from Supabase: $e');
+      }
+      return null;
+    }
+  }
+
+  /// Saves climb analysis to Supabase
+  ///
+  /// This method saves climb analysis to Supabase for the specified
+  /// activity. It upserts the analysis (replaces if exists).
+  Future<void> saveClimbAnalysis(ActivityClimbAnalysis analysis) async {
+    try {
+      // Ensure we're authenticated using cached check
+      final isAuthenticated = await _checkAuthentication();
+      if (!isAuthenticated) {
+        throw Exception('Not authenticated with Supabase');
+      }
+
+      // Get the current athlete ID using cached value
+      final athleteId = await _getAthleteId();
+      if (athleteId == null) {
+        throw Exception('No athlete ID available');
+      }
+
+      // Convert analysis to ClimbAnalysisModel
+      final model = ClimbAnalysisModel.fromActivityClimbAnalysis(analysis);
+      final map = model.toMap();
+
+      // Add athlete ID for RLS
+      map['strava_athlete_id'] = athleteId;
+
+      // Upsert climb analysis
+      await _client
+          .from('zw_climb_analysis')
+          .upsert(map);
+
+      if (kDebugMode) {
+        print('Saved climb analysis for activity ${analysis.activityId} to Supabase');
+      }
+    } catch (e) {
+      if (kDebugMode) {
+        print('Error saving climb analysis to Supabase: $e');
+      }
+      rethrow;
+    }
+  }
+
+  /// Deletes climb analysis for an activity from Supabase
+  ///
+  /// This method deletes climb analysis for the specified activity.
+  Future<void> deleteClimbAnalysis(int activityId) async {
+    try {
+      // Ensure we're authenticated using cached check
+      final isAuthenticated = await _checkAuthentication();
+      if (!isAuthenticated) {
+        throw Exception('Not authenticated with Supabase');
+      }
+
+      // Get the current athlete ID using cached value
+      final athleteId = await _getAthleteId();
+      if (athleteId == null) {
+        throw Exception('No athlete ID available');
+      }
+
+      // Delete climb analysis from Supabase
+      await _client
+          .from('zw_climb_analysis')
+          .delete()
+          .eq('activity_id', activityId)
+          .eq('strava_athlete_id', athleteId);
+
+      if (kDebugMode) {
+        print('Deleted climb analysis for activity $activityId from Supabase');
+      }
+    } catch (e) {
+      if (kDebugMode) {
+        print('Error deleting climb analysis from Supabase: $e');
       }
       rethrow;
     }

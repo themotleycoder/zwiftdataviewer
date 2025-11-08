@@ -8,7 +8,7 @@ import 'package:sqflite/sqflite.dart';
 class DatabaseHelper {
   static final DatabaseHelper _instance = DatabaseHelper._internal();
   static Database? _database;
-  static const int _currentVersion = 7; // Incremented to ensure calendar tables are created
+  static const int _currentVersion = 8; // Added climb_analysis table
 
   // Singleton pattern
   factory DatabaseHelper() => _instance;
@@ -238,6 +238,19 @@ class DatabaseHelper {
       )
     ''');
 
+    // Create climb_analysis table
+    await db.execute('''
+      CREATE TABLE climb_analysis (
+        id INTEGER PRIMARY KEY AUTOINCREMENT,
+        activity_id INTEGER NOT NULL UNIQUE,
+        total_climbs INTEGER NOT NULL,
+        total_elevation_gain REAL NOT NULL,
+        analyzed_at TEXT NOT NULL,
+        json_data TEXT NOT NULL,
+        created_at TEXT DEFAULT CURRENT_TIMESTAMP
+      )
+    ''');
+
     // Create indexes for faster queries
     await _createIndexes(db);
   }
@@ -287,6 +300,9 @@ class DatabaseHelper {
     // Indexes for climb_calendar
     await db.execute('CREATE INDEX IF NOT EXISTS idx_climb_calendar_date ON climb_calendar(calendar_date)');
     await db.execute('CREATE INDEX IF NOT EXISTS idx_climb_calendar_climb_id ON climb_calendar(climb_id)');
+
+    // Indexes for climb_analysis
+    await db.execute('CREATE INDEX IF NOT EXISTS idx_climb_analysis_activity_id ON climb_analysis(activity_id)');
   }
 
   Future<void> _onUpgrade(Database db, int oldVersion, int newVersion) async {
@@ -662,6 +678,52 @@ class DatabaseHelper {
         } catch (e) {
           if (kDebugMode) {
             debugPrint('❌ Error during migration to version 7: $e');
+          }
+          // Rethrow critical database errors
+          rethrow;
+        }
+      }
+
+      if (oldVersion < 8) {
+        // Migration to version 8 - Add climb_analysis table
+        try {
+          if (kDebugMode) {
+            debugPrint('Running migration to version 8 (adding climb_analysis table)...');
+          }
+
+          // Create climb_analysis table
+          await db.execute('''
+            CREATE TABLE IF NOT EXISTS climb_analysis (
+              id INTEGER PRIMARY KEY AUTOINCREMENT,
+              activity_id INTEGER NOT NULL UNIQUE,
+              total_climbs INTEGER NOT NULL,
+              total_elevation_gain REAL NOT NULL,
+              analyzed_at TEXT NOT NULL,
+              json_data TEXT NOT NULL,
+              created_at TEXT DEFAULT CURRENT_TIMESTAMP
+            )
+          ''');
+
+          // Create index for faster lookups
+          await db.execute('CREATE INDEX IF NOT EXISTS idx_climb_analysis_activity_id ON climb_analysis(activity_id)');
+
+          if (kDebugMode) {
+            debugPrint('✅ Climb analysis table and index created');
+          }
+
+          // Update version record
+          await db.update('db_version', {
+            'version': 8,
+            'last_updated': DateTime.now().toIso8601String(),
+            'description': 'Added climb_analysis table for activity climb detection'
+          }, where: 'id = 1');
+
+          if (kDebugMode) {
+            debugPrint('Migration to version 8 completed successfully');
+          }
+        } catch (e) {
+          if (kDebugMode) {
+            debugPrint('❌ Error during migration to version 8: $e');
           }
           // Rethrow critical database errors
           rethrow;

@@ -17,7 +17,7 @@ class ActivityService implements ActivitiesRepository, StreamsRepository {
   // Activities
   Future<List<SummaryActivity>> getActivities(int beforeDate, int afterDate) async {
     final db = await _databaseHelper.database;
-    
+
     final List<Map<String, dynamic>> maps = await db.query(
       'activities',
       where: 'start_date BETWEEN ? AND ?',
@@ -31,6 +31,24 @@ class ActivityService implements ActivitiesRepository, StreamsRepository {
     return List.generate(maps.length, (i) {
       return ActivityModel.fromMap(maps[i]).toSummaryActivity();
     });
+  }
+
+  // Get a single summary activity by ID
+  Future<SummaryActivity?> getActivityById(int activityId) async {
+    final db = await _databaseHelper.database;
+
+    final List<Map<String, dynamic>> maps = await db.query(
+      'activities',
+      where: 'id = ?',
+      whereArgs: [activityId],
+      limit: 1,
+    );
+
+    if (maps.isEmpty) {
+      return null;
+    }
+
+    return ActivityModel.fromMap(maps.first).toSummaryActivity();
   }
 
   // Activity Details

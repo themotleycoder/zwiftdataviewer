@@ -1,23 +1,24 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:zwiftdataviewer/screens/routestats/routeanalysistabpowercolumnchartscreen.dart';
-import 'package:zwiftdataviewer/screens/routestats/routeanalysistabpowertimepiechartscreen.dart';
-import 'package:zwiftdataviewer/screens/routestats/routeanalysistabprofilechartscreen.dart';
 
 import '../../utils/theme.dart';
+import 'routeanalysistabclimbsscreen.dart';
+import 'routeanalysistabpowercolumnchartscreen.dart';
+import 'routeanalysistabpowertimepiechartscreen.dart';
+import 'routeanalysistabprofilechartscreen.dart';
 
 class RouteAnalysisScreen extends ConsumerStatefulWidget {
   const RouteAnalysisScreen({super.key});
 
   @override
-  _RouteAnalysisScreenState createState() => _RouteAnalysisScreenState();
+  RouteAnalysisScreenState createState() => RouteAnalysisScreenState();
 }
 
-class _RouteAnalysisScreenState extends ConsumerState<RouteAnalysisScreen>
+class RouteAnalysisScreenState extends ConsumerState<RouteAnalysisScreen>
     with TickerProviderStateMixin {
   @override
   Widget build(BuildContext context) {
-    final controller = TabController(length: 3, vsync: this);
+    final controller = TabController(length: 4, vsync: this);
 
     //final DetailedActivity detailedActivity = ref.watch(activityDetailProvider.notifier).activityDetail;
 
@@ -55,6 +56,10 @@ class _RouteAnalysisScreenState extends ConsumerState<RouteAnalysisScreen>
             icon: Icon(Icons.schedule),
             // text: 'Time',
           ),
+          Tab(
+            icon: Icon(Icons.landscape),
+            // text: 'Climbs',
+          ),
         ],
       ),
       Expanded(
@@ -66,6 +71,7 @@ class _RouteAnalysisScreenState extends ConsumerState<RouteAnalysisScreen>
             RouteAnalysisProfileChartScreen(),
             RouteAnalysisWattsDataView(),
             RouteAnalysisPowerTimePieChartScreen(), // Fixed class name
+            RouteAnalysisClimbsScreen(),
           ],
         ),
       ))
