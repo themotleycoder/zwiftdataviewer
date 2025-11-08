@@ -531,7 +531,15 @@ class ClimbProfilePainter extends CustomPainter {
   }
 
   @override
-  bool shouldRepaint(covariant CustomPainter oldDelegate) => false;
+  bool shouldRepaint(covariant ClimbProfilePainter oldDelegate) {
+    // Repaint if any of the key data changes
+    return oldDelegate.distance != distance ||
+        oldDelegate.elevationGain != elevationGain ||
+        oldDelegate.averageGrade != averageGrade ||
+        oldDelegate.maxGrade != maxGrade ||
+        oldDelegate.elevationData != elevationData ||
+        oldDelegate.gradientData != gradientData;
+  }
 }
 
 /// Helper class to store elevation and gradient data points

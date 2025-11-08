@@ -246,16 +246,89 @@ class RouteAnalysisClimbsScreen extends ConsumerWidget {
           ),
         );
       },
-      loading: () => Padding(
-        padding: const EdgeInsets.symmetric(horizontal: 0, vertical: 0),
-        child: ClimbProfileWidget(
-          segmentName: segment.name ?? 'Unknown Segment',
-          distance: segment.distance ?? 0.0,
-          elevationGain: elevationGain,
-          averageGrade: segment.averageGrade ?? 0.0,
-          maxGrade: segment.maximumGrade,
-          timeString: timeString,
-          isPR: isPR,
+      loading: () => Container(
+        decoration: BoxDecoration(
+          color: Colors.white,
+          borderRadius: BorderRadius.circular(12),
+          boxShadow: [
+            BoxShadow(
+              color: Colors.black.withValues(alpha: 0.1),
+              blurRadius: 4,
+              offset: const Offset(0, 2),
+            ),
+          ],
+        ),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.stretch,
+          children: [
+            // Header
+            Container(
+              padding: const EdgeInsets.all(12),
+              decoration: BoxDecoration(
+                color: Colors.grey[300],
+                borderRadius: const BorderRadius.only(
+                  topLeft: Radius.circular(12),
+                  topRight: Radius.circular(12),
+                ),
+              ),
+              child: Row(
+                children: [
+                  Expanded(
+                    child: Text(
+                      segment.name ?? 'Unknown Segment',
+                      style: const TextStyle(
+                        color: Colors.white,
+                        fontSize: 16,
+                        fontWeight: FontWeight.bold,
+                      ),
+                      maxLines: 2,
+                      overflow: TextOverflow.ellipsis,
+                    ),
+                  ),
+                  if (isPR)
+                    Container(
+                      padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+                      decoration: BoxDecoration(
+                        color: Colors.amber,
+                        borderRadius: BorderRadius.circular(12),
+                      ),
+                      child: const Row(
+                        mainAxisSize: MainAxisSize.min,
+                        children: [
+                          Icon(Icons.star, size: 14, color: Colors.white),
+                          SizedBox(width: 4),
+                          Text(
+                            'PR',
+                            style: TextStyle(
+                              color: Colors.white,
+                              fontWeight: FontWeight.bold,
+                              fontSize: 12,
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
+                ],
+              ),
+            ),
+            // Loading indicator
+            const SizedBox(
+              height: 200,
+              child: Center(
+                child: CircularProgressIndicator(),
+              ),
+            ),
+            // Stats row (placeholder)
+            Container(
+              padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.spaceAround,
+                children: [
+                  Text('Loading profile...', style: TextStyle(color: Colors.grey[600])),
+                ],
+              ),
+            ),
+          ],
         ),
       ),
       error: (error, stack) {
